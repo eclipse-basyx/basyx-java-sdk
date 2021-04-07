@@ -113,6 +113,24 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+      				<source>8</source>
+    			</configuration>
+                <executions>
+	                <execution>
+	                	<goals>
+	                    	<goal>javadoc</goal>
+	                    </goals>
+	                    <id>generate-javadoc</id>
+	                    <phase>package</phase>
+	                </execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 

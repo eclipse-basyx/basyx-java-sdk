@@ -37,7 +37,7 @@ public class SubmodelElementMapCollectionConverter {
 	
 	/**
 	 * Builds a Submodel from a given Map.<br>
-	 * Converts the Submodel.SUBMODELELEMENT entry of a Map to a Map<IdShort, SMElement>.<br>
+	 * Converts the Submodel.SUBMODELELEMENT entry of a Map to a {@literal Map<IdShort, SMElement>}.<br>
 	 * Creates Facades for all smElements.
 	 * 
 	 * @param submodel a Map representing the Submodel to be converted.
@@ -86,7 +86,7 @@ public class SubmodelElementMapCollectionConverter {
 	
 	/**
 	 * Builds a SubmodelElementCollection from a given Map.<br>
-	 * Converts the Property.VALUE entry of a Map to a Map<IdShort, SMElement>.<br>
+	 * Converts the Property.VALUE entry of a Map to a {@literal Map<IdShort, SMElement>}.<br>
 	 * Creates Facades for all smElements.
 	 * 
 	 * @param smECollection a Map representing the SubmodelElementCollection to be converted.
@@ -130,10 +130,10 @@ public class SubmodelElementMapCollectionConverter {
 	
 	
 	/**
-	 * Converts a given smElement Collection/Map to a Map<idShort, smElement>. 
+	 * Converts a given smElement Collection/Map to a {@literal Map<IdShort, SMElement>}. 
 	 * 
 	 * @param smElements the smElements to be converted
-	 * @return a Map<idSHort, smElement>
+	 * @return a {@literal Map<IdShort, SMElement>}
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> convertCollectionToIDMap(Object smElements) {
@@ -168,10 +168,10 @@ public class SubmodelElementMapCollectionConverter {
 	
 	
 	/**
-	 * Converts a given Map<idShort, smElement> to a smElement Collection. 
+	 * Converts a given {@literal Map<IdShort, SMElement>} to a smElement Collection. 
 	 * 
-	 * @param smElements the smElements to be converted
-	 * @return Collection<smElement>
+	 * @param map the map to be converted
+	 * @return {@literal Collection<smElement>}
 	 */
 	@SuppressWarnings("unchecked")
 	public static Collection<Map<String, Object>> convertIDMapToCollection(Object map) {

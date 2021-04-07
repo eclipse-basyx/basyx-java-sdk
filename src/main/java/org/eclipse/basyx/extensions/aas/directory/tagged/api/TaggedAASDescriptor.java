@@ -33,7 +33,7 @@ public class TaggedAASDescriptor extends AASDescriptor {
 	 * Create a new aas descriptor that retrieves the necessary information from a
 	 * passend AssetAdministrationShell
 	 * 
-	 * @param iAssetAdministrationShell
+	 * @param assetAdministrationShell
 	 * @param endpoint
 	 */
 	public TaggedAASDescriptor(IAssetAdministrationShell assetAdministrationShell, String endpoint) {

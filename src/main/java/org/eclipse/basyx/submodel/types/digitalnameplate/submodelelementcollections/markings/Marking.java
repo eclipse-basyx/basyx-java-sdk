@@ -30,7 +30,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.types.helper.SubmodelElementRetrievalHelper;
 
 /**
- * Marking as defined in the AAS Digital Nameplate Template document <br/>
+ * Marking as defined in the AAS Digital Nameplate Template document <br>
  * It is a submodel element collection which
  * contains information about the marking labelled on the device
  * 

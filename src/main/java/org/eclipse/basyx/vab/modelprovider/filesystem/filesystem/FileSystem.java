@@ -20,7 +20,7 @@ import java.util.List;
 public interface FileSystem {
 	
 	/**
-	 * Reads the content of a file formated as UTF-8.<br/>
+	 * Reads the content of a file formated as UTF-8.<br>
 	 * Throws an Exception if file at given path does not exist. 
 	 * 
 	 * @param path
@@ -30,9 +30,9 @@ public interface FileSystem {
 	public String readFile(String path) throws IOException;
 
 	/**
-	 * Writes a given String to a file at the given path.<br/>
-	 * Does create the file if it does not exist.<br/>
-	 * Does overwrite the file if it exists.<br/>
+	 * Writes a given String to a file at the given path.<br>
+	 * Does create the file if it does not exist.<br>
+	 * Does overwrite the file if it exists.<br>
 	 * Does not create nonexistent parent directories.
 	 * 
 	 * @param path
@@ -42,7 +42,7 @@ public interface FileSystem {
 	public void writeFile(String path, String content) throws IOException;
 
 	/**
-	 * Deletes the file at the specified path.<br/>
+	 * Deletes the file at the specified path.<br>
 	 * Does not throw an Exception if the file does not exist.
 	 * 
 	 * @param path
@@ -51,7 +51,7 @@ public interface FileSystem {
 	public void deleteFile(String path) throws IOException;
 
 	/**
-	 * Creates a directory at the given path.<br/>
+	 * Creates a directory at the given path.<br>
 	 * Creates parent directories if nonexistent.
 	 * 
 	 * @param path
@@ -60,7 +60,7 @@ public interface FileSystem {
 	public void createDirectory(String path) throws IOException;
 
 	/**
-	 * Lists all directories and files at the specified path.<br/>
+	 * Lists all directories and files at the specified path.<br>
 	 * Does not list items in subdirectories.
 	 * 
 	 * @param path
@@ -71,7 +71,7 @@ public interface FileSystem {
 	
 	/**
 	 * Deletes the directory at the specified path,
-	 * including contained files and subdirectories.<br/>
+	 * including contained files and subdirectories.<br>
 	 * Does not throw an Exception if directory at path does not exist. 
 	 * 
 	 * @param path

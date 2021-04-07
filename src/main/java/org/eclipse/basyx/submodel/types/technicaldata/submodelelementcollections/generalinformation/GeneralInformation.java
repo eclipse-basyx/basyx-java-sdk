@@ -324,7 +324,7 @@ public class GeneralInformation extends SubmodelElementCollection{
 	/**
 	 * Sets image file for associated product provided in common format (.png, .jpg).
 	 * 
-	 * @param image
+	 * @param images
 	 */
 	public void setProductImages(List<File> images) {
 		if (images != null && images.size() > 0) {

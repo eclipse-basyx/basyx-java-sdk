@@ -140,7 +140,7 @@ public class AASRegistryModelProvider implements IModelProvider {
 	}
 	
 	/**
-	 * Makes sure, that given Object is an AASDescriptor by checking its ModelType<br />
+	 * Makes sure, that given Object is an AASDescriptor by checking its ModelType<br>
 	 * Creates a new AASDescriptor with the content of the given Map
 	 * 
 	 * @param value the AAS Map object
@@ -154,7 +154,7 @@ public class AASRegistryModelProvider implements IModelProvider {
 	}
 	
 	/**
-	 * Makes sure, that given Object is an SubmodelDescriptor by checking its ModelType<br />
+	 * Makes sure, that given Object is an SubmodelDescriptor by checking its ModelType<br>
 	 * Creates a new SubmodelDescriptor with the content of the given Map
 	 * 
 	 * @param value the AAS Map object

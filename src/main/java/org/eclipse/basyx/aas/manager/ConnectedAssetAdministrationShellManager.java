@@ -32,8 +32,8 @@ import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 
 /**
- * Implement a AAS manager backend that communicates via HTTP/REST<br />
- * <br />
+ * Implement a AAS manager backend that communicates via HTTP/REST<br>
+ * <br>
  * 
  * @author kuhn, schnicke
  * 
@@ -54,8 +54,8 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	}
 
 	/**
-	 * @param networkDirectoryService
-	 * @param providerProvider
+	 * @param directory
+	 * @param provider
 	 */
 	public ConnectedAssetAdministrationShellManager(IAASRegistry directory,
 			IConnectorFactory provider) {

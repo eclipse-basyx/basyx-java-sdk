@@ -41,9 +41,8 @@ public class ValueReferencePair extends VABModelMap<Object> implements IValueRef
 	 * Constructs a reference based on an {@link IIdentifiable} and additional
 	 * information (see {@link Key#Key(KeyElements, boolean, String, KeyType)}).
 	 * 
-	 * @param identifiable
-	 * @param keyElement
-	 * @param local
+	 * @param value
+	 * @param valueId
 	 */
 	public ValueReferencePair(String value, IReference valueId) {
 		setValue(value);
@@ -53,7 +52,7 @@ public class ValueReferencePair extends VABModelMap<Object> implements IValueRef
 	/**
 	 * Creates a ValueReferencePair object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a ValueReferencePair object as raw map
 	 * @return a ValueReferencePair object, that behaves like a facade for the given map
 	 */

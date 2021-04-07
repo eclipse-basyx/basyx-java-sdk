@@ -14,8 +14,8 @@ import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnum;
 import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnumHelper;
 
 /**
- * KeyType, LocalKeyType, IdentifierType as defined in DAAS document <br/>
- * <br />
+ * KeyType, LocalKeyType, IdentifierType as defined in DAAS document <br>
+ * <br>
  * Since there's no enum inheritance in Java, all enums are merged into a single
  * class
  * 

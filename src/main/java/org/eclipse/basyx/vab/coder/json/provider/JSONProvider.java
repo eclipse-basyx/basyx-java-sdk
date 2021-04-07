@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Provider class that supports JSON serialized communication <br/>
+ * Provider class that supports JSON serialized communication <br>
  * Generic Caller is required since messages can be technology specific.
  * 
  * 
@@ -301,7 +301,7 @@ public class JSONProvider<ModelProvider extends IModelProvider> {
 	 * Creates a resource under the given path
 	 * 
 	 * @param path
-	 * @param parameter
+	 * @param serializedJSONValue
 	 * @param outputStream
 	 * @throws ProviderException 
 	 */

@@ -39,7 +39,7 @@ public class LangString extends VABModelMap<Object> {
 	/**
 	 * Creates a LangString object from a map
 	 * 
-	 * @param obj a LangString object as raw map
+	 * @param map a LangString object as raw map
 	 * @return a LangString object, that behaves like a facade for
 	 *         the given map
 	 */

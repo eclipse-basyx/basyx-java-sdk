@@ -31,37 +31,31 @@ import org.xml.sax.SAXException;
 
 /***
  * A Generic XML Parser which transforms the given XML data to nested
- * Map&#60String, Object&#62.<br/>
- * <br/>
+ * {@literal Map<String, Object>}.<br>
+ * <br>
  * 
- * Examples:<br/>
- * <br/>
- * -Text Element <br/>
- * <code> &#60a&#62v&#60/a&#62 => {a = v}<br/></code><br/>
+ * Examples:<br>
+ * <br>
+ * -Text Element <br>
+ * <code>{@literal <a>v</a> => {a = v}}<br></code><br>
  * 
- * -Nested Element <br/>
- * <code> &#60a&#62&#60b&#62v&#60/b&#62&#60/a&#62 => {a={b=
- * v}}<br/></code><br/>
+ * -Nested Element <br>
+ * <code> {@literal <a><b>v</b></a> => {a={b=v}}}<br></code><br>
  * 
- * -Text Node with Attributes<br/>
- * <code>&#60a b="v1" c="v2">v3&#60/a&#62 =>
- * {ele :{#text:v3,b:v1, c:v2}}</code> <br/>
- * <br/>
+ * -Text Node with Attributes<br>
+ * <code> {@literal <a b="v1" c="v2">v3</a> => {ele :{#text:v3,b:v1, c:v2}}}</code> <br>
+ * <br>
  * 
- * -Multiple Text Nodes<br/>
- * <code>&#60a&#62&#60b&#62v1&#60/b&#62&#60b&#62v2&#60/b&#62&#60/a&#62 => {a={b=[v1,
- * v2]}}<br/></code><br/>
+ * -Multiple Text Nodes<br>
+ * <code>{@literal <a><b>v1</b><b>v2</b></a> => {a={b=[v1,v2]}}}<br></code><br>
  * 
- * -Multiple Text Nodes with Attributes <br/>
- * <code> &#60a&#62&#60b
- * d="v3" e="v5">v1&#60/b&#62&#60b d="v4" e="v6">v2&#60/b&#62&#60/a&#62 =>
- * {a={b=[{#text=v1, d=v3, e=v5}, {#text=v2, d=v4, e=v6}]}}</code><br/>
- * <br/>
+ * -Multiple Text Nodes with Attributes <br>
+ * <code> {@literal <a><b d="v3" e="v5">v1</b><b d="v4" e="v6">v2</b></a> => {a={b=[{#text=v1, d=v3, e=v5}, {#text=v2, d=v4, e=v6}]}}}</code><br>
+ * <br>
  * 
- * -Element Node Attributes<br/>
- * <code> &#60a c="v1" d="v2">&#60b&#62v3&#60/b&#62&#60/a&#62
- * => {a={b=v3}, c=v1, d=v2}</code><br/>
- * <br/>
+ * -Element Node Attributes<br>
+ * <code> {@literal <a c="v1" d="v2"><b>v3</b></a> => {a={b=v3}, c=v1, d=v2}}</code><br>
+ * <br>
  * 
  * @author kannoth
  *

@@ -87,8 +87,6 @@ public class MqttEventService {
 
 	/**
 	 * Gets the QoS for MQTT messages
-	 * 
-	 * @param qos
 	 */
 	public int getQoS() {
 		return this.qos;

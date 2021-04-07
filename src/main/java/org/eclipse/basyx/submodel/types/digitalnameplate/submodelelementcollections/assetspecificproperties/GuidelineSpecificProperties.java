@@ -27,7 +27,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 
 /**
- * GuidelineSpecificProperties as defined in the AAS Digital Nameplate Template document <br/>
+ * GuidelineSpecificProperties as defined in the AAS Digital Nameplate Template document <br>
  * It is a submodel element collection which contains Asset specific nameplate 
  * information required by guideline, stipulation or legislation.
  * 

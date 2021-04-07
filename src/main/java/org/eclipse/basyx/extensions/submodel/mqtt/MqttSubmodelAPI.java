@@ -94,7 +94,7 @@ public class MqttSubmodelAPI extends MqttEventService implements ISubmodelAPI {
 	/**
 	 * Adds a submodel element to the filter whitelist. Can also be a path for nested submodel elements.
 	 * 
-	 * @param element
+	 * @param shortId
 	 */
 	public void observeSubmodelElement(String shortId) {
 		whitelist.add(VABPathTools.stripSlashes(shortId));
@@ -103,7 +103,7 @@ public class MqttSubmodelAPI extends MqttEventService implements ISubmodelAPI {
 	/**
 	 * Sets a new filter whitelist.
 	 * 
-	 * @param element
+	 * @param shortIds
 	 */
 	public void setWhitelist(Set<String> shortIds) {
 		this.whitelist.clear();
@@ -114,8 +114,6 @@ public class MqttSubmodelAPI extends MqttEventService implements ISubmodelAPI {
 
 	/**
 	 * Disables the submodel element filter whitelist
-	 * 
-	 * @param element
 	 */
 	public void disableWhitelist() {
 		useWhitelist = false;
@@ -123,8 +121,6 @@ public class MqttSubmodelAPI extends MqttEventService implements ISubmodelAPI {
 
 	/**
 	 * Enables the submodel element filter whitelist
-	 * 
-	 * @param element
 	 */
 	public void enableWhitelist() {
 		useWhitelist = true;

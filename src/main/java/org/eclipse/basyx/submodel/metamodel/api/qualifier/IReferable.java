@@ -37,8 +37,8 @@ public interface IReferable {
 	public String getCategory();
 
 	/**
-	 * Gets the description or comments on the element.<br/>
-	 * <br/>
+	 * Gets the description or comments on the element.<br>
+	 * <br>
 	 * The description can be provided in several languages.
 	 * 
 	 * @return

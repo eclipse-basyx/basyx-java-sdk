@@ -37,7 +37,7 @@ public class VABAASAPI implements IAASAPI {
 	/**
 	 * Creates a VABAASAPI that wraps an IModelProvider
 	 * 
-	 * @param modelProvider
+	 * @param provider
 	 *            providing the AAS
 	 */
 	public VABAASAPI(IModelProvider provider) {

@@ -54,8 +54,7 @@ public class AASDescriptor extends ModelDescriptor {
 	 * Create a new aas descriptor that retrieves the necessary information from a
 	 * passed AssetAdministrationShell
 	 * 
-	 * @param iAssetAdministrationShell
-	 * @param IAsset                    - The asset which is associated to the AAS
+	 * @param assetAdministrationShell
 	 * @param endpoint
 	 */
 	public AASDescriptor(IAssetAdministrationShell assetAdministrationShell, String endpoint) {

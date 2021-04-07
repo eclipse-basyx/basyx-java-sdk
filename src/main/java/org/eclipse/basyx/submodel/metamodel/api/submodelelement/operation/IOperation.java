@@ -51,7 +51,6 @@ public interface IOperation extends IElement, ISubmodelElement {
 	 * @param params
 	 *               Operation parameter
 	 * @return If multiple values are returned, Object is here a list of Objects
-	 * @throws Exception
 	 */
 	public Object invoke(Object... params);
 	
@@ -59,10 +58,9 @@ public interface IOperation extends IElement, ISubmodelElement {
 	 * Invoke operation with parameters wrapped as SubmodelElements
 	 * 
 	 * 
-	 * @param params
+	 * @param elems
 	 *               Operation parameters
 	 * @return List of results
-	 * @throws Exception
 	 */
 	public SubmodelElement[] invoke(SubmodelElement... elems);
 

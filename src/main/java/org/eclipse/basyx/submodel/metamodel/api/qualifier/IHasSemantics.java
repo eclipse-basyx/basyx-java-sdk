@@ -21,8 +21,8 @@ public interface IHasSemantics {
 
 	/**
 	 * Gets the identifier of the semantic definition of the element. It is called
-	 * semantic id of the element. <br />
-	 * <br />
+	 * semantic id of the element. <br>
+	 * <br>
 	 * The semantic id may either reference an external global id or it may
 	 * reference a referable model element of kind=Template that defines the
 	 * semantics of the element.

@@ -107,8 +107,9 @@ public class ConnectedSubmodelElementFactory {
 	 * Creates a connected ISubmodelElement by idShort, proxy and map content
 	 * 
 	 * @param rootProxy      proxy for the root element
-	 * @param collectionPath path in the proxy for accessing all elements
 	 * @param elementPath    path in the proxy for accessing single elements by short ids
+	 * @param idShort
+	 * @param mapContent
 	 * @return The connected variant of the requested submodel element
 	 */
 	public static ISubmodelElement getConnectedSubmodelElement(VABElementProxy rootProxy,

@@ -92,7 +92,7 @@ public class SubmodelFacadeIRDISemantics extends Submodel {
 
 	/**
 	 * Sub model constructor for sub models that conform to a globally defined
-	 * semantics with IRDI (International Registration Data Identifier) <br />
+	 * semantics with IRDI (International Registration Data Identifier) <br>
 	 * Create an instance sub model with all meta properties empty / set to default
 	 * values
 	 * 

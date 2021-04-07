@@ -28,7 +28,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.vab.exception.provider.WrongNumberOfParametersException;
 
 /**
- * Operation as defined in DAAS document <br/>
+ * Operation as defined in DAAS document <br>
  * An operation is a submodel element with input and output variables.
  * 
  * @author schnicke
@@ -116,9 +116,7 @@ public class Operation extends SubmodelElement implements IOperation {
 	/**
 	 * Create Operations w/o endpoint
 	 * 
-	 * @param operation
 	 * @param function
-	 * @return
 	 */
 	public Operation(Function<Object[], Object> function) {
 		this();

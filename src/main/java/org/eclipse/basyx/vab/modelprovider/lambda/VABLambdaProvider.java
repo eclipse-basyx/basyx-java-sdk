@@ -15,11 +15,11 @@ import org.eclipse.basyx.vab.modelprovider.generic.VABModelProvider;
 
 /**
  * Provider that optionally allows properties to be modifiable by hidden
- * set/get/insert/remove property. <br />
- * Supports nested lambda-expressions. <br />
- * E.g.:<br />
+ * set/get/insert/remove property. <br>
+ * Supports nested lambda-expressions. <br>
+ * E.g.:<br>
  * GET $path is internally delegated to a call of $path/get which is a
- * {@link java.util.function.Consumer}. <br />
+ * {@link java.util.function.Consumer}. <br>
  * SET $path is delegated to $path/set which is a
  * {@link java.util.function.Supplier}.
  * 

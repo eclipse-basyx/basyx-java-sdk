@@ -36,17 +36,17 @@ import com.google.common.io.ByteSource;
 
 /**
  * VAB provider class that enables access to an IModelProvider via HTTP REST
- * interface<br />
- * <br />
- * REST http interface is as following: <br />
+ * interface<br>
+ * <br>
+ * REST http interface is as following: <br>
  * - GET /aas/submodels/{subModelId} Retrieves submodel with ID {subModelId}
- * <br />
+ * <br>
  * - GET /aas/submodels/{subModelId}/properties/a Retrieve property a of
- * submodel {subModelId}<br />
+ * submodel {subModelId}<br>
  * - GET /aas/submodels/{subModelId}/properties/a/b Retrieve property a/b of
- * submodel {subModelId} <br />
+ * submodel {subModelId} <br>
  * - POST /aas/submodels/{subModelId}/operations/a Invoke operation a of
- * submodel {subModelId}<br />
+ * submodel {subModelId}<br>
  * - POST /aas/submodels/{subModelId}/operations/a/b Invoke operation a/b of
  * submodel {subModelId}
  * 
@@ -147,7 +147,6 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 
 	
 	/**
-	 * <pre>
 	 * Handle HTTP POST operation. Creates a new Property, Operation, Event,
 	 * Submodel or AAS or invokes an operation.
 	 */

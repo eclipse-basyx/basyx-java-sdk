@@ -57,7 +57,7 @@ public class AasEnv extends VABModelMap<Object> implements IAasEnv {
 	/**
 	 * Creates a AssetAdministrationShell object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a AssetAdministrationShell object as raw map
 	 * @return a AssetAdministrationShell object, that behaves like a facade for the
 	 *         given map

@@ -20,7 +20,7 @@ import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 
 /**
- * A blob element as defined in DAAS document <br/>
+ * A blob element as defined in DAAS document <br>
  * 
  * @author pschorn, schnicke
  *

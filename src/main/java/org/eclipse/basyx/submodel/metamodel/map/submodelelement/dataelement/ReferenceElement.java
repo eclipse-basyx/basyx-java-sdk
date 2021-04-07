@@ -20,7 +20,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementC
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 
 /**
- * A ReferenceElement as defined in DAAS document <br/>
+ * A ReferenceElement as defined in DAAS document <br>
  * A reference element is a data element that defines a reference to another
  * element within the same or another AAS or a reference to an external object
  * or entity.

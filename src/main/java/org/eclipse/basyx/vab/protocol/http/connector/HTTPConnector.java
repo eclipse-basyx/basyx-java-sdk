@@ -45,8 +45,6 @@ public class HTTPConnector implements IBaSyxConnector {
 	/**
 	 * Invoke a BaSys get operation via HTTP GET
 	 * 
-	 * @param address
-	 *            the server address from the directory
 	 * @param servicePath
 	 *            the URL suffix for the requested path
 	 * @return the requested object
@@ -74,8 +72,6 @@ public class HTTPConnector implements IBaSyxConnector {
 	 * Invokes BasysPut method via HTTP PUT. Overrides existing property, operation
 	 * or event.
 	 * 
-	 * @param address
-	 *            the server address from the directory
 	 * @param servicePath
 	 *            the URL suffix for the requested property, operation or event
 	 * @param newValue
@@ -91,8 +87,6 @@ public class HTTPConnector implements IBaSyxConnector {
 	 * Invoke a BaSys Delete operation via HTTP PATCH. Deletes an element from a map
 	 * or collection by key
 	 * 
-	 * @param address
-	 *            the server address from the directory
 	 * @param servicePath
 	 *            the URL suffix for the requested property
 	 * @param obj
