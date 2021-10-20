@@ -1,0 +1,166 @@
+/*******************************************************************************
+ * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * 
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ ******************************************************************************/
+package org.eclipse.basyx.vab.modelprovider.generic;
+
+import java.util.function.Function;
+
+import org.eclipse.basyx.vab.exception.provider.NotAnInvokableException;
+import org.eclipse.basyx.vab.exception.provider.ResourceAlreadyExistsException;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
+import org.eclipse.basyx.vab.modelprovider.VABPathTools;
+import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+
+/**
+ * A generic VAB model provider.
+ * 
+ * @author espen
+ */
+public class VABModelProvider implements IModelProvider {
+	/**
+	 * Handler, which handles single element objects
+	 */
+	private IVABElementHandler handler;
+
+	/**
+	 * Root object that stores contained elements
+	 */
+	protected Object elements;
+
+	public VABModelProvider(Object elements, IVABElementHandler handler) {
+		this.handler = handler;
+		this.elements = elements;
+	}
+
+	@Override
+	public Object getValue(String path) {
+		Object element = getTargetElement(path);
+		return handler.postprocessObject(element);
+	}
+
+	@Override
+	public void setValue(String path, Object newValue) {
+		VABPathTools.checkPathForNull(path);
+		if (VABPathTools.isEmptyPath(path)) {
+			// Empty path => parent element == null => replace root, if it exists
+			if (elements != null) {
+				elements = newValue;
+			}
+			return;
+		}
+
+		Object parentElement = getParentElement(path);
+		String propertyName = VABPathTools.getLastElement(path);
+		// Throws an exception, if the element does not exist
+		handler.getElementProperty(parentElement, propertyName);
+		// => Can only set elements that have already been created
+		handler.setModelPropertyValue(parentElement, propertyName, newValue);
+	}
+
+	@Override
+	public void createValue(String path, Object newValue) {
+		VABPathTools.checkPathForNull(path);
+		if (VABPathTools.isEmptyPath(path)) {
+			// The complete model should be replaced if it does not exist
+			if (elements == null) {
+				elements = newValue;
+			} else {
+				throw new ResourceAlreadyExistsException("Root element does already exist.");
+			}
+			return;
+		}
+
+		// Find parent & name of new element
+		Object parentElement = getParentElement(path);
+		String propertyName = VABPathTools.getLastElement(path);
+		try {
+			Object childElement = handler.getElementProperty(parentElement, propertyName);
+			// The last path element does exist -> create the new value here
+			handler.createValue(childElement, newValue);
+		} catch (ResourceNotFoundException e) {
+			// The last path element does not exist
+			// -> create the new property in the parent element
+			handler.setModelPropertyValue(parentElement, propertyName, newValue);
+		}
+	}
+
+	@Override
+	public void deleteValue(String path) {
+		VABPathTools.checkPathForNull(path);
+
+		Object parentElement = getParentElement(path);
+		String propertyName = VABPathTools.getLastElement(path);
+		handler.deleteValue(parentElement, propertyName);
+	}
+
+	@Override
+	public void deleteValue(String path, Object obj) {
+		Object targetElement = getTargetElement(path);
+		handler.deleteValue(targetElement, obj);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object invokeOperation(String path, Object... parameters) {
+		
+		path = VABPathTools.stripInvokeFromPath(path);
+		
+		Object childElement = getValue(path);
+
+		// Invoke operation for function interfaces
+		if (childElement instanceof Function<?, ?>) {
+			Function<Object[], Object> function = (Function<Object[], Object>) childElement;
+			return function.apply(parameters);
+		} else {
+			throw new NotAnInvokableException("Element \"" + path + "\" is not a function.");
+		}
+	}
+
+	/**
+	 * Get the parent of an element in this provider. The path should include the path to the element separated by '/'.
+	 * E.g., for accessing element c in path a/b, the path should be a/b/c.
+	 */
+	private Object getParentElement(String path) {
+		VABPathTools.checkPathForNull(path);
+
+		// Split path into its elements, separated by '/'
+		String[] pathElements = VABPathTools.splitPath(path);
+
+		Object currentElement = elements;
+		// ignore the leaf element, only return the leaf's parent element
+		for (int i = 0; i < pathElements.length - 1; i++) {
+			currentElement = handler.getElementProperty(currentElement, pathElements[i]);
+		}
+
+		if (currentElement == null) {
+			throw new ResourceNotFoundException("Parent element for \"" + path + "\" does not exist.");
+		}
+
+		return currentElement;
+	}
+
+
+	/**
+	 * Instead of returning the parent element of a path, this function gives the target element.
+	 * E.g., it returns c for the path a/b/c
+	 */
+	protected Object getTargetElement(String path) {
+		VABPathTools.checkPathForNull(path);
+		if (VABPathTools.isEmptyPath(path)) {
+			return elements;
+		}
+
+		Object parentElement = getParentElement(path);
+		String operationName = VABPathTools.getLastElement(path);
+		if (operationName != null) {
+			return handler.getElementProperty(parentElement, operationName);
+		}
+		return null;
+	}
+}

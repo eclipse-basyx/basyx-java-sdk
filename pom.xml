@@ -1,0 +1,228 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.eclipse.basyx</groupId>
+	<artifactId>basyx.sdk</artifactId>
+	<version>1.0.1</version>
+	<name>BaSyx SDK</name>
+
+	<packaging>jar</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+	
+	<repositories>
+		<!--  Additional repository for MQTT Client releases (Paho Java Client) -->
+	    <repository>
+	        <id>Eclipse Paho Repo</id>
+	        <url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
+	    </repository>
+	    <!-- Additional repository for MQTT Broker releases (Moquette Java Broker) -->
+	    <repository>
+    		<id>bintray</id>
+    		<url>https://jcenter.bintray.com</url>
+  		</repository>
+	</repositories>
+
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+
+		<plugins>
+			<!-- Compile Sources using Java 8 -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<!-- Attach sources to jar file -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Generate separate jar for tests and exclude logback.xml from generated jars -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<excludes>
+						<exclude>**/logback.xml</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Run Unit Tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<configuration>
+					<excludes>
+						<exclude>**/*HTTP*</exclude>
+						<exclude>**/*TCP*</exclude>
+					</excludes>
+					<includes>
+						<include>**/**</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+			<!-- Run Integration Tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<configuration>
+					<includes>
+						<include>**/*HTTP*</include>
+						<include>**/*TCP*</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<!-- JUnit 4 for running JUnit tests -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- Moquette MQTT broker for testing MQTT events -->
+		<dependency>
+			<groupId>io.moquette</groupId>
+			<artifactId>moquette-broker</artifactId>
+			<version>0.12.1</version>
+			<scope>test</scope>
+		    <exclusions>
+				<exclusion> 
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+		    </exclusions>
+		</dependency>
+
+		<!-- Eclipse Milo (for OPC-UA client) -->
+		<dependency>
+			<groupId>org.eclipse.milo</groupId>
+			<artifactId>sdk-client</artifactId>
+			<version>0.3.3</version>
+		</dependency>
+
+		<!-- Eclipse Milo (for OPC-UA server) -->
+		<dependency>
+			<groupId>org.eclipse.milo</groupId>
+			<artifactId>sdk-server</artifactId>
+			<version>0.3.3</version>
+		</dependency>
+
+		<!-- Java Servlet API (for HTTP provider) -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+
+		<!-- Java REST API (for WebServiceRawClient) -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+
+		<!-- Java REST Jersey client (for WebServiceRawClient) -->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>2.30</version>
+		</dependency>
+
+		<!-- Jersey InjectionManager (for Jersey client)  -->
+		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>2.30.1</version>
+		</dependency>
+
+		<!-- Tomcat 8 for HTTP server resource -->
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>8.5.41</version>
+		</dependency>
+
+		<!-- Used for creating .aasx files -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+
+		<!-- Logger -->
+		<dependency>
+    		<groupId>ch.qos.logback</groupId>
+    		<artifactId>logback-classic</artifactId>
+    		<version>1.2.3</version>
+		</dependency>
+		
+		<!-- Used by Logback to compile filter expressions from logback.xml -->
+		<dependency>
+    		<groupId>org.codehaus.janino</groupId>
+    		<artifactId>janino</artifactId>
+    		<version>2.7.5</version>
+		</dependency>
+		
+		<!-- Paho Java Client for MQTT -->
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		
+		<!-- JSON Serialization -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.5</version>
+		</dependency>
+		
+	</dependencies>
+</project>
+
