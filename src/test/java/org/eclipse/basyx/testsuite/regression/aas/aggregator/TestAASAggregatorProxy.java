@@ -38,7 +38,7 @@ public class TestAASAggregatorProxy extends AASAggregatorSuite {
 
 	@Override
 	protected IAASAggregator getAggregator() {
-		return new AASAggregatorProxy(new VABElementProxy("/shells", new AASAggregatorProvider(new AASAggregator())));
+		return new AASAggregatorProxy(new VABElementProxy("", new AASAggregatorProvider(new AASAggregator())));
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class TestAASAggregatorProxy extends AASAggregatorSuite {
 
 		// Test feedthrough of INVOKE
 		// Use short form of invoke with operation variable matching and no parameters (empty object array)
-		assertTrue((boolean) ((IOperation) sm.getSubmodelElement(op.getIdShort())).invoke(new Object[0]));
+		assertTrue((boolean) ((IOperation) sm.getSubmodelElement(op.getIdShort())).invokeSimple(new Object[0]));
 
 		// Test feedthrough of DELETE
 		retrievedAAS.removeSubmodel(sm.getIdentification());

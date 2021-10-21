@@ -56,7 +56,6 @@ public class TestConnectedSubmodel extends TestSubmodelSuite {
 	public void build() {
 
 		Submodel reference = getReferenceSubmodel();
-		// Create an operation
 		Operation op = new Operation((Function<Object[], Object> & Serializable) obj -> {
 			return (int) obj[0] + (int) obj[1];
 		});
@@ -95,7 +94,7 @@ public class TestConnectedSubmodel extends TestSubmodelSuite {
 
 		// Check the operation itself
 		IOperation op = ops.get(OP);
-		assertEquals(5, op.invoke(2, 3));
+		assertEquals(5, op.invokeSimple(2, 3));
 	}
 
 	@Test

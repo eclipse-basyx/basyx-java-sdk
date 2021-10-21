@@ -31,8 +31,7 @@ public class HasKind extends VABModelMap<Object> implements IHasKind {
 
 	/**
 	 * Constructor that takes
-	 * {@link org.eclipse.basyx.submodel.metamodel.map.qualifier.haskind.Kind
-	 * Kind}(either Kind.Instance or Kind.Type)
+	 * {@link ModelingKind} (either Kind.Instance or Kind.Type)
 	 */
 	public HasKind(ModelingKind kind) {
 		// Kind of the element: either type or instance.
@@ -43,7 +42,7 @@ public class HasKind extends VABModelMap<Object> implements IHasKind {
 	/**
 	 * Creates a HasKind object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a HasKind object as raw map
 	 * @return a HasKind object, that behaves like a facade for the given map
 	 */

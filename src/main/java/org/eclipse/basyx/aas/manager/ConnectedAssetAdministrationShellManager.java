@@ -3,14 +3,12 @@
  */
 package org.eclipse.basyx.aas.manager;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.basyx.aas.aggregator.AASAggregatorAPIHelper;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
-import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.manager.api.IAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
@@ -32,8 +30,8 @@ import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 
 /**
- * Implement a AAS manager backend that communicates via HTTP/REST<br />
- * <br />
+ * Implement a AAS manager backend that communicates via HTTP/REST<br>
+ * <br>
  * 
  * @author kuhn, schnicke
  * 
@@ -54,8 +52,8 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	}
 
 	/**
-	 * @param networkDirectoryService
-	 * @param providerProvider
+	 * @param directory
+	 * @param provider
 	 */
 	public ConnectedAssetAdministrationShellManager(IAASRegistry directory,
 			IConnectorFactory provider) {
@@ -163,19 +161,12 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	@Override
 	public void createAAS(AssetAdministrationShell aas, String endpoint) {
 		endpoint = VABPathTools.stripSlashes(endpoint);
-		if (!endpoint.endsWith(AASAggregatorProvider.PREFIX)) {
-			endpoint += "/" + AASAggregatorProvider.PREFIX;
-		}
 
 		IModelProvider provider = connectorFactory.getConnector(endpoint);
 		AASAggregatorProxy proxy = new AASAggregatorProxy(provider);
 		proxy.createAAS(aas);
-		try {
+		String combinedEndpoint = VABPathTools.concatenatePaths(endpoint, AASAggregatorAPIHelper.getAASAccessPath(aas.getIdentification()));
+		aasDirectory.register(new AASDescriptor(aas, combinedEndpoint));
 
-			String combinedEndpoint = VABPathTools.concatenatePaths(endpoint, URLEncoder.encode(aas.getIdentification().getId(), "UTF-8"), "aas");
-			aasDirectory.register(new AASDescriptor(aas, combinedEndpoint));
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Encoding failed. This should never happen");
-		}
 	}
 }

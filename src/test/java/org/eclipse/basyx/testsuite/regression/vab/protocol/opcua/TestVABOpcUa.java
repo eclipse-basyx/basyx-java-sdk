@@ -10,7 +10,7 @@
 package org.eclipse.basyx.testsuite.regression.vab.protocol.opcua;
 
 import org.eclipse.basyx.vab.gateway.ConnectorProviderMapper;
-import org.eclipse.basyx.vab.protocol.opcua.connector.OpcUaConnectorProvider;
+import org.eclipse.basyx.vab.protocol.opcua.connector.OpcUaConnectorFactory;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.ULong;
@@ -34,7 +34,7 @@ public class TestVABOpcUa {
 
 //    @Test
     public void testOpcUaMethodCall() {
-        clientMapper.addConnectorProvider("opc.tcp", new OpcUaConnectorProvider());
+        clientMapper.addConnectorProvider("opc.tcp", new OpcUaConnectorFactory());
         try {
             Object methodCallRes = clientMapper.getConnector("opc.tcp://opcua.demo-this.com:51210/UA/SampleServer")
                     .invokeOperation("0:Objects/2:Data/2:Static/2:MethodTest/2:ScalarMethod1",
@@ -51,7 +51,7 @@ public class TestVABOpcUa {
     
 //    @Test
     public void testOpcUaReadAndWrite() {
-        clientMapper.addConnectorProvider("opc.tcp", new OpcUaConnectorProvider());
+        clientMapper.addConnectorProvider("opc.tcp", new OpcUaConnectorFactory());
         try {
             clientMapper.getConnector("opc.tcp://opcua.demo-this.com:51210/UA/SampleServer")
                     .setValue("0:Objects/2:Data/2:Static/2:AnalogScalar/2:Int32Value", 42);

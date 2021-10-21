@@ -38,56 +38,42 @@ import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 
 /**
- * Provider class that implements the AssetAdministrationShellServices <br />
+ * Provider class that implements the AssetAdministrationShellServices <br>
  * This provider supports operations on multiple sub models that are selected by
- * path<br />
- * <br />
- * Supported API:<br />
- * - getModelPropertyValue<br />
- * /aas Returns the Asset Administration Shell<br />
- * /aas/submodels Retrieves all Submodels from the current Asset Administration
- * Shell<br />
- * /aas/submodels/{subModelId} Retrieves a specific Submodel from a specific
- * Asset Administration Shell<br />
- * /aas/submodels/{subModelId}/properties Retrieves all Properties from the
- * current Submodel<br />
- * /aas/submodels/{subModelId}/operations Retrieves all Operations from the
- * current Submodel<br />
- * /aas/submodels/{subModelId}/events Retrieves all Events from the current
- * Submodel<br />
- * /aas/submodels/{subModelId}/properties/{propertyId} Retrieves a specific
- * property from the AAS's Submodel<br />
- * /aas/submodels/{subModelId}/operations/{operationId} Retrieves a specific
- * Operation from the AAS's Submodel<br />
- * /aas/submodels/{subModelId}/events/{eventId} Retrieves a specific event from
- * the AAS's submodel
- * <br /><br />
- * - createValue <br />
- * /aas/submodels Adds a new Submodel to an existing Asset Administration Shell
- * <br /><br />
- * /aas/submodels/{subModelId}/properties Adds a new property to the AAS's
- * submodel <br />
- * /aas/submodels/{subModelId}/operations Adds a new operation to the AAS's
- * submodel <br />
- * /aas/submodels/{subModelId}/events Adds a new event to the AAS's submodel
- * <br /><br />
- * - invokeOperation<br />
- * /aas/submodels/{subModelId}/operations/{operationId} Invokes a specific
- * operation from the AAS' submodel with a list of input parameters
- * <br /><br />
- * - deleteValue<br />
- * /aas/submodels/{subModelId} Deletes a specific Submodel from a specific Asset
- * Administration Shell <br />
- * /aas/submodels/{subModelId}/properties/{propertyId} Deletes a specific
- * Property from the AAS's Submodel<br />
- * /aas/submodels/{subModelId}/operations/{operationId} Deletes a specific
- * Operation from the AAS's Submodel<br />
- * /aas/submodels/{subModelId}/events/{eventId} Deletes a specific event from
- * the AAS's submodel
- * <br /><br />
- * - setModelPropertyValue<br />
- * /aas/submodels/{subModelId}/properties/{propertyId} Sets the value of the
- * AAS's Submodel's Property
+ * path<br>
+ * <br>
+ * Supported API:<br>
+ * - getValue<br>
+ * <i>/aas</i> Returns the Asset Administration Shell<br>
+ * <i>/aas/submodels</i> Retrieves all Submodels from the current Asset
+ * Administration Shell<br>
+ * <i>/aas/submodels/{subModelIdShort}/submodel</i> Retrieves a specific
+ * Submodel from a specific Asset Administration Shell<br>
+ * <i>/aas/submodels/{subModelIdShort}/submodel/submodelElements</i> Retrieves
+ * all SubmodelElements from the current Submodel<br>
+ * <i>/aas/submodels/{subModelIdShort}/submodel/submodelElements/{submodelElementIdShort}</i>
+ * Retrieves a specific SubmodelElement from the AAS's Submodel<br>
+ * <i>/aas/submodels/{subModelIdShort}/submodel/submodelElements/{submodelElementIdShort}/value</i>
+ * Retrieves the value of a specific SubmodelElement from the AAS's Submodel<br>
+ * <br>
+ * - setValue <br>
+ * <i>/aas/submodels/{subModelIdShort}</i> Adds a new Submodel to an existing
+ * Asset Administration Shell <br>
+ * <i>/aas/submodels/{subModelIdShort}/submodel/submodelElements/{submodelElementIdShort}</i>
+ * Adds a new SubmodelElement to the AAS's submodel <br>
+ * <i>/aas/submodels/{subModelIdShort}/submodel/submodelElements/{submodelElementIdShort}</i>
+ * Sets the value of a specific SubmodelElement from the AAS's Submodel<br>
+ * <br>
+ * - invokeOperation<br>
+ * <i>/aas/submodels/{subModelIdShort}/submodel/submodelElements/{submodelElementIdShort}</i>
+ * Invokes a specific operation from the AAS' submodel with a list of input
+ * parameters <br>
+ * <br>
+ * - deleteValue<br>
+ * <i>/aas/submodels/{subModelId}</i> Deletes a specific Submodel from a
+ * specific Asset Administration Shell <br>
+ * <i>/aas/submodels/{subModelIdShort}/submodel/submodelElements/{submodelElementIdShort}</i>
+ * Deletes a specific submodelElement from the AAS's Submodel<br>
  * 
  * 
  * @author kuhn, pschorn
@@ -209,8 +195,6 @@ public class MultiSubmodelProvider implements IModelProvider {
 	/**
 	 * Set an AAS for this provider
 	 * 
-	 * @param elementId
-	 *            Element ID
 	 * @param modelContentProvider
 	 *            Model content provider
 	 */

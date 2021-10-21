@@ -10,6 +10,7 @@
 package org.eclipse.basyx.vab.coder.json.metaprotocol;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 
@@ -31,6 +32,13 @@ public class Message extends HashMap<String, Object> {
 		put(MESSAGETYPE, messageType.getId());
 		put(CODE, code);
 		put(TEXT, text);
+	}
+	
+	public static Message createAsFacade(Map<String, Object> map) {
+		MessageType type = MessageType.getById(((Number) map.get(MESSAGETYPE)).intValue());
+		String code = (String) map.get(CODE);
+		String text = (String) map.get(TEXT);
+		return new Message(type, code, text);
 	}
 
 	public String getText() {

@@ -9,7 +9,9 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.vab.modelprovider;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
@@ -26,34 +28,62 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
  *
  */
 public class MapInvoke {
-	
+
 	public static void test(VABConnectionManager connManager) {
-		// Connect to VAB element with ID "urn:fhg:es.iese:vab:1:1:simplevabelement"
 		VABElementProxy connVABElement = connManager.connectToVABElement("urn:fhg:es.iese:vab:1:1:simplevabelement");
-	
-		// Invoke complex function
+
+		invokeComplexObjectReturningFunction(connVABElement);
+
+		invokeSupportedFunctionalInterfaces(connVABElement);
+
+		invokeNonexistantPath(connVABElement);
+
+		invokeInvalidPath(connVABElement);
+
+		invokeExceptionFunction(connVABElement);
+
+		invokeNullPointerExceptionFunction(connVABElement);
+
+		invokeEmptyPathException(connVABElement);
+
+		invokeNullPathException(connVABElement);
+	}
+
+	private static void invokeComplexObjectReturningFunction(VABElementProxy connVABElement) throws ProviderException {
 		Object complex = connVABElement.invokeOperation("operations/complex/", 12, 34);
 		assertEquals(46, complex);
-	
-		// Invoke unsupported functional interface
-		try {
-			connVABElement.invokeOperation("operations/supplier/" + Operation.INVOKE);
-			fail();
-		} catch (ProviderException e) {}
-	
-		// Invoke non-existing operation
+	}
+
+	private static void invokeSupportedFunctionalInterfaces(VABElementProxy connVABElement) {
+		boolean result = (boolean) connVABElement.invokeOperation("operations/supplier/" + Operation.INVOKE);
+		assertTrue(result);
+
+		Object[] toConsume = { 10 };
+		connVABElement.invokeOperation("operations/consumer/" + Operation.INVOKE, toConsume);
+		Object[] consumed = (Object[]) SimpleVABElement.getAndResetConsumed();
+		assertArrayEquals(toConsume, consumed);
+
+		connVABElement.invokeOperation("operations/runnable/" + Operation.INVOKE);
+		assertTrue(SimpleVABElement.getAndResetRunnableRan());
+	}
+
+	private static void invokeNonexistantPath(VABElementProxy connVABElement) throws ProviderException {
 		try {
 			connVABElement.invokeOperation("operations/unknown/" + Operation.INVOKE);
 			fail();
-		} catch (ResourceNotFoundException e) {}
-	
-		// Invoke invalid operation -> not a function, but a primitive data type
+		} catch (ResourceNotFoundException e) {
+		}
+	}
+
+	private static void invokeInvalidPath(VABElementProxy connVABElement) {
 		try {
 			connVABElement.invokeOperation("operations/invalid/" + Operation.INVOKE);
 			fail();
-		} catch (ProviderException e) {}
-	
-		// Invoke operations that throw Exceptions
+		} catch (ProviderException e) {
+		}
+	}
+
+	private static void invokeExceptionFunction(VABElementProxy connVABElement) {
 		try {
 			connVABElement.invokeOperation("operations/providerException/" + Operation.INVOKE);
 			fail();
@@ -61,7 +91,9 @@ public class MapInvoke {
 			// exception type not implemented, yet
 			// assertEquals(e.getType(), "testExceptionType");
 		}
-	
+	}
+
+	private static void invokeNullPointerExceptionFunction(VABElementProxy connVABElement) {
 		try {
 			connVABElement.invokeOperation("operations/nullException/" + Operation.INVOKE);
 			fail();
@@ -69,18 +101,22 @@ public class MapInvoke {
 			// exception type not implemented, yet
 			// assertEquals(e.getType(), "java.lang.NullPointerException");
 		}
-	
-		// Empty paths - should execute, but has no effect
+	}
+
+	private static void invokeEmptyPathException(VABElementProxy connVABElement) {
 		try {
 			connVABElement.invokeOperation("", "");
 			fail();
-		} catch (ProviderException e) {}
-		
-	
-		// Null path - should throw exception
+		} catch (ProviderException e) {
+		}
+	}
+
+	private static void invokeNullPathException(VABElementProxy connVABElement) throws ProviderException {
 		try {
 			connVABElement.invokeOperation(null, "");
 			fail();
-		} catch (MalformedRequestException e) {}
+		} catch (MalformedRequestException e) {
+		}
 	}
+
 }

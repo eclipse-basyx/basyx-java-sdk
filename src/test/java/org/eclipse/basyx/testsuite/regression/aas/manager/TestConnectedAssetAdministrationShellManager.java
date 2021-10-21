@@ -37,6 +37,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.testsuite.regression.vab.gateway.ConnectorProviderStub;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
+import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,7 +46,7 @@ import org.junit.Test;
  * Tests ConnectedAssetAdministrationShellManager class
  * 
  * @author schnicke
- *
+ * 
  */
 public class TestConnectedAssetAdministrationShellManager {
 	ConnectedAssetAdministrationShellManager manager;
@@ -79,11 +80,11 @@ public class TestConnectedAssetAdministrationShellManager {
  
 		// Create an AAS containing a reference to the created Submodel
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "/shells");
+		manager.createAAS(aas, "");
 
 		// Check descriptor for correct endpoint
 		String endpoint = registry.lookupAAS(aasId).getFirstEndpoint();
-		assertEquals(AASAggregatorProvider.PREFIX + "/" + aasId.getId() + "/aas", endpoint);
+		assertEquals(AASAggregatorProvider.PREFIX + "/" + aasId.getId() + "/aas", VABPathTools.stripSlashes(endpoint));
 
 		// Retrieve it
 		ConnectedAssetAdministrationShell connectedAAS = manager.retrieveAAS(aasId);
@@ -148,7 +149,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		prepareConnectorProvider(provider);
 
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "/shells");
+		manager.createAAS(aas, "");
 
 		Submodel sm = new Submodel(smIdShort, smId);
 		manager.createSubmodel(aasId, sm);
@@ -172,7 +173,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		prepareConnectorProvider(provider);
 
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "/shells");
+		manager.createAAS(aas, "");
 		manager.deleteAAS(aas.getIdentification());
 		try {
 			manager.retrieveAAS(aas.getIdentification());

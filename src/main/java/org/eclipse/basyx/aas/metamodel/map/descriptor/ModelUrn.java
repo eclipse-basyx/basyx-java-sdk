@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Create URNs with the format urn:<legalEntity>:<subUnit>:<subModel>:<version>:<revision>:<elementID>#<elementInstance>
+ * Create URNs with the format urn: {@literal <legalEntity>:<subUnit>:<subModel>:<version>:<revision>:<elementID>#<elementInstance>}
  * 
  * @author kuhn
  *

@@ -39,7 +39,7 @@ public class Identifier extends VABModelMap<Object> implements IIdentifier {
 	/**
 	 * Creates a Identifier object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Identifier object as raw map
 	 * @return a Identifier object, that behaves like a facade for the given map
 	 */

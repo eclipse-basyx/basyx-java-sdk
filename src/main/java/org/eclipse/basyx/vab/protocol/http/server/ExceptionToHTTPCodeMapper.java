@@ -9,6 +9,9 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.server;
 
+import java.util.List;
+
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceAlreadyExistsException;
@@ -59,6 +62,27 @@ public class ExceptionToHTTPCodeMapper {
 			return new ResourceNotFoundException(text);
 		default:
 			return new ProviderException(text);
+		}
+		
+	}
+	
+	/**
+	 * Maps HTTP-Codes to ProviderExceptions
+	 * 
+	 * @param statusCode The received HTTP-code
+	 * @return the corresponding ProviderException
+	 */
+	public static ProviderException mapToException(int statusCode, List<Message> messages) {
+		
+		switch(statusCode) {
+		case 400:
+			return new MalformedRequestException(messages);
+		case 422:
+			return new ResourceAlreadyExistsException(messages);
+		case 404:
+			return new ResourceNotFoundException(messages);
+		default:
+			return new ProviderException(messages);
 		}
 		
 	}

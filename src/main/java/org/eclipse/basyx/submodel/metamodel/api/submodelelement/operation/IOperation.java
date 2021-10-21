@@ -47,24 +47,34 @@ public interface IOperation extends IElement, ISubmodelElement {
 	/**
 	 * Invoke operation with given parameter
 	 * 
-	 * 
+	 * @deprecated Please use either {@link #invoke(SubmodelElement...)} for passing
+	 *             SubmodelElements or {@link #invokeSimple(Object...)} for directly
+	 *             passing values.
 	 * @param params
-	 *               Operation parameter
+	 *            Operation parameter
 	 * @return If multiple values are returned, Object is here a list of Objects
-	 * @throws Exception
 	 */
+	@Deprecated
 	public Object invoke(Object... params);
 	
 	/**
 	 * Invoke operation with parameters wrapped as SubmodelElements
 	 * 
 	 * 
-	 * @param params
+	 * @param elems
 	 *               Operation parameters
 	 * @return List of results
-	 * @throws Exception
 	 */
 	public SubmodelElement[] invoke(SubmodelElement... elems);
+
+	/**
+	 * Invoke operation with raw parameters, i.e. not wrapped as SubmodelElements
+	 * 
+	 * @param params
+	 *            Raw operation parameters
+	 * @return Raw result
+	 */
+	public Object invokeSimple(Object... params);
 
 	/**
 	 * Invoke operation with given parameter asynchronously

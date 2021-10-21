@@ -9,8 +9,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.registration.proxy;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -19,17 +17,15 @@ import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
+import org.eclipse.basyx.aas.registration.AASRegistryAPIHelper;
 import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
-import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 import org.eclipse.basyx.vab.registry.proxy.VABRegistryProxy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 
@@ -40,8 +36,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
-	
-	private static Logger logger = LoggerFactory.getLogger(AASRegistryProxy.class);
 
 	/**
 	 * Constructor for an AAS registry proxy based on a HTTP connection
@@ -77,7 +71,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	}
 
 	private static VABElementProxy createProxy(IModelProvider provider) {
-		return new VABElementProxy(AASRegistryModelProvider.PREFIX, provider);
+		return new VABElementProxy("", provider);
 	}
 
 	/**
@@ -87,7 +81,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
 		// Add a mapping from the AAS id to the serialized descriptor
 		try {
-			String encodedId = VABPathTools.encodePathElement(deviceAASDescriptor.getIdentifier().getId());
+			String encodedId = AASRegistryAPIHelper.getAASPath(deviceAASDescriptor.getIdentifier());
 
 			// Typically, VAB SET should not create new entries. Nevertheless, the registry
 			// API is defined to do it.
@@ -106,12 +100,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	 */
 	@Override
 	public void delete(IIdentifier aasIdentifier) throws ProviderException {
-		try {
-			this.removeMapping(URLEncoder.encode(aasIdentifier.getId(), "UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			logger.error("Could not encode URL. This should not happen");
-			throw new RuntimeException(e);
-		}
+		this.removeMapping(AASRegistryAPIHelper.getAASPath(aasIdentifier));
 	}
 	
 	/**
@@ -120,7 +109,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	@Override @SuppressWarnings("unchecked")
 	public AASDescriptor lookupAAS(IIdentifier aasIdentifier) throws ProviderException {
 		try {
-			Object result = provider.getValue(URLEncoder.encode(aasIdentifier.getId(), "UTF-8"));
+			Object result = provider.getValue(AASRegistryAPIHelper.getAASPath(aasIdentifier));
 			return new AASDescriptor((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
@@ -135,7 +124,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	@Override
 	public List<AASDescriptor> lookupAll() throws ProviderException {
 		try {
-			Object result = provider.getValue("");
+			Object result = provider.getValue(AASRegistryAPIHelper.getRegistryPath());
 			Collection<?> descriptors = (Collection<?>) result;
 			return descriptors.stream().map(x -> new AASDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
@@ -152,7 +141,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 		try {
 			// Typically, VAB SET should not create new entries. Nevertheless, the registry
 			// API is defined to do it.
-			provider.setValue(VABPathTools.concatenatePaths(buildSubmodelPath(aas), URLEncoder.encode(smDescriptor.getIdentifier().getId(), "UTF-8")), smDescriptor);
+			provider.setValue(AASRegistryAPIHelper.getSubmodelAccessPath(aas, smDescriptor.getIdentifier()), smDescriptor);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -165,7 +154,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		try {
-			provider.deleteValue(VABPathTools.concatenatePaths(buildSubmodelPath(aasId), URLEncoder.encode(smId.getId(), "UTF-8")));
+			provider.deleteValue(AASRegistryAPIHelper.getSubmodelAccessPath(aasId, smId));
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -175,17 +164,12 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 		}
 	}
 
-	private String buildSubmodelPath(IIdentifier aas) throws ProviderException {
-		// Encode id to handle usage of reserved symbols, e.g. /
-		String encodedAASId = VABPathTools.encodePathElement(aas.getId());
-		return VABPathTools.concatenatePaths(encodedAASId, AASRegistryModelProvider.SUBMODELS);
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<SubmodelDescriptor> lookupSubmodels(IIdentifier aasId) throws ProviderException {
 		try {
-			Object result = provider.getValue(VABPathTools.concatenatePaths(buildSubmodelPath(aasId)));
+			Object result = provider.getValue(AASRegistryAPIHelper.getSubmodelListOfAASPath(aasId));
 			Collection<?> descriptors = (Collection<?>) result;
 			return descriptors.stream().map(x -> new SubmodelDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
@@ -201,7 +185,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	@Override
 	public SubmodelDescriptor lookupSubmodel(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		try {
-			Object result = provider.getValue(VABPathTools.concatenatePaths(buildSubmodelPath(aasId), URLEncoder.encode(smId.getId(), "UTF-8")));
+			Object result = provider.getValue(AASRegistryAPIHelper.getSubmodelAccessPath(aasId, smId));
 			return new SubmodelDescriptor((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {

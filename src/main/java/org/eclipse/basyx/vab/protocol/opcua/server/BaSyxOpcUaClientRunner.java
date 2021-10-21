@@ -21,6 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.eclipse.basyx.vab.protocol.opcua.connector.IOpcUaClient;
+import org.eclipse.basyx.vab.protocol.opcua.connector.milo.MiloOpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfig;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
@@ -42,6 +44,10 @@ import org.eclipse.milo.opcua.stack.core.types.structured.TranslateBrowsePathsTo
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated As of version 1.1. Replaced by {@link IOpcUaClient} and {@link MiloOpcUaClient}.
+ */
+@Deprecated
 public class BaSyxOpcUaClientRunner {
 
     private static Logger logger = LoggerFactory.getLogger(BaSyxOpcUaClientRunner.class);

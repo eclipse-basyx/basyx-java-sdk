@@ -39,10 +39,10 @@ import com.google.gson.JsonPrimitive;
 
 /**
  * Provides means for (de-)serialization of Primitives (int, double, string,
- * boolean), Maps, Sets and Lists. <br />
+ * boolean), Maps, Sets and Lists. <br>
  * Since JSON is not able to differentiate between Sets and Lists, additional
  * information is added. When a Collection of objects is serialized, this
- * information is directly added using an "index" key. <br />
+ * information is directly added using an "index" key. <br>
  * However, collections of primitives do not allow adding an "index" key. To
  * handle this, a type tag is added on the same level as the collection. For
  * more details, see <i>TestJson</i>
@@ -279,7 +279,7 @@ public class GSONTools implements Serializer {
 	}
 
 	/**
-	 * Deserializes a JsonArray to a Collection<br/>
+	 * Deserializes a JsonArray to a Collection<br>
 	 * Remark: internally, a List will be used for deserialization & it is assumed, that
 	 * the order in the json equals the correct intended order for the list.
 	 * => The ordering will be preserved in the returned collection
@@ -305,7 +305,8 @@ public class GSONTools implements Serializer {
 		return (value instanceof Supplier<?>) 
 				|| (value instanceof Function<?, ?>) 
 				|| (value instanceof Consumer<?>)
-				|| (value instanceof BiConsumer<?, ?>);
+				|| (value instanceof BiConsumer<?, ?> 
+				|| (value instanceof Runnable));
 	}
 
 	/**

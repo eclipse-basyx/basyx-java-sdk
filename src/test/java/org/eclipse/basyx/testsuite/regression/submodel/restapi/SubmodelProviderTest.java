@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.function.Function;
 
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
@@ -97,8 +96,8 @@ public class SubmodelProviderTest {
 	    for (String keyword : SimpleAASSubmodel.KEYWORDS) {
             Operation op = new Operation();
             op.setIdShort(keyword + "Operation");
-			op.setInvokable((Function<Object[], Object>) x -> {
-				return null;
+            op.setInvokable(() -> {
+               // Do nothing
             });
 
             Map<String, Object> param = wrapParameter("argument", 5);

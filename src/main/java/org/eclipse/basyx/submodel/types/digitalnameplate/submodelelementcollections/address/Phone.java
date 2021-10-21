@@ -29,7 +29,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.types.digitalnameplate.enums.PhoneType;
 
 /**
- * Phone as defined in the AAS Digital Nameplate Template document <br/>
+ * Phone as defined in the AAS Digital Nameplate Template document <br>
  * It is a submodel element collection which contains a phone number including type
  * 
  * @author haque

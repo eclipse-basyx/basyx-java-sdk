@@ -13,7 +13,7 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
- * Provider used for removing type information from Objects. </br>
+ * Provider used for removing type information from Objects. <br>
  * Similar to a communication over VAB.
  * 
  * @author conradi

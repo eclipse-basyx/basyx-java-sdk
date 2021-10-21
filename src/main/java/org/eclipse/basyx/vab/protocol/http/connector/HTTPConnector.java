@@ -9,6 +9,9 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.connector;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -18,6 +21,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
+import org.eclipse.basyx.vab.coder.json.metaprotocol.MessageType;
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Result;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.protocol.api.IBaSyxConnector;
@@ -25,6 +31,8 @@ import org.eclipse.basyx.vab.protocol.http.server.ExceptionToHTTPCodeMapper;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 import io.netty.handler.codec.http.HttpMethod;
 
@@ -45,8 +53,6 @@ public class HTTPConnector implements IBaSyxConnector {
 	/**
 	 * Invoke a BaSys get operation via HTTP GET
 	 * 
-	 * @param address
-	 *            the server address from the directory
 	 * @param servicePath
 	 *            the URL suffix for the requested path
 	 * @return the requested object
@@ -74,8 +80,6 @@ public class HTTPConnector implements IBaSyxConnector {
 	 * Invokes BasysPut method via HTTP PUT. Overrides existing property, operation
 	 * or event.
 	 * 
-	 * @param address
-	 *            the server address from the directory
 	 * @param servicePath
 	 *            the URL suffix for the requested property, operation or event
 	 * @param newValue
@@ -91,8 +95,6 @@ public class HTTPConnector implements IBaSyxConnector {
 	 * Invoke a BaSys Delete operation via HTTP PATCH. Deletes an element from a map
 	 * or collection by key
 	 * 
-	 * @param address
-	 *            the server address from the directory
 	 * @param servicePath
 	 *            the URL suffix for the requested property
 	 * @param obj
@@ -176,7 +178,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = request.get();
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.GET, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.GET, rsp);
 			}
 		}
 
@@ -195,7 +197,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = request.put(Entity.entity(newValue, mediaType));
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.PUT, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.PUT, rsp);
 			}
 		}
 
@@ -213,7 +215,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = this.client.target(VABPathTools.concatenatePaths(address, servicePath)).request().build("PATCH", Entity.text(newValue)).property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.PATCH, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.PATCH, rsp);
 			}
 		}
 
@@ -232,7 +234,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = request.post(Entity.entity(parameter, mediaType));
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.POST, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.POST, rsp);
 			}
 		}
 
@@ -251,7 +253,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = request.delete();
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.DELETE, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.DELETE, rsp);
 			}
 		}
 
@@ -275,12 +277,21 @@ public class HTTPConnector implements IBaSyxConnector {
 		return buildRequest(client, VABPathTools.concatenatePaths(address, servicePath));
 	}
 
-	private ProviderException handleProcessingException(HttpMethod method, int statusCode) {
-		if (statusCode == 0) {
-			return ExceptionToHTTPCodeMapper.mapToException(404, "[HTTP " + method.name() + "] Failed to request " + this.address + " with mediatype " + this.mediaType);
-		} else {
-			return ExceptionToHTTPCodeMapper.mapToException(statusCode, "[HTTP " + method.name() + "] Failed to request " + this.address + " with mediatype " + this.mediaType);
+	private ProviderException handleProcessingException(HttpMethod method, Response rsp) {
+		if(rsp == null) {
+			return ExceptionToHTTPCodeMapper.mapToException(404, buildMessageString(method.name(), null));
 		}
+		
+		int statusCode = getStatusCode(rsp);
+		String responseJson = rsp.readEntity(String.class);
+		
+		Result result = buildResultFromJSON(responseJson);
+		
+		List<Message> messages = result.getMessages();
+		messages.add(new Message(MessageType.Exception, buildMessageString(method.name(), result)));
+		
+		ProviderException e = ExceptionToHTTPCodeMapper.mapToException(statusCode,  result.getMessages());
+		return e;
 	}
 	
 	/**
@@ -309,5 +320,44 @@ public class HTTPConnector implements IBaSyxConnector {
 	@Override
 	public String getEndpointRepresentation(String path) {
 		return VABPathTools.concatenatePaths(address, path);
+	}
+	
+	/**
+	 * Builds a Result object from the json response
+	 * 
+	 * @param json The json response
+	 * @return Result
+	 */
+	@SuppressWarnings("unchecked")
+	private Result buildResultFromJSON(String json) {
+		Gson gson = new Gson();
+		Map<String, Object> map = gson.fromJson(json, Map.class);
+		return Result.createAsFacade(map);
+	}
+	
+	/**
+	 * Builds the text for the message about the failed HTTP Request
+	 * 
+	 * @param methodName the HTTP method that failed
+	 * @param result the Messages returned by the server if any
+	 * @return the message text
+	 */
+	private String buildMessageString(String methodName, Result result) {
+		String message = "[HTTP " + methodName + "] Failed to request " + this.address + " with mediatype " + this.mediaType;
+		
+		if(result == null) {
+			return message;
+		}
+		
+		String text = "";
+		if(result.getMessages().size() > 0) {
+			text = result.getMessages().get(0).getText();
+		}
+		
+		if(!text.isEmpty()) {
+			message += ". \"" + text + "\"";
+		}
+		
+		return message;
 	}
 }

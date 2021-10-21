@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
+import org.eclipse.basyx.aas.restapi.AASAPIHelper;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
@@ -37,7 +38,7 @@ public class VABAASAPI implements IAASAPI {
 	/**
 	 * Creates a VABAASAPI that wraps an IModelProvider
 	 * 
-	 * @param modelProvider
+	 * @param provider
 	 *            providing the AAS
 	 */
 	public VABAASAPI(IModelProvider provider) {
@@ -49,19 +50,19 @@ public class VABAASAPI implements IAASAPI {
 	@Override
 	public IAssetAdministrationShell getAAS() {
 		// For access on the container property root, return the whole model
-		Map<String, Object> map = (Map<String, Object>) provider.getValue("");
+		Map<String, Object> map = (Map<String, Object>) provider.getValue(AASAPIHelper.getAASPath());
 		return AssetAdministrationShell.createAsFacade(map);
 	}
 
 	@Override
 	public void addSubmodel(IReference submodel) {
-		provider.createValue(AssetAdministrationShell.SUBMODELS, submodel);
+		provider.createValue(AASAPIHelper.getSubmodelsPath(), submodel);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void removeSubmodel(String id) {
-		Collection<Map<String, Object>> smReferences = (Collection<Map<String, Object>>) provider.getValue(AssetAdministrationShell.SUBMODELS);
+		Collection<Map<String, Object>> smReferences = (Collection<Map<String, Object>>) provider.getValue(AASAPIHelper.getSubmodelsPath());
 		// Reference to submodel could be either by idShort (=> local) or directly via
 		// its identifier
 		for (Iterator<Map<String, Object>> iterator = smReferences.iterator(); iterator.hasNext();) {
@@ -72,7 +73,7 @@ public class VABAASAPI implements IAASAPI {
 			String idValue = lastKey.getValue();
 			// remove this reference, if the last key points to the submodel
 			if (idValue.equals(id)) {
-				provider.deleteValue(AssetAdministrationShell.SUBMODELS, ref);
+				provider.deleteValue(AASAPIHelper.getSubmodelsPath(), ref);
 				break;
 			}
 		}

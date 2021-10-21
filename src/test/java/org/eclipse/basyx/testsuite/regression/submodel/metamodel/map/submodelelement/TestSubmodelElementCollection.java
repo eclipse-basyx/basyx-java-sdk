@@ -13,12 +13,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -36,6 +37,7 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
@@ -124,6 +126,19 @@ public class TestSubmodelElementCollection {
 	} 
 	
 	@Test
+	public void testKeepsOrderWhenOrdered() {
+	  SubmodelElementCollection sec1 = new SubmodelElementCollection("sec1");
+	  sec1.setOrdered(true);
+	  sec1.addSubmodelElement(new Property("id1", "blub1"));
+	  sec1.addSubmodelElement(new Property("id2", "blub2"));
+	  sec1.addSubmodelElement(new Property("id3", "blub3"));
+	  sec1.addSubmodelElement(new Property("id4", "blub4"));
+	  
+	  List<String> idShortsInOrder = sec1.getValue().stream().map(e -> e.getIdShort()).collect(Collectors.toList());
+	  assertEquals(Arrays.asList("id1","id2","id3","id4"), idShortsInOrder);
+	}
+	
+	@Test
 	public void testSetElements() {
 		String idShort = "testIdShort";
 		Key key = new Key(KeyElements.BLOB, true, "TestValue", IdentifierType.IRI);
@@ -195,6 +210,29 @@ public class TestSubmodelElementCollection {
 	public void testDeleteSubmodelElementNotExist() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 		collection.deleteSubmodelElement("Id_Which_Does_Not_Exist");
+	}
+	
+	@Test
+	public void testGetValues() {
+		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
+		collection.setIdShort("smColl");
+		Map<String, Object> elements = collection.getValues();
+		Property property = getProperty();
+		assertEquals(1, elements.size());
+		assertTrue(elements.containsKey(PROPERTY_ID));
+		assertEquals(property.getValue(), elements.get(PROPERTY_ID));
+		
+		String newKey = "newKey";
+		String newValue = "newValue";
+		
+		Property property2 = new Property(newKey, newValue);
+		property2.setValueType(ValueType.String);
+		collection.addSubmodelElement(property2);
+		
+		elements = collection.getValues();
+		assertEquals(2, elements.size());
+		assertTrue(elements.containsKey(newKey));
+		assertEquals(newValue, elements.get(newKey));
 	}
 
 	/**

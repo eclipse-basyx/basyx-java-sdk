@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
@@ -63,10 +64,8 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		put(Identifiable.IDENTIFICATION, identifierMap);
 
 		// Set Endpoints
-		HashMap<String, String> endpointWrapper = new HashMap<>();
-		endpointWrapper.put(AssetAdministrationShell.TYPE, "http");
-		endpointWrapper.put(AssetAdministrationShell.ADDRESS, httpEndpoint);
-		put(ENDPOINTS, Arrays.asList(endpointWrapper));
+		Map<String, Object> endpointWrapper = convertEndpointToMap(httpEndpoint, "http");
+		setEndpoints(Arrays.asList(endpointWrapper));
 	}
 
 	/**
@@ -81,6 +80,32 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 	public String getIdShort() {
 		// Passing null in KeyElement type since it doesn't matter while only retrieving idShort
 		return Referable.createAsFacade(this, null).getIdShort();
+	}
+	
+	/**
+	 * Adds an endpoint
+	 * @param endpoint
+	 */
+	public void addEndpoint(String endpoint) {
+		Collection<Map<String, Object>> endpointsCollection = getEndpoints();
+		
+		Map<String, Object> endpointWrapper = convertEndpointToMap(endpoint, "http");
+		endpointsCollection.add(endpointWrapper);
+		setEndpoints(endpointsCollection);
+	}
+	
+	public void removeEndpoint(String endpoint) {
+		Collection<Map<String, Object>> endpointsCollection = getEndpoints();
+		
+		Iterator<Map<String, Object>> iterator = endpointsCollection.iterator();
+	    while (iterator.hasNext()) {
+	    	Map<String, Object> endpointMap = iterator.next();
+	    	if (endpointMap.containsKey(AssetAdministrationShell.ADDRESS) && endpointMap.get(AssetAdministrationShell.ADDRESS) != null && endpointMap.get(AssetAdministrationShell.ADDRESS).toString().equalsIgnoreCase(endpoint)) {
+				iterator.remove();
+				break;
+			}
+	    }
+		setEndpoints(endpointsCollection);
 	}
 
 	/**
@@ -111,7 +136,13 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		Object endpoints = get(ENDPOINTS);
 		// Extract String from endpoint for set or list representations of the endpoint wrappers
 		if (endpoints instanceof Collection<?>) {
-			return (Collection<Map<String, Object>>) endpoints;
+			// Create a new return list and insert all endpoints. If the endpoints are
+			// created using Arrays.asList() which is immutable, this can be solved
+			Collection<Map<String, Object>> ret = new ArrayList<Map<String,Object>>();
+			for (Map<String, Object> endpointMap: (Collection<Map<String, Object>>)endpoints) {
+				ret.add(endpointMap);
+			}
+			return ret;
 		} else {
 			return new ArrayList<>();
 		}
@@ -132,4 +163,21 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 	}
 
 	protected abstract String getModelType();
+	
+	/**
+	 * Converts an endpoint to a map wrapper
+	 * @param endpoint 
+	 * @param type
+	 * @return
+	 */
+	private Map<String, Object> convertEndpointToMap(String endpoint, String type) {
+		HashMap<String, Object> endpointWrapper = new HashMap<>();
+		endpointWrapper.put(AssetAdministrationShell.TYPE, type);
+		endpointWrapper.put(AssetAdministrationShell.ADDRESS, endpoint);
+		return endpointWrapper;
+	}
+	
+	private void setEndpoints(Collection<Map<String, Object>> endpointsCollection) {
+		put(ENDPOINTS, endpointsCollection);
+	}
 }

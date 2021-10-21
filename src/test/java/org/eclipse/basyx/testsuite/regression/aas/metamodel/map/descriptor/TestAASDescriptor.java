@@ -35,7 +35,7 @@ import org.junit.Test;
  * @author schnicke
  *
  */
-public class TestAASDescriptor {
+public class TestAASDescriptor extends ModelDescriptorTestSuite {
 	
 	private Map<String, Object> map;
 	
@@ -138,5 +138,10 @@ public class TestAASDescriptor {
 	public void testValidateWrongSubmodels() {
 		map.put(AssetAdministrationShell.SUBMODELS, "testSubmodel");
 		new AASDescriptor(map).getSubmodelDescriptors();
+	}
+
+	@Override
+	public ModelDescriptor retrieveModelDescriptor() {
+		return new AASDescriptor(map);
 	}
 }

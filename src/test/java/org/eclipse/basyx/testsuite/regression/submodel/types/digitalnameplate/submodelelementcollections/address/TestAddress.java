@@ -118,14 +118,14 @@ public class TestAddress {
 		assertEquals(addressRemarks, addressFromMap.getAddressRemarks());
 		assertEquals(additLink, addressFromMap.getAddressOfAdditionalLink());
 		List<Phone> phones = new ArrayList<Phone>();
-		phones.add(phone2);
 		phones.add(phone1);
+		phones.add(phone2);
 		List<Fax> faxes = new ArrayList<Fax>();
 		faxes.add(fax1);
 		faxes.add(fax2);
 		List<Email> emails = new ArrayList<Email>();
-		emails.add(email2);
 		emails.add(email1);
+		emails.add(email2);
 		assertEquals(phones, addressFromMap.getPhone());
 		assertEquals(faxes, addressFromMap.getFax());
 		assertEquals(emails, addressFromMap.getEmail());

@@ -13,8 +13,8 @@ import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnum;
 import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnumHelper;
 
 /**
- * Helper enum to handle anySimpleTypeDef as defined in DAAS document <br />
- * Represents the type of a data entry <br />
+ * Helper enum to handle anySimpleTypeDef as defined in DAAS document <br>
+ * Represents the type of a data entry <br>
  * TODO: Extend this to support rest of types (cf. p. 58)
  * 
  * @author schnicke

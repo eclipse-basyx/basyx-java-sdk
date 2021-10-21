@@ -10,6 +10,7 @@
 package org.eclipse.basyx.extensions.shared.mqtt;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -41,12 +42,33 @@ public class MqttEventService {
 	 * @throws MqttException
 	 */
 	public MqttEventService(String serverEndpoint, String clientId) throws MqttException {
-		this.mqttClient = new MqttClient(serverEndpoint, clientId, new MqttDefaultFilePersistence());
-		mqttClient.connect();
+		this(serverEndpoint, clientId, new MqttDefaultFilePersistence());
 	}
 	
 	/**
+	 * Constructor for creating an MqttClient (with no authentication and a custom
+	 * persistence strategy)
+	 */
+	public MqttEventService(String serverEndpoint, String clientId, MqttClientPersistence mqttPersistence) throws MqttException {
+		this.mqttClient = new MqttClient(serverEndpoint, clientId, mqttPersistence);
+		mqttClient.connect();
+	}
+
+	/**
+	 * Constructor for creating an MqttClient with authentication and a custom
+	 * persistence strategy
+	 */
+	public MqttEventService(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence mqttPersistence) throws MqttException {
+		this.mqttClient = new MqttClient(serverEndpoint, clientId, mqttPersistence);
+		MqttConnectOptions options = new MqttConnectOptions();
+		options.setUserName(user);
+		options.setPassword(pw);
+		mqttClient.connect(options);
+	}
+
+	/**
 	 * Constructor for creating an MqttClient with authentication
+	 * 
 	 * @param serverEndpoint
 	 * @param clientId
 	 * @param user
@@ -55,11 +77,7 @@ public class MqttEventService {
 	 */
 	public MqttEventService(String serverEndpoint, String clientId, String user, char[] pw)
 			throws MqttException {
-		this.mqttClient = new MqttClient(serverEndpoint, clientId, new MqttDefaultFilePersistence());
-		MqttConnectOptions options = new MqttConnectOptions();
-		options.setUserName(user);
-		options.setPassword(pw);
-		mqttClient.connect(options);
+		this(serverEndpoint, clientId, user, pw, new MqttDefaultFilePersistence());
 	}
 	
 	/**
@@ -87,8 +105,6 @@ public class MqttEventService {
 
 	/**
 	 * Gets the QoS for MQTT messages
-	 * 
-	 * @param qos
 	 */
 	public int getQoS() {
 		return this.qos;

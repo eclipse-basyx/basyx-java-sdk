@@ -15,7 +15,6 @@ import static org.junit.Assert.fail;
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Result;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceAlreadyExistsException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.manager.VABConnectionManager;
@@ -64,21 +63,5 @@ public class Exceptions {
 			Message msg = result.getMessages().get(0);
 			assertEquals("400", msg.getCode());
 		}
-
-		// Invoke unsupported functional interface
-		try {
-			connVABElement.invokeOperation("operations/supplier/invoke");
-			fail();
-		} catch (MalformedRequestException e) {
-			// this is for FileSystemProvider that does not support invoke
-			Result result = new Result(e);
-			Message msg = result.getMessages().get(0);
-			assertEquals("400", msg.getCode());
-		} catch (ProviderException e) {
-			Result result = new Result(e);
-			Message msg = result.getMessages().get(0);
-			assertEquals("500", msg.getCode());
-		}
-
 	}
 }

@@ -35,6 +35,9 @@ public class SimpleAASSubmodel extends Submodel {
 
 	public static final String INTPROPIDSHORT = "integerProperty";
 	public static final String OPERATIONSIMPLEIDSHORT = "simple";
+
+	public static final String EXCEPTION_MESSAGE = "Exception description";
+
 	public static final List<String> KEYWORDS = Collections.unmodifiableList(Arrays.asList(
 	        Property.MODELTYPE, Property.VALUETYPE, Property.VALUE, Property.VALUEID,
 	        Submodel.MODELTYPE, Submodel.SUBMODELELEMENT,
@@ -98,7 +101,7 @@ public class SimpleAASSubmodel extends Submodel {
 
 		// - Contained operation that throws VAB exception
 		Operation exception2 = new Operation((Function<Object[], Object>) elId -> {
-			throw new ProviderException("Exception description");
+			throw new ProviderException(EXCEPTION_MESSAGE);
 		});
 		exception2.setIdShort("exception2");
 		addSubmodelElement(exception2);

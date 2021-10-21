@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aas:aasenv xmlns:aas="http://www.admin-shell.io/aas/2/0"
+	xmlns:IEC61360="http://www.admin-shell.io/IEC61360/2/0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.admin-shell.io/aas/2/0 AAS.xsd
+	http://www.admin-shell.io/IEC61360/2/0 IEC61360.xsd">
+	<aas:assets>
+		<aas:asset>
+			<aas:idShort>asset</aas:idShort>
+			<aas:identification idType="IRI">http://pk.festo.com/q30j38dlajx</aas:identification>
+			
+			<!-- This kind is invalid; BaSyx converts it to "Type"-->
+			<aas:kind>Template</aas:kind>
+		</aas:asset>
+	</aas:assets>
+	<aas:submodels>
+		<aas:submodel>
+			<aas:idShort>submodelIdShort</aas:idShort>
+			<aas:identification idType="IRI">http://www.zvei.de/demo/submodel/12345679</aas:identification>
+			<aas:submodelElements>
+				<aas:submodelElement>
+					<aas:operation>
+						<aas:idShort>operation_ID</aas:idShort>
+						
+						<!--"<aas:inputVariable><aas:inputVariable>" instead of "<aas:inputVariable><aas:operationVariable><aas:operationVariable>"-->
+						<aas:inputVariable>
+							<aas:value>
+								<aas:file>
+									<aas:idShort>file_ID</aas:idShort>
+									<aas:mimeType>file_mimetype</aas:mimeType>
+									<aas:value>file_value</aas:value>
+									<aas:kind>Template</aas:kind>
+								</aas:file>
+							</aas:value>
+						</aas:inputVariable>
+						<aas:inputVariable>
+							<aas:value>
+								<aas:blob>
+									<aas:idShort>blob_ID</aas:idShort>
+									<aas:value>YmxvYit2YWx1ZQ==</aas:value>
+									<aas:mimeType>blob_mimetype</aas:mimeType>
+									<aas:kind>Template</aas:kind>
+								</aas:blob>
+							</aas:value>
+						</aas:inputVariable>
+						
+						<!--"<aas:outputVariable><aas:value>" instead of "<aas:outputVariable><aas:operationVariable><aas:value>"-->
+						<aas:outputVariable>
+							<aas:value>
+								<aas:referenceElement>
+									<aas:idShort>reference_ELE_ID</aas:idShort>
+									<aas:value>
+										<aas:keys>
+											<aas:key local="false" type="GlobalReference" idType="IRDI">0173-1#05-AAA650#002</aas:key>
+										</aas:keys>
+									</aas:value>
+									<aas:kind>Template</aas:kind>
+								</aas:referenceElement>
+							</aas:value>
+						</aas:outputVariable>
+					</aas:operation>
+				</aas:submodelElement>
+			</aas:submodelElements>
+		</aas:submodel>
+	</aas:submodels>
+</aas:aasenv>

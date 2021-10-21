@@ -23,6 +23,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
+import org.eclipse.basyx.submodel.metamodel.facade.ElementContainerValuesHelper;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.map.helper.ElementContainerHelper;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
@@ -33,7 +34,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 
 /**
- * SubmodelElementCollection as defined by DAAS document <br/>
+ * SubmodelElementCollection as defined by DAAS document <br>
  * A submodel element collection is a set or list of submodel elements
  * 
  * @author schnicke
@@ -284,5 +285,10 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 		// And return this copy with the cloned values
 		copy.setValue(clonedValue);
 		return copy;
+	}
+
+	@Override
+	public Map<String, Object> getValues() {
+		return ElementContainerValuesHelper.getSubmodelValue(this);
 	}
 }

@@ -19,8 +19,8 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyType;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
- * Key as defined in DAAS document <br/>
- * <br/>
+ * Key as defined in DAAS document <br>
+ * <br>
  * A key is a reference to an element by its id.
  * 
  * @author schnicke
@@ -53,12 +53,11 @@ public class Key extends VABModelMap<Object> implements IKey {
 	}
 	
 	/**
-	 * Helper constructor to translate IdentifierType to KeyType. <br />
+	 * Helper constructor to translate IdentifierType to KeyType. <br>
 	 * In the meta model KeyType inheritcs from IdentifiertType, however Java does
 	 * not support enum inheritance
 	 * 
 	 * @param type
-	 * @param local
 	 * @param value
 	 * @param idType
 	 */
@@ -76,7 +75,7 @@ public class Key extends VABModelMap<Object> implements IKey {
 	/**
 	 * Creates a Key object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Key object as raw map
 	 * @return a Key object, that behaves like a facade for the given map
 	 */

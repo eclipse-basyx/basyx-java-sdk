@@ -10,6 +10,7 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.ConnectedS
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
@@ -126,7 +128,7 @@ public class TestConnectedSubmodelElementCollection {
 		IOperation sum = ops.get(OPERATION);
 
 		// Check operation invocation
-		assertEquals(5, sum.invoke(2, 3));
+		assertEquals(5, sum.invokeSimple(2, 3));
 	}
 	
 	@Test
@@ -166,5 +168,25 @@ public class TestConnectedSubmodelElementCollection {
 		prop.addSubmodelElement(newProp);
 		ISubmodelElement element = prop.getSubmodelElement(newId);
 		assertEquals(newId, element.getIdShort());
+	}
+	
+	@Test
+	public void testGetValues() {
+		Map<String, Object> values = prop.getValues();
+		assertEquals(1, values.size());
+		assertTrue(values.containsKey(PROP));
+		assertEquals(4, values.get(PROP));
+		
+		String newKey = "newKey";
+		String newValue = "newValue";
+		
+		Property newProp = new Property(newKey, newValue);
+		newProp.setValueType(ValueType.String);
+		prop.addSubmodelElement(newProp);
+		
+		values = prop.getValues();
+		assertEquals(2, values.size());
+		assertTrue(values.containsKey(newKey));
+		assertEquals(newValue, values.get(newKey));
 	}
 }

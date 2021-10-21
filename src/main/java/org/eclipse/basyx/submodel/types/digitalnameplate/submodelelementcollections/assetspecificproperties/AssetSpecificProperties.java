@@ -24,7 +24,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementC
 import org.eclipse.basyx.submodel.types.helper.SubmodelElementRetrievalHelper;
 
 /**
- * AssetSpecificProperties as defined in the AAS Digital Nameplate Template document <br/>
+ * AssetSpecificProperties as defined in the AAS Digital Nameplate Template document <br>
  * It is a submodel element collection which contains collection of guideline specific properties
  * 
  * @author haque

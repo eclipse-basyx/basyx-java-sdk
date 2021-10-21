@@ -21,12 +21,24 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.regex.Pattern;
 
+import org.eclipse.basyx.vab.protocol.opcua.CertificateHelper;
+import org.eclipse.basyx.vab.protocol.opcua.connector.ClientConfiguration;
 import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateBuilder;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated 
+ *   As of version 1.1. No full replacement planned.
+ *   <br>A limited replacement is available in {@link CertificateHelper} which creates self-signed 
+ *   certificates in memory to be passed to 
+ *   {@link ClientConfiguration#setKeyPairAndCertificate(KeyPair, X509Certificate)}. But it is the 
+ *   user's responsibility to persist these in a {@link KeyStore}, if they wish.
+ *
+ */
+@Deprecated
 public class KeyStoreLoaderClient {
 
     private static final Pattern IP_ADDR_PATTERN = Pattern

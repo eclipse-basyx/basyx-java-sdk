@@ -415,7 +415,7 @@ public class FileSystemProvider implements IModelProvider {
 
 	/**
 	 * Creates newEntity at the specified path
-	 * If a collection exists at the specified path, add newEntity to it >IF< newEntity is not a collection
+	 * If a collection exists at the specified path, add newEntity to it IF newEntity is not a collection
 	 */
 	@Override
 	@SuppressWarnings("unchecked")

@@ -61,7 +61,7 @@ public class VABPathTools {
 	/**
 	 * Decodes sensitive characters, e.g. "/" and "#"
 	 * 
-	 * @param elem
+	 * @param encodedElem
 	 * @return
 	 */
 	public static String decodePathElement(String encodedElem) {
@@ -110,7 +110,7 @@ public class VABPathTools {
 	}
 
 	/**
-	 * Split a path into path elements, e.g. /a/b/c -> [ a, b, c ]
+	 * Split a path into path elements, e.g. /a/b/c {@literal ->} [ a, b, c ]
 	 */
 	public static String[] splitPath(String path) {
 		// Return null result for null argument
@@ -273,7 +273,7 @@ public class VABPathTools {
 
 	/**
 	 * Gets the first endpoint of a path.
-	 * @path 
+	 * @param fullPath 
 	 * 		A path that can contain 0..* endpoints.
 	 * @return
 	 * 		The first address entry of a path. The address entry is the first endpoint combined with a protocol.
@@ -297,8 +297,8 @@ public class VABPathTools {
 	}
 
 	/**
-	 * Removes the first endpoint from a path. See {@link #getAddressEntry}<br/>
-	 * @path
+	 * Removes the first endpoint from a path.<br>
+	 * @param fullPath
 	 * @return 
 	 * 		The first endpoint. E.g. basyx://127.0.0.1:6998//https://localhost/test/ will return
 	 * 		https://localhost/test/.
@@ -381,11 +381,21 @@ public class VABPathTools {
 	 * @return path without last element "invoke" or unchanged path
 	 */
 	public static String stripInvokeFromPath(String path) {
-		
+		return stripFromPath(path, Operation.INVOKE);
+	}
+	
+	/**
+	 * Strips the last path element if it is elementToStrip
+	 * 
+	 * @param path
+	 * @param elementToStrip
+	 * @return path without last element "invoke" or unchanged path
+	 */
+	public static String stripFromPath(String path, String elementToStrip) {
 		if(path == null)
 			return null;
 		
-		if(getLastElement(path).startsWith(Operation.INVOKE)) {
+		if(getLastElement(path).startsWith(elementToStrip)) {
 			return getParentPath(path);
 		}
 		

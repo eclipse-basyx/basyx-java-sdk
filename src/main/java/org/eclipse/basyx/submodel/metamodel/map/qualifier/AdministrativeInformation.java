@@ -52,7 +52,7 @@ public class AdministrativeInformation extends VABModelMap<Object> implements IA
 	/**
 	 * Creates a AdministrativeInformation object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a AdministrativeInformation object as raw map
 	 * @return a AdministrativeInformation object, that behaves like a facade for
 	 *         the given map

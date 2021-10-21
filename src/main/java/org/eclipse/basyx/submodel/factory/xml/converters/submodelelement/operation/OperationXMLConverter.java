@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.basyx.aas.factory.xml.AASXPackageExplorerCompatibilityHandler;
 import org.eclipse.basyx.submodel.factory.xml.XMLHelper;
 import org.eclipse.basyx.submodel.factory.xml.converters.submodelelement.SubmodelElementXMLConverter;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -47,23 +48,25 @@ public class OperationXMLConverter extends SubmodelElementXMLConverter {
 	 * @param xmlObject the Map with the content of XML tag &lt;aas:operation&gt;
 	 * @return the parsed Operation
 	 */
-	@SuppressWarnings("unchecked")
 	public static Operation parseOperation(Map<String, Object> xmlObject) {
 		List<OperationVariable> inList = new ArrayList<>();
 		List<OperationVariable> outList = new ArrayList<>();
 		List<OperationVariable> inoutList = new ArrayList<>();
 		
-		Map<String, Object> inObj = (Map<String, Object>) xmlObject.get(INPUT_VARIABLE);
+		Map<String, Object> inObj = AASXPackageExplorerCompatibilityHandler
+				.prepareOperationVariableMap(xmlObject.get(INPUT_VARIABLE));
 		if (inObj != null) {
 			inList = getOperationVariables(inObj);
 		}
 		
-		Map<String, Object> outObj = (Map<String, Object>) xmlObject.get(OUTPUT_VARIABLE);
+		Map<String, Object> outObj = AASXPackageExplorerCompatibilityHandler
+				.prepareOperationVariableMap(xmlObject.get(OUTPUT_VARIABLE));
 		if (outObj != null) {
 			outList = getOperationVariables(outObj);
 		}
 		
-		Map<String, Object> inoutObj = (Map<String, Object>) xmlObject.get(INOUTPUT_VARIABLE);
+		Map<String, Object> inoutObj = AASXPackageExplorerCompatibilityHandler
+				.prepareOperationVariableMap(xmlObject.get(INOUTPUT_VARIABLE));
 		if (inoutObj != null) {
 			inoutList = getOperationVariables(inoutObj);	
 		}
@@ -162,13 +165,6 @@ public class OperationXMLConverter extends SubmodelElementXMLConverter {
 	private static List<OperationVariable> getOperationVariables(Map<String, Object> varObj) {
 		List<OperationVariable> variableList = new ArrayList<>();
 		Object operationVarObj = varObj.get(OPERATION_VARIABLE);
-		
-		//TODO: Remove after non-existing aas:operationVariable problem fixed in AAS Package Explorer 
-		if (operationVarObj == null) {
-			if (varObj.get(VALUE) != null) {
-				operationVarObj = varObj;
-			}
-		}
 		
 		List<Map<String, Object>> xmlOpVars = XMLHelper.getList(operationVarObj);
 		

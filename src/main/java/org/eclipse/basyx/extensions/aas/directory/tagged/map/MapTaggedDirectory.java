@@ -23,7 +23,7 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
- * Map implementation of a tagged directory. It extends {@link MapRegistry} by
+ * Map implementation of a tagged directory. It extends {@link AASRegistry} by
  * additionally managing a map of tags
  * 
  * @author schnicke
@@ -54,7 +54,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	@Override
 	public Set<TaggedAASDescriptor> lookupTag(String tag) {
 		if (tagMap.containsKey(tag)) {
-			return tagMap.get(tag);
+			return new HashSet<>(tagMap.get(tag));
 		} else {
 			return new HashSet<>();
 		}

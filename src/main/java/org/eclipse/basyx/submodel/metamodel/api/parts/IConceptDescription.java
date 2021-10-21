@@ -17,8 +17,8 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
  * The semantics of a property or other elements that may have a semantic
- * description is defined by a concept description. <br />
- * <br />
+ * description is defined by a concept description. <br>
+ * <br>
  * The description of the concept should follow a standardized schema (realized
  * as data specification template).
  * 

@@ -201,6 +201,16 @@ public class VABPathToolsTest {
 	}
 	
 	@Test
+	public void testStripFromPath() {
+		assertEquals("id", VABPathTools.stripFromPath("id/invoke", "invoke"));
+		assertEquals("", VABPathTools.stripFromPath("invoke", "invoke"));
+		assertEquals("", VABPathTools.stripFromPath("/invoke", "invoke"));
+		assertEquals("id/value", VABPathTools.stripFromPath("id/value", "invoke"));
+		assertEquals("id", VABPathTools.stripFromPath("id/value", "value"));
+		assertEquals("", VABPathTools.stripFromPath("", ""));
+	}
+	
+	@Test
 	public void testGetPathFromURL() {
 		
 		String[] urls = {"http://localhost:8080/test/elem.aasx", "http://localhost/test/elem.aasx",

@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
@@ -38,7 +39,7 @@ import org.junit.Test;
  * @author haque
  *
  */
-public class TestSubmodelDescriptor {
+public class TestSubmodelDescriptor extends ModelDescriptorTestSuite {
 	private static final IdentifierType ID_TYPE = IdentifierType.CUSTOM;
 	private static final String HTTP_ENDPOINT = "testEnd/submodel";
 	private static final String ID_SHORT_STRING = "testIdShort";
@@ -74,5 +75,10 @@ public class TestSubmodelDescriptor {
 		assertEquals(HTTP_ENDPOINT, descriptor.getFirstEndpoint());
 		assertEquals(ID_SHORT_STRING, descriptor.getIdShort());
 		assertEquals(IDENTIFIER, descriptor.getIdentifier());
+	}
+
+	@Override
+	public ModelDescriptor retrieveModelDescriptor() {
+		return new SubmodelDescriptor(ID_SHORT_STRING, IDENTIFIER, HTTP_ENDPOINT);
 	}
 }

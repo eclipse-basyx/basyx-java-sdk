@@ -11,7 +11,9 @@ package org.eclipse.basyx.testsuite.regression.aas.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
@@ -24,7 +26,10 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.testsuite.regression.aas.restapi.StubAASServlet;
+import org.eclipse.basyx.testsuite.regression.submodel.restapi.SimpleAASSubmodel;
 import org.eclipse.basyx.testsuite.regression.vab.protocol.http.AASHTTPServerResource;
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.registry.memory.VABInMemoryRegistry;
@@ -129,7 +134,29 @@ public class TestAASHTTP {
 		assertEquals(4, operations.size());
 
 		IOperation op = operations.get("complex");
-		assertEquals(1, op.invoke(2, 1));
+		assertEquals(1, op.invokeSimple(2, 1));
+		
+		op = operations.get("exception1");
+		try {
+			op.invokeSimple();
+			fail();
+		} catch (ProviderException e) {
+			List<Message> msg = e.getMessages();
+			assertEquals(2, msg.size());
+			String msgText = msg.get(1).getText();
+			assertTrue(msgText.contains("ProviderException: " + NullPointerException.class.getName()));
+		}
+		
+		op = operations.get("exception2");
+		try {
+			op.invokeSimple();
+			fail();
+		} catch (ProviderException e) {
+			List<Message> msg = e.getMessages();
+			assertEquals(2, msg.size());
+			String msgText = msg.get(1).getText();
+			assertTrue(msgText.contains("ProviderException: " + SimpleAASSubmodel.EXCEPTION_MESSAGE));
+		}
 
 		Map<String, ISubmodelElement> elements = sm.getSubmodelElements();
 		// 2 properties, 4 operations, 1 collection

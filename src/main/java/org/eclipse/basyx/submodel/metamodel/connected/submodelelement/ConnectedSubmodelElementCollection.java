@@ -118,4 +118,9 @@ public class ConnectedSubmodelElementCollection extends ConnectedSubmodelElement
 	public SubmodelElementCollection getLocalCopy() {
 		return SubmodelElementCollection.createAsFacade(getElem()).getLocalCopy();
 	}
+
+	@Override
+	public Map<String, Object> getValues() {
+		return SubmodelElementCollection.createAsFacade(getElemLive()).getValues();
+	}
 }

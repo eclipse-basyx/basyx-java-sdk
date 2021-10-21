@@ -14,7 +14,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IAsyncInvocation;
 
 /**
@@ -29,7 +28,10 @@ public class AsyncInvocation implements IAsyncInvocation {
 
 	private String operationId;
 	private CompletableFuture<Void> future;
+	
+	// This variable is used to write the result of the function into
 	private Object result;
+	
 	private RuntimeException exception;
 	
 	@SuppressWarnings("unchecked")
@@ -37,6 +39,12 @@ public class AsyncInvocation implements IAsyncInvocation {
 		operationId = operation.getIdShort();
 		
 		Function<Object[], Object> invokable = (Function<Object[], Object>) operation.get(Operation.INVOKABLE);
+		
+		// This future executes the given function and a timeout future.
+		// It finishes when either the timeout is over or the function finishes.
+		
+		// The result of the function is written into the "result" variable
+		// as it can not be returned through the Future due to the timeout check
 		future = CompletableFuture.supplyAsync(
 				// Run Operation asynchronously
 				() -> invokable.apply(parameters))
@@ -60,8 +68,8 @@ public class AsyncInvocation implements IAsyncInvocation {
 	/**
 	 * Function for scheduling a timeout function with completable futures
 	 */
-	private CompletableFuture<T> setTimeout(int timeout) {
-		CompletableFuture<T> timeoutFuture = new CompletableFuture<>();
+	private CompletableFuture<Void> setTimeout(int timeout) {
+		CompletableFuture<Void> timeoutFuture = new CompletableFuture<>();
 		delayer.schedule(
 				() -> timeoutFuture.completeExceptionally(
 						new OperationExecutionTimeoutException("Operation " + operationId + " timed out")),
@@ -72,11 +80,13 @@ public class AsyncInvocation implements IAsyncInvocation {
 	@Override
 	public Object getResult() {
 		try {
+			// The future itself always returns null (<Void>)
+			// Actual return value is written into result variable inside future
 			future.get();
 		} catch (Exception e) {
 			// Some RuntimeException occured when finishing the future
 			throw new OperationExecutionErrorException(
-					"Exception while executing Operation Operation '" + operationId + "'", e.getCause());
+					"Exception while executing Operation '" + operationId + "'", e.getCause());
 		}
 		if (exception instanceof OperationExecutionTimeoutException
 				|| exception instanceof OperationExecutionErrorException) {

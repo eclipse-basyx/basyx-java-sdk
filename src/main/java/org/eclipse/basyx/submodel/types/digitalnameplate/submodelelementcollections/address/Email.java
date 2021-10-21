@@ -29,7 +29,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.types.digitalnameplate.enums.MailType;
 
 /**
- * Email as defined in the AAS Digital Nameplate Template document <br/>
+ * Email as defined in the AAS Digital Nameplate Template document <br>
  * It is a submodel element collection which contains email address and encryption method
  * 
  * @author haque
