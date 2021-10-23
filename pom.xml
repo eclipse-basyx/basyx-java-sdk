@@ -7,6 +7,15 @@
 	<artifactId>basyx.sdk</artifactId>
 	<version>1.1.0-SNAPSHOT</version>
 	<name>BaSyx SDK</name>
+	
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/frankschnicke/java-sdk</url>
+		</repository>
+	</distributionManagement>
+
 
 	<packaging>jar</packaging>
 
