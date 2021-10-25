@@ -50,19 +50,23 @@ public class ConceptDescriptionXMLConverter {
 	 */
 	public static List<IConceptDescription> parseConceptDescriptions(Map<String, Object> xmlObject) {
 		
-		List<Map<String, Object>> xmlConceptDescriptionList = XMLHelper.getList(xmlObject.get(CONCEPT_DESCRIPTION));
 		List<IConceptDescription> conceptDescriptions = new ArrayList<>();
 		
-		for (Map<String, Object> xmlConceptDescription : xmlConceptDescriptionList) {
-			ConceptDescription conceptDescription = new ConceptDescription();
-			
-			IdentifiableXMLConverter.populateIdentifiable(xmlConceptDescription, Identifiable.createAsFacadeNonStrict(conceptDescription, KeyElements.CONCEPTDESCRIPTION));
-			HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlConceptDescription, HasDataSpecification.createAsFacade(conceptDescription));
-			
-			Collection<Reference> handleIsCaseOf = parseIsCaseOfRefs(xmlConceptDescription);
-			conceptDescription.setIsCaseOf(handleIsCaseOf);
-			
-			conceptDescriptions.add(conceptDescription);
+		if (xmlObject != null) {
+			List<Map<String, Object>> xmlConceptDescriptionList = XMLHelper.getList(xmlObject.get(CONCEPT_DESCRIPTION));
+			for (Map<String, Object> xmlConceptDescription : xmlConceptDescriptionList) {
+				ConceptDescription conceptDescription = new ConceptDescription();
+
+				IdentifiableXMLConverter.populateIdentifiable(xmlConceptDescription,
+						Identifiable.createAsFacadeNonStrict(conceptDescription, KeyElements.CONCEPTDESCRIPTION));
+				HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlConceptDescription,
+						HasDataSpecification.createAsFacade(conceptDescription));
+
+				Collection<Reference> handleIsCaseOf = parseIsCaseOfRefs(xmlConceptDescription);
+				conceptDescription.setIsCaseOf(handleIsCaseOf);
+
+				conceptDescriptions.add(conceptDescription);
+			}
 		}
 		
 		return conceptDescriptions;

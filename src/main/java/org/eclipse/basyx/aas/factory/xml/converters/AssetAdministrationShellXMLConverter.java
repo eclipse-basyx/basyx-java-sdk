@@ -68,33 +68,38 @@ public class AssetAdministrationShellXMLConverter {
 	@SuppressWarnings("unchecked")
 	public static List<IAssetAdministrationShell> parseAssetAdministrationShells(Map<String, Object> xmlAASObject,
 			Collection<IConceptDescription> conceptDescriptions) {
-		List<Map<String, Object>> xmlAASs = XMLHelper.getList(xmlAASObject.get(ASSET_ADMINISTRATION_SHELL));
 		List<IAssetAdministrationShell> aasList = new ArrayList<>();
 		
-		for(Map<String, Object> xmlAAS: xmlAASs) {
-			AssetAdministrationShell adminShell = new AssetAdministrationShell();
-			
-			IdentifiableXMLConverter.populateIdentifiable(xmlAAS, Identifiable.createAsFacadeNonStrict(adminShell, KeyElements.ASSETADMINISTRATIONSHELL));
-			HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlAAS, HasDataSpecification.createAsFacade(adminShell));
-			
-			Collection<IView> views = ViewXMLConverter.parseViews(xmlAAS);
-			Collection<IConceptDictionary> conceptDictionary = parseConceptDictionaries(xmlAAS, conceptDescriptions);
-			
-			Map<String, Object> xmlAssetRef = (Map<String, Object>) xmlAAS.get(ASSET_REF);
-			Reference assetRef = ReferenceXMLConverter.parseReference(xmlAssetRef);
-			
-			Map<String, Object> xmlDerivedFrom = (Map<String, Object>) xmlAAS.get(DERIVED_FROM);
-			IReference derivedFrom =  ReferenceXMLConverter.parseReference(xmlDerivedFrom);
-			adminShell.setDerivedFrom(derivedFrom);
-			
-			adminShell.setViews(views);
-			adminShell.setConceptDictionary(conceptDictionary);
-			adminShell.setAssetReference(assetRef);
-			
-			Collection<IReference> submodelRefs = parseSubmodelRefs(xmlAAS);
-			adminShell.setSubmodelReferences(submodelRefs);
-			
-			aasList.add(adminShell);
+		if (xmlAASObject != null) {
+			List<Map<String, Object>> xmlAASs = XMLHelper.getList(xmlAASObject.get(ASSET_ADMINISTRATION_SHELL));
+			for (Map<String, Object> xmlAAS : xmlAASs) {
+				AssetAdministrationShell adminShell = new AssetAdministrationShell();
+
+				IdentifiableXMLConverter.populateIdentifiable(xmlAAS,
+						Identifiable.createAsFacadeNonStrict(adminShell, KeyElements.ASSETADMINISTRATIONSHELL));
+				HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlAAS,
+						HasDataSpecification.createAsFacade(adminShell));
+
+				Collection<IView> views = ViewXMLConverter.parseViews(xmlAAS);
+				Collection<IConceptDictionary> conceptDictionary = parseConceptDictionaries(xmlAAS,
+						conceptDescriptions);
+
+				Map<String, Object> xmlAssetRef = (Map<String, Object>) xmlAAS.get(ASSET_REF);
+				Reference assetRef = ReferenceXMLConverter.parseReference(xmlAssetRef);
+
+				Map<String, Object> xmlDerivedFrom = (Map<String, Object>) xmlAAS.get(DERIVED_FROM);
+				IReference derivedFrom = ReferenceXMLConverter.parseReference(xmlDerivedFrom);
+				adminShell.setDerivedFrom(derivedFrom);
+
+				adminShell.setViews(views);
+				adminShell.setConceptDictionary(conceptDictionary);
+				adminShell.setAssetReference(assetRef);
+
+				Collection<IReference> submodelRefs = parseSubmodelRefs(xmlAAS);
+				adminShell.setSubmodelReferences(submodelRefs);
+
+				aasList.add(adminShell);
+			}
 		}
 		return aasList;
 	}
