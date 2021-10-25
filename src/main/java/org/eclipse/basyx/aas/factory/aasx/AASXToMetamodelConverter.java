@@ -39,6 +39,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleFactory;
 import org.eclipse.basyx.aas.factory.xml.XMLToMetamodelConverter;
+import org.eclipse.basyx.aas.metamodel.map.AasEnv;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
@@ -68,6 +69,8 @@ public class AASXToMetamodelConverter {
 
 	private Set<AASBundle> bundles;
 
+	private AasEnv aasEnv;
+
 	private static Logger logger = LoggerFactory.getLogger(AASXToMetamodelConverter.class);
 
 	public AASXToMetamodelConverter(String path) {
@@ -76,6 +79,20 @@ public class AASXToMetamodelConverter {
 
 	public AASXToMetamodelConverter(InputStream stream) {
 		this.aasxInputStream = stream;
+	}
+
+	public AasEnv retrieveAasEnv()
+			throws ParserConfigurationException, SAXException, IOException, InvalidFormatException {
+		if (aasEnv != null) {
+			return aasEnv;
+		}
+
+		loadAASX();
+
+		String xmlContent = getXMLResourceString(aasxRoot);
+		XMLToMetamodelConverter converter = new XMLToMetamodelConverter(xmlContent);
+		closeOPCPackage();
+		return converter.parseAasEnv();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,10 +105,10 @@ public class AASXToMetamodelConverter {
 
 		loadAASX();
 
-		String xmlContent = getXMLResourceString(aasxRoot);
-		XMLToMetamodelConverter converter = new XMLToMetamodelConverter(xmlContent);
+		AasEnv localAasEnv = retrieveAasEnv();
 
-		bundles = new AASBundleFactory().create(converter.parseAAS(), converter.parseSubmodels(), converter.parseAssets());
+		bundles = new AASBundleFactory().create(localAasEnv.getAssetAdministrationShells(), localAasEnv.getSubmodels(),
+				localAasEnv.getAssets());
 
 		closeOPCPackage();
 

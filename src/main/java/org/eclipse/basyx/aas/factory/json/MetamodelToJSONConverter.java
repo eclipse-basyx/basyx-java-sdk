@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.eclipse.basyx.aas.metamodel.map.AasEnv;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
@@ -38,6 +39,20 @@ public class MetamodelToJSONConverter {
 	public static final String CONCEPT_DESCRIPTIONS = "conceptDescriptions";
 
 	/**
+	 * Builds the JSON for the aasEnv
+	 * 
+	 * @param aasEnv
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static String convertToJSON(AasEnv aasEnv) {
+		return convertToJSON((List<AssetAdministrationShell>) (List<?>) aasEnv.getAssetAdministrationShells(),
+				(List<Asset>) (List<?>) aasEnv.getAssets(),
+				(List<ConceptDescription>) (List<?>) aasEnv.getConceptDescriptions(),
+				(List<Submodel>) (List<?>) aasEnv.getSubmodels());
+	}
+
+	/**
 	 * Builds the JSON for the given metamodel Objects.
 	 * Not required parameters can be null.
 	 * 
@@ -46,28 +61,30 @@ public class MetamodelToJSONConverter {
 	 * @param conceptDescriptionList the ConceptDescriptions to build the JSON for
 	 * @param submodelList the Submodels to build the JSON for
 	 */
-	public static String convertToJSON(Collection<AssetAdministrationShell> aasList, Collection<Asset> assetList, 
+	public static String convertToJSON(Collection<AssetAdministrationShell> aasList, Collection<Asset> assetList,
 			Collection<ConceptDescription> conceptDescriptionList, Collection<Submodel> submodelList) {
 		
-		// The Submodel-Object holds SubmodelElements in a Map<IdShort, SMElement>
-		// The JSON-Schema requires the SubmodelElements to be in a List
-		// This conversion is done by converting the sm to a Map
-		List<Object> smMapList;
-		if(submodelList != null) {
-			smMapList = submodelList.stream()
-					.map(sm -> SubmodelElementMapCollectionConverter.smToMap(sm)).collect(Collectors.toList());
-		} else {
-			smMapList = new ArrayList<>();
-		}
-		
+		List<Object> smMapList = submodelsToMapList(submodelList);
 		
 		Map<String, Object> root = new HashMap<>();
 		
-		root.put(ASSET_ADMINISTRATION_SHELLS, aasList==null ? new ArrayList<AssetAdministrationShell>() : aasList);
+		root.put(ASSET_ADMINISTRATION_SHELLS, aasList == null ? new ArrayList<AssetAdministrationShell>() : aasList);
 		root.put(SUBMODELS, smMapList);
 		root.put(ASSETS, assetList==null ? new ArrayList<Asset>() : assetList);
-		root.put(CONCEPT_DESCRIPTIONS, conceptDescriptionList==null ? new ArrayList<ConceptDescription>() : conceptDescriptionList);
+		root.put(CONCEPT_DESCRIPTIONS,
+				conceptDescriptionList == null ? new ArrayList<ConceptDescription>() : conceptDescriptionList);
 		
 		return new GSONTools(new DefaultTypeFactory()).serialize(root);
+	}
+
+	private static List<Object> submodelsToMapList(Collection<Submodel> submodelList) {
+		List<Object> smMapList;
+		if (submodelList != null) {
+			smMapList = submodelList.stream().map(sm -> SubmodelElementMapCollectionConverter.smToMap(sm))
+					.collect(Collectors.toList());
+		} else {
+			smMapList = new ArrayList<>();
+		}
+		return smMapList;
 	}	
 }

@@ -25,6 +25,7 @@ import org.eclipse.basyx.aas.factory.xml.api.parts.AssetXMLConverter;
 import org.eclipse.basyx.aas.factory.xml.converters.AssetAdministrationShellXMLConverter;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
+import org.eclipse.basyx.aas.metamodel.map.AasEnv;
 import org.eclipse.basyx.submodel.factory.xml.api.parts.ConceptDescriptionXMLConverter;
 import org.eclipse.basyx.submodel.factory.xml.converters.SubmodelXMLConverter;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -42,13 +43,28 @@ public class MetamodelToXMLConverter {
 	public static final String AASENV = "aas:aasenv";
 	
 	/**
+	 * Builds the XML for the given aasEnv
+	 * 
+	 * @param aasEnv
+	 * @param result a Result object to write the XML to e.g. ResultStream
+	 * @throws TransformerException
+	 * @throws ParserConfigurationException
+	 */
+	public static void convertToXML(AasEnv aasEnv, Result result)
+			throws TransformerException, ParserConfigurationException {
+		convertToXML(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(),
+				aasEnv.getSubmodels(), result);
+	}
+
+	/**
 	 * Builds the XML for the given metamodel Objects
 	 * 
-	 * @param aasList the AASs to build the XML for
-	 * @param assetList the Assets to build the XML for
+	 * @param aasList                the AASs to build the XML for
+	 * @param assetList              the Assets to build the XML for
 	 * @param conceptDescriptionList the ConceptDescriptions to build the XML for
-	 * @param submodelList the Submodels to build the XML for
-	 * @param result a Result object to write the XML to e.g. ResultStream
+	 * @param submodelList           the Submodels to build the XML for
+	 * @param result                 a Result object to write the XML to e.g.
+	 *                               ResultStream
 	 * @throws TransformerException
 	 * @throws ParserConfigurationException
 	 */
@@ -56,9 +72,7 @@ public class MetamodelToXMLConverter {
 			Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Result result)
 					throws TransformerException, ParserConfigurationException {
 		
-		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
-		Document document = documentBuilder.newDocument();
+		Document document = createEmptyDocument();
 		
 		//creating the root tag <aas:aasenv>
 		Element root = document.createElement(AASENV);
@@ -94,5 +108,12 @@ public class MetamodelToXMLConverter {
 		DOMSource domSource = new DOMSource(document);
 
 		transformer.transform(domSource, result);
+	}
+
+	private static Document createEmptyDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+		Document document = documentBuilder.newDocument();
+		return document;
 	}
 }
