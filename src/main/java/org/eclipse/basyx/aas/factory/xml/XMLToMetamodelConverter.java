@@ -122,8 +122,6 @@ public class XMLToMetamodelConverter {
 	/**
 	 * Parses the ConceptDescriptions from the XML
 	 * 
-	 * @param root
-	 * 
 	 * @return the ConceptDescriptions parsed from the XML
 	 */
 	public List<IConceptDescription> parseConceptDescriptions() {
