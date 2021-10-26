@@ -44,28 +44,52 @@ public class JSONToMetamodelConverter {
 	 * 
 	 * @param jsonContent the JSON content to be parsed
 	 */
-	@SuppressWarnings("unchecked")
 	public JSONToMetamodelConverter(String jsonContent) {
-		Map<String, Object> root = (Map<String, Object>) new GSONTools(new DefaultTypeFactory())
-				.deserialize(jsonContent);
+		Map<String, Object> root = createRoot(jsonContent);
 
-		List<IAsset> assets = ((List<Object>) root.get(MetamodelToJSONConverter.ASSETS)).stream()
-				.map(aMap -> Asset.createAsFacade((Map<String, Object>) aMap)).collect(Collectors.toList());
+		List<IAsset> assets = createAssets(root);
 
-		List<IAssetAdministrationShell> shells = ((List<Object>) root
-				.get(MetamodelToJSONConverter.ASSET_ADMINISTRATION_SHELLS)).stream()
-						.map(aasObject -> handleJSONAssetReference(aasObject, (List<Asset>) (List<?>) assets))
-						.collect(Collectors.toList());
+		List<IAssetAdministrationShell> shells = createShells(root, assets);
 
-		List<IConceptDescription> conceptDescriptions = ((List<Object>) root
+		List<IConceptDescription> conceptDescriptions = createConceptDescriptions(root);
+
+		List<ISubmodel> submodels = createSubmodels(root);
+
+		aasEnv = new AasEnv(shells, assets, conceptDescriptions, submodels);
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<ISubmodel> createSubmodels(Map<String, Object> root) {
+		return ((List<Object>) root.get(MetamodelToJSONConverter.SUBMODELS)).stream()
+				.map(smMap -> Submodel.createAsFacade((Map<String, Object>) smMap)).collect(Collectors.toList());
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<IConceptDescription> createConceptDescriptions(Map<String, Object> root) {
+		return ((List<Object>) root
 				.get(MetamodelToJSONConverter.CONCEPT_DESCRIPTIONS)).stream()
 						.map(cdMap -> ConceptDescription.createAsFacade((Map<String, Object>) cdMap))
 						.collect(Collectors.toList());
+	}
 
-		List<ISubmodel> submodels = ((List<Object>) root.get(MetamodelToJSONConverter.SUBMODELS)).stream()
-				.map(smMap -> Submodel.createAsFacade((Map<String, Object>) smMap)).collect(Collectors.toList());
+	@SuppressWarnings("unchecked")
+	private List<IAssetAdministrationShell> createShells(Map<String, Object> root, List<IAsset> assets) {
+		return ((List<Object>) root
+				.get(MetamodelToJSONConverter.ASSET_ADMINISTRATION_SHELLS)).stream()
+						.map(aasObject -> handleJSONAssetReference(aasObject, (List<Asset>) (List<?>) assets))
+						.collect(Collectors.toList());
+	}
 
-		aasEnv = new AasEnv(shells, assets, conceptDescriptions, submodels);
+	@SuppressWarnings("unchecked")
+	private List<IAsset> createAssets(Map<String, Object> root) {
+		return ((List<Object>) root.get(MetamodelToJSONConverter.ASSETS)).stream()
+				.map(aMap -> Asset.createAsFacade((Map<String, Object>) aMap)).collect(Collectors.toList());
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> createRoot(String jsonContent) {
+		return (Map<String, Object>) new GSONTools(new DefaultTypeFactory())
+				.deserialize(jsonContent);
 	}
 	
 	/**

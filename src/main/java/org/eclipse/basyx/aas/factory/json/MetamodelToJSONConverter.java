@@ -11,6 +11,7 @@ package org.eclipse.basyx.aas.factory.json;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,13 +79,11 @@ public class MetamodelToJSONConverter {
 	}
 
 	private static List<Object> submodelsToMapList(Collection<Submodel> submodelList) {
-		List<Object> smMapList;
 		if (submodelList != null) {
-			smMapList = submodelList.stream().map(sm -> SubmodelElementMapCollectionConverter.smToMap(sm))
+			return submodelList.stream().map(sm -> SubmodelElementMapCollectionConverter.smToMap(sm))
 					.collect(Collectors.toList());
 		} else {
-			smMapList = new ArrayList<>();
+			return Collections.emptyList();
 		}
-		return smMapList;
 	}	
 }
