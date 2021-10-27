@@ -32,6 +32,7 @@ import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.eclipse.basyx.aas.factory.xml.MetamodelToXMLConverter;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
+import org.eclipse.basyx.aas.metamodel.map.AasEnv;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.parts.IConceptDescription;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -73,12 +74,14 @@ public class MetamodelToAASXConverter {
 	/**
 	 * Generates the .aasx file and writes it to the given OutputStream
 	 * 
-	 * @param aasList the AASs to be saved in the .aasx
-	 * @param assetList the Assets to be saved in the .aasx
-	 * @param conceptDescriptionList the ConceptDescriptions to be saved in the .aasx
-	 * @param submodelList the Submodels to be saved in the .aasx
-	 * @param files the files referred to in the Submodels
-	 * @param os the OutputStream the resulting .aasx is written to
+	 * @param aasList                the AASs to be saved in the .aasx
+	 * @param assetList              the Assets to be saved in the .aasx
+	 * @param conceptDescriptionList the ConceptDescriptions to be saved in the
+	 *                               .aasx
+	 * @param submodelList           the Submodels to be saved in the .aasx
+	 * @param files                  the files referred to in the Submodels
+	 * @param os                     the OutputStream the resulting .aasx is written
+	 *                               to
 	 * @throws IOException
 	 * @throws TransformerException
 	 * @throws ParserConfigurationException
@@ -90,18 +93,31 @@ public class MetamodelToAASXConverter {
 		
 		OPCPackage rootPackage = OPCPackage.create(os);
 		
-		// Create the empty aasx-origin file
 		PackagePart origin = createAASXPart(rootPackage, rootPackage, ORIGIN_PATH, MIME_PLAINTXT, ORIGIN_RELTYPE, ORIGIN_CONTENT.getBytes());
 		
-		// Convert the given Metamodels to XML
 		String xml = convertToXML(aasList, assetList, conceptDescriptionList, submodelList);
 		
-		// Save the XML to aasx/xml/content.xml
 		PackagePart xmlPart = createAASXPart(rootPackage, origin, XML_PATH, MIME_XML, AASSPEC_RELTYPE, xml.getBytes());
 		
 		storeFilesInAASX(submodelList, files, rootPackage, xmlPart);
 		
 		saveAASX(os, rootPackage);
+	}
+
+	/**
+	 * Generates the .aasx file and writes it to the given OutputStream
+	 * 
+	 * @param aasEnv
+	 * @param files
+	 * @param os     the OutputStream the resulting .aasx is written to
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws ParserConfigurationException
+	 */
+	public static void buildAASX(AasEnv aasEnv, Collection<InMemoryFile> files, OutputStream os)
+			throws IOException, TransformerException, ParserConfigurationException {
+		buildAASX(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(),
+				aasEnv.getSubmodels(), files, os);
 	}
 
 	/**
@@ -118,15 +134,29 @@ public class MetamodelToAASXConverter {
 		for(ISubmodel sm: submodelList) {
 			for(File file: findFileElements(sm.getSubmodelElements().values())) {
 				String filePath = file.getValue();
-				try {
-					InMemoryFile content = findFileByPath(files, filePath);
-					logger.trace("Writing file '" + filePath + "' to .aasx.");
-					createAASXPart(rootPackage, xmlPart, filePath, file.getMimeType(), AASSUPPL_RELTYPE, content.getFileContent());
-				} catch (ResourceNotFoundException e) {
-					// Log that a file is missing and continue building the .aasx
-					logger.warn("Could not add File '" + filePath + "'. It was not contained in given InMemoryFiles.");
-				}
+				storeFileInAASX(files, rootPackage, xmlPart, file, filePath);
 			}
+		}
+	}
+
+	/**
+	 * Stores a single file in the .aasx file
+	 * 
+	 * @param files
+	 * @param rootPackage
+	 * @param xmlPart
+	 * @param file
+	 * @param filePath
+	 */
+	private static void storeFileInAASX(Collection<InMemoryFile> files, OPCPackage rootPackage, PackagePart xmlPart,
+			File file, String filePath) {
+		try {
+			InMemoryFile content = findFileByPath(files, filePath);
+			logger.trace("Writing file '" + filePath + "' to .aasx.");
+			createAASXPart(rootPackage, xmlPart, filePath, file.getMimeType(), AASSUPPL_RELTYPE, content.getFileContent());
+		} catch (ResourceNotFoundException e) {
+			// Log that a file is missing and continue building the .aasx
+			logger.warn("Could not add File '" + filePath + "'. It was not contained in given InMemoryFiles.");
 		}
 	}
 	
@@ -262,17 +292,14 @@ public class MetamodelToAASXConverter {
 	}
 	
 	/**
-	 * Removes the serverpart from a path and ensures it starts with a slash
+	 * Removes the serverpart from a path. VABPathTools.getPathFromURL() also
+	 * ensures that it starts with a slash.
 	 * 
 	 * @param path the path to be prepared
 	 * @return the prepared path
 	 */
 	private static String preparePath(String path) {
-		String newPath = VABPathTools.getPathFromURL(path);
-		if(!newPath.startsWith("/")) {
-			newPath = "/" + newPath;
-		}
-		return newPath;
+		return VABPathTools.getPathFromURL(path);
 	}
 	
 	/**
