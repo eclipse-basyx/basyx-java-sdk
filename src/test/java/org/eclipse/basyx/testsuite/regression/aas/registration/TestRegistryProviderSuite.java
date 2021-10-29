@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.registration;
@@ -20,6 +20,7 @@ import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -35,9 +36,9 @@ import org.junit.Test;
 
 /**
  * Integration test for a registry. All registry provider implementations have to pass these tests.
- * 
+ *
  * @author espen
- * 
+ *
  */
 public abstract class TestRegistryProviderSuite {
 	// The registry proxy that is used to access the sql servlet
@@ -77,15 +78,15 @@ public abstract class TestRegistryProviderSuite {
 		asset2.setIdentification(IdentifierType.CUSTOM, "asset002");
 		asset2.setIdShort("asset002");
 		// Create descriptors for AAS and submodels
-		AASDescriptor aasDesc1 = new AASDescriptor(aasIdShort1, aasId1, asset1, aasEndpoint1);
-		aasDesc1.addSubmodelDescriptor(new SubmodelDescriptor(smIdShort1, smId1, smEndpoint1));
-		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, aasEndpoint2);
-		
+		AASDescriptor aasDesc1 = new AASDescriptor(aasIdShort1, aasId1, asset1, new Endpoint(aasEndpoint1));
+		aasDesc1.addSubmodelDescriptor(new SubmodelDescriptor(smIdShort1, smId1, new Endpoint(smEndpoint1)));
+		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, new Endpoint(aasEndpoint2));
+
 		// Register Asset Administration Shells
 		proxy.register(aasDesc1);
 		proxy.register(aasDesc2);
 	}
-	
+
 	/**
 	 * Remove registry entries after each test
 	 */
@@ -141,14 +142,14 @@ public abstract class TestRegistryProviderSuite {
 		assertEquals(aasId1.getIdType(), descriptor.getIdentifier().getIdType());
 		IAsset asset = descriptor.getAsset();
 		assertEquals(asset1.getIdentification(), asset.getIdentification());
-		assertEquals(aasEndpoint1, descriptor.getFirstEndpoint());
+		assertEquals(aasEndpoint1, descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 
 		// Check, if the SM descriptor in the AASDescriptor is correct
 		SubmodelDescriptor smDescriptor = descriptor.getSubmodelDescriptorFromIdentifierId(smId1.getId());
 		assertEquals(smId1.getId(), smDescriptor.getIdentifier().getId());
 		assertEquals(smId1.getIdType(), smDescriptor.getIdentifier().getIdType());
 		assertEquals(smIdShort1, smDescriptor.get(Referable.IDSHORT));
-		assertEquals(smEndpoint1, smDescriptor.getFirstEndpoint());
+		assertEquals(smEndpoint1, smDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 	}
 
 	/**
@@ -160,7 +161,7 @@ public abstract class TestRegistryProviderSuite {
 		assertEquals(aasId2.getIdType(), descriptor.getIdentifier().getIdType());
 		IAsset asset = descriptor.getAsset();
 		assertEquals(asset2.getIdentification(), asset.getIdentification());
-		assertEquals(aasEndpoint2, descriptor.getFirstEndpoint());
+		assertEquals(aasEndpoint2, descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 	}
 
 	@Test
@@ -207,9 +208,9 @@ public abstract class TestRegistryProviderSuite {
 		// After the setup, both AAS should have been inserted to the registry
 		assertNotNull(proxy.lookupAAS(aasId1));
 		assertNotNull(proxy.lookupAAS(aasId2));
-		
+
 		proxy.delete(aasId2);
-		
+
 		// After aas2 has been deleted, only aas1 should be registered
 		assertNotNull(proxy.lookupAAS(aasId1));
 		try {
@@ -294,7 +295,7 @@ public abstract class TestRegistryProviderSuite {
 	 */
 	@Test
 	public void testOverwritingAASDescriptor() {
-		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, "http://testendpoint2/");
+		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, new Endpoint("http://testendpoint2/"));
 		proxy.register(aasDesc2);
 		AASDescriptor retrieved = proxy.lookupAAS(aasId2);
 		assertEquals(aasDesc2.getFirstEndpoint(), retrieved.getFirstEndpoint());
@@ -306,7 +307,7 @@ public abstract class TestRegistryProviderSuite {
 	@Test
 	public void testSubmodelCalls() {
 		// Add descriptor
-		SubmodelDescriptor smDesc = new SubmodelDescriptor(smIdShort2, smId2, smEndpoint2);
+		SubmodelDescriptor smDesc = new SubmodelDescriptor(smIdShort2, smId2, new Endpoint(smEndpoint2));
 		proxy.register(aasId1, smDesc);
 
 		// Ensure that the submodel is correctly stored in the aas descriptor
@@ -314,7 +315,7 @@ public abstract class TestRegistryProviderSuite {
 		assertEquals(smDesc, aasDesc.getSubmodelDescriptorFromIdShort(smIdShort2));
 
 		// Test overwriting an SM descriptor
-		SubmodelDescriptor smDescNew = new SubmodelDescriptor(smIdShort2, smId2, "http://testendpoint2/submodel/");
+		SubmodelDescriptor smDescNew = new SubmodelDescriptor(smIdShort2, smId2, new Endpoint("http://testendpoint2/submodel/"));
 		proxy.register(aasId1, smDescNew);
 		AASDescriptor aasDescNew = proxy.lookupAAS(aasId1);
 		assertEquals(smDescNew.getFirstEndpoint(), aasDescNew.getSubmodelDescriptorFromIdShort(smIdShort2).getFirstEndpoint());
@@ -327,9 +328,9 @@ public abstract class TestRegistryProviderSuite {
 		assertNotNull(aasDesc.getSubmodelDescriptorFromIdShort(smIdShort1));
 		assertNull(aasDesc.getSubmodelDescriptorFromIdShort(smIdShort2));
 	}
-	
+
 	@Test(expected = ResourceNotFoundException.class)
 	public void testRegisterSubmodelToNotExistingAAS() {
-		proxy.register(new Identifier(IdentifierType.CUSTOM, "nonExistent"), new SubmodelDescriptor(smIdShort1, smId1, smEndpoint1));
+		proxy.register(new Identifier(IdentifierType.CUSTOM, "nonExistent"), new SubmodelDescriptor(smIdShort1, smId1, new Endpoint(smEndpoint1)));
 	}
 }

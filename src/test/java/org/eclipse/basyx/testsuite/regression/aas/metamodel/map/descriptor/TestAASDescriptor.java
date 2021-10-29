@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.metamodel.map.descriptor;
@@ -21,6 +21,7 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
@@ -31,7 +32,7 @@ import org.junit.Test;
 
 /**
  * Tests {@link AASDescriptor}
- * 
+ *
  * @author schnicke
  *
  */
@@ -55,15 +56,15 @@ public class TestAASDescriptor extends ModelDescriptorTestSuite {
 	public void testGetAllSubmodels() {
 		// Setup descriptor and add one submodel descriptor
 
-		AASDescriptor descriptor = new AASDescriptor(new Identifier(IdentifierType.CUSTOM, "Test"), super.createEndpoint(super.ENDPOINT_INTERFACE, "http://a.b/c/aas"));
-		descriptor.addSubmodelDescriptor(new SubmodelDescriptor("SM1", new Identifier(IdentifierType.CUSTOM, "SM1"), super.createEndpoint(super.ENDPOINT_INTERFACE, "http://a.b/c/aas/submodels/SM1")));
+		AASDescriptor descriptor = new AASDescriptor(new Identifier(IdentifierType.CUSTOM, "Test"), new Endpoint("http://a.b/c/aas"));
+		descriptor.addSubmodelDescriptor(new SubmodelDescriptor("SM1", new Identifier(IdentifierType.CUSTOM, "SM1"), new Endpoint("http://a.b/c/aas/submodels/SM1")));
 
 		// Assert correct retrieval
 		assertEquals(1, descriptor.getSubmodelDescriptors().size());
 		assertEquals("SM1", descriptor.getSubmodelDescriptors().iterator().next().getIdentifier().getId());
 
 		// Add a second descriptor
-		descriptor.addSubmodelDescriptor(new SubmodelDescriptor("SM2", new Identifier(IdentifierType.CUSTOM, "SM2"), super.createEndpoint(super.ENDPOINT_INTERFACE, "http://a.b/c/aas/submodels/SM2")));
+		descriptor.addSubmodelDescriptor(new SubmodelDescriptor("SM2", new Identifier(IdentifierType.CUSTOM, "SM2"), new Endpoint("http://a.b/c/aas/submodels/SM2")));
 
 		// Assert correct retrieval
 		assertEquals(2, descriptor.getSubmodelDescriptors().size());

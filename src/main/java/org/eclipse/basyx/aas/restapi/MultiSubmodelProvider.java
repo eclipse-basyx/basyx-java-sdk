@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.aas.restapi;
@@ -74,8 +74,8 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
  * specific Asset Administration Shell <br>
  * <i>/aas/submodels/{subModelIdShort}/submodel/submodelElements/{submodelElementIdShort}</i>
  * Deletes a specific submodelElement from the AAS's Submodel<br>
- * 
- * 
+ *
+ *
  * @author kuhn, pschorn
  *
  */
@@ -88,7 +88,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 * Store aas providers
 	 */
 	protected AASModelProvider aas_provider = null;
-	
+
 	/**
 	 * Store aasId
 	 */
@@ -98,12 +98,12 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 * Store submodel providers
 	 */
 	protected Map<String, SubmodelProvider> submodel_providers = new HashMap<>();
-	
+
 	/**
 	 * Store AAS Registry
 	 */
 	protected IAASRegistry registry = null;
-	
+
 	/**
 	 * Store HTTP Connector
 	 */
@@ -157,7 +157,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 		// Store content provider
 		addSubmodel(contentProvider);
 	}
-	
+
 	/**
 	 * Constructor that accepts a registry and a connection provider
 	 * @param registry
@@ -168,7 +168,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 		this.registry = registry;
 		this.connectorFactory = provider;
 	}
-	
+
 	/**
 	 * Constructor that accepts a registry, a connection provider and API providers
 	 */
@@ -181,7 +181,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 
 	/**
 	 * Constructor that accepts a aas provider, a registry and a connection provider
-	 * 
+	 *
 	 * @param contentProvider
 	 * @param registry
 	 * @param provider
@@ -194,7 +194,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 
 	/**
 	 * Set an AAS for this provider
-	 * 
+	 *
 	 * @param modelContentProvider
 	 *            Model content provider
 	 */
@@ -228,7 +228,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 
 	/**
 	 * Remove a provider
-	 * 
+	 *
 	 * @param elementId
 	 *            Element ID
 	 */
@@ -275,7 +275,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	/**
 	 * Retrieves all submodels of the AAS. If there's a registry, remote Submodels
 	 * will also be retrieved.
-	 * 
+	 *
 	 * @return
 	 * @throws ProviderException
 	 */
@@ -290,37 +290,37 @@ public class MultiSubmodelProvider implements IModelProvider {
 		// Check for remote submodels
 		if (registry != null) {
 			AASDescriptor desc = registry.lookupAAS(aasId);
-			
+
 			// Get the address of the AAS e.g. http://localhost:8080
 			// This address should be equal to the address of this server
-			String aasEndpoint = desc.getFirstEndpoint();
+			String aasEndpoint = desc.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
 			String aasServerURL = getServerURL(aasEndpoint);
-			
+
 			List<String> localIds = submodels.stream().map(sm -> sm.getIdentification().getId()).collect(Collectors.toList());
 			List<IIdentifier> missingIds = desc.getSubmodelDescriptors().stream().map(d -> d.getIdentifier()).
 					filter(id -> !localIds.contains(id.getId())).collect(Collectors.toList());
-			
+
 			if(!missingIds.isEmpty()) {
 				List<String> missingEndpoints = missingIds.stream().map(id -> desc.getSubmodelDescriptorFromIdentifierId(id.getId()))
-						.map(smDesc -> smDesc.getFirstEndpoint()).collect(Collectors.toList());
-				
+						.map(smDesc -> smDesc.getFirstEndpoint().getProtocolInformation().getEndpointAddress()).collect(Collectors.toList());
+
 				// Check if any of the missing Submodels have the same address as the AAS.
 				// This would mean, that the Submodel should be present on the same
 				// server of the AAS but is not
-				
+
 				// If this error would not be caught here an endless loop would develop
 				// as the registry would be asked for this Submodel and then it would be requested
 				// from this server again, which would ask the registry about it again
-				
+
 				// Such a situation might originate from a deleted but not unregistered Submodel
 				// or from a manually registered but never pushed Submodel
 				for(String missingEndpoint: missingEndpoints) {
 					if(getServerURL(missingEndpoint).equals(aasServerURL)) {
-						throw new ResourceNotFoundException("The Submodel at Endpoint '" + missingEndpoint + 
+						throw new ResourceNotFoundException("The Submodel at Endpoint '" + missingEndpoint +
 								"' does not exist on this server. It seems to be registered but not actually present.");
 					}
 				}
-				
+
 				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> connectorFactory.getConnector(endpoint)).
 						map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m)).collect(Collectors.toList());
 				submodels.addAll(remoteSms);
@@ -335,7 +335,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 */
 	@Override
 	public void setValue(String path, Object newValue) throws ProviderException {
- 		VABPathTools.checkPathForNull(path);
+		VABPathTools.checkPathForNull(path);
 		path = VABPathTools.stripSlashes(path);
 		String[] pathElements = VABPathTools.splitPath(path);
 		String propertyPath = VABPathTools.buildPath(pathElements, 3);
@@ -380,14 +380,14 @@ public class MultiSubmodelProvider implements IModelProvider {
 		if (!path.startsWith(SUBMODELS_PREFIX)) {
 			throw new MalformedRequestException("Access to MultiSubmodelProvider always has to start with \"" + SUBMODELS_PREFIX + "\", was " + path);
 		}
-		
+
 		String[] pathElements = VABPathTools.splitPath(path);
 		String propertyPath = VABPathTools.buildPath(pathElements, 3);
 		if (pathElements.length == 3) {
 			// Delete Submodel from registered AAS
 			String smIdShort = pathElements[2];
 			if (!isSubmodelLocal(smIdShort)) {
-				return;	
+				return;
 			}
 
 			// Delete submodel reference from aas
@@ -436,7 +436,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 
 		return provider.invokeOperation(operationPath, parameter);
 	}
-	
+
 	/**
 	 * Check whether the given submodel exists in submodel provider
 	 * @param key to search the submodel
@@ -445,7 +445,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	private boolean isSubmodelLocal(String submodelId) {
 		return submodel_providers.containsKey(submodelId);
 	}
-	
+
 	/**
 	 * Check whether a registry exists
 	 * @return boolean true/false
@@ -453,7 +453,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	private boolean doesRegistryExist() {
 		return this.registry != null;
 	}
-	
+
 	/**
 	 * Get submodel descriptor from the registry
 	 * @param submodelId to search the submodel
@@ -467,21 +467,21 @@ public class MultiSubmodelProvider implements IModelProvider {
 		}
 		return desc;
 	}
-	
+
 	/**
 	 * Get a model provider from a submodel descriptor
 	 * @param submodelDescriptor
 	 * @return a model provider
 	 */
 	private IModelProvider getModelProvider(SubmodelDescriptor submodelDescriptor) {
-		String endpoint = submodelDescriptor.getFirstEndpoint();
+		String endpoint = submodelDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
 
 		// Remove "/submodel" since it will be readded later
 		endpoint = endpoint.substring(0, endpoint.length() - SubmodelProvider.SUBMODEL.length() - 1);
 
 		return connectorFactory.getConnector(endpoint);
 	}
-	
+
 	/**
 	 * Get a model provider from a submodel id
 	 * @param submodelId to select a specific submodel
@@ -490,18 +490,18 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 */
 	private IModelProvider getModelProvider(String submodelId) {
 		if (!doesRegistryExist()) {
-			throw new ResourceNotFoundException("Submodel with id " + submodelId + " cannot be resolved locally, but no registry is passed");	
+			throw new ResourceNotFoundException("Submodel with id " + submodelId + " cannot be resolved locally, but no registry is passed");
 		}
-		
+
 		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptorFromRegistry(submodelId);
 		return getModelProvider(submodelDescriptor);
 	}
-	
+
 	/**
 	 * Gets the server URL of a given endpoint.
 	 * e.g. http://localhost:1234/x/y/z/aas/submodels/Sm1IdShort would return
 	 * http://localhost:1234/x/y/z
-	 * 
+	 *
 	 * @param endpoint
 	 * @return the server URL part of the given endpoint
 	 */
