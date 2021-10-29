@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.aas.metamodel.map.descriptor;
@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
@@ -28,7 +27,7 @@ import org.eclipse.basyx.vab.model.VABModelMap;
 /**
  * Abstract class for a model descriptor that contains: - a short id - an
  * identifier - endpoints
- * 
+ *
  * @author espen
  *
  */
@@ -82,7 +81,7 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 
 	/**
 	 * Adds an endpoint
-	 * 
+	 *
 	 * @param endpoint
 	 */
 	public void addEndpoint(Endpoint endpoint) {
@@ -111,21 +110,16 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 	 * Return first AAS endpoint
 	 */
 	@SuppressWarnings("unchecked")
-	public String getFirstEndpoint() {
-		Object e = get(ENDPOINTS);
-		// Extract String from endpoint for set or list representations of the endpoint
-		// wrappers
-		if (e instanceof Collection<?>) {
-			Collection<Map<?, ?>> endpoints = (Collection<Map<?, ?>>) e;
-			if (endpoints.isEmpty()) {
-				return "";
-			} else {
-				// assume the endpoint is wrapped in a map with address and address type
-				// return the first endpoint address
-				return (String) endpoints.iterator().next().get(AssetAdministrationShell.ADDRESS);
-			}
+	public Endpoint getFirstEndpoint() {
+		Object endpoints = get(ENDPOINTS);
+		if (endpoints instanceof Collection<?>) {
+			Collection<Map<String, Object>> endpointCollection = (Collection<Map<String, Object>>) endpoints;
+			Map<String, Object> endpointMap = endpointCollection.iterator().next();
+
+			return Endpoint.createAsFacade(endpointMap);
+		} else {
+			return null;
 		}
-		return "";
 	}
 
 	/**
@@ -152,7 +146,7 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 	/**
 	 * Validates a model descriptor by checking whether idShort, identification and
 	 * endpoints key is present in the given map
-	 * 
+	 *
 	 * @param map
 	 */
 	protected void validate(Map<String, Object> map) {
