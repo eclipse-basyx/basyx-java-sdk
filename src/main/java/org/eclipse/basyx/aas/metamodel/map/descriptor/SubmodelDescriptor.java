@@ -11,6 +11,7 @@ package org.eclipse.basyx.aas.metamodel.map.descriptor;
 
 import java.util.Map;
 
+import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IHasSemantics;
@@ -19,9 +20,6 @@ import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.HasSemantics;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 
-
-
-
 /**
  * AAS descriptor class
  * 
@@ -29,7 +27,7 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
  *
  */
 public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics {
-	
+
 	public static final String MODELTYPE = "SubmodelDescriptor";
 
 	/**
@@ -39,24 +37,24 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 		super(map);
 		validate(map);
 	}
-	
+
 	/**
 	 * Create a new aas descriptor with minimal information based on an existing
 	 * submodel.
 	 */
-	public SubmodelDescriptor(ISubmodel sm, String httpEndpoint) {
+	public SubmodelDescriptor(ISubmodel sm, Endpoint endpoint) {
 		// Create descriptor with minimal information (id and idShort)
-		this(sm.getIdShort(), sm.getIdentification(), httpEndpoint);
-		
+		this(sm.getIdShort(), sm.getIdentification(), endpoint);
+
 		putAll(new HasSemantics(sm.getSemanticId()));
 	}
-	
+
 	/**
 	 * Create a new descriptor with minimal information
 	 */
-	public SubmodelDescriptor(String idShort, IIdentifier id, String httpEndpoint) {
-		super(idShort, id, harmonizeEndpoint(httpEndpoint));
-		
+	public SubmodelDescriptor(String idShort, IIdentifier id, Endpoint endpoint) {
+		super(idShort, id, endpoint);
+
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
@@ -64,14 +62,6 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 	@Override
 	protected String getModelType() {
 		return MODELTYPE;
-	}
-
-	private static String harmonizeEndpoint(String endpoint) {
-		if (!endpoint.endsWith("/submodel")) {
-			return endpoint + "/submodel";
-		} else {
-			return endpoint;
-		}
 	}
 
 	@Override
@@ -84,4 +74,3 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 	}
 
 }
-

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
@@ -34,7 +35,7 @@ import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 public class AASDescriptor extends ModelDescriptor {
 	public static final String MODELTYPE = "AssetAdministrationShellDescriptor";
 	public static final String ASSET = "asset";
-	
+
 	/**
 	 * Create descriptor from existing hash map
 	 */
@@ -57,32 +58,31 @@ public class AASDescriptor extends ModelDescriptor {
 	 * @param assetAdministrationShell
 	 * @param endpoint
 	 */
-	public AASDescriptor(IAssetAdministrationShell assetAdministrationShell, String endpoint) {
+	public AASDescriptor(IAssetAdministrationShell assetAdministrationShell, Endpoint endpoint) {
 		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), assetAdministrationShell.getAsset(), endpoint);
 	}
-
 
 	/**
 	 * Create a new descriptor with aasid, idshort , assetid, and endpoint
 	 */
-	public AASDescriptor(String idShort, IIdentifier aasid, IAsset asset, String httpEndpoint) {
-		super(idShort, aasid, httpEndpoint);
+	public AASDescriptor(String idShort, IIdentifier aasid, IAsset asset, Endpoint endpoint) {
+		super(idShort, aasid, endpoint);
 
 		// Set Asset
 		put(ASSET, asset);
 
 		// Set Submodels
 		put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
-		
+
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	/**
 	 * Create a new descriptor with minimal information
 	 */
-	public AASDescriptor(String idShort, IIdentifier aasid, String httpEndpoint) {
-		super(idShort, aasid, httpEndpoint);
+	public AASDescriptor(String idShort, IIdentifier aasid, Endpoint endpoint) {
+		super(idShort, aasid, endpoint);
 
 		// Set Submodels
 		put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
@@ -95,10 +95,10 @@ public class AASDescriptor extends ModelDescriptor {
 	 * Create a new descriptor with minimal information (idShort is assumed to be
 	 * set to "")
 	 */
-	public AASDescriptor(IIdentifier aasid, String httpEndpoint) {
-		this("", aasid, httpEndpoint);
+	public AASDescriptor(IIdentifier aasid, Endpoint endpoint) {
+		this("", aasid, endpoint);
 	}
-	
+
 	/**
 	 * Add a sub model descriptor
 	 */
@@ -106,7 +106,7 @@ public class AASDescriptor extends ModelDescriptor {
 	public AASDescriptor addSubmodelDescriptor(SubmodelDescriptor desc) {
 		// Sub model descriptors are stored in a list
 		Collection<Map<String, Object>> submodelDescriptors = (Collection<Map<String, Object>>) get(AssetAdministrationShell.SUBMODELS);
-		
+
 		// Add new sub model descriptor to list
 		submodelDescriptors.add(desc);
 		put(AssetAdministrationShell.SUBMODELS, submodelDescriptors);
@@ -147,8 +147,7 @@ public class AASDescriptor extends ModelDescriptor {
 	@SuppressWarnings("unchecked")
 	public SubmodelDescriptor getSubmodelDescriptorFromIdentifierId(String subModelId) {
 		// Sub model descriptors are stored in a list
-		Collection<Map<String, Object>> smDescriptorMaps = (Collection<Map<String, Object>>) get(
-				AssetAdministrationShell.SUBMODELS);
+		Collection<Map<String, Object>> smDescriptorMaps = (Collection<Map<String, Object>>) get(AssetAdministrationShell.SUBMODELS);
 
 		// Go through all descriptors (as maps) and find the one with the subModelId
 		for (Map<String, Object> smDescriptorMap : smDescriptorMaps) {
@@ -158,7 +157,7 @@ public class AASDescriptor extends ModelDescriptor {
 				return new SubmodelDescriptor(smDescriptorMap);
 			}
 		}
-		
+
 		// No descriptor found
 		return null;
 	}
@@ -195,7 +194,7 @@ public class AASDescriptor extends ModelDescriptor {
 	protected String getModelType() {
 		return MODELTYPE;
 	}
-	
+
 	/**
 	 * Get asset
 	 */
@@ -204,7 +203,7 @@ public class AASDescriptor extends ModelDescriptor {
 		Map<String, Object> assetModel = (Map<String, Object>) get(ASSET);
 		return Asset.createAsFacade(assetModel);
 	}
-	
+
 	@Override
 	public void validate(Map<String, Object> map) {
 		super.validate(map);
@@ -215,4 +214,3 @@ public class AASDescriptor extends ModelDescriptor {
 		}
 	}
 }
-
