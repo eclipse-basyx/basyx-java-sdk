@@ -44,7 +44,7 @@ public class Endpoint extends VABModelMap<Object> {
 	 * endpointAddress is capsuled in a protcolInformation object.
 	 *
 	 * @param endpointInterface
-	 * @param protocolInformation
+	 * @param endpointAddress
 	 */
 	public Endpoint(String endpointInterface, String endpointAddress) {
 		ProtocolInformation protocolInformation = new ProtocolInformation(endpointAddress);
@@ -56,8 +56,7 @@ public class Endpoint extends VABModelMap<Object> {
 	 * Creates an endpoint object from an interface and a endpointAddress. The
 	 * endpointAddress is capsuled in a protcolInformation object.
 	 *
-	 * @param endpointInterface
-	 * @param protocolInformation
+	 * @param endpointAddress
 	 */
 	public Endpoint(String endpointAddress) {
 		ProtocolInformation protocolInformation = new ProtocolInformation(endpointAddress);
