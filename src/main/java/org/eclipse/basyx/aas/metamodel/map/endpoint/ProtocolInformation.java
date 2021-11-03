@@ -82,7 +82,7 @@ public class ProtocolInformation extends VABModelMap<Object> {
 	}
 
 	public void setEndpointAddress(String endpointAddress) {
-		// TODO: has to be set
+		// TODO: check if string is not empty
 		put(ENDPOINT_ADDRESS, endpointAddress);
 	}
 
