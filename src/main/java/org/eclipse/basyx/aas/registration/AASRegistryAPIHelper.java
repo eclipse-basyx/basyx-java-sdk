@@ -1,68 +1,68 @@
 /*******************************************************************************
-* Copyright (C) 2021 the Eclipse BaSyx Authors
-* 
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Copyright (C) 2021 the Eclipse BaSyx Authors
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
 
-* 
-* SPDX-License-Identifier: EPL-2.0
-******************************************************************************/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ ******************************************************************************/
 
 package org.eclipse.basyx.aas.registration;
 
-import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
+import org.eclipse.basyx.aas.registration.restapi.BaSyxRegistryPath;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**
  * API helper for AAS Registry
- * @author haque
+ *
+ * @author haque, fischer
  *
  */
 public class AASRegistryAPIHelper {
-	
-	/**
-	 * Retrieves base access path
-	 * @return
-	 */
-	public static String getRegistryPath() {
-		return AASRegistryModelProvider.PREFIX;
+
+	private AASRegistryAPIHelper() {
 	}
-	
+
+	/**
+	 * Retrieves base access path for shell descriptors
+	 *
+	 * @return base access path for shell descriptors
+	 */
+	public static String getShellDescriptorPath() {
+		return VABPathTools.concatenatePaths(BaSyxRegistryPath.PREFIX, BaSyxRegistryPath.SHELL_DESCRIPTORS);
+	}
+
 	/**
 	 * Retrieves an access path for an AAS
-	 * @param aasId
-	 * @return
+	 *
+	 * @param aasIdentifier
+	 * @return access path for an AAS
 	 */
-	public static String getAASPath(IIdentifier aasId) {
-		return VABPathTools.concatenatePaths(getRegistryPath(), VABPathTools.encodePathElement(aasId.getId()));
+	public static String getAASAccessPath(IIdentifier aasIdentifier) {
+		return VABPathTools.concatenatePaths(getShellDescriptorPath(), VABPathTools.encodePathElement(aasIdentifier.getId()));
 	}
-	
+
 	/**
-	 * Retrieves an access path for all the submodels inside an AAS
-	 * @param aasId
-	 * @return
+	 * Retrieves an access path for all the submodels of a given AAS
+	 *
+	 * @param aasIdentifier
+	 * @return access path for all submodels of a given AAS
 	 */
-	public static String getSubmodelListOfAASPath(IIdentifier aasId) {
-		return VABPathTools.concatenatePaths(getRegistryPath(), buildSubmodelPath(aasId));
+	public static String getAASSubmodelsAccessPath(IIdentifier aasIdentifier) {
+		return VABPathTools.concatenatePaths(getAASAccessPath(aasIdentifier), BaSyxRegistryPath.SUBMODEL_DESCRIPTORS);
 	}
-	
-	
+
 	/**
 	 * Retrieves an access path for a submodel
-	 * @param aasId
+	 *
+	 * @param aasIdentifier
 	 * @param submodelId
-	 * @return
+	 * @return access path for a submodel
 	 */
-	public static String getSubmodelAccessPath(IIdentifier aasId, IIdentifier submodelId) {
-		return VABPathTools.concatenatePaths(getSubmodelListOfAASPath(aasId), VABPathTools.encodePathElement(submodelId.getId()));
-	}
-	
-	private static String buildSubmodelPath(IIdentifier aas) throws ProviderException {
-		// Encode id to handle usage of reserved symbols, e.g. /
-		String encodedAASId = VABPathTools.encodePathElement(aas.getId());
-		return VABPathTools.concatenatePaths(encodedAASId, AASRegistryModelProvider.SUBMODELS);
+	public static String getSubmodelAccessPath(IIdentifier aasIdentifier, IIdentifier submodelId) {
+		return VABPathTools.concatenatePaths(getAASSubmodelsAccessPath(aasIdentifier), VABPathTools.encodePathElement(submodelId.getId()));
 	}
 }
