@@ -23,13 +23,19 @@ public class BaSyxRegistryPath {
 	private static final String ENCODING = "UTF-8";
 
 	private String pathPrefix;
-	private String pathShellDescriptors;
-	private String pathAASId;
-	private String pathSubmodelDescriptors;
-	private String pathSubmodelId;
+	private String firstDescriptorType;
+	private String firstDescriptorId;
+	private String secondDescriptorType;
+	private String secondDescriptorId;
+
+	private boolean hasFirstDescriptorForAAS;
+	private boolean hasFirstDescriptorForSubmodel;
+	private boolean hasFirstDescriptorId;
+	private boolean hasSecondDescriptorForSubmodel;
+	private boolean hasSecondDescriptorId;
 
 	/**
-	 * Splits string into three parts as registry v2 specifies
+	 * Splits string into multiple parts as registry v2 specifies
 	 *
 	 * @param path
 	 */
@@ -40,20 +46,21 @@ public class BaSyxRegistryPath {
 
 		populatePrivateVariables(path);
 		checkIfPathPrefixIsValid();
-		checkIfPathShellDescriptorsIsValid();
-		checkIfPathSubmodelDescriptorsIsValid();
+		checkIfFirstDescriptorIsValid();
+		checkIfSecondDescriptorIsValid();
+		populateCheckVariables();
 	}
 
 	private void populatePrivateVariables(String path) throws UnsupportedEncodingException {
-		String[] splitted_path = path.split("/");
+		String[] splittedPath = path.split("/");
 
-		pathPrefix = splitted_path.length > 0 ? utf8Decode(splitted_path[0]) : null;
-		pathShellDescriptors = splitted_path.length > 1 ? utf8Decode(splitted_path[1]) : null;
-		pathAASId = splitted_path.length > 2 ? utf8Decode(splitted_path[2]) : null;
-		pathSubmodelDescriptors = splitted_path.length > 3 ? utf8Decode(splitted_path[3]) : null;
-		pathSubmodelId = splitted_path.length > 4 ? utf8Decode(splitted_path[4]) : null;
+		pathPrefix = splittedPath.length > 0 ? utf8Decode(splittedPath[0]) : null;
+		firstDescriptorType = splittedPath.length > 1 ? utf8Decode(splittedPath[1]) : null;
+		firstDescriptorId = splittedPath.length > 2 ? utf8Decode(splittedPath[2]) : null;
+		secondDescriptorType = splittedPath.length > 3 ? utf8Decode(splittedPath[3]) : null;
+		secondDescriptorId = splittedPath.length > 4 ? utf8Decode(splittedPath[4]) : null;
 
-		if (splitted_path.length > 5) {
+		if (splittedPath.length > 5) {
 			throw new MalformedRequestException("Given path '" + path + "' contains too many path elements and is therefore invalid.");
 		}
 	}
@@ -68,16 +75,50 @@ public class BaSyxRegistryPath {
 		}
 	}
 
-	private void checkIfPathShellDescriptorsIsValid() {
-		if (!pathShellDescriptors.equals(SHELL_DESCRIPTORS)) {
-			throw new MalformedRequestException("Registry path must start with " + PREFIX + "/" + SHELL_DESCRIPTORS);
+	private void checkIfFirstDescriptorIsValid() {
+		if (!(firstDescriptorType.equals(SHELL_DESCRIPTORS) || firstDescriptorType.equals(SUBMODEL_DESCRIPTORS))) {
+			throw new MalformedRequestException("After " + PREFIX + "the path must continue with " + SHELL_DESCRIPTORS + " or " + SUBMODEL_DESCRIPTORS);
 		}
 	}
 
-	private void checkIfPathSubmodelDescriptorsIsValid() {
-		if (!(pathSubmodelDescriptors == null || pathSubmodelDescriptors.equals(SUBMODEL_DESCRIPTORS))) {
+	private void checkIfSecondDescriptorIsValid() {
+		if (!(secondDescriptorType == null || secondDescriptorType.equals(SUBMODEL_DESCRIPTORS))) {
 			throw new MalformedRequestException("Second path element must be (if present): " + SUBMODEL_DESCRIPTORS);
+		} else if (!firstDescriptorType.equals(SHELL_DESCRIPTORS)) {
+			throw new MalformedRequestException(SUBMODEL_DESCRIPTORS + "can only be viewed for " + SHELL_DESCRIPTORS);
 		}
+	}
+
+	private void populateCheckVariables() {
+		hasFirstDescriptorForAAS = firstDescriptorType.equals(SHELL_DESCRIPTORS);
+		hasFirstDescriptorForSubmodel = firstDescriptorType.equals(SUBMODEL_DESCRIPTORS);
+		hasFirstDescriptorId = firstDescriptorId != null;
+		hasSecondDescriptorForSubmodel = secondDescriptorType != null && secondDescriptorType.equals(SUBMODEL_DESCRIPTORS);
+		hasSecondDescriptorId = secondDescriptorId != null;
+	}
+
+	public boolean isAllAASDescriptorsPath() {
+		return hasFirstDescriptorForAAS && !hasFirstDescriptorId && !hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
+	}
+
+	public boolean isSingleAASDescriptorPath() {
+		return hasFirstDescriptorForAAS && hasFirstDescriptorId && !hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
+	}
+
+	public boolean isSingleAASDescriptorAllSubmodelDescriptorsPath() {
+		return hasFirstDescriptorForAAS && hasFirstDescriptorId && hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
+	}
+
+	public boolean isSingleAASDescriptorSingleSubmodelDescriptorPath() {
+		return hasFirstDescriptorForAAS && hasFirstDescriptorId && hasSecondDescriptorForSubmodel && hasSecondDescriptorId;
+	}
+
+	public boolean isAllSubmodelDescriptorsPath() {
+		return hasFirstDescriptorForSubmodel && !hasFirstDescriptorId;
+	}
+
+	public boolean isSingleSubmodelDescriptorPath() {
+		return hasFirstDescriptorForSubmodel && hasFirstDescriptorId;
 	}
 
 	/**
@@ -90,38 +131,38 @@ public class BaSyxRegistryPath {
 	}
 
 	/**
-	 * Retrieves shell descriptors inside the given path
+	 * Retrieves first descriptor type inside the given path
 	 *
-	 * @return shell descriptors of given path
+	 * @return first type of descriptors for the given path
 	 */
-	public String getPathShellDescriptors() {
-		return pathShellDescriptors;
+	public String getFirstDescriptorType() {
+		return firstDescriptorType;
 	}
 
 	/**
-	 * Retrieves aasId inside the given path
+	 * Retrieves first descriptor id inside the given path
 	 *
-	 * @return aasId of given path
+	 * @return first descriptor id for the given path
 	 */
-	public String getPathAASId() {
-		return pathAASId;
+	public String getFirstDescriptorId() {
+		return firstDescriptorId;
 	}
 
 	/**
-	 * Retrieves submodel descriptors inside the given path
+	 * Retrieves second descriptor type inside the given path
 	 *
-	 * @return submodel descriptors of given path
+	 * @return second type of descriptors for the given path
 	 */
-	public String getPathSubmodelDescriptors() {
-		return pathSubmodelDescriptors;
+	public String getSecondDescriptorType() {
+		return secondDescriptorType;
 	}
 
 	/**
-	 * Retrieves submodelId inside the given path
+	 * Retrieves second descriptor id inside the given path
 	 *
-	 * @return submodelId of given path
+	 * @return second descriptor id for the given path
 	 */
-	public String getPathSubmodelId() {
-		return pathSubmodelId;
+	public String getSecondDescriptorId() {
+		return secondDescriptorId;
 	}
 }

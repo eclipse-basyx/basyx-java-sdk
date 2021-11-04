@@ -31,7 +31,7 @@ public class AASRegistryAPIHelper {
 	 *
 	 * @return base access path for shell descriptors
 	 */
-	public static String getShellDescriptorPath() {
+	public static String getAllShellDescriptorsPath() {
 		return VABPathTools.concatenatePaths(BaSyxRegistryPath.PREFIX, BaSyxRegistryPath.SHELL_DESCRIPTORS);
 	}
 
@@ -41,8 +41,8 @@ public class AASRegistryAPIHelper {
 	 * @param aasIdentifier
 	 * @return access path for an AAS
 	 */
-	public static String getAASAccessPath(IIdentifier aasIdentifier) {
-		return VABPathTools.concatenatePaths(getShellDescriptorPath(), VABPathTools.encodePathElement(aasIdentifier.getId()));
+	public static String getSingleShellDescriptorPath(IIdentifier aasIdentifier) {
+		return VABPathTools.concatenatePaths(getAllShellDescriptorsPath(), VABPathTools.encodePathElement(aasIdentifier.getId()));
 	}
 
 	/**
@@ -51,8 +51,8 @@ public class AASRegistryAPIHelper {
 	 * @param aasIdentifier
 	 * @return access path for all submodels of a given AAS
 	 */
-	public static String getAASSubmodelsAccessPath(IIdentifier aasIdentifier) {
-		return VABPathTools.concatenatePaths(getAASAccessPath(aasIdentifier), BaSyxRegistryPath.SUBMODEL_DESCRIPTORS);
+	public static String getSingleShellDescriptorAllSubmodelDescriptorsPath(IIdentifier aasIdentifier) {
+		return VABPathTools.concatenatePaths(getSingleShellDescriptorPath(aasIdentifier), BaSyxRegistryPath.SUBMODEL_DESCRIPTORS);
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class AASRegistryAPIHelper {
 	 * @param submodelId
 	 * @return access path for a submodel
 	 */
-	public static String getSubmodelAccessPath(IIdentifier aasIdentifier, IIdentifier submodelId) {
-		return VABPathTools.concatenatePaths(getAASSubmodelsAccessPath(aasIdentifier), VABPathTools.encodePathElement(submodelId.getId()));
+	public static String getSingleShellDescriptorSingleSubmodelDescriptorPath(IIdentifier aasIdentifier, IIdentifier submodelId) {
+		return VABPathTools.concatenatePaths(getSingleShellDescriptorAllSubmodelDescriptorsPath(aasIdentifier), VABPathTools.encodePathElement(submodelId.getId()));
 	}
 }
