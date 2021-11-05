@@ -27,12 +27,10 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 import org.eclipse.basyx.vab.registry.proxy.VABRegistryProxy;
 
-
-
 /**
  * Local proxy class that hides HTTP calls to BaSys registry
  *
- * @author kuhn, schnicke
+ * @author kuhn, schnicke, fischer
  *
  */
 public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
@@ -75,17 +73,18 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	}
 
 	/**
-	 * Register AAS descriptor in registry, delete old registration
+	 * Registers an AASDescriptor in the registry, if not already existing.
+	 *
+	 * @param aasDescriptor
+	 * @throws ProviderException
 	 */
 	@Override
-	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
+	public void register(AASDescriptor aasDescriptor) throws ProviderException {
 		// Add a mapping from the AAS id to the serialized descriptor
 		try {
-			String encodedId = AASRegistryAPIHelper.getSingleShellDescriptorPath(deviceAASDescriptor.getIdentifier());
+			String allAASDescriptorsPath = AASRegistryAPIHelper.getAllShellDescriptorsPath();
 
-			// Typically, VAB SET should not create new entries. Nevertheless, the registry
-			// API is defined to do it.
-			provider.setValue(encodedId, deviceAASDescriptor);
+			provider.createValue(allAASDescriptorsPath, aasDescriptor);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -96,7 +95,55 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	}
 
 	/**
-	 * Delete AAS descriptor from registry
+	 * Registers a SubmodelDescriptor in the registry with the given identifier.
+	 *
+	 * @param aasIdentifier
+	 * @param submodelDescriptor
+	 * @throws ProviderException
+	 */
+	@Override
+	public void register(IIdentifier aasIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		try {
+			String allSubmodelDescriptorsPath = AASRegistryAPIHelper.getSingleShellDescriptorAllSubmodelDescriptorsPath(aasIdentifier);
+
+			provider.createValue(allSubmodelDescriptorsPath, submodelDescriptor);
+		} catch (Exception e) {
+			if (e instanceof ProviderException) {
+				throw (ProviderException) e;
+			} else {
+				throw new ProviderException(e);
+			}
+		}
+	}
+
+	/**
+	 * Updates the AASDescriptor in the registry with the given identifier.
+	 *
+	 * @param aasIdentifier
+	 * @param aasDescriptor
+	 * @throws ProviderException
+	 */
+	@Override
+	public void update(IIdentifier aasIdentifier, AASDescriptor aasDescriptor) throws ProviderException {
+		// Add a mapping from the AAS id to the serialized descriptor
+		try {
+			String singleAASDescriptorPath = AASRegistryAPIHelper.getSingleShellDescriptorPath(aasDescriptor.getIdentifier());
+
+			provider.setValue(singleAASDescriptorPath, aasDescriptor);
+		} catch (Exception e) {
+			if (e instanceof ProviderException) {
+				throw (ProviderException) e;
+			} else {
+				throw new ProviderException(e);
+			}
+		}
+	}
+
+	/**
+	 * Deletes the AASDescriptor from the registry with the given identifier.
+	 *
+	 * @param aasIdentifier
+	 * @throws ProviderException
 	 */
 	@Override
 	public void delete(IIdentifier aasIdentifier) throws ProviderException {
@@ -104,9 +151,34 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	}
 
 	/**
-	 * Lookup device AAS
+	 * Deletes the SubmodelDescriptor from the registry with the given identifier.
+	 *
+	 * @param aasIdentifier
+	 * @param submodelIdentifier
+	 * @throws ProviderException
 	 */
-	@Override @SuppressWarnings("unchecked")
+	@Override
+	public void delete(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
+		try {
+			provider.deleteValue(AASRegistryAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(aasIdentifier, submodelIdentifier));
+		} catch (Exception e) {
+			if (e instanceof ProviderException) {
+				throw (ProviderException) e;
+			} else {
+				throw new ProviderException(e);
+			}
+		}
+	}
+
+	/**
+	 * Looks up the AASDescriptor for the given aasIdentifier.
+	 *
+	 * @param aasIdentifier
+	 * @return AASDescriptor with the given aasIdentifier
+	 * @throws ProviderException
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
 	public AASDescriptor lookupAAS(IIdentifier aasIdentifier) throws ProviderException {
 		try {
 			Object result = provider.getValue(AASRegistryAPIHelper.getSingleShellDescriptorPath(aasIdentifier));
@@ -120,13 +192,19 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 		}
 	}
 
+	/**
+	 * Retrieves all registered AASDescriptors.
+	 *
+	 * @return List of all registered AASDescriptors
+	 * @throws ProviderException
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AASDescriptor> lookupAll() throws ProviderException {
 		try {
 			Object result = provider.getValue(AASRegistryAPIHelper.getAllShellDescriptorsPath());
-			Collection<?> descriptors = (Collection<?>) result;
-			return descriptors.stream().map(x -> new AASDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
+			Collection<?> aasDescriptors = (Collection<?>) result;
+			return aasDescriptors.stream().map(x -> new AASDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -136,40 +214,18 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 		}
 	}
 
-	@Override
-	public void register(IIdentifier aas, SubmodelDescriptor smDescriptor) throws ProviderException {
-		try {
-			// Typically, VAB SET should not create new entries. Nevertheless, the registry
-			// API is defined to do it.
-			provider.setValue(AASRegistryAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(aas, smDescriptor.getIdentifier()), smDescriptor);
-		} catch (Exception e) {
-			if (e instanceof ProviderException) {
-				throw (ProviderException) e;
-			} else {
-				throw new ProviderException(e);
-			}
-		}
-	}
-
-	@Override
-	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
-		try {
-			provider.deleteValue(AASRegistryAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(aasId, smId));
-		} catch (Exception e) {
-			if (e instanceof ProviderException) {
-				throw (ProviderException) e;
-			} else {
-				throw new ProviderException(e);
-			}
-		}
-	}
-
-
+	/**
+	 * Retrieves all SubmodelDescriptors for the AAS with the given aasIdentifier.
+	 *
+	 * @param aasIdentifier
+	 * @return the list of all SubmodelDescriptors part of the given AAS
+	 * @throws ProviderException
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<SubmodelDescriptor> lookupSubmodels(IIdentifier aasId) throws ProviderException {
+	public List<SubmodelDescriptor> lookupSubmodels(IIdentifier aasIdentifier) throws ProviderException {
 		try {
-			Object result = provider.getValue(AASRegistryAPIHelper.getSingleShellDescriptorAllSubmodelDescriptorsPath(aasId));
+			Object result = provider.getValue(AASRegistryAPIHelper.getSingleShellDescriptorAllSubmodelDescriptorsPath(aasIdentifier));
 			Collection<?> descriptors = (Collection<?>) result;
 			return descriptors.stream().map(x -> new SubmodelDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
@@ -181,11 +237,20 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 		}
 	}
 
+	/**
+	 * Retrieves the SubmodelDescriptor with the given submodelIdentifier that is
+	 * part of the AAS with the given aasIdentifier.
+	 *
+	 * @param aasIdentifier
+	 * @param submodelIdentifier
+	 * @return the SubmodelDescriptor
+	 * @throws ProviderException
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public SubmodelDescriptor lookupSubmodel(IIdentifier aasId, IIdentifier smId) throws ProviderException {
+	public SubmodelDescriptor lookupSubmodel(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
 		try {
-			Object result = provider.getValue(AASRegistryAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(aasId, smId));
+			Object result = provider.getValue(AASRegistryAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(aasIdentifier, submodelIdentifier));
 			return new SubmodelDescriptor((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
@@ -196,4 +261,3 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 		}
 	}
 }
-

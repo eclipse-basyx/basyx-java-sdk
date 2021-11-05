@@ -29,13 +29,15 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
+import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Integration test for a registry. All registry provider implementations have to pass these tests.
+ * Integration test for a registry. All registry provider implementations have
+ * to pass these tests.
  *
  * @author espen
  *
@@ -47,10 +49,12 @@ public abstract class TestRegistryProviderSuite {
 	// Ids, shortIds and endpoints for registered AAS and submodel
 	protected IIdentifier aasId1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:registryAAS#001");
 	protected IIdentifier aasId2 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:registryAAS#002");
+	protected IIdentifier aasId3 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:registryAAS#003");
 	protected IIdentifier smId1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:statusSM#001");
 	protected IIdentifier smId2 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:testSM#001");
 	protected String aasIdShort1 = "aasIdShort1";
 	protected String aasIdShort2 = "aasIdShort2";
+	protected String aasIdShort3 = "aasIdShort3";
 	protected String smIdShort1 = "smIdShort1";
 	protected String smIdShort2 = "smIdShort2";
 	protected String aasEndpoint1 = "http://www.registrytest.de/aas01/aas";
@@ -59,6 +63,7 @@ public abstract class TestRegistryProviderSuite {
 	protected String smEndpoint2 = "http://www.registrytest.de/aas01/aas/submodels/" + smIdShort2 + "/submodel";
 	protected Asset asset1;
 	protected Asset asset2;
+
 	/**
 	 * Getter for the tested registry provider. Tests for actual registry provider
 	 * have to realize this method.
@@ -114,7 +119,6 @@ public abstract class TestRegistryProviderSuite {
 		validateDescriptor1(descriptor);
 	}
 
-
 	/**
 	 * Tests getting all entries from the registry and validates the result.
 	 */
@@ -134,8 +138,8 @@ public abstract class TestRegistryProviderSuite {
 	}
 
 	/**
-	 * Checks, if the given descriptor is valid. Should contain the values of the first descriptor
-	 * as given by the test setup
+	 * Checks, if the given descriptor is valid. Should contain the values of the
+	 * first descriptor as given by the test setup
 	 */
 	protected void validateDescriptor1(AASDescriptor descriptor) {
 		assertEquals(aasId1.getId(), descriptor.getIdentifier().getId());
@@ -153,8 +157,8 @@ public abstract class TestRegistryProviderSuite {
 	}
 
 	/**
-	 * Checks, if the given descriptor is valid. Should contain the values of the second descriptor
-	 * as given by the test setup
+	 * Checks, if the given descriptor is valid. Should contain the values of the
+	 * second descriptor as given by the test setup
 	 */
 	protected void validateDescriptor2(AASDescriptor descriptor) {
 		assertEquals(aasId2.getId(), descriptor.getIdentifier().getId());
@@ -296,9 +300,27 @@ public abstract class TestRegistryProviderSuite {
 	@Test
 	public void testOverwritingAASDescriptor() {
 		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, new Endpoint("http://testendpoint2/"));
-		proxy.register(aasDesc2);
+		proxy.update(aasDesc2.getIdentifier(), aasDesc2);
 		AASDescriptor retrieved = proxy.lookupAAS(aasId2);
 		assertEquals(aasDesc2.getFirstEndpoint(), retrieved.getFirstEndpoint());
+	}
+
+	/**
+	 * Tests overwriting a not existing descriptor of an AAS
+	 */
+	@Test(expected = ResourceNotFoundException.class)
+	public void testOverwritingNotExistingAASDescriptor() {
+		AASDescriptor aasDesc3 = new AASDescriptor(aasIdShort3, aasId3, asset2, new Endpoint("http://testendpoint2/"));
+		proxy.update(aasDesc3.getIdentifier(), aasDesc3);
+	}
+
+	/**
+	 * Tests creating already existing AAS
+	 */
+	@Test(expected = MalformedRequestException.class)
+	public void testCreateExistingAASDescriptor() {
+		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, new Endpoint("http://testendpoint2/"));
+		proxy.register(aasDesc2);
 	}
 
 	/**

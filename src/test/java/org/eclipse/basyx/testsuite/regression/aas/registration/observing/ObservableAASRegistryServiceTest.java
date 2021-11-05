@@ -81,6 +81,18 @@ public class ObservableAASRegistryServiceTest {
 	}
 
 	@Test
+	public void testUpdateAAS() {
+		AssetAdministrationShell shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
+		String aasEndpoint = "http://localhost:8080/aasList/" + AASID + "/aas";
+
+		AASDescriptor aasDescriptor = new AASDescriptor(shell, new Endpoint(aasEndpoint));
+		observedRegistry.update(aasDescriptor.getIdentifier(), aasDescriptor);
+
+		assertEquals(AASID, observer.aasId);
+		assertTrue(observer.updateAASNotified);
+	}
+
+	@Test
 	public void testRegisterSubmodel() {
 		String submodelid = "submodelid2";
 		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRI, submodelid);
@@ -120,6 +132,7 @@ public class ObservableAASRegistryServiceTest {
 	private class MockObserver implements IAASRegistryServiceObserver {
 
 		public boolean registerAASNotified = false;
+		public boolean updateAASNotified = false;
 		public boolean registerSubmodelNotified = false;
 		public boolean deleteAASNotified = false;
 		public boolean deleteSubmodelNotified = false;
@@ -130,6 +143,17 @@ public class ObservableAASRegistryServiceTest {
 		@Override
 		public void aasRegistered(String aasId) {
 			this.registerAASNotified = true;
+			this.updateAASNotified = false;
+			this.registerSubmodelNotified = false;
+			this.deleteAASNotified = false;
+			this.deleteSubmodelNotified = false;
+			this.aasId = aasId;
+		}
+
+		@Override
+		public void aasUpdated(String aasId) {
+			this.registerAASNotified = false;
+			this.updateAASNotified = true;
 			this.registerSubmodelNotified = false;
 			this.deleteAASNotified = false;
 			this.deleteSubmodelNotified = false;
@@ -139,6 +163,7 @@ public class ObservableAASRegistryServiceTest {
 		@Override
 		public void submodelRegistered(IIdentifier aasId, IIdentifier smId) {
 			this.registerAASNotified = false;
+			this.updateAASNotified = false;
 			this.registerSubmodelNotified = true;
 			this.deleteAASNotified = false;
 			this.deleteSubmodelNotified = false;
@@ -149,6 +174,7 @@ public class ObservableAASRegistryServiceTest {
 		@Override
 		public void aasDeleted(String aasId) {
 			this.registerAASNotified = false;
+			this.updateAASNotified = false;
 			this.registerSubmodelNotified = false;
 			this.deleteAASNotified = true;
 			this.deleteSubmodelNotified = false;
@@ -158,6 +184,7 @@ public class ObservableAASRegistryServiceTest {
 		@Override
 		public void submodelDeleted(IIdentifier aasId, IIdentifier smId) {
 			this.registerAASNotified = false;
+			this.updateAASNotified = false;
 			this.registerSubmodelNotified = false;
 			this.deleteAASNotified = false;
 			this.deleteSubmodelNotified = true;

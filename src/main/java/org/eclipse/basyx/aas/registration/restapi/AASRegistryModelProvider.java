@@ -172,21 +172,40 @@ public class AASRegistryModelProvider implements IModelProvider {
 		BaSyxRegistryPath registryPath = preparePath(path);
 
 		if (registryPath.isSingleAASDescriptorPath()) {
-			registerAASDescriptor(newValue, registryPath.getFirstDescriptorId());
+			updateAASDescriptor(newValue, registryPath.getFirstDescriptorId());
 		} else if (registryPath.isSingleAASDescriptorSingleSubmodelDescriptorPath()) {
+			updateSubmodelDescriptorForAASDescriptor(newValue, registryPath.getFirstDescriptorId());
+		} else {
+			throw new MalformedRequestException("Unknown path " + path);
+		}
+	}
+
+	@Override
+	public void createValue(String path, Object newValue) throws ProviderException {
+		BaSyxRegistryPath registryPath = preparePath(path);
+
+		if (registryPath.isAllAASDescriptorsPath()) {
+			registerAASDescriptor(newValue);
+		} else if (registryPath.isSingleAASDescriptorAllSubmodelDescriptorsPath()) {
 			registerSubmodelDescriptorForAASDescriptor(newValue, registryPath.getFirstDescriptorId());
 		} else {
 			throw new MalformedRequestException("Unknown path " + path);
 		}
 	}
 
-	private void registerAASDescriptor(Object newValue, String urlId) {
+	private void registerAASDescriptor(Object newValue) {
+		AASDescriptor aasDescriptor = createAASDescriptorFromMap(newValue);
+
+		registry.register(aasDescriptor);
+	}
+
+	private void updateAASDescriptor(Object newValue, String urlId) {
 		AASDescriptor aasDescriptor = createAASDescriptorFromMap(newValue);
 
 		String aasDescriptorId = aasDescriptor.getIdentifier().getId();
 
 		if (aasDescriptorId.equals(urlId)) {
-			registry.register(aasDescriptor);
+			registry.update(aasDescriptor.getIdentifier(), aasDescriptor);
 		} else {
 			throw new MalformedRequestException("The AASId " + aasDescriptorId + " in the descriptor does not match the URL with id " + urlId);
 		}
@@ -195,12 +214,15 @@ public class AASRegistryModelProvider implements IModelProvider {
 	private void registerSubmodelDescriptorForAASDescriptor(Object newValue, String aasId) {
 		ModelUrn aasIdentifier = new ModelUrn(aasId);
 		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptorFromMap(newValue);
+
 		registry.register(aasIdentifier, submodelDescriptor);
 	}
 
-	@Override
-	public void createValue(String path, Object newEntity) throws ProviderException {
-		throw new MalformedRequestException("Create (POST) on a registry is not supported. Please, use put");
+	private void updateSubmodelDescriptorForAASDescriptor(Object newValue, String aasId) {
+		ModelUrn aasIdentifier = new ModelUrn(aasId);
+		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptorFromMap(newValue);
+
+		registry.register(aasIdentifier, submodelDescriptor);
 	}
 
 	@Override

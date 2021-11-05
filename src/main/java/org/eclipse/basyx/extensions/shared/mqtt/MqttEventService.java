@@ -1,14 +1,15 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.mqtt;
 
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -20,13 +21,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of common parts of MQTT event propagation services.
- * Extend this class to make a service MQTT extendable
- *  
+ * Implementation of common parts of MQTT event propagation services. Extend
+ * this class to make a service MQTT extendable
+ *
  * @author haque
  *
  */
 public class MqttEventService {
+
+	// List of topics
+	public static final String TOPIC_REGISTERAAS = "BaSyxRegistry_registeredAAS";
+	public static final String TOPIC_UPDATEAAS = "BaSyxRegistry_updatedAAS";
+	public static final String TOPIC_REGISTERSUBMODEL = "BaSyxRegistry_registeredSubmodel";
+	public static final String TOPIC_DELETEAAS = "BaSyxRegistry_deletedAAS";
+	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
+
 	private static Logger logger = LoggerFactory.getLogger(MqttEventService.class);
 
 	// The MQTTClient
@@ -34,9 +43,10 @@ public class MqttEventService {
 
 	// QoS for MQTT messages (1, 2 or 3).
 	protected int qos = 1;
-	
+
 	/**
 	 * Constructor for creating an MqttClient (no authentication)
+	 *
 	 * @param serverEndpoint
 	 * @param clientId
 	 * @throws MqttException
@@ -44,7 +54,7 @@ public class MqttEventService {
 	public MqttEventService(String serverEndpoint, String clientId) throws MqttException {
 		this(serverEndpoint, clientId, new MqttDefaultFilePersistence());
 	}
-	
+
 	/**
 	 * Constructor for creating an MqttClient (with no authentication and a custom
 	 * persistence strategy)
@@ -68,20 +78,20 @@ public class MqttEventService {
 
 	/**
 	 * Constructor for creating an MqttClient with authentication
-	 * 
+	 *
 	 * @param serverEndpoint
 	 * @param clientId
 	 * @param user
 	 * @param pw
 	 * @throws MqttException
 	 */
-	public MqttEventService(String serverEndpoint, String clientId, String user, char[] pw)
-			throws MqttException {
+	public MqttEventService(String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		this(serverEndpoint, clientId, user, pw, new MqttDefaultFilePersistence());
 	}
-	
+
 	/**
 	 * Constructor for creating an MqttClient with existing client
+	 *
 	 * @param client
 	 * @throws MqttException
 	 */
@@ -92,7 +102,7 @@ public class MqttEventService {
 
 	/**
 	 * Sets the QoS for MQTT messages
-	 * 
+	 *
 	 * @param qos
 	 */
 	public void setQoS(int qos) {
@@ -109,11 +119,14 @@ public class MqttEventService {
 	public int getQoS() {
 		return this.qos;
 	}
-	
+
 	/**
 	 * Sends MQTT message to connected broker
-	 * @param topic in which the message will be published
-	 * @param payload the actual message
+	 *
+	 * @param topic
+	 *            in which the message will be published
+	 * @param payload
+	 *            the actual message
 	 */
 	protected void sendMqttMessage(String topic, String payload) {
 		MqttMessage msg = new MqttMessage(payload.getBytes());
@@ -128,5 +141,9 @@ public class MqttEventService {
 		} catch (MqttException e) {
 			logger.error("Could not send mqtt message", e);
 		}
+	}
+
+	public static String concatAasSmId(IIdentifier aasId, IIdentifier smId) {
+		return "(" + aasId.getId() + "," + smId.getId() + ")";
 	}
 }
