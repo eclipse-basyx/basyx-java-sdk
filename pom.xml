@@ -12,7 +12,7 @@
 		<repository>
 			<id>github</id>
 			<name>GitHub Eclipse BaSyx Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/eclipse-basyx/basyx-java-sdk</url>
+			<url>https://maven.pkg.github.com/FrankSchnicke/basyx-java-sdk</url>
 		</repository>
 	</distributionManagement>
 
