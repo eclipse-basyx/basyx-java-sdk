@@ -32,6 +32,7 @@ jobs:
 
     - name: Delete old sdk package
       uses: actions/delete-package-versions@v1
+      continue-on-error: true
       with:
         package-name: 'org.eclipse.basyx.basyx.sdk'
 
