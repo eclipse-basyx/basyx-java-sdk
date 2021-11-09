@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.metamodel.map.descriptor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,10 +17,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
-import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
+import org.eclipse.basyx.aas.metamodel.map.parts.GlobalAssetId;
+import org.eclipse.basyx.aas.metamodel.map.parts.SpecificAssetId;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
@@ -34,7 +35,8 @@ import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
  */
 public class AASDescriptor extends ModelDescriptor {
 	public static final String MODELTYPE = "AssetAdministrationShellDescriptor";
-	public static final String ASSET = "asset";
+	public static final String GLOBAL_ASSET_ID = "globalAssetId";
+	public static final String SPECIFIC_ASSET_IDS = "specificAssetId";
 
 	/**
 	 * Create descriptor from existing hash map
@@ -59,17 +61,21 @@ public class AASDescriptor extends ModelDescriptor {
 	 * @param endpoint
 	 */
 	public AASDescriptor(IAssetAdministrationShell assetAdministrationShell, Endpoint endpoint) {
-		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), assetAdministrationShell.getAsset(), endpoint);
+		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), endpoint);
 	}
 
 	/**
-	 * Create a new descriptor with aasid, idshort , assetid, and endpoint
+	 * Create a new descriptor with shellId, idShort, globalAssetId,
+	 * specificAssetId, and endpoint
 	 */
-	public AASDescriptor(String idShort, IIdentifier aasid, IAsset asset, Endpoint endpoint) {
+	public AASDescriptor(String idShort, IIdentifier aasid, GlobalAssetId globalAssetId, SpecificAssetId specificAssetIds, Endpoint endpoint) {
 		super(idShort, aasid, endpoint);
 
-		// Set Asset
-		put(ASSET, asset);
+		// Set Global Asset Id
+		put(GLOBAL_ASSET_ID, globalAssetId);
+
+		// Set Specific Asset Ids
+		put(SPECIFIC_ASSET_IDS, specificAssetIds);
 
 		// Set Submodels
 		put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
@@ -195,15 +201,6 @@ public class AASDescriptor extends ModelDescriptor {
 		return MODELTYPE;
 	}
 
-	/**
-	 * Get asset
-	 */
-	@SuppressWarnings("unchecked")
-	public IAsset getAsset() {
-		Map<String, Object> assetModel = (Map<String, Object>) get(ASSET);
-		return Asset.createAsFacade(assetModel);
-	}
-
 	@Override
 	public void validate(Map<String, Object> map) {
 		super.validate(map);
@@ -212,5 +209,25 @@ public class AASDescriptor extends ModelDescriptor {
 		} else if (map.containsKey(AssetAdministrationShell.SUBMODELS) && !(map.get(AssetAdministrationShell.SUBMODELS) instanceof Collection<?>)) {
 			throw new MalformedRequestException("Passed entry for " + AssetAdministrationShell.SUBMODELS + " is not a list of submodelDescriptors!");
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public Collection<SpecificAssetId> getSpecificAssetIds() {
+		Object specificAssetIds = get(SPECIFIC_ASSET_IDS);
+		if (specificAssetIds instanceof Collection<?>) {
+			Collection<SpecificAssetId> ret = new ArrayList<SpecificAssetId>();
+			for (Map<String, Object> specificAssetIdsMap : (Collection<Map<String, Object>>) specificAssetIds) {
+				ret.add(SpecificAssetId.createAsFacade(specificAssetIdsMap));
+			}
+			return ret;
+		} else {
+			return new ArrayList<>();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public GlobalAssetId getGlobalAssetId() {
+		Object globalAssetIdMap = get(GLOBAL_ASSET_ID);
+		return GlobalAssetId.createAsFacade((Map<String, Object>) globalAssetIdMap);
 	}
 }

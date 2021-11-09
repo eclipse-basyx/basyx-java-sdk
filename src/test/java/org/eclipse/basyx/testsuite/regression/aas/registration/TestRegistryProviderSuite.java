@@ -12,6 +12,7 @@ package org.eclipse.basyx.testsuite.regression.aas.registration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -20,6 +21,8 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
+import org.eclipse.basyx.aas.metamodel.map.parts.GlobalAssetId;
+import org.eclipse.basyx.aas.metamodel.map.parts.SpecificAssetId;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -47,6 +50,10 @@ public abstract class TestRegistryProviderSuite {
 	protected String shellIdShort2 = "shellIdShort2";
 	protected String shellEndpoint1 = "http://www.registrytest.de/aas01/shell";
 	protected String shellEndpoint2 = "http://www.registrytest.de/aas02/shell";
+	protected GlobalAssetId globalAssetId1 = new GlobalAssetId();
+	protected GlobalAssetId globalAssetId2 = new GlobalAssetId();
+	protected SpecificAssetId specificAssetIds1 = new SpecificAssetId();
+	protected SpecificAssetId specificAssetIds2 = new SpecificAssetId();
 
 	protected IIdentifier submodelIdentifier1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:statusSM#001");
 	protected IIdentifier submodelIdentifier2 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:testSM#001");
@@ -72,9 +79,9 @@ public abstract class TestRegistryProviderSuite {
 		SubmodelDescriptor submodelDescriptor1 = new SubmodelDescriptor(submodelIdShort1, submodelIdentifier1, new Endpoint(submodelEndpoint1));
 		SubmodelDescriptor submodelDescriptor2 = new SubmodelDescriptor(submodelIdShort2, submodelIdentifier2, new Endpoint(submodelEndpoint2));
 
-		AASDescriptor shellDescriptor1 = new AASDescriptor(shellIdShort1, shellIdentifier1, new Endpoint(shellEndpoint1));
+		AASDescriptor shellDescriptor1 = new AASDescriptor(shellIdShort1, shellIdentifier1, globalAssetId1, specificAssetIds1, new Endpoint(shellEndpoint1));
 		shellDescriptor1.addSubmodelDescriptor(submodelDescriptor1);
-		AASDescriptor shellDescriptor2 = new AASDescriptor(shellIdShort2, shellIdentifier2, new Endpoint(shellEndpoint2));
+		AASDescriptor shellDescriptor2 = new AASDescriptor(shellIdShort2, shellIdentifier2, globalAssetId2, specificAssetIds2, new Endpoint(shellEndpoint2));
 
 		proxy.register(shellDescriptor1);
 		proxy.register(shellDescriptor2);
@@ -329,7 +336,7 @@ public abstract class TestRegistryProviderSuite {
 	 */
 	@Test
 	public void testOverwritingShellDescriptor() {
-		AASDescriptor shellDescriptor2 = new AASDescriptor(shellIdShort2, shellIdentifier2, new Endpoint(shellEndpoint1));
+		AASDescriptor shellDescriptor2 = new AASDescriptor(shellIdShort2, shellIdentifier2, globalAssetId2, specificAssetIds2, new Endpoint(shellEndpoint1));
 		proxy.updateShell(shellDescriptor2.getIdentifier(), shellDescriptor2);
 		AASDescriptor retrieved = proxy.lookupShell(shellIdentifier2);
 		assertEquals(shellDescriptor2.getFirstEndpoint(), retrieved.getFirstEndpoint());
@@ -413,5 +420,23 @@ public abstract class TestRegistryProviderSuite {
 		aasDesc = proxy.lookupShell(shellIdentifier1);
 		assertNotNull(aasDesc.getSubmodelDescriptorFromIdShort(submodelIdShort1));
 		assertNull(aasDesc.getSubmodelDescriptorFromIdShort(submodelIdShort2));
+	}
+
+	/**
+	 * Test for correct specificAssetIds. specificAssetIds is currently an empty map
+	 */
+	@Test
+	public void testSpecificAssetIds() {
+		AASDescriptor descriptor = proxy.lookupShell(shellIdentifier1);
+		assertTrue(descriptor.getSpecificAssetIds().isEmpty());
+	}
+
+	/**
+	 * Test for correct globalAssetId. globalAssetId is currently empty
+	 */
+	@Test
+	public void testGlobalAssetId() {
+		AASDescriptor descriptor = proxy.lookupShell(shellIdentifier1);
+		assertTrue(descriptor.getGlobalAssetId().isEmpty());
 	}
 }
