@@ -11,7 +11,7 @@ package org.eclipse.basyx.aas.bundle;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
+import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**

@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package org.eclipse.basyx.aas.metamodel.map.endpoint;
+package org.eclipse.basyx.aas.metamodel.map.parts;
 
 import java.util.Map;
 

@@ -37,7 +37,8 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	 * Constructor that takes a reference to a map as a base for the registry
 	 * entries
 	 *
-	 * @param rootMap
+	 * @param shellRootMap
+	 * @param submodelRootMap
 	 * @param tagMap
 	 */
 	public MapTaggedDirectory(Map<String, AASDescriptor> shellRootMap, Map<String, SubmodelDescriptor> submodelRootMap, Map<String, Set<TaggedAASDescriptor>> tagMap) {

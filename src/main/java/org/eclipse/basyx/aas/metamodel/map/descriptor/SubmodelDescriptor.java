@@ -11,7 +11,7 @@ package org.eclipse.basyx.aas.metamodel.map.descriptor;
 
 import java.util.Map;
 
-import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
+import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IHasSemantics;

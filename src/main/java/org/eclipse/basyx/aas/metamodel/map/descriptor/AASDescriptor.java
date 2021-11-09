@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
+import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
 import org.eclipse.basyx.aas.metamodel.map.parts.GlobalAssetId;
 import org.eclipse.basyx.aas.metamodel.map.parts.SpecificAssetId;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;

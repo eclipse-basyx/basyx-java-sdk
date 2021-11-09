@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
+import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
 import org.junit.Test;
 
 /**
