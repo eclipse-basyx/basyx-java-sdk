@@ -31,9 +31,10 @@ public class MqttEventService {
 
 	// List of topics
 	public static final String TOPIC_REGISTERAAS = "BaSyxRegistry_registeredAAS";
-	public static final String TOPIC_UPDATEAAS = "BaSyxRegistry_updatedAAS";
+	public static final String TOPIC_UPDATEAAS = "BaSyxRegistry_updatedShell";
 	public static final String TOPIC_REGISTERSUBMODEL = "BaSyxRegistry_registeredSubmodel";
-	public static final String TOPIC_DELETEAAS = "BaSyxRegistry_deletedAAS";
+	public static final String TOPIC_UPDATESUBMODEL = "BaSyxRegistry_updatedSubmodel";
+	public static final String TOPIC_DELETEAAS = "BaSyxRegistry_deletedShell";
 	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
 
 	private static Logger logger = LoggerFactory.getLogger(MqttEventService.class);

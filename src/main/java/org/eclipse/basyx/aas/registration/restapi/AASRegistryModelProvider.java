@@ -89,11 +89,11 @@ public class AASRegistryModelProvider implements IModelProvider {
 	 * Makes sure, that given Object is an AASDescriptor by checking its ModelType.
 	 *
 	 * @param value
-	 *            the AAS Map object
-	 * @return an AAS
+	 *            the Shell Map object
+	 * @return an AASDescriptor
 	 * @throws MalformedRequestException
 	 */
-	private AASDescriptor createAASDescriptorFromMap(Object value) throws MalformedRequestException {
+	private AASDescriptor createShellDescriptorFromMap(Object value) throws MalformedRequestException {
 		Map<String, Object> map = checkModelType(AASDescriptor.MODELTYPE, value);
 		return new AASDescriptor(map);
 	}
@@ -104,8 +104,8 @@ public class AASRegistryModelProvider implements IModelProvider {
 	 * ModelType.
 	 *
 	 * @param value
-	 *            the AAS Map object
-	 * @return an AAS
+	 *            the Submodel Map object
+	 * @return a SubmodelDescriptor
 	 * @throws MalformedRequestException
 	 */
 	private SubmodelDescriptor createSubmodelDescriptorFromMap(Object value) throws MalformedRequestException {
@@ -117,64 +117,84 @@ public class AASRegistryModelProvider implements IModelProvider {
 	public Object getValue(String path) throws ProviderException {
 		BaSyxRegistryPath registryPath = preparePath(path);
 
-		if (registryPath.isAllAASDescriptorsPath()) {
-			return getAllAASDescriptors();
-		} else if (registryPath.isSingleAASDescriptorPath()) {
-			return getSingleAASDescriptor(registryPath.getFirstDescriptorId());
-		} else if (registryPath.isSingleAASDescriptorAllSubmodelDescriptorsPath()) {
-			return getAllSubmodelDescriptorsForAASDescriptor(registryPath.getFirstDescriptorId());
+		if (registryPath.isAllShellDescriptorsPath()) {
+			return getAllShellDescriptors();
+		} else if (registryPath.isSingleShellDescriptorPath()) {
+			return getSingleShellDescriptor(registryPath.getFirstDescriptorId());
+		} else if (registryPath.isSingleShellDescriptorAllSubmodelDescriptorsPath()) {
+			return getAllSubmodelDescriptorsForShellDescriptor(registryPath.getFirstDescriptorId());
+		} else if (registryPath.isAllSubmodelDescriptorsPath()) {
+			return getAllSubmodelDescriptors();
+		} else if (registryPath.isSingleSubmodelDescriptorPath()) {
+			return getSingleSubmodelDescriptor(registryPath.getFirstDescriptorId());
 		} else {
-			return getSingleSubmodelDescriptorForAASDescriptor(registryPath.getFirstDescriptorId(), registryPath.getSecondDescriptorId());
+			return getSingleSubmodelDescriptorForShellDescriptor(registryPath.getFirstDescriptorId(), registryPath.getSecondDescriptorId());
 		}
 	}
 
-	private List<AASDescriptor> getAllAASDescriptors() {
-		return registry.lookupAll();
+	private List<AASDescriptor> getAllShellDescriptors() {
+		return registry.lookupAllShells();
 	}
 
-	private Object getSingleAASDescriptor(String aasIdentifier) {
-		AASDescriptor aasDescriptor = registry.lookupAAS(new ModelUrn(aasIdentifier));
+	private List<SubmodelDescriptor> getAllSubmodelDescriptors() {
+		return registry.lookupAllSubmodels();
+	}
 
-		if (aasDescriptor == null) {
-			throw new ResourceNotFoundException("Specified aasIdentifier '" + aasIdentifier + "' does not exist.");
+	private Object getSingleShellDescriptor(String shellIdentifier) {
+		AASDescriptor shellDescriptor = registry.lookupShell(new ModelUrn(shellIdentifier));
+
+		if (shellDescriptor == null) {
+			throw new ResourceNotFoundException("Specified shellIdentifier '" + shellIdentifier + "' does not exist.");
 		}
 
-		return aasDescriptor;
+		return shellDescriptor;
+	}
+
+	private Object getSingleSubmodelDescriptor(String submodelIdentifier) {
+		SubmodelDescriptor submodelDescriptor = registry.lookupSubmodel(new ModelUrn(submodelIdentifier));
+
+		if (submodelDescriptor == null) {
+			throw new ResourceNotFoundException("Specified submodelIdentifier '" + submodelIdentifier + "' does not exist.");
+		}
+
+		return submodelDescriptor;
 	}
 
 	/**
-	 * Gets all SubmodelDescriptor objects form an aas. Throws
+	 * Gets all SubmodelDescriptor objects form a shell. Throws
 	 * ResourceNotFoundException if AAS does not exist.
 	 *
-	 * @param aasId
-	 *            id of the aas
+	 * @param shellId
+	 *            id of the shell
 	 * @return Set of contained SubmodelDescriptor objects
 	 * @throws ResourceNotFoundException
 	 *             if the AAS does not exist
 	 */
-	private Collection<SubmodelDescriptor> getAllSubmodelDescriptorsForAASDescriptor(String aasId) throws ResourceNotFoundException {
-		ModelUrn aasIdentifier = new ModelUrn(aasId);
-		AASDescriptor aasDescriptor = registry.lookupAAS(aasIdentifier);
+	private Collection<SubmodelDescriptor> getAllSubmodelDescriptorsForShellDescriptor(String shellId) throws ResourceNotFoundException {
+		ModelUrn shellIdentifier = new ModelUrn(shellId);
+		AASDescriptor shellDescriptor = registry.lookupShell(shellIdentifier);
 
-		if (aasDescriptor == null) {
-			throw new ResourceNotFoundException("Specified AASid '" + aasIdentifier.getId() + "' does not exist.");
+		if (shellDescriptor == null) {
+			throw new ResourceNotFoundException("Specified shellId '" + shellIdentifier.getId() + "' does not exist.");
 		}
 
-		return aasDescriptor.getSubmodelDescriptors();
+		return shellDescriptor.getSubmodelDescriptors();
 	}
 
-	private Object getSingleSubmodelDescriptorForAASDescriptor(String aasId, String submodelId) {
-		return getSubmodelDescriptor(new ModelUrn(aasId), submodelId);
+	private Object getSingleSubmodelDescriptorForShellDescriptor(String shellId, String submodelId) {
+		return getSubmodelDescriptor(new ModelUrn(shellId), submodelId);
 	}
 
 	@Override
 	public void setValue(String path, Object newValue) throws ProviderException {
 		BaSyxRegistryPath registryPath = preparePath(path);
 
-		if (registryPath.isSingleAASDescriptorPath()) {
-			updateAASDescriptor(newValue, registryPath.getFirstDescriptorId());
-		} else if (registryPath.isSingleAASDescriptorSingleSubmodelDescriptorPath()) {
-			updateSubmodelDescriptorForAASDescriptor(newValue, registryPath.getFirstDescriptorId());
+		if (registryPath.isSingleShellDescriptorPath()) {
+			updateShellDescriptor(newValue, registryPath.getFirstDescriptorId());
+		} else if (registryPath.isSingleSubmodelDescriptorPath()) {
+			updateSubmodelDescriptor(newValue, registryPath.getFirstDescriptorId());
+		} else if (registryPath.isSingleShellDescriptorSingleSubmodelDescriptorPath()) {
+			updateSubmodelDescriptorForShellDescriptor(newValue, registryPath.getFirstDescriptorId());
 		} else {
 			throw new MalformedRequestException("Unknown path " + path);
 		}
@@ -184,78 +204,110 @@ public class AASRegistryModelProvider implements IModelProvider {
 	public void createValue(String path, Object newValue) throws ProviderException {
 		BaSyxRegistryPath registryPath = preparePath(path);
 
-		if (registryPath.isAllAASDescriptorsPath()) {
-			registerAASDescriptor(newValue);
-		} else if (registryPath.isSingleAASDescriptorAllSubmodelDescriptorsPath()) {
-			registerSubmodelDescriptorForAASDescriptor(newValue, registryPath.getFirstDescriptorId());
+		if (registryPath.isAllShellDescriptorsPath()) {
+			registerShellDescriptor(newValue);
+		} else if (registryPath.isAllSubmodelDescriptorsPath()) {
+			registerSubmodelDescriptor(newValue);
+		} else if (registryPath.isSingleShellDescriptorAllSubmodelDescriptorsPath()) {
+			registerSubmodelDescriptorForShellDescriptor(newValue, registryPath.getFirstDescriptorId());
 		} else {
 			throw new MalformedRequestException("Unknown path " + path);
 		}
 	}
 
-	private void registerAASDescriptor(Object newValue) {
-		AASDescriptor aasDescriptor = createAASDescriptorFromMap(newValue);
+	private void registerShellDescriptor(Object newValue) {
+		AASDescriptor shellDescriptor = createShellDescriptorFromMap(newValue);
 
-		registry.register(aasDescriptor);
+		registry.register(shellDescriptor);
 	}
 
-	private void updateAASDescriptor(Object newValue, String urlId) {
-		AASDescriptor aasDescriptor = createAASDescriptorFromMap(newValue);
+	private void registerSubmodelDescriptor(Object newValue) {
+		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptorFromMap(newValue);
 
-		String aasDescriptorId = aasDescriptor.getIdentifier().getId();
+		registry.register(submodelDescriptor);
+	}
 
-		if (aasDescriptorId.equals(urlId)) {
-			registry.update(aasDescriptor.getIdentifier(), aasDescriptor);
+	private void updateShellDescriptor(Object newValue, String urlId) {
+		AASDescriptor shellDescriptor = createShellDescriptorFromMap(newValue);
+
+		String shellDescriptorId = shellDescriptor.getIdentifier().getId();
+
+		if (shellDescriptorId.equals(urlId)) {
+			registry.updateShell(shellDescriptor.getIdentifier(), shellDescriptor);
 		} else {
-			throw new MalformedRequestException("The AASId " + aasDescriptorId + " in the descriptor does not match the URL with id " + urlId);
+			throw new MalformedRequestException("The shellId " + shellDescriptorId + " in the descriptor does not match the URL with id " + urlId);
 		}
 	}
 
-	private void registerSubmodelDescriptorForAASDescriptor(Object newValue, String aasId) {
-		ModelUrn aasIdentifier = new ModelUrn(aasId);
+	private void updateSubmodelDescriptor(Object newValue, String urlId) {
 		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptorFromMap(newValue);
 
-		registry.register(aasIdentifier, submodelDescriptor);
+		String submodelDescriptorId = submodelDescriptor.getIdentifier().getId();
+
+		if (submodelDescriptorId.equals(urlId)) {
+			registry.updateSubmodel(submodelDescriptor.getIdentifier(), submodelDescriptor);
+		} else {
+			throw new MalformedRequestException("The submodelId " + submodelDescriptorId + " in the descriptor does not match the URL with id " + urlId);
+		}
 	}
 
-	private void updateSubmodelDescriptorForAASDescriptor(Object newValue, String aasId) {
-		ModelUrn aasIdentifier = new ModelUrn(aasId);
+	private void registerSubmodelDescriptorForShellDescriptor(Object newValue, String shellId) {
+		ModelUrn shellIdentifier = new ModelUrn(shellId);
 		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptorFromMap(newValue);
 
-		registry.register(aasIdentifier, submodelDescriptor);
+		registry.registerSubmodelForShell(shellIdentifier, submodelDescriptor);
+	}
+
+	private void updateSubmodelDescriptorForShellDescriptor(Object newValue, String shellId) {
+		ModelUrn shellIdentifier = new ModelUrn(shellId);
+		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptorFromMap(newValue);
+
+		registry.registerSubmodelForShell(shellIdentifier, submodelDescriptor);
 	}
 
 	@Override
 	public void deleteValue(String path) throws ProviderException {
 		BaSyxRegistryPath registryPath = preparePath(path);
 
-		if (registryPath.isAllAASDescriptorsPath() || registryPath.isAllSubmodelDescriptorsPath() || registryPath.isSingleAASDescriptorAllSubmodelDescriptorsPath()) {
+		if (registryPath.isAllShellDescriptorsPath() || registryPath.isAllSubmodelDescriptorsPath() || registryPath.isSingleShellDescriptorAllSubmodelDescriptorsPath()) {
 			throw new MalformedRequestException("Delete with empty path is not supported by registry");
 		}
 
-		if (registryPath.isSingleAASDescriptorSingleSubmodelDescriptorPath()) {
-			deleteSubmodelDescriptorForAASDescriptor(registryPath.getFirstDescriptorId(), registryPath.getSecondDescriptorId());
-		} else if (registryPath.isSingleAASDescriptorPath()) {
-			deleteAASDescriptor(registryPath.getFirstDescriptorId());
+		if (registryPath.isSingleShellDescriptorSingleSubmodelDescriptorPath()) {
+			deleteSubmodelDescriptorForShellDescriptor(registryPath.getFirstDescriptorId(), registryPath.getSecondDescriptorId());
+		} else if (registryPath.isSingleShellDescriptorPath()) {
+			deleteShellDescriptor(registryPath.getFirstDescriptorId());
+		} else if (registryPath.isSingleSubmodelDescriptorPath()) {
+			deleteSubmodelDescriptor(registryPath.getFirstDescriptorId());
 		}
 
 	}
 
-	private void deleteSubmodelDescriptorForAASDescriptor(String aasId, String submodelId) {
-		ModelUrn aasIdentifier = new ModelUrn(aasId);
-		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptor(aasIdentifier, submodelId);
+	private void deleteSubmodelDescriptorForShellDescriptor(String shellId, String submodelId) {
+		ModelUrn shellIdentifier = new ModelUrn(shellId);
+		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptor(shellIdentifier, submodelId);
 
-		registry.delete(aasIdentifier, submodelDescriptor.getIdentifier());
+		registry.deleteSubmodelFromShell(shellIdentifier, submodelDescriptor.getIdentifier());
 	}
 
-	private void deleteAASDescriptor(String aasIdentifier) {
-		ModelUrn aasId = new ModelUrn(aasIdentifier);
+	private void deleteShellDescriptor(String shellIdentifier) {
+		ModelUrn shellId = new ModelUrn(shellIdentifier);
 
-		if (registry.lookupAAS(aasId) == null) {
-			throw new ResourceNotFoundException("AAS '" + aasId + "' to be deleted does not exist.");
+		if (registry.lookupShell(shellId) == null) {
+			throw new ResourceNotFoundException("Shell '" + shellId + "' to be deleted does not exist.");
 		}
 
-		registry.delete(aasId);
+		registry.deleteShell(shellId);
+	}
+
+	private void deleteSubmodelDescriptor(String submodelIdentifier) {
+		ModelUrn submodelId = new ModelUrn(submodelIdentifier);
+
+		if (registry.lookupSubmodel(submodelId) == null) {
+			throw new ResourceNotFoundException("Submodel '" + submodelId + "' to be deleted does not exist.");
+		}
+
+		registry.deleteSubmodel(submodelId);
 	}
 
 	@Override
@@ -272,25 +324,25 @@ public class AASRegistryModelProvider implements IModelProvider {
 	 * Gets a specific SubmodelDescriptor form an aas. Throws
 	 * ResourceNotFoundException if aas does not exist.
 	 *
-	 * @param aasId
-	 *            id of the aas
+	 * @param shellIdentifier
+	 *            id of the shell
 	 * @param submodelId
 	 *            id of the submodel
 	 * @return the SubmodelDescriptor with the given id
 	 * @throws ResourceNotFoundException
 	 *             if aasId does not exist
 	 */
-	private SubmodelDescriptor getSubmodelDescriptor(IIdentifier aasId, String submodelId) throws ResourceNotFoundException {
-		AASDescriptor aasDescriptor = registry.lookupAAS(aasId);
+	private SubmodelDescriptor getSubmodelDescriptor(IIdentifier shellIdentifier, String submodelId) throws ResourceNotFoundException {
+		AASDescriptor shellDescriptor = registry.lookupShell(shellIdentifier);
 
-		if (aasDescriptor == null) {
-			throw new ResourceNotFoundException("Specified AASId '" + aasId.getId() + "' does not exist.");
+		if (shellDescriptor == null) {
+			throw new ResourceNotFoundException("Specified shellId '" + shellIdentifier.getId() + "' does not exist.");
 		}
 
-		SubmodelDescriptor submodelDescriptor = aasDescriptor.getSubmodelDescriptorFromIdentifierId(submodelId);
+		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifierId(submodelId);
 
 		if (submodelDescriptor == null) {
-			throw new ResourceNotFoundException("Specified SubmodelId '" + submodelId + "' for AAS '" + aasId.getId() + "' does not exist.");
+			throw new ResourceNotFoundException("Specified SubmodelId '" + submodelId + "' for Shell '" + shellIdentifier.getId() + "' does not exist.");
 		}
 
 		return submodelDescriptor;

@@ -91,7 +91,7 @@ public abstract class TestMqttAASRegistrySuit {
 		Submodel submodel = new Submodel(SUBMODELID, SUBMODELIDENTIFIER);
 		String submodelEndpoint = AASENDPOINT + "/submodels/" + SUBMODELID + "/submodel";
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
-		proxyAPI.register(AASIDENTIFIER, submodelDescriptor);
+		proxyAPI.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
 		listener = new MqttTestListener();
 		mqttBroker.addInterceptHandler(listener);
@@ -105,7 +105,7 @@ public abstract class TestMqttAASRegistrySuit {
 
 	private void deleteAASFromRegistryIfExisting() {
 		try {
-			proxyAPI.delete(AASIDENTIFIER);
+			proxyAPI.deleteShell(AASIDENTIFIER);
 		} catch (ProviderException e) {
 		}
 	}
@@ -132,7 +132,7 @@ public abstract class TestMqttAASRegistrySuit {
 		String submodelEndpoint = AASENDPOINT + "/submodels/" + submodelid + "/submodel";
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
 
-		proxyAPI.register(AASIDENTIFIER, submodelDescriptor);
+		proxyAPI.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
 		assertEquals(MqttEventService.concatAasSmId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
 		assertEquals(MqttEventService.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
@@ -140,7 +140,7 @@ public abstract class TestMqttAASRegistrySuit {
 
 	@Test
 	public void testDeleteAAS() {
-		proxyAPI.delete(AASIDENTIFIER);
+		proxyAPI.deleteShell(AASIDENTIFIER);
 
 		assertEquals(AASID, listener.lastPayload);
 		assertEquals(MqttEventService.TOPIC_DELETEAAS, listener.lastTopic);
@@ -148,7 +148,7 @@ public abstract class TestMqttAASRegistrySuit {
 
 	@Test
 	public void testDeleteSubmodel() {
-		proxyAPI.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);
+		proxyAPI.deleteSubmodelFromShell(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
 		assertEquals(MqttEventService.concatAasSmId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
 		assertEquals(MqttEventService.TOPIC_DELETESUBMODEL, listener.lastTopic);

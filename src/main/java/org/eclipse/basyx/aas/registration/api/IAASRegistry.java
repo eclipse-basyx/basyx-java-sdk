@@ -23,23 +23,13 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  *
  */
 public interface IAASRegistry {
-
 	/**
-	 * Registers an AASDescriptor in the registry, if not already existing.
+	 * Registers a ShellDescriptor in the registry, if not already existing.
 	 *
-	 * @param aasDescriptor
+	 * @param shellDescriptor
 	 * @throws ProviderException
 	 */
-	public void register(AASDescriptor aasDescriptor) throws ProviderException;
-
-	/**
-	 * Updates the AASDescriptor in the registry with the given identifier.
-	 *
-	 * @param aasIdentifier
-	 * @param aasDescriptor
-	 * @throws ProviderException
-	 */
-	public void update(IIdentifier aasIdentifier, AASDescriptor aasDescriptor) throws ProviderException;
+	public void register(AASDescriptor shellDescriptor) throws ProviderException;
 
 	/**
 	 * Registers a SubmodelDescriptor in the registry, if not already existing.
@@ -47,70 +37,122 @@ public interface IAASRegistry {
 	 * @param submodelDescriptor
 	 * @throws ProviderException
 	 */
-	// public void register(SubmodelDescriptor submodelDescriptor) throws
-	// ProviderException;
+	public void register(SubmodelDescriptor submodelDescriptor) throws ProviderException;
 
 	/**
-	 * Registers a SubmodelDescriptor in the registry with the given identifier.
+	 * Registers a SubmodelDescriptor in the registry for the shell with the given
+	 * identifier.
 	 *
-	 * @param aasIdentifier
+	 * @param shellIdentifier
 	 * @param submodelDescriptor
 	 * @throws ProviderException
 	 */
-	public void register(IIdentifier aasIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException;
+	public void registerSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException;
 
 	/**
-	 * Deletes the AASDescriptor from the registry with the given identifier.
+	 * Updates the ShellDescriptor in the registry with the given identifier.
 	 *
-	 * @param aasIdentifier
+	 * @param shellIdentifier
+	 * @param shellDescriptor
 	 * @throws ProviderException
 	 */
-	public void delete(IIdentifier aasIdentifier) throws ProviderException;
+	public void updateShell(IIdentifier shellIdentifier, AASDescriptor shellDescriptor) throws ProviderException;
+
+	/**
+	 * Updates the SubmodelDescriptor in the registry with the given identifier.
+	 *
+	 * @param submodelIdentifier
+	 * @param submodelDescriptor
+	 * @throws ProviderException
+	 */
+	public void updateSubmodel(IIdentifier submodelIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException;
+
+	/**
+	 * Updates the SubmodelDescriptor in the registry for the shell with the given
+	 * identifier.
+	 *
+	 * @param shellIdentifier
+	 * @param submodelDescriptor
+	 * @throws ProviderException
+	 */
+	public void updateSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException;
+
+	/**
+	 * Deletes the ShellDescriptor from the registry with the given identifier.
+	 *
+	 * @param shellIdentifier
+	 * @throws ProviderException
+	 */
+	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException;
 
 	/**
 	 * Deletes the SubmodelDescriptor from the registry with the given identifier.
 	 *
-	 * @param aasIdentifier
 	 * @param submodelIdentifier
 	 * @throws ProviderException
 	 */
-	public void delete(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException;
+	public void deleteSubmodel(IIdentifier submodelIdentifier) throws ProviderException;
 
 	/**
-	 * Looks up the AASDescriptor for the given aasIdentifier.
+	 * Deletes the SubmodelDescriptor from the registry with the given identifier.
 	 *
-	 * @param aasIdentifier
+	 * @param shellIdentifier
+	 * @param submodelIdentifier
+	 * @throws ProviderException
+	 */
+	public void deleteSubmodelFromShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException;
+
+	/**
+	 * Looks up the ShellDescriptor for the given aasIdentifier.
+	 *
+	 * @param shellIdentifier
 	 * @return AASDescriptor with the given aasIdentifier
 	 * @throws ProviderException
 	 */
-	public AASDescriptor lookupAAS(IIdentifier aasIdentifier) throws ProviderException;
+	public AASDescriptor lookupShell(IIdentifier shellIdentifier) throws ProviderException;
 
 	/**
-	 * Retrieves all registered AASDescriptors.
+	 * Retrieves all registered ShellDescriptors.
 	 *
-	 * @return List of all registered AASDescriptors
+	 * @return List of all registered ShellDescriptors
 	 * @throws ProviderException
 	 */
-	public List<AASDescriptor> lookupAll() throws ProviderException;
+	public List<AASDescriptor> lookupAllShells() throws ProviderException;
 
 	/**
-	 * Retrieves all SubmodelDescriptors for the AAS with the given aasIdentifier.
+	 * Retrieves the SubmodelDescriptor for the given submodelIdentifier.
 	 *
-	 * @param aasIdentifier
-	 * @return the list of all SubmodelDescriptors part of the given AAS
-	 * @throws ProviderException
-	 */
-	public List<SubmodelDescriptor> lookupSubmodels(IIdentifier aasIdentifier) throws ProviderException;
-
-	/**
-	 * Retrieves the SubmodelDescriptor with the given submodelIdentifier that is
-	 * part of the AAS with the given aasIdentifier.
-	 *
-	 * @param aasIdentifier
 	 * @param submodelIdentifier
 	 * @return the SubmodelDescriptor
 	 * @throws ProviderException
 	 */
-	public SubmodelDescriptor lookupSubmodel(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException;
+	public SubmodelDescriptor lookupSubmodel(IIdentifier submodelIdentifier) throws ProviderException;
 
+	/**
+	 * Retrieves the SubmodelDescriptor for the given submodelIdentifier.
+	 *
+	 * @return List of all registered SubmodelDescriptors
+	 * @throws ProviderException
+	 */
+	public List<SubmodelDescriptor> lookupAllSubmodels() throws ProviderException;
+
+	/**
+	 * Retrieves the SubmodelDescriptor with the given submodelIdentifier that is
+	 * part of the Shell with the given aasIdentifier.
+	 *
+	 * @param shellIdentifier
+	 * @param submodelIdentifier
+	 * @return the SubmodelDescriptor
+	 * @throws ProviderException
+	 */
+	public SubmodelDescriptor lookupSubmodel(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException;
+
+	/**
+	 * Retrieves all SubmodelDescriptors for the Shell with the given aasIdentifier.
+	 *
+	 * @param shellIdentifier
+	 * @return the list of all SubmodelDescriptors part of the given Shell
+	 * @throws ProviderException
+	 */
+	public List<SubmodelDescriptor> lookupAllSubmodelsForShell(IIdentifier shellIdentifier) throws ProviderException;
 }

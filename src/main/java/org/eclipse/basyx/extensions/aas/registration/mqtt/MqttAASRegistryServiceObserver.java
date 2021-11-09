@@ -19,8 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation variant for the AASRegistryServiceObserver that triggers MQTT events for
- * different operations on the registry.
+ * Implementation variant for the AASRegistryServiceObserver that triggers MQTT
+ * events for different operations on the registry.
  *
  * @author haque
  *
@@ -31,8 +31,10 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
 	 *
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId) throws MqttException {
@@ -44,10 +46,14 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer with a
 	 * custom mqtt client persistence
 	 *
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param clientId unique client identifier
-	 * @param mqttPersistence custom mqtt persistence strategy
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param clientId
+	 *            unique client identifier
+	 * @param mqttPersistence
+	 *            custom mqtt persistence strategy
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, MqttClientPersistence mqttPersistence) throws MqttException {
@@ -58,14 +64,17 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
 	 *
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param pw password for authentication with broker
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
-	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw)
-			throws MqttException {
+	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		super(serverEndpoint, clientId, user, pw);
 		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + serverEndpoint);
 	}
@@ -73,7 +82,8 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
 	 *
-	 * @param client already configured client
+	 * @param client
+	 *            already configured client
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryServiceObserver(MqttClient client) throws MqttException {
@@ -82,27 +92,42 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 	}
 
 	@Override
-	public void aasRegistered(String aasId) {
-		sendMqttMessage(TOPIC_REGISTERAAS, aasId);
+	public void shellRegistered(String shellIdentifier) {
+		sendMqttMessage(TOPIC_REGISTERAAS, shellIdentifier);
 	}
 
 	@Override
-	public void aasUpdated(String aasId) {
-		sendMqttMessage(TOPIC_UPDATEAAS, aasId);
+	public void shellUpdated(String shellIdentifier) {
+		sendMqttMessage(TOPIC_UPDATEAAS, shellIdentifier);
 	}
 
 	@Override
-	public void submodelRegistered(IIdentifier aasId, IIdentifier smId) {
-		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(aasId, smId));
+	public void submodelUpdated(String submodelIdentifier) {
+		sendMqttMessage(TOPIC_UPDATESUBMODEL, submodelIdentifier);
 	}
 
 	@Override
-	public void aasDeleted(String aasId) {
-		sendMqttMessage(TOPIC_DELETEAAS, aasId);
+	public void submodelRegistered(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
+		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(shellIdentifier, submodelIdentifier));
 	}
 
 	@Override
-	public void submodelDeleted(IIdentifier aasId, IIdentifier smId) {
-		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(aasId, smId));
+	public void submodelUpdated(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
+		sendMqttMessage(TOPIC_UPDATESUBMODEL, concatAasSmId(shellIdentifier, submodelIdentifier));
+	}
+
+	@Override
+	public void shellDeleted(String shellId) {
+		sendMqttMessage(TOPIC_DELETEAAS, shellId);
+	}
+
+	@Override
+	public void shellSubmodelDeleted(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
+		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(shellIdentifier, submodelIdentifier));
+	}
+
+	@Override
+	public void submodelDeleted(IIdentifier submodelIdentifier) {
+		sendMqttMessage(TOPIC_DELETEAAS, submodelIdentifier.getId());
 	}
 }

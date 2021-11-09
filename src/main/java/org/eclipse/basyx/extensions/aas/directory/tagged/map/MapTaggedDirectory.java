@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.map;
@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.memory.AASRegistry;
 import org.eclipse.basyx.aas.registration.memory.MapRegistryHandler;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
@@ -25,7 +26,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 /**
  * Map implementation of a tagged directory. It extends {@link AASRegistry} by
  * additionally managing a map of tags
- * 
+ *
  * @author schnicke
  *
  */
@@ -35,20 +36,20 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	/**
 	 * Constructor that takes a reference to a map as a base for the registry
 	 * entries
-	 * 
+	 *
 	 * @param rootMap
 	 * @param tagMap
 	 */
-	public MapTaggedDirectory(Map<String, AASDescriptor> rootMap, Map<String, Set<TaggedAASDescriptor>> tagMap) {
-		super(new MapRegistryHandler(rootMap));
+	public MapTaggedDirectory(Map<String, AASDescriptor> shellRootMap, Map<String, SubmodelDescriptor> submodelRootMap, Map<String, Set<TaggedAASDescriptor>> tagMap) {
+		super(new MapRegistryHandler(shellRootMap, submodelRootMap));
 		this.tagMap = tagMap;
 	}
 
 	@Override
-	public void register(TaggedAASDescriptor descriptor) {
+	public void register(TaggedAASDescriptor taggedShellDescriptor) {
 		// Let MapRegistry take care of the registry part and only manage the tags
-		super.register(descriptor);
-		addTags(descriptor.getTags(), descriptor);
+		super.register(taggedShellDescriptor);
+		addTags(taggedShellDescriptor.getTags(), taggedShellDescriptor);
 	}
 
 	@Override
@@ -79,26 +80,26 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	}
 
 	@Override
-	public void delete(IIdentifier aasIdentifier) {
+	public void deleteShell(IIdentifier shellIdentifier) {
 		// Let MapRegistry take care of the registry part and only manage the tags
-		AASDescriptor desc = super.lookupAAS(aasIdentifier);
-		super.delete(aasIdentifier);
+		AASDescriptor desc = super.lookupShell(shellIdentifier);
+		super.deleteShell(shellIdentifier);
 
 		if (desc instanceof TaggedAASDescriptor) {
 			((TaggedAASDescriptor) desc).getTags().stream().forEach(t -> tagMap.get(t).remove(desc));
 		}
 	}
 
-	private void addTags(Set<String> tags, TaggedAASDescriptor descriptor) {
-		tags.stream().forEach(t -> addTag(t, descriptor));
+	private void addTags(Set<String> tags, TaggedAASDescriptor taggedShellDescriptor) {
+		tags.stream().forEach(t -> addTag(t, taggedShellDescriptor));
 	}
 
-	private synchronized void addTag(String tag, TaggedAASDescriptor descriptor) {
+	private synchronized void addTag(String tag, TaggedAASDescriptor taggedShellDescriptor) {
 		if (!tagMap.containsKey(tag)) {
 			tagMap.put(tag, new HashSet<>());
 		}
 
-		tagMap.get(tag).add(descriptor);
+		tagMap.get(tag).add(taggedShellDescriptor);
 	}
 
 }

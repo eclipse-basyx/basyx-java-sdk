@@ -16,19 +16,15 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.endpoint.Endpoint;
-import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
-import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
-import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.junit.After;
@@ -39,30 +35,28 @@ import org.junit.Test;
  * Integration test for a registry. All registry provider implementations have
  * to pass these tests.
  *
- * @author espen
+ * @author espen, fischer
  *
  */
 public abstract class TestRegistryProviderSuite {
-	// The registry proxy that is used to access the sql servlet
 	protected final IAASRegistry proxy = getRegistryService();
 
-	// Ids, shortIds and endpoints for registered AAS and submodel
-	protected IIdentifier aasId1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:registryAAS#001");
-	protected IIdentifier aasId2 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:registryAAS#002");
-	protected IIdentifier aasId3 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:registryAAS#003");
-	protected IIdentifier smId1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:statusSM#001");
-	protected IIdentifier smId2 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:testSM#001");
-	protected String aasIdShort1 = "aasIdShort1";
-	protected String aasIdShort2 = "aasIdShort2";
-	protected String aasIdShort3 = "aasIdShort3";
-	protected String smIdShort1 = "smIdShort1";
-	protected String smIdShort2 = "smIdShort2";
-	protected String aasEndpoint1 = "http://www.registrytest.de/aas01/aas";
-	protected String aasEndpoint2 = "http://www.registrytest.de/aas02/aas";
-	protected String smEndpoint1 = "http://www.registrytest.de/aas01/aas/submodels/" + smIdShort1 + "/submodel";
-	protected String smEndpoint2 = "http://www.registrytest.de/aas01/aas/submodels/" + smIdShort2 + "/submodel";
-	protected Asset asset1;
-	protected Asset asset2;
+	protected IIdentifier shellIdentifier1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:registryAAS#001");
+	protected IIdentifier shellIdentifier2 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:registryAAS#002");
+	protected String shellIdShort1 = "shellIdShort1";
+	protected String shellIdShort2 = "shellIdShort2";
+	protected String shellEndpoint1 = "http://www.registrytest.de/aas01/shell";
+	protected String shellEndpoint2 = "http://www.registrytest.de/aas02/shell";
+
+	protected IIdentifier submodelIdentifier1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:statusSM#001");
+	protected IIdentifier submodelIdentifier2 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:testSM#001");
+	protected String submodelIdShort1 = "submodelIdShort1";
+	protected String submodelIdShort2 = "submodelIdShort2";
+	protected String submodelEndpoint1 = "http://www.registrytest.de/aas01/aas/submodels/" + submodelIdShort1 + "/submodel";
+	protected String submodelEndpoint2 = "http://www.registrytest.de/aas01/aas/submodels/" + submodelIdShort2 + "/submodel";
+
+	protected IIdentifier identifier3 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:identifier#003");
+	protected String idShort3 = "idShort3";
 
 	/**
 	 * Getter for the tested registry provider. Tests for actual registry provider
@@ -75,21 +69,17 @@ public abstract class TestRegistryProviderSuite {
 	 */
 	@Before
 	public void setUp() {
-		// Create assets
-		asset1 = new Asset(new Reference(new Identifier(IdentifierType.CUSTOM, "asset001"), KeyElements.ASSET, false));
-		asset1.setIdentification(IdentifierType.CUSTOM, "asset001");
-		asset1.setIdShort("asset001");
-		asset2 = new Asset(new Reference(new Identifier(IdentifierType.CUSTOM, "asset002"), KeyElements.ASSET, false));
-		asset2.setIdentification(IdentifierType.CUSTOM, "asset002");
-		asset2.setIdShort("asset002");
-		// Create descriptors for AAS and submodels
-		AASDescriptor aasDesc1 = new AASDescriptor(aasIdShort1, aasId1, asset1, new Endpoint(aasEndpoint1));
-		aasDesc1.addSubmodelDescriptor(new SubmodelDescriptor(smIdShort1, smId1, new Endpoint(smEndpoint1)));
-		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, new Endpoint(aasEndpoint2));
+		SubmodelDescriptor submodelDescriptor1 = new SubmodelDescriptor(submodelIdShort1, submodelIdentifier1, new Endpoint(submodelEndpoint1));
+		SubmodelDescriptor submodelDescriptor2 = new SubmodelDescriptor(submodelIdShort2, submodelIdentifier2, new Endpoint(submodelEndpoint2));
 
-		// Register Asset Administration Shells
-		proxy.register(aasDesc1);
-		proxy.register(aasDesc2);
+		AASDescriptor shellDescriptor1 = new AASDescriptor(shellIdShort1, shellIdentifier1, new Endpoint(shellEndpoint1));
+		shellDescriptor1.addSubmodelDescriptor(submodelDescriptor1);
+		AASDescriptor shellDescriptor2 = new AASDescriptor(shellIdShort2, shellIdentifier2, new Endpoint(shellEndpoint2));
+
+		proxy.register(shellDescriptor1);
+		proxy.register(shellDescriptor2);
+		proxy.register(submodelDescriptor1);
+		proxy.register(submodelDescriptor2);
 	}
 
 	/**
@@ -98,143 +88,161 @@ public abstract class TestRegistryProviderSuite {
 	@After
 	public void tearDown() {
 		try {
-			proxy.delete(aasId1);
+			proxy.deleteShell(shellIdentifier1);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
 		try {
-			proxy.delete(aasId2);
+			proxy.deleteShell(shellIdentifier2);
+		} catch (ResourceNotFoundException e) {
+			// Does not matter
+		}
+		try {
+			proxy.deleteSubmodel(submodelIdentifier1);
+		} catch (ResourceNotFoundException e) {
+			// Does not matter
+		}
+		try {
+			proxy.deleteSubmodel(submodelIdentifier2);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
 	}
 
 	/**
-	 * Tests getting single entries from the registry and validates the result.
+	 * Tests getting single shell entries from the registry and validates the
+	 * result.
 	 */
 	@Test
-	public void testGetSingleAAS() {
+	public void testGetSingleShell() {
 		// Retrieve and check the first AAS
-		AASDescriptor descriptor = proxy.lookupAAS(aasId1);
-		validateDescriptor1(descriptor);
+		AASDescriptor descriptor = proxy.lookupShell(shellIdentifier1);
+		validateShellDescriptor1(descriptor);
+	}
+
+	/**
+	 * Tests getting single submodel entries from the registry and validates the
+	 * result.
+	 */
+	@Test
+	public void testGetSingleSubmodel() {
+		// Retrieve and check the first Submodel
+		SubmodelDescriptor submodelDescriptor = proxy.lookupSubmodel(submodelIdentifier1);
+		validateSubmodelDescriptor1(submodelDescriptor);
 	}
 
 	/**
 	 * Tests getting all entries from the registry and validates the result.
 	 */
 	@Test
-	public void testGetMultiAAS() {
-		// Get all registered AAS
-		List<AASDescriptor> result = proxy.lookupAll();
+	public void testGetMultipleShell() {
+		// Get all registered Shells
+		List<AASDescriptor> result = proxy.lookupAllShells();
+		// Check, if both shells are registered. Ordering does not matter
+		assertEquals(2, result.size());
+		if (result.get(0).getIdShort().equals(shellIdShort1)) {
+			validateShellDescriptor1(result.get(0));
+			validateShellDescriptor2(result.get(1));
+		} else {
+			validateShellDescriptor2(result.get(0));
+			validateShellDescriptor1(result.get(1));
+		}
+	}
+
+	/**
+	 * Tests getting all entries from the registry and validates the result.
+	 */
+	@Test
+	public void testGetMultipleSubmodel() {
+		// Get all registered submodels
+		List<SubmodelDescriptor> result = proxy.lookupAllSubmodels();
 		// Check, if both AAS are registered. Ordering does not matter
 		assertEquals(2, result.size());
-		if (result.get(0).getIdShort().equals(aasIdShort1)) {
-			validateDescriptor1(result.get(0));
-			validateDescriptor2(result.get(1));
+		if (result.get(0).getIdShort().equals(submodelIdShort1)) {
+			validateSubmodelDescriptor1(result.get(0));
+			validateSubmodelDescriptor2(result.get(1));
 		} else {
-			validateDescriptor2(result.get(0));
-			validateDescriptor1(result.get(1));
+			validateSubmodelDescriptor2(result.get(0));
+			validateSubmodelDescriptor1(result.get(1));
 		}
 	}
 
 	/**
 	 * Checks, if the given descriptor is valid. Should contain the values of the
-	 * first descriptor as given by the test setup
+	 * first shellDescriptor as given by the test setup
 	 */
-	protected void validateDescriptor1(AASDescriptor descriptor) {
-		assertEquals(aasId1.getId(), descriptor.getIdentifier().getId());
-		assertEquals(aasId1.getIdType(), descriptor.getIdentifier().getIdType());
-		IAsset asset = descriptor.getAsset();
-		assertEquals(asset1.getIdentification(), asset.getIdentification());
-		assertEquals(aasEndpoint1, descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
+	protected void validateShellDescriptor1(AASDescriptor shellDescriptor) {
+		assertEquals(shellIdentifier1.getId(), shellDescriptor.getIdentifier().getId());
+		assertEquals(shellIdentifier1.getIdType(), shellDescriptor.getIdentifier().getIdType());
+		assertEquals(shellEndpoint1, shellDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 
 		// Check, if the SM descriptor in the AASDescriptor is correct
-		SubmodelDescriptor smDescriptor = descriptor.getSubmodelDescriptorFromIdentifierId(smId1.getId());
-		assertEquals(smId1.getId(), smDescriptor.getIdentifier().getId());
-		assertEquals(smId1.getIdType(), smDescriptor.getIdentifier().getIdType());
-		assertEquals(smIdShort1, smDescriptor.get(Referable.IDSHORT));
-		assertEquals(smEndpoint1, smDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
+		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifierId(submodelIdentifier1.getId());
+		validateSubmodelDescriptor1(submodelDescriptor);
 	}
 
 	/**
 	 * Checks, if the given descriptor is valid. Should contain the values of the
-	 * second descriptor as given by the test setup
+	 * second shellDescriptor as given by the test setup
 	 */
-	protected void validateDescriptor2(AASDescriptor descriptor) {
-		assertEquals(aasId2.getId(), descriptor.getIdentifier().getId());
-		assertEquals(aasId2.getIdType(), descriptor.getIdentifier().getIdType());
-		IAsset asset = descriptor.getAsset();
-		assertEquals(asset2.getIdentification(), asset.getIdentification());
-		assertEquals(aasEndpoint2, descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
-	}
-
-	@Test
-	public void testDeleteWithAssetExtension() {
-		// After the setup, both AAS should have been inserted to the registry
-		assertNotNull(proxy.lookupAAS(aasId1));
-		assertNotNull(proxy.lookupAAS(aasId2));
-
-		proxy.delete(aasId2);
-
-		// After aas2 has been deleted, only aas1 should be registered
-		assertNotNull(proxy.lookupAAS(asset1.getIdentification()));
-
-		// Reference of asset-id to the AAS descriptor should also to deleted
-		try {
-			proxy.lookupAAS(asset2.getIdentification());
-			fail();
-		} catch (ResourceNotFoundException e) {
-			// expected
-		}
-
-		proxy.delete(aasId1);
-
-		// Reference of both asset-ids to the AAS descriptors should also to deleted
-		try {
-			proxy.lookupAAS(asset1.getIdentification());
-			fail();
-		} catch (ResourceNotFoundException e) {
-			// expected
-		}
-		try {
-			proxy.lookupAAS(asset2.getIdentification());
-			fail();
-		} catch (ResourceNotFoundException e) {
-			// expected
-		}
+	protected void validateShellDescriptor2(AASDescriptor descriptor) {
+		assertEquals(shellIdentifier2.getId(), descriptor.getIdentifier().getId());
+		assertEquals(shellIdentifier2.getIdType(), descriptor.getIdentifier().getIdType());
+		assertEquals(shellEndpoint2, descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 	}
 
 	/**
-	 * Tests deletion for aas entries
+	 * Checks, if the given descriptor is valid. Should contain the values of the
+	 * first submodelDescriptor as given by the test setup
+	 */
+	protected void validateSubmodelDescriptor1(SubmodelDescriptor submodelDescriptor) {
+		assertEquals(submodelIdentifier1.getId(), submodelDescriptor.getIdentifier().getId());
+		assertEquals(submodelIdentifier1.getIdType(), submodelDescriptor.getIdentifier().getIdType());
+		assertEquals(submodelIdShort1, submodelDescriptor.get(Referable.IDSHORT));
+		assertEquals(submodelEndpoint1, submodelDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
+	}
+
+	/**
+	 * Checks, if the given descriptor is valid. Should contain the values of the
+	 * second submodelDescriptor as given by the test setup
+	 */
+	protected void validateSubmodelDescriptor2(SubmodelDescriptor submodelDescriptor) {
+		assertEquals(submodelIdentifier2.getId(), submodelDescriptor.getIdentifier().getId());
+		assertEquals(submodelIdentifier2.getIdType(), submodelDescriptor.getIdentifier().getIdType());
+		assertEquals(submodelIdShort2, submodelDescriptor.get(Referable.IDSHORT));
+		assertEquals(submodelEndpoint2, submodelDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
+	}
+
+	/**
+	 * Tests deletion for shellDescriptors
 	 */
 	@Test
-	public void testDeleteCall() {
-		// After the setup, both AAS should have been inserted to the registry
-		assertNotNull(proxy.lookupAAS(aasId1));
-		assertNotNull(proxy.lookupAAS(aasId2));
+	public void testDeleteShellDescriptors() {
+		assertNotNull(proxy.lookupShell(shellIdentifier1));
+		assertNotNull(proxy.lookupShell(shellIdentifier2));
 
-		proxy.delete(aasId2);
+		proxy.deleteShell(shellIdentifier2);
 
 		// After aas2 has been deleted, only aas1 should be registered
-		assertNotNull(proxy.lookupAAS(aasId1));
+		assertNotNull(proxy.lookupShell(shellIdentifier1));
 		try {
-			proxy.lookupAAS(aasId2);
+			proxy.lookupShell(shellIdentifier2);
 			fail();
 		} catch (ResourceNotFoundException e) {
 			// expected
 		}
 
-		proxy.delete(aasId1);
+		proxy.deleteShell(shellIdentifier1);
 
 		// After aas1 has been deleted, both should not be registered any more
 		try {
-			proxy.lookupAAS(aasId1);
+			proxy.lookupShell(shellIdentifier1);
 			fail();
 		} catch (ResourceNotFoundException e) {
 			// expected
 		}
 		try {
-			proxy.lookupAAS(aasId2);
+			proxy.lookupShell(shellIdentifier2);
 			fail();
 		} catch (ResourceNotFoundException e) {
 			// expected
@@ -242,24 +250,36 @@ public abstract class TestRegistryProviderSuite {
 	}
 
 	/**
-	 * Tests deletion for aas entries
+	 * Tests deletion for submodelDescriptors
 	 */
 	@Test
-	public void testDeleteByAssetIdCall() {
-		proxy.delete(asset1.getIdentification());
+	public void testDeleteSubmodelDescriptors() {
+		assertNotNull(proxy.lookupSubmodel(submodelIdentifier1));
+		assertNotNull(proxy.lookupSubmodel(submodelIdentifier2));
 
-		// After aas1 has been deleted, only aas2 should be registered
-		assertNotNull(proxy.lookupAAS(aasId2));
-		assertNotNull(proxy.lookupAAS(asset2.getIdentification()));
+		proxy.deleteSubmodel(submodelIdentifier2);
+
+		// After aas2 has been deleted, only aas1 should be registered
+		assertNotNull(proxy.lookupSubmodel(submodelIdentifier1));
 		try {
-			proxy.lookupAAS(aasId1);
+			proxy.lookupSubmodel(submodelIdentifier2);
+			System.out.println(proxy.lookupSubmodel(submodelIdentifier2));
 			fail();
 		} catch (ResourceNotFoundException e) {
 			// expected
 		}
 
+		proxy.deleteSubmodel(submodelIdentifier1);
+
+		// After aas1 has been deleted, both should not be registered any more
 		try {
-			proxy.lookupAAS(asset1.getIdentification());
+			proxy.lookupSubmodel(submodelIdentifier1);
+			fail();
+		} catch (ResourceNotFoundException e) {
+			// expected
+		}
+		try {
+			proxy.lookupSubmodel(submodelIdentifier2);
 			fail();
 		} catch (ResourceNotFoundException e) {
 			// expected
@@ -267,92 +287,131 @@ public abstract class TestRegistryProviderSuite {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void testDeleteNotExistingSubmodelFromNotExistingAAS() {
-		proxy.delete(new Identifier(IdentifierType.CUSTOM, "nonExistent"), new Identifier(IdentifierType.CUSTOM, "nonExistentSubmodelId"));
+	public void testGetSingleShellWithSubmodelIdentifier() {
+		proxy.lookupShell(submodelIdentifier1);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void testDeleteNotExistingSubmodel() {
-		proxy.delete(aasId1, new Identifier(IdentifierType.CUSTOM, "nonExistentSubmodelId"));
+	public void testGetSingleSubmodelWithShellIdentifier() {
+		proxy.lookupSubmodel(shellIdentifier1);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void testDeleteNotExistingAAS() {
-		proxy.delete(new Identifier(IdentifierType.CUSTOM, "nonExistent"));
+	public void testDeleteNotExistingSubmodelFromNotExistingShell() {
+		proxy.deleteSubmodelFromShell(new Identifier(IdentifierType.CUSTOM, "nonExistent"), new Identifier(IdentifierType.CUSTOM, "nonExistentSubmodelId"));
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void testDeleteNotExistingSubmodelFromExistingShell() {
+		proxy.deleteSubmodelFromShell(shellIdentifier1, new Identifier(IdentifierType.CUSTOM, "nonExistentSubmodelId"));
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void testDeleteNotExistingShell() {
+		proxy.deleteShell(new Identifier(IdentifierType.CUSTOM, "nonExistent"));
 	}
 
 	@Test
 	public void testRetrieveSubmodelDescriptors() {
-		List<SubmodelDescriptor> descs = proxy.lookupSubmodels(aasId1);
+		List<SubmodelDescriptor> descs = proxy.lookupAllSubmodelsForShell(shellIdentifier1);
 		assertEquals(1, descs.size());
-		assertEquals(smIdShort1, descs.get(0).getIdShort());
+		assertEquals(submodelIdShort1, descs.get(0).getIdShort());
 	}
 
 	@Test
 	public void testRetrieveSpecificSubmodelDescriptor() {
-		SubmodelDescriptor desc = proxy.lookupSubmodel(aasId1, smId1);
-		assertEquals(smIdShort1, desc.getIdShort());
+		SubmodelDescriptor desc = proxy.lookupSubmodel(shellIdentifier1, submodelIdentifier1);
+		assertEquals(submodelIdShort1, desc.getIdShort());
 	}
 
 	/**
-	 * Tests overwriting the descriptor of an AAS
+	 * Tests overwriting the descriptor of a Shell
 	 */
 	@Test
-	public void testOverwritingAASDescriptor() {
-		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, new Endpoint("http://testendpoint2/"));
-		proxy.update(aasDesc2.getIdentifier(), aasDesc2);
-		AASDescriptor retrieved = proxy.lookupAAS(aasId2);
-		assertEquals(aasDesc2.getFirstEndpoint(), retrieved.getFirstEndpoint());
+	public void testOverwritingShellDescriptor() {
+		AASDescriptor shellDescriptor2 = new AASDescriptor(shellIdShort2, shellIdentifier2, new Endpoint(shellEndpoint1));
+		proxy.updateShell(shellDescriptor2.getIdentifier(), shellDescriptor2);
+		AASDescriptor retrieved = proxy.lookupShell(shellIdentifier2);
+		assertEquals(shellDescriptor2.getFirstEndpoint(), retrieved.getFirstEndpoint());
 	}
 
 	/**
-	 * Tests overwriting a not existing descriptor of an AAS
+	 * Tests overwriting the descriptor of a Submodel
+	 */
+	@Test
+	public void testOverwritingSubmodelDescriptor() {
+		SubmodelDescriptor submodelDescriptor2 = new SubmodelDescriptor(submodelIdShort2, submodelIdentifier2, new Endpoint(submodelEndpoint1));
+		proxy.updateSubmodel(submodelDescriptor2.getIdentifier(), submodelDescriptor2);
+		SubmodelDescriptor retrieved = proxy.lookupSubmodel(submodelIdentifier2);
+		assertEquals(submodelDescriptor2.getFirstEndpoint(), retrieved.getFirstEndpoint());
+	}
+
+	/**
+	 * Tests overwriting a not existing descriptor of a Shell
 	 */
 	@Test(expected = ResourceNotFoundException.class)
-	public void testOverwritingNotExistingAASDescriptor() {
-		AASDescriptor aasDesc3 = new AASDescriptor(aasIdShort3, aasId3, asset2, new Endpoint("http://testendpoint2/"));
-		proxy.update(aasDesc3.getIdentifier(), aasDesc3);
+	public void testOverwritingNotExistingShellDescriptor() {
+		AASDescriptor shellDescriptor3 = new AASDescriptor(idShort3, identifier3, new Endpoint("http://testendpoint2/"));
+		proxy.updateShell(shellDescriptor3.getIdentifier(), shellDescriptor3);
 	}
 
 	/**
-	 * Tests creating already existing AAS
+	 * Tests overwriting a not existing descriptor of a Submodel
+	 */
+	@Test(expected = ResourceNotFoundException.class)
+	public void testOverwritingNotExistingSubmodelDescriptor() {
+		SubmodelDescriptor submodelDescriptor3 = new SubmodelDescriptor(idShort3, identifier3, new Endpoint("http://testendpoint2/"));
+		proxy.updateSubmodel(submodelDescriptor3.getIdentifier(), submodelDescriptor3);
+	}
+
+	/**
+	 * Tests creating already existing Shell
 	 */
 	@Test(expected = MalformedRequestException.class)
-	public void testCreateExistingAASDescriptor() {
-		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, new Endpoint("http://testendpoint2/"));
-		proxy.register(aasDesc2);
+	public void testCreateExistingShellDescriptor() {
+		AASDescriptor shellDescriptor2 = new AASDescriptor(shellIdShort2, shellIdentifier2, new Endpoint("http://testendpoint2/"));
+		proxy.register(shellDescriptor2);
+	}
+
+	/**
+	 * Tests creating already existing Submodel
+	 */
+	@Test(expected = MalformedRequestException.class)
+	public void testCreateExistingSubmodelDescriptor() {
+		SubmodelDescriptor submodelDescriptor2 = new SubmodelDescriptor(submodelIdShort2, submodelIdentifier2, new Endpoint("http://testendpoint2/"));
+		proxy.register(submodelDescriptor2);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void testRegisterSubmodelToNotExistingShell() {
+		proxy.registerSubmodelForShell(new Identifier(IdentifierType.CUSTOM, "nonExistent"), new SubmodelDescriptor(submodelIdShort1, submodelIdentifier1, new Endpoint(submodelEndpoint1)));
 	}
 
 	/**
 	 * Tests addition, retrieval and removal of submodels
 	 */
 	@Test
-	public void testSubmodelCalls() {
+	public void testSubmodelAsPartOfShell() {
 		// Add descriptor
-		SubmodelDescriptor smDesc = new SubmodelDescriptor(smIdShort2, smId2, new Endpoint(smEndpoint2));
-		proxy.register(aasId1, smDesc);
+		SubmodelDescriptor smDesc = new SubmodelDescriptor(submodelIdShort2, submodelIdentifier2, new Endpoint(submodelEndpoint2));
+		proxy.registerSubmodelForShell(shellIdentifier1, smDesc);
 
 		// Ensure that the submodel is correctly stored in the aas descriptor
-		AASDescriptor aasDesc = proxy.lookupAAS(aasId1);
-		assertEquals(smDesc, aasDesc.getSubmodelDescriptorFromIdShort(smIdShort2));
+		AASDescriptor aasDesc = proxy.lookupShell(shellIdentifier1);
+		assertEquals(smDesc, aasDesc.getSubmodelDescriptorFromIdShort(submodelIdShort2));
 
 		// Test overwriting an SM descriptor
-		SubmodelDescriptor smDescNew = new SubmodelDescriptor(smIdShort2, smId2, new Endpoint("http://testendpoint2/submodel/"));
-		proxy.register(aasId1, smDescNew);
-		AASDescriptor aasDescNew = proxy.lookupAAS(aasId1);
-		assertEquals(smDescNew.getFirstEndpoint(), aasDescNew.getSubmodelDescriptorFromIdShort(smIdShort2).getFirstEndpoint());
+		SubmodelDescriptor smDescNew = new SubmodelDescriptor(submodelIdShort2, submodelIdentifier2, new Endpoint("http://testendpoint2/submodel/"));
+		proxy.updateSubmodelForShell(shellIdentifier1, smDescNew);
+		AASDescriptor aasDescNew = proxy.lookupShell(shellIdentifier1);
+		assertEquals(smDescNew.getFirstEndpoint(), aasDescNew.getSubmodelDescriptorFromIdShort(submodelIdShort2).getFirstEndpoint());
 
 		// Remove Submodel
-		proxy.delete(aasId1, smId2);
+		proxy.deleteSubmodelFromShell(shellIdentifier1, submodelIdentifier2);
 
 		// Ensure that the submodel was correctly removed
-		aasDesc = proxy.lookupAAS(aasId1);
-		assertNotNull(aasDesc.getSubmodelDescriptorFromIdShort(smIdShort1));
-		assertNull(aasDesc.getSubmodelDescriptorFromIdShort(smIdShort2));
-	}
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void testRegisterSubmodelToNotExistingAAS() {
-		proxy.register(new Identifier(IdentifierType.CUSTOM, "nonExistent"), new SubmodelDescriptor(smIdShort1, smId1, new Endpoint(smEndpoint1)));
+		aasDesc = proxy.lookupShell(shellIdentifier1);
+		assertNotNull(aasDesc.getSubmodelDescriptorFromIdShort(submodelIdShort1));
+		assertNull(aasDesc.getSubmodelDescriptorFromIdShort(submodelIdShort2));
 	}
 }

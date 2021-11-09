@@ -83,7 +83,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	@Override
 	public Map<String, ISubmodel> retrieveSubmodels(IIdentifier aasId) {
-		AASDescriptor aasDesc = aasDirectory.lookupAAS(aasId);
+		AASDescriptor aasDesc = aasDirectory.lookupShell(aasId);
 		Collection<SubmodelDescriptor> smDescriptors = aasDesc.getSubmodelDescriptors();
 		Map<String, ISubmodel> submodels = new HashMap<>();
 		for (SubmodelDescriptor smDesc : smDescriptors) {
@@ -98,7 +98,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	private VABElementProxy getAASProxyFromId(IIdentifier aasId) {
 		// Lookup AAS descriptor
-		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(aasId);
+		AASDescriptor aasDescriptor = aasDirectory.lookupShell(aasId);
 
 		// Get AAS address from AAS descriptor
 		String addr = aasDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
@@ -115,7 +115,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	@Override
 	public void deleteAAS(IIdentifier id) {
 		// Lookup AAS descriptor
-		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(id);
+		AASDescriptor aasDescriptor = aasDirectory.lookupShell(id);
 
 		// Get AAS address from AAS descriptor
 		String addr = aasDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
@@ -128,7 +128,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		proxyFactory.createProxy(addr).deleteValue("");
 
 		// Delete from Registry
-		aasDirectory.delete(id);
+		aasDirectory.deleteShell(id);
 
 		// TODO: How to handle submodels -> Lifecycle needs to be clarified
 	}
@@ -141,14 +141,14 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		retrieveAAS(aasId).addSubmodel(submodel);
 
 		// Lookup AAS descriptor
-		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(aasId);
+		AASDescriptor aasDescriptor = aasDirectory.lookupShell(aasId);
 
 		// Get aas endpoint
 		String addr = aasDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
 
 		// Register the SM
 		String smEndpoint = VABPathTools.concatenatePaths(addr, AssetAdministrationShell.SUBMODELS, submodel.getIdShort(), SubmodelProvider.SUBMODEL);
-		aasDirectory.register(aasId, new SubmodelDescriptor(submodel, new Endpoint(smEndpoint)));
+		aasDirectory.registerSubmodelForShell(aasId, new SubmodelDescriptor(submodel, new Endpoint(smEndpoint)));
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		IAssetAdministrationShell shell = retrieveAAS(aasId);
 		shell.removeSubmodel(submodelId);
 
-		aasDirectory.delete(aasId, submodelId);
+		aasDirectory.deleteSubmodelFromShell(aasId, submodelId);
 	}
 
 	@Override

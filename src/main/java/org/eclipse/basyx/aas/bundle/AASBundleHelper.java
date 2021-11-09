@@ -119,7 +119,7 @@ public class AASBundleHelper {
 				IAssetAdministrationShell aas = bundle.getAAS();
 				
 				try {
-					registry.delete(aas.getIdentification());
+					registry.deleteShell(aas.getIdentification());
 				} catch (ProviderException e) {
 					logger.info("The AAS '" + aas.getIdShort() + "' can't be deregistered. It was not found in registry.");
 					// Just continue if deregistration failed
@@ -127,7 +127,7 @@ public class AASBundleHelper {
 				
 				for(ISubmodel sm: bundle.getSubmodels()) {
 					try {
-						registry.delete(sm.getIdentification());
+						registry.deleteShell(sm.getIdentification());
 					} catch (ProviderException e) {
 						logger.info("The SM '" + sm.getIdShort() + "' can't be deregistered. It was not found in registry.");
 						// Just continue if deregistration failed

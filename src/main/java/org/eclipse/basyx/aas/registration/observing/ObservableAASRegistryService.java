@@ -30,58 +30,93 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  */
 public class ObservableAASRegistryService extends Observable<IAASRegistryServiceObserver> implements IAASRegistry {
 
-	private IAASRegistry aasRegistry;
+	private IAASRegistry registry;
 
 	public ObservableAASRegistryService(IAASRegistry registry) {
-		this.aasRegistry = registry;
+		this.registry = registry;
 	}
 
 	@Override
 	public void register(AASDescriptor aasDescriptor) throws ProviderException {
-		aasRegistry.register(aasDescriptor);
-		observers.stream().forEach(o -> o.aasRegistered(aasDescriptor.getIdentifier().getId()));
+		registry.register(aasDescriptor);
+		observers.stream().forEach(o -> o.shellRegistered(aasDescriptor.getIdentifier().getId()));
 	}
 
 	@Override
-	public void update(IIdentifier aasIdentifier, AASDescriptor aasDescriptor) throws ProviderException {
-		aasRegistry.update(aasIdentifier, aasDescriptor);
-		observers.stream().forEach(o -> o.aasUpdated(aasDescriptor.getIdentifier().getId()));
+	public void register(SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		registry.register(submodelDescriptor);
+		observers.stream().forEach(o -> o.shellRegistered(submodelDescriptor.getIdentifier().getId()));
 	}
 
 	@Override
-	public void register(IIdentifier aasIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
-		aasRegistry.register(aasIdentifier, submodelDescriptor);
+	public void updateShell(IIdentifier aasIdentifier, AASDescriptor aasDescriptor) throws ProviderException {
+		registry.updateShell(aasIdentifier, aasDescriptor);
+		observers.stream().forEach(o -> o.shellUpdated(aasDescriptor.getIdentifier().getId()));
+	}
+
+	@Override
+	public void updateSubmodel(IIdentifier submodelIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		registry.updateSubmodel(submodelIdentifier, submodelDescriptor);
+		observers.stream().forEach(o -> o.submodelUpdated(submodelDescriptor.getIdentifier().getId()));
+	}
+
+	@Override
+	public void registerSubmodelForShell(IIdentifier aasIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		registry.registerSubmodelForShell(aasIdentifier, submodelDescriptor);
 		observers.stream().forEach(o -> o.submodelRegistered(aasIdentifier, submodelDescriptor.getIdentifier()));
 	}
 
 	@Override
-	public void delete(IIdentifier aasIdentifier) throws ProviderException {
-		aasRegistry.delete(aasIdentifier);
-		observers.stream().forEach(o -> o.aasDeleted(aasIdentifier.getId()));
+	public void updateSubmodelForShell(IIdentifier aasIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		registry.updateSubmodelForShell(aasIdentifier, submodelDescriptor);
+		observers.stream().forEach(o -> o.submodelUpdated(aasIdentifier, submodelDescriptor.getIdentifier()));
 	}
 
 	@Override
-	public void delete(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
-		observers.stream().forEach(o -> o.submodelDeleted(aasIdentifier, submodelIdentifier));
+	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException {
+		registry.deleteShell(shellIdentifier);
+		observers.stream().forEach(o -> o.shellDeleted(shellIdentifier.getId()));
 	}
 
 	@Override
-	public AASDescriptor lookupAAS(IIdentifier aasIdentifier) throws ProviderException {
-		return aasRegistry.lookupAAS(aasIdentifier);
+	public void deleteSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
+		registry.deleteSubmodel(submodelIdentifier);
+		observers.stream().forEach(o -> o.submodelDeleted(submodelIdentifier));
 	}
 
 	@Override
-	public List<AASDescriptor> lookupAll() throws ProviderException {
-		return aasRegistry.lookupAll();
+	public void deleteSubmodelFromShell(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
+		observers.stream().forEach(o -> o.shellSubmodelDeleted(aasIdentifier, submodelIdentifier));
 	}
 
 	@Override
-	public List<SubmodelDescriptor> lookupSubmodels(IIdentifier aasIdentifier) throws ProviderException {
-		return aasRegistry.lookupSubmodels(aasIdentifier);
+	public AASDescriptor lookupShell(IIdentifier aasIdentifier) throws ProviderException {
+		return registry.lookupShell(aasIdentifier);
+	}
+
+	@Override
+	public List<AASDescriptor> lookupAllShells() throws ProviderException {
+		return registry.lookupAllShells();
+	}
+
+	@Override
+	public List<SubmodelDescriptor> lookupAllSubmodelsForShell(IIdentifier aasIdentifier) throws ProviderException {
+		return registry.lookupAllSubmodelsForShell(aasIdentifier);
 	}
 
 	@Override
 	public SubmodelDescriptor lookupSubmodel(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
-		return aasRegistry.lookupSubmodel(aasIdentifier, submodelIdentifier);
+		return registry.lookupSubmodel(aasIdentifier, submodelIdentifier);
 	}
+
+	@Override
+	public SubmodelDescriptor lookupSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
+		return registry.lookupSubmodel(submodelIdentifier);
+	}
+
+	@Override
+	public List<SubmodelDescriptor> lookupAllSubmodels() throws ProviderException {
+		return registry.lookupAllSubmodels();
+	}
+
 }

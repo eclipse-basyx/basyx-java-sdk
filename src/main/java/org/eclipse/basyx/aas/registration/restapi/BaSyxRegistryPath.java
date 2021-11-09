@@ -28,7 +28,7 @@ public class BaSyxRegistryPath {
 	private String secondDescriptorType;
 	private String secondDescriptorId;
 
-	private boolean hasFirstDescriptorForAAS;
+	private boolean hasFirstDescriptorForShell;
 	private boolean hasFirstDescriptorForSubmodel;
 	private boolean hasFirstDescriptorId;
 	private boolean hasSecondDescriptorForSubmodel;
@@ -84,33 +84,31 @@ public class BaSyxRegistryPath {
 	private void checkIfSecondDescriptorIsValid() {
 		if (!(secondDescriptorType == null || secondDescriptorType.equals(SUBMODEL_DESCRIPTORS))) {
 			throw new MalformedRequestException("Second path element must be (if present): " + SUBMODEL_DESCRIPTORS);
-		} else if (!firstDescriptorType.equals(SHELL_DESCRIPTORS)) {
-			throw new MalformedRequestException(SUBMODEL_DESCRIPTORS + "can only be viewed for " + SHELL_DESCRIPTORS);
 		}
 	}
 
 	private void populateCheckVariables() {
-		hasFirstDescriptorForAAS = firstDescriptorType.equals(SHELL_DESCRIPTORS);
+		hasFirstDescriptorForShell = firstDescriptorType.equals(SHELL_DESCRIPTORS);
 		hasFirstDescriptorForSubmodel = firstDescriptorType.equals(SUBMODEL_DESCRIPTORS);
 		hasFirstDescriptorId = firstDescriptorId != null;
 		hasSecondDescriptorForSubmodel = secondDescriptorType != null && secondDescriptorType.equals(SUBMODEL_DESCRIPTORS);
 		hasSecondDescriptorId = secondDescriptorId != null;
 	}
 
-	public boolean isAllAASDescriptorsPath() {
-		return hasFirstDescriptorForAAS && !hasFirstDescriptorId && !hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
+	public boolean isAllShellDescriptorsPath() {
+		return hasFirstDescriptorForShell && !hasFirstDescriptorId && !hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
 	}
 
-	public boolean isSingleAASDescriptorPath() {
-		return hasFirstDescriptorForAAS && hasFirstDescriptorId && !hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
+	public boolean isSingleShellDescriptorPath() {
+		return hasFirstDescriptorForShell && hasFirstDescriptorId && !hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
 	}
 
-	public boolean isSingleAASDescriptorAllSubmodelDescriptorsPath() {
-		return hasFirstDescriptorForAAS && hasFirstDescriptorId && hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
+	public boolean isSingleShellDescriptorAllSubmodelDescriptorsPath() {
+		return hasFirstDescriptorForShell && hasFirstDescriptorId && hasSecondDescriptorForSubmodel && !hasSecondDescriptorId;
 	}
 
-	public boolean isSingleAASDescriptorSingleSubmodelDescriptorPath() {
-		return hasFirstDescriptorForAAS && hasFirstDescriptorId && hasSecondDescriptorForSubmodel && hasSecondDescriptorId;
+	public boolean isSingleShellDescriptorSingleSubmodelDescriptorPath() {
+		return hasFirstDescriptorForShell && hasFirstDescriptorId && hasSecondDescriptorForSubmodel && hasSecondDescriptorId;
 	}
 
 	public boolean isAllSubmodelDescriptorsPath() {

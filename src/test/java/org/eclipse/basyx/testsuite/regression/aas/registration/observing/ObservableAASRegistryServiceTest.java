@@ -55,7 +55,7 @@ public class ObservableAASRegistryServiceTest {
 		Submodel submodel = new Submodel(SUBMODELID, SUBMODELIDENTIFIER);
 		String submodelEndpoint = AASENDPOINT + "/submodels/" + SUBMODELID + "/submodel";
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
-		registryService.register(AASIDENTIFIER, submodelDescriptor);
+		registryService.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
 		observedRegistry = new ObservableAASRegistryService(registryService);
 
@@ -76,7 +76,7 @@ public class ObservableAASRegistryServiceTest {
 		AASDescriptor aasDescriptor = new AASDescriptor(shell, new Endpoint(aasEndpoint));
 		observedRegistry.register(aasDescriptor);
 
-		assertEquals(newAASId, observer.aasId);
+		assertEquals(newAASId, observer.shellId);
 		assertTrue(observer.registerAASNotified);
 	}
 
@@ -86,9 +86,9 @@ public class ObservableAASRegistryServiceTest {
 		String aasEndpoint = "http://localhost:8080/aasList/" + AASID + "/aas";
 
 		AASDescriptor aasDescriptor = new AASDescriptor(shell, new Endpoint(aasEndpoint));
-		observedRegistry.update(aasDescriptor.getIdentifier(), aasDescriptor);
+		observedRegistry.updateShell(aasDescriptor.getIdentifier(), aasDescriptor);
 
-		assertEquals(AASID, observer.aasId);
+		assertEquals(AASID, observer.shellId);
 		assertTrue(observer.updateAASNotified);
 	}
 
@@ -100,32 +100,46 @@ public class ObservableAASRegistryServiceTest {
 		String submodelEndpoint = AASENDPOINT + "/submodels/" + submodelid + "/submodel";
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
 
-		observedRegistry.register(AASIDENTIFIER, submodelDescriptor);
+		observedRegistry.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
 		assertTrue(observer.registerSubmodelNotified);
-		assertEquals(AASID, observer.aasId);
-		assertEquals(submodelid, observer.smId);
+		assertEquals(AASID, observer.shellId);
+		assertEquals(submodelid, observer.submodelId);
+	}
+
+	@Test
+	public void testUpdateSubmodel() {
+		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRI, SUBMODELID);
+		Submodel submodel = new Submodel(SUBMODELID, newSubmodelIdentifier);
+		String submodelEndpoint = AASENDPOINT + "/submodels/" + SUBMODELID + "/submodel/new/Endpoint";
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
+
+		observedRegistry.updateSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
+
+		assertTrue(observer.updateSubmodelNotified);
+		assertEquals(AASID, observer.shellId);
+		assertEquals(SUBMODELID, observer.submodelId);
 	}
 
 	@Test
 	public void testDeleteAAS() {
-		observedRegistry.delete(AASIDENTIFIER);
+		observedRegistry.deleteShell(AASIDENTIFIER);
 		assertTrue(observer.deleteAASNotified);
-		assertEquals(AASID, observer.aasId);
+		assertEquals(AASID, observer.shellId);
 	}
 
 	@Test
 	public void testDeleteSubmodel() {
-		observedRegistry.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);
+		observedRegistry.deleteSubmodelFromShell(AASIDENTIFIER, SUBMODELIDENTIFIER);
 		assertTrue(observer.deleteSubmodelNotified);
-		assertEquals(AASID, observer.aasId);
-		assertEquals(SUBMODELID, observer.smId);
+		assertEquals(AASID, observer.shellId);
+		assertEquals(SUBMODELID, observer.submodelId);
 	}
 
 	@Test
 	public void testRemoveObserver() {
 		assertTrue(observedRegistry.removeObserver(observer));
-		observedRegistry.delete(AASIDENTIFIER);
+		observedRegistry.deleteShell(AASIDENTIFIER);
 		assertFalse(observer.deleteAASNotified);
 	}
 
@@ -134,62 +148,102 @@ public class ObservableAASRegistryServiceTest {
 		public boolean registerAASNotified = false;
 		public boolean updateAASNotified = false;
 		public boolean registerSubmodelNotified = false;
+		public boolean updateSubmodelNotified = false;
 		public boolean deleteAASNotified = false;
 		public boolean deleteSubmodelNotified = false;
 
-		public String aasId = "";
-		public String smId = "";
+		public String shellId = "";
+		public String submodelId = "";
 
 		@Override
-		public void aasRegistered(String aasId) {
+		public void shellRegistered(String shellId) {
 			this.registerAASNotified = true;
 			this.updateAASNotified = false;
 			this.registerSubmodelNotified = false;
+			this.updateSubmodelNotified = false;
 			this.deleteAASNotified = false;
 			this.deleteSubmodelNotified = false;
-			this.aasId = aasId;
+			this.shellId = shellId;
 		}
 
 		@Override
-		public void aasUpdated(String aasId) {
+		public void shellUpdated(String shellId) {
 			this.registerAASNotified = false;
 			this.updateAASNotified = true;
 			this.registerSubmodelNotified = false;
+			this.updateSubmodelNotified = false;
 			this.deleteAASNotified = false;
 			this.deleteSubmodelNotified = false;
-			this.aasId = aasId;
+			this.shellId = shellId;
 		}
 
 		@Override
-		public void submodelRegistered(IIdentifier aasId, IIdentifier smId) {
+		public void submodelUpdated(String submodelId) {
+			this.registerAASNotified = false;
+			this.updateAASNotified = false;
+			this.registerSubmodelNotified = false;
+			this.updateSubmodelNotified = true;
+			this.deleteAASNotified = false;
+			this.deleteSubmodelNotified = false;
+			this.submodelId = submodelId;
+		}
+
+		@Override
+		public void submodelRegistered(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
 			this.registerAASNotified = false;
 			this.updateAASNotified = false;
 			this.registerSubmodelNotified = true;
+			this.updateSubmodelNotified = false;
 			this.deleteAASNotified = false;
 			this.deleteSubmodelNotified = false;
-			this.aasId = aasId.getId();
-			this.smId = smId.getId();
+			this.shellId = shellIdentifier.getId();
+			this.submodelId = submodelIdentifier.getId();
 		}
 
 		@Override
-		public void aasDeleted(String aasId) {
+		public void submodelUpdated(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
 			this.registerAASNotified = false;
 			this.updateAASNotified = false;
 			this.registerSubmodelNotified = false;
+			this.updateSubmodelNotified = true;
+			this.deleteAASNotified = false;
+			this.deleteSubmodelNotified = false;
+			this.shellId = shellIdentifier.getId();
+			this.submodelId = submodelIdentifier.getId();
+		}
+
+		@Override
+		public void shellDeleted(String shellId) {
+			this.registerAASNotified = false;
+			this.updateAASNotified = false;
+			this.registerSubmodelNotified = false;
+			this.updateSubmodelNotified = false;
 			this.deleteAASNotified = true;
 			this.deleteSubmodelNotified = false;
-			this.aasId = aasId;
+			this.shellId = shellId;
 		}
 
 		@Override
-		public void submodelDeleted(IIdentifier aasId, IIdentifier smId) {
+		public void shellSubmodelDeleted(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
 			this.registerAASNotified = false;
 			this.updateAASNotified = false;
 			this.registerSubmodelNotified = false;
+			this.updateSubmodelNotified = false;
 			this.deleteAASNotified = false;
 			this.deleteSubmodelNotified = true;
-			this.aasId = aasId.getId();
-			this.smId = smId.getId();
+			this.shellId = shellIdentifier.getId();
+			this.submodelId = submodelIdentifier.getId();
+		}
+
+		@Override
+		public void submodelDeleted(IIdentifier submodelIdentifier) {
+			this.registerAASNotified = false;
+			this.updateAASNotified = false;
+			this.registerSubmodelNotified = false;
+			this.updateSubmodelNotified = false;
+			this.deleteAASNotified = false;
+			this.deleteSubmodelNotified = true;
+			this.submodelId = submodelIdentifier.getId();
 		}
 	}
 }

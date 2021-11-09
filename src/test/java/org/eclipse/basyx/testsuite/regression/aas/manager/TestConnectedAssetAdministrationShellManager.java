@@ -84,7 +84,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		manager.createAAS(aas, "");
 
 		// Check descriptor for correct endpoint
-		String endpoint = registry.lookupAAS(aasId).getFirstEndpoint().getProtocolInformation().getEndpointAddress();
+		String endpoint = registry.lookupShell(aasId).getFirstEndpoint().getProtocolInformation().getEndpointAddress();
 		assertEquals(AASAggregatorProvider.PREFIX + "/" + aasId.getId() + "/aas", VABPathTools.stripSlashes(endpoint));
 
 		// Retrieve it

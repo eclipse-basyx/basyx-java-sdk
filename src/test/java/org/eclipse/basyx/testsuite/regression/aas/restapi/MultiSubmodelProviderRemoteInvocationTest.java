@@ -145,7 +145,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 		SubmodelDescriptor smDescriptor = new SubmodelDescriptor("nonexist", new ModelUrn("nonexisting"), new Endpoint("basyx://localhost:8000/aas/submodels/nonexist"));
 
 		// Register this SubmodelDescriptor
-		registry.register(AASID1, smDescriptor);
+		registry.registerSubmodelForShell(AASID1, smDescriptor);
 
 		// Try to request all Submodels from the server
 		try {

@@ -289,7 +289,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 
 		// Check for remote submodels
 		if (registry != null) {
-			AASDescriptor desc = registry.lookupAAS(aasId);
+			AASDescriptor desc = registry.lookupShell(aasId);
 
 			// Get the address of the AAS e.g. http://localhost:8080
 			// This address should be equal to the address of this server
@@ -460,7 +460,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 * @return a specifi submodel descriptor
 	 */
 	private SubmodelDescriptor getSubmodelDescriptorFromRegistry(String submodelIdShort) {
-		AASDescriptor aasDescriptor = registry.lookupAAS(aasId);
+		AASDescriptor aasDescriptor = registry.lookupShell(aasId);
 		SubmodelDescriptor desc = aasDescriptor.getSubmodelDescriptorFromIdShort(submodelIdShort);
 		if(desc == null) {
 			throw new ResourceNotFoundException("Could not resolve Submodel with idShort " + submodelIdShort + " for AAS " + aasId);

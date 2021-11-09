@@ -90,52 +90,87 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	}
 
 	@Override
-	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
-		this.observedRegistryService.register(deviceAASDescriptor);
-		sendMqttMessage(TOPIC_REGISTERAAS, deviceAASDescriptor.getIdentifier().getId());
+	public void register(AASDescriptor shellDescriptor) throws ProviderException {
+		this.observedRegistryService.register(shellDescriptor);
+		sendMqttMessage(TOPIC_REGISTERAAS, shellDescriptor.getIdentifier().getId());
 	}
 
 	@Override
-	public void update(IIdentifier aasIdentifier, AASDescriptor aasDescriptor) throws ProviderException {
-		this.observedRegistryService.update(aasIdentifier, aasDescriptor);
-		sendMqttMessage(TOPIC_UPDATEAAS, aasDescriptor.getIdentifier().getId());
+	public void register(SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		this.observedRegistryService.register(submodelDescriptor);
+		sendMqttMessage(TOPIC_REGISTERSUBMODEL, submodelDescriptor.getIdentifier().getId());
 	}
 
 	@Override
-	public void register(IIdentifier aas, SubmodelDescriptor smDescriptor) throws ProviderException {
-		this.observedRegistryService.register(aas, smDescriptor);
-		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(aas, smDescriptor.getIdentifier()));
+	public void updateShell(IIdentifier shellIdentifier, AASDescriptor shellDescriptor) throws ProviderException {
+		this.observedRegistryService.updateShell(shellIdentifier, shellDescriptor);
+		sendMqttMessage(TOPIC_UPDATEAAS, shellDescriptor.getIdentifier().getId());
 	}
 
 	@Override
-	public void delete(IIdentifier aasId) throws ProviderException {
-		this.observedRegistryService.delete(aasId);
-		sendMqttMessage(TOPIC_DELETEAAS, aasId.getId());
+	public void updateSubmodel(IIdentifier submodelIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		this.observedRegistryService.updateSubmodel(submodelIdentifier, submodelDescriptor);
+		sendMqttMessage(TOPIC_UPDATESUBMODEL, submodelDescriptor.getIdentifier().getId());
 	}
 
 	@Override
-	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
-		this.observedRegistryService.delete(aasId, smId);
-		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(aasId, smId));
+	public void registerSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		this.observedRegistryService.registerSubmodelForShell(shellIdentifier, submodelDescriptor);
+		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(shellIdentifier, submodelDescriptor.getIdentifier()));
 	}
 
 	@Override
-	public AASDescriptor lookupAAS(IIdentifier aasId) throws ProviderException {
-		return this.observedRegistryService.lookupAAS(aasId);
+	public void updateSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
+		this.observedRegistryService.updateSubmodelForShell(shellIdentifier, submodelDescriptor);
+		sendMqttMessage(TOPIC_UPDATESUBMODEL, concatAasSmId(shellIdentifier, submodelDescriptor.getIdentifier()));
 	}
 
 	@Override
-	public List<AASDescriptor> lookupAll() throws ProviderException {
-		return this.observedRegistryService.lookupAll();
+	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException {
+		this.observedRegistryService.deleteShell(shellIdentifier);
+		sendMqttMessage(TOPIC_DELETEAAS, shellIdentifier.getId());
 	}
 
 	@Override
-	public List<SubmodelDescriptor> lookupSubmodels(IIdentifier aasId) throws ProviderException {
-		return this.observedRegistryService.lookupSubmodels(aasId);
+	public void deleteSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
+		this.observedRegistryService.deleteShell(submodelIdentifier);
+		sendMqttMessage(TOPIC_DELETESUBMODEL, submodelIdentifier.getId());
 	}
 
 	@Override
-	public SubmodelDescriptor lookupSubmodel(IIdentifier aasId, IIdentifier smId) throws ProviderException {
-		return this.observedRegistryService.lookupSubmodel(aasId, smId);
+	public void deleteSubmodelFromShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
+		this.observedRegistryService.deleteSubmodelFromShell(shellIdentifier, submodelIdentifier);
+		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(shellIdentifier, submodelIdentifier));
 	}
+
+	@Override
+	public AASDescriptor lookupShell(IIdentifier shellIdentifier) throws ProviderException {
+		return this.observedRegistryService.lookupShell(shellIdentifier);
+	}
+
+	@Override
+	public List<AASDescriptor> lookupAllShells() throws ProviderException {
+		return this.observedRegistryService.lookupAllShells();
+	}
+
+	@Override
+	public List<SubmodelDescriptor> lookupAllSubmodelsForShell(IIdentifier shellIdentifier) throws ProviderException {
+		return this.observedRegistryService.lookupAllSubmodelsForShell(shellIdentifier);
+	}
+
+	@Override
+	public SubmodelDescriptor lookupSubmodel(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
+		return this.observedRegistryService.lookupSubmodel(shellIdentifier, submodelIdentifier);
+	}
+
+	@Override
+	public SubmodelDescriptor lookupSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
+		return this.observedRegistryService.lookupSubmodel(submodelIdentifier);
+	}
+
+	@Override
+	public List<SubmodelDescriptor> lookupAllSubmodels() throws ProviderException {
+		return this.observedRegistryService.lookupAllSubmodels();
+	}
+
 }

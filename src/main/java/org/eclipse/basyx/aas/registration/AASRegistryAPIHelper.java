@@ -27,42 +27,61 @@ public class AASRegistryAPIHelper {
 	}
 
 	/**
-	 * Retrieves base access path for shell descriptors
+	 * Retrieves base access path for shellDescriptors
 	 *
-	 * @return base access path for shell descriptors
+	 * @return base access path for shellDescriptors
 	 */
 	public static String getAllShellDescriptorsPath() {
 		return VABPathTools.concatenatePaths(BaSyxRegistryPath.PREFIX, BaSyxRegistryPath.SHELL_DESCRIPTORS);
 	}
 
 	/**
-	 * Retrieves an access path for an AAS
+	 * Retrieves base access path for submodelDescriptors
 	 *
-	 * @param aasIdentifier
-	 * @return access path for an AAS
+	 * @return base access path for submodelDescriptors
 	 */
-	public static String getSingleShellDescriptorPath(IIdentifier aasIdentifier) {
-		return VABPathTools.concatenatePaths(getAllShellDescriptorsPath(), VABPathTools.encodePathElement(aasIdentifier.getId()));
+	public static String getAllSubmodelDescriptorsPath() {
+		return VABPathTools.concatenatePaths(BaSyxRegistryPath.PREFIX, BaSyxRegistryPath.SUBMODEL_DESCRIPTORS);
 	}
 
 	/**
-	 * Retrieves an access path for all the submodels of a given AAS
+	 * Retrieves an access path for a shell
 	 *
-	 * @param aasIdentifier
-	 * @return access path for all submodels of a given AAS
+	 * @param shellIdentifier
+	 * @return access path for a shell
 	 */
-	public static String getSingleShellDescriptorAllSubmodelDescriptorsPath(IIdentifier aasIdentifier) {
-		return VABPathTools.concatenatePaths(getSingleShellDescriptorPath(aasIdentifier), BaSyxRegistryPath.SUBMODEL_DESCRIPTORS);
+	public static String getSingleShellDescriptorPath(IIdentifier shellIdentifier) {
+		return VABPathTools.concatenatePaths(getAllShellDescriptorsPath(), VABPathTools.encodePathElement(shellIdentifier.getId()));
 	}
 
 	/**
 	 * Retrieves an access path for a submodel
 	 *
-	 * @param aasIdentifier
+	 * @param submodelIdentifier
+	 * @return access path for a submodel
+	 */
+	public static String getSingleSubmodelDescriptorPath(IIdentifier submodelIdentifier) {
+		return VABPathTools.concatenatePaths(getAllSubmodelDescriptorsPath(), VABPathTools.encodePathElement(submodelIdentifier.getId()));
+	}
+
+	/**
+	 * Retrieves an access path for all the submodels of a given shell
+	 *
+	 * @param shellIdentifier
+	 * @return access path for all submodels of a given shell
+	 */
+	public static String getSingleShellDescriptorAllSubmodelDescriptorsPath(IIdentifier shellIdentifier) {
+		return VABPathTools.concatenatePaths(getSingleShellDescriptorPath(shellIdentifier), BaSyxRegistryPath.SUBMODEL_DESCRIPTORS);
+	}
+
+	/**
+	 * Retrieves an access path for a submodel
+	 *
+	 * @param shellIdentifier
 	 * @param submodelId
 	 * @return access path for a submodel
 	 */
-	public static String getSingleShellDescriptorSingleSubmodelDescriptorPath(IIdentifier aasIdentifier, IIdentifier submodelId) {
-		return VABPathTools.concatenatePaths(getSingleShellDescriptorAllSubmodelDescriptorsPath(aasIdentifier), VABPathTools.encodePathElement(submodelId.getId()));
+	public static String getSingleShellDescriptorSingleSubmodelDescriptorPath(IIdentifier shellIdentifier, IIdentifier submodelId) {
+		return VABPathTools.concatenatePaths(getSingleShellDescriptorAllSubmodelDescriptorsPath(shellIdentifier), VABPathTools.encodePathElement(submodelId.getId()));
 	}
 }
