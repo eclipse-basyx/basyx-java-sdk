@@ -95,12 +95,12 @@ public abstract class TestRegistryProviderSuite {
 	@After
 	public void tearDown() {
 		try {
-			proxy.deleteShell(shellIdentifier1);
+			proxy.deleteModel(shellIdentifier1);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
 		try {
-			proxy.deleteShell(shellIdentifier2);
+			proxy.deleteModel(shellIdentifier2);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
@@ -228,7 +228,7 @@ public abstract class TestRegistryProviderSuite {
 		assertNotNull(proxy.lookupShell(shellIdentifier1));
 		assertNotNull(proxy.lookupShell(shellIdentifier2));
 
-		proxy.deleteShell(shellIdentifier2);
+		proxy.deleteModel(shellIdentifier2);
 
 		// After aas2 has been deleted, only aas1 should be registered
 		assertNotNull(proxy.lookupShell(shellIdentifier1));
@@ -239,7 +239,7 @@ public abstract class TestRegistryProviderSuite {
 			// expected
 		}
 
-		proxy.deleteShell(shellIdentifier1);
+		proxy.deleteModel(shellIdentifier1);
 
 		// After aas1 has been deleted, both should not be registered any more
 		try {
@@ -315,7 +315,7 @@ public abstract class TestRegistryProviderSuite {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void testDeleteNotExistingShell() {
-		proxy.deleteShell(new Identifier(IdentifierType.CUSTOM, "nonExistent"));
+		proxy.deleteModel(new Identifier(IdentifierType.CUSTOM, "nonExistent"));
 	}
 
 	@Test

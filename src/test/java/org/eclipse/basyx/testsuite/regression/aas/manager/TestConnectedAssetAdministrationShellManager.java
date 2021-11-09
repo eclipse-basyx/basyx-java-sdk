@@ -81,7 +81,7 @@ public class TestConnectedAssetAdministrationShellManager {
 
 		// Create an AAS containing a reference to the created Submodel
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 
 		// Check descriptor for correct endpoint
 		String endpoint = registry.lookupShell(aasId).getFirstEndpoint().getProtocolInformation().getEndpointAddress();
@@ -150,7 +150,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		prepareConnectorProvider(provider);
 
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 
 		Submodel sm = new Submodel(smIdShort, smId);
 		manager.createSubmodel(aasId, sm);
@@ -174,7 +174,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		prepareConnectorProvider(provider);
 
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 		manager.deleteAAS(aas.getIdentification());
 		try {
 			manager.retrieveAAS(aas.getIdentification());

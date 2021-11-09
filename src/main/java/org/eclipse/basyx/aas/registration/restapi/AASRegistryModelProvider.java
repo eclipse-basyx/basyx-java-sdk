@@ -297,7 +297,7 @@ public class AASRegistryModelProvider implements IModelProvider {
 			throw new ResourceNotFoundException("Shell '" + shellId + "' to be deleted does not exist.");
 		}
 
-		registry.deleteShell(shellId);
+		registry.deleteModel(shellId);
 	}
 
 	private void deleteSubmodelDescriptor(String submodelIdentifier) {

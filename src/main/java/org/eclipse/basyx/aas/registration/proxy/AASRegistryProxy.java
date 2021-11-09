@@ -211,7 +211,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	 * @throws ProviderException
 	 */
 	@Override
-	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException {
+	public void deleteModel(IIdentifier shellIdentifier) throws ProviderException {
 		this.removeMapping(AASRegistryAPIHelper.getSingleShellDescriptorPath(shellIdentifier));
 	}
 

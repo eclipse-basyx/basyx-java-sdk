@@ -53,8 +53,8 @@ public class ObservableAASAggregator extends Observable<IAASAggregatorObserver> 
 	}
 
 	@Override
-	public void createAAS(AssetAdministrationShell aas) {
-		aasAggregator.createAAS(aas);
+	public void createShell(AssetAdministrationShell aas) {
+		aasAggregator.createShell(aas);
 		observers.stream().forEach(o -> o.aasCreated(aas.getIdentification().getId()));
 	}
 

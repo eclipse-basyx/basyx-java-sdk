@@ -133,7 +133,7 @@ public class AASAggregatorProvider implements IModelProvider {
 					aggregator.getAAS(identifier);
 					aggregator.updateAAS(aas);
 				} catch (ResourceNotFoundException e) {
-					aggregator.createAAS(aas);
+					aggregator.createShell(aas);
 				}
 			} else { // Update of contained element
 				String id = VABPathTools.decodePathElement(VABPathTools.getEntry(path, 0));

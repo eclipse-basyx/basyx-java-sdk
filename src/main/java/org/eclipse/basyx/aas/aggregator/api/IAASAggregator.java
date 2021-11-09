@@ -55,7 +55,7 @@ public interface IAASAggregator {
 	 * 
 	 * @param aas the AAS to be created
 	 */
-	public void createAAS(AssetAdministrationShell aas);
+	public void createShell(AssetAdministrationShell aas);
 	
 	/**
 	 * Updates a specific Asset Administration Shell

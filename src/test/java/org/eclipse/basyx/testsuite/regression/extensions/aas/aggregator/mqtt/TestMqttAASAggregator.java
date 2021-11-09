@@ -76,7 +76,7 @@ public class TestMqttAASAggregator {
 	@Before
 	public void setUp() {
 		shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid1"), AssetKind.INSTANCE));
-		eventAPI.createAAS(shell);
+		eventAPI.createShell(shell);
 		
 		listener = new MqttTestListener();
 		mqttBroker.addInterceptHandler(listener);
@@ -92,7 +92,7 @@ public class TestMqttAASAggregator {
 		String aasId2 = "aas2";
 		Identifier identifier2 = new Identifier(IdentifierType.IRDI, aasId2);
 		AssetAdministrationShell shell2 = new AssetAdministrationShell(aasId2, identifier2, new Asset("assetid2", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
-		eventAPI.createAAS(shell2);
+		eventAPI.createShell(shell2);
 
 		assertEquals(aasId2, listener.lastPayload);
 		assertEquals(MqttAASAggregator.TOPIC_CREATEAAS, listener.lastTopic);

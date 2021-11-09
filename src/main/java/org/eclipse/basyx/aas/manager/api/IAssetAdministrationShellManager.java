@@ -43,7 +43,7 @@ public interface IAssetAdministrationShellManager {
 	 * @param aas
 	 * @param endpoint
 	 */
-	void createAAS(AssetAdministrationShell aas, String endpoint);
+	void createShell(AssetAdministrationShell aas, String endpoint);
 
 	/**
 	 * Unlink an AAS from the system

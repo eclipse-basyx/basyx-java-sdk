@@ -123,7 +123,7 @@ public class ObservableAASRegistryServiceTest {
 
 	@Test
 	public void testDeleteAAS() {
-		observedRegistry.deleteShell(AASIDENTIFIER);
+		observedRegistry.deleteModel(AASIDENTIFIER);
 		assertTrue(observer.deleteAASNotified);
 		assertEquals(AASID, observer.shellId);
 	}
@@ -139,7 +139,7 @@ public class ObservableAASRegistryServiceTest {
 	@Test
 	public void testRemoveObserver() {
 		assertTrue(observedRegistry.removeObserver(observer));
-		observedRegistry.deleteShell(AASIDENTIFIER);
+		observedRegistry.deleteModel(AASIDENTIFIER);
 		assertFalse(observer.deleteAASNotified);
 	}
 

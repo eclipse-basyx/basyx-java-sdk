@@ -78,12 +78,12 @@ public interface IAASRegistry {
 	public void updateSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException;
 
 	/**
-	 * Deletes the ShellDescriptor from the registry with the given identifier.
-	 *
-	 * @param shellIdentifier
+	 * Deletes the Model from the registry with the given identifier.
+	 * 
+	 * @param identifier
 	 * @throws ProviderException
 	 */
-	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException;
+	public void deleteModel(IIdentifier identifier) throws ProviderException;
 
 	/**
 	 * Deletes the SubmodelDescriptor from the registry with the given identifier.

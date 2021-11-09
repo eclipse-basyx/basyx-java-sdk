@@ -102,8 +102,8 @@ public class MqttAASAggregator extends MqttEventService implements IAASAggregato
 	}
 
 	@Override
-	public void createAAS(AssetAdministrationShell aas) {
-		this.observedAASAggregator.createAAS(aas);
+	public void createShell(AssetAdministrationShell aas) {
+		this.observedAASAggregator.createShell(aas);
 		sendMqttMessage(TOPIC_CREATEAAS, aas.getIdentification().getId());
 		
 	}

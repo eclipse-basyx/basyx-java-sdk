@@ -126,14 +126,14 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	}
 
 	@Override
-	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException {
-		this.observedRegistryService.deleteShell(shellIdentifier);
+	public void deleteModel(IIdentifier shellIdentifier) throws ProviderException {
+		this.observedRegistryService.deleteModel(shellIdentifier);
 		sendMqttMessage(TOPIC_DELETEAAS, shellIdentifier.getId());
 	}
 
 	@Override
 	public void deleteSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
-		this.observedRegistryService.deleteShell(submodelIdentifier);
+		this.observedRegistryService.deleteModel(submodelIdentifier);
 		sendMqttMessage(TOPIC_DELETESUBMODEL, submodelIdentifier.getId());
 	}
 

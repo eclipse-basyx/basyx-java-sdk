@@ -98,7 +98,7 @@ public class AASAggregatorProxy implements IAASAggregator {
 	}
 
 	@Override
-	public void createAAS(AssetAdministrationShell aas) {
+	public void createShell(AssetAdministrationShell aas) {
 		provider.setValue(AASAggregatorAPIHelper.getAASEntryPath(aas.getIdentification()), aas);
 		logger.info("AAS with Id " + aas.getIdentification().getId() + " created");
 	}

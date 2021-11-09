@@ -113,7 +113,7 @@ public class AASRegistry implements IAASRegistry {
 	}
 
 	@Override
-	public void deleteShell(IIdentifier shellIdentifier) {
+	public void deleteModel(IIdentifier shellIdentifier) {
 		String shellId = shellIdentifier.getId();
 		if (!handler.containsShell(shellIdentifier)) {
 			throw new ResourceNotFoundException("Could not delete key for Shell " + shellId + " since it does not exist.");

@@ -1,6 +1,12 @@
-/**
+/*******************************************************************************
+ * Copyright (C) 2021 the Eclipse BaSyx Authors
  *
- */
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ ******************************************************************************/
 package org.eclipse.basyx.aas.manager;
 
 import java.util.Collection;
@@ -14,6 +20,7 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
@@ -39,7 +46,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
  */
 public class ConnectedAssetAdministrationShellManager implements IAssetAdministrationShellManager {
 
-	protected IAASRegistry aasDirectory;
+	protected IAASRegistry shellDirectory;
 	protected IConnectorFactory connectorFactory;
 	protected ModelProxyFactory proxyFactory;
 
@@ -56,9 +63,8 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	 * @param directory
 	 * @param provider
 	 */
-	public ConnectedAssetAdministrationShellManager(IAASRegistry directory,
-			IConnectorFactory provider) {
-		this.aasDirectory = directory;
+	public ConnectedAssetAdministrationShellManager(IAASRegistry directory, IConnectorFactory provider) {
+		this.shellDirectory = directory;
 		this.connectorFactory = provider;
 		this.proxyFactory = new ModelProxyFactory(provider);
 	}
@@ -66,13 +72,13 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	@Override
 	public ISubmodel retrieveSubmodel(IIdentifier aasId, IIdentifier smId) {
 		// look up SM descriptor in the registry
-		SubmodelDescriptor smDescriptor = aasDirectory.lookupSubmodel(aasId, smId);
+		SubmodelDescriptor submodelDescriptor = shellDirectory.lookupSubmodel(aasId, smId);
 
 		// get address of the submodel descriptor
-		String addr = smDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
+		String submodelEndpointAddress = extractFirstEndpointAddress(submodelDescriptor);
 
 		// Return a new VABElementProxy
-		return new ConnectedSubmodel(proxyFactory.createProxy(addr));
+		return new ConnectedSubmodel(proxyFactory.createProxy(submodelEndpointAddress));
 	}
 
 	@Override
@@ -83,28 +89,28 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	@Override
 	public Map<String, ISubmodel> retrieveSubmodels(IIdentifier aasId) {
-		AASDescriptor aasDesc = aasDirectory.lookupShell(aasId);
-		Collection<SubmodelDescriptor> smDescriptors = aasDesc.getSubmodelDescriptors();
+		AASDescriptor shellDescriptor = shellDirectory.lookupShell(aasId);
+		Collection<SubmodelDescriptor> smDescriptors = shellDescriptor.getSubmodelDescriptors();
 		Map<String, ISubmodel> submodels = new HashMap<>();
+
 		for (SubmodelDescriptor smDesc : smDescriptors) {
-			String smEndpoint = smDesc.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
 			String smIdShort = smDesc.getIdShort();
+
+			String smEndpoint = extractFirstEndpointAddress(smDesc);
 			VABElementProxy smProxy = proxyFactory.createProxy(smEndpoint);
 			ConnectedSubmodel connectedSM = new ConnectedSubmodel(smProxy);
+
 			submodels.put(smIdShort, connectedSM);
 		}
 		return submodels;
 	}
 
 	private VABElementProxy getAASProxyFromId(IIdentifier aasId) {
-		// Lookup AAS descriptor
-		AASDescriptor aasDescriptor = aasDirectory.lookupShell(aasId);
+		AASDescriptor shellDescriptor = shellDirectory.lookupShell(aasId);
 
-		// Get AAS address from AAS descriptor
-		String addr = aasDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
+		String shellAddress = extractFirstEndpointAddress(shellDescriptor);
 
-		// Return a new VABElementProxy
-		return proxyFactory.createProxy(addr);
+		return proxyFactory.createProxy(shellAddress);
 	}
 
 	@Override
@@ -115,59 +121,73 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	@Override
 	public void deleteAAS(IIdentifier id) {
 		// Lookup AAS descriptor
-		AASDescriptor aasDescriptor = aasDirectory.lookupShell(id);
+		AASDescriptor shellDescriptor = shellDirectory.lookupShell(id);
 
-		// Get AAS address from AAS descriptor
-		String addr = aasDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
+		String shellEndpointAddress = extractFirstEndpointAddress(shellDescriptor);
 
-		// Address ends in "/aas", has to be stripped for removal
-		addr = VABPathTools.stripSlashes(addr);
-		addr = addr.substring(0, addr.length() - "/aas".length());
+		shellEndpointAddress = prepareShellEndpointAddress(shellEndpointAddress);
 
 		// Delete from server
-		proxyFactory.createProxy(addr).deleteValue("");
+		proxyFactory.createProxy(shellEndpointAddress).deleteValue("");
 
 		// Delete from Registry
-		aasDirectory.deleteShell(id);
+		shellDirectory.deleteModel(id);
 
 		// TODO: How to handle submodels -> Lifecycle needs to be clarified
 	}
 
+	private String prepareShellEndpointAddress(String shellAddress) {
+		// Address ends in "/aas", has to be stripped for removal
+		shellAddress = VABPathTools.stripSlashes(shellAddress);
+		shellAddress = shellAddress.substring(0, shellAddress.length() - "/aas".length());
+		return shellAddress;
+	}
+
 	@Override
-	public void createSubmodel(IIdentifier aasId, Submodel submodel) {
+	public void createSubmodel(IIdentifier shellIdentifier, Submodel submodel) {
 
 		// Push the SM to the server using the ConnectedAAS
 
-		retrieveAAS(aasId).addSubmodel(submodel);
+		retrieveAAS(shellIdentifier).addSubmodel(submodel);
 
-		// Lookup AAS descriptor
-		AASDescriptor aasDescriptor = aasDirectory.lookupShell(aasId);
+		AASDescriptor shellDescriptor = shellDirectory.lookupShell(shellIdentifier);
 
-		// Get aas endpoint
-		String addr = aasDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
+		String shellEndpointAddress = extractFirstEndpointAddress(shellDescriptor);
 
-		// Register the SM
-		String smEndpoint = VABPathTools.concatenatePaths(addr, AssetAdministrationShell.SUBMODELS, submodel.getIdShort(), SubmodelProvider.SUBMODEL);
-		aasDirectory.registerSubmodelForShell(aasId, new SubmodelDescriptor(submodel, new Endpoint(smEndpoint)));
+		registerSubmodel(shellIdentifier, submodel, shellEndpointAddress);
+	}
+
+	private void registerSubmodel(IIdentifier shellIdentifier, Submodel submodel, String shellEndpointAddress) {
+		String submodelEndpointPath = VABPathTools.concatenatePaths(shellEndpointAddress, AssetAdministrationShell.SUBMODELS, submodel.getIdShort(), SubmodelProvider.SUBMODEL);
+		shellDirectory.registerSubmodelForShell(shellIdentifier, new SubmodelDescriptor(submodel, new Endpoint(submodelEndpointPath)));
 	}
 
 	@Override
-	public void deleteSubmodel(IIdentifier aasId, IIdentifier submodelId) {
-		IAssetAdministrationShell shell = retrieveAAS(aasId);
-		shell.removeSubmodel(submodelId);
+	public void deleteSubmodel(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
+		IAssetAdministrationShell shell = retrieveAAS(shellIdentifier);
+		shell.removeSubmodel(submodelIdentifier);
 
-		aasDirectory.deleteSubmodelFromShell(aasId, submodelId);
+		shellDirectory.deleteSubmodelFromShell(shellIdentifier, submodelIdentifier);
 	}
 
 	@Override
-	public void createAAS(AssetAdministrationShell aas, String endpoint) {
+	public void createShell(AssetAdministrationShell shell, String endpoint) {
 		endpoint = VABPathTools.stripSlashes(endpoint);
 
 		IModelProvider provider = connectorFactory.getConnector(endpoint);
 		AASAggregatorProxy proxy = new AASAggregatorProxy(provider);
-		proxy.createAAS(aas);
-		String combinedEndpoint = VABPathTools.concatenatePaths(endpoint, AASAggregatorAPIHelper.getAASAccessPath(aas.getIdentification()));
-		aasDirectory.register(new AASDescriptor(aas, new Endpoint(combinedEndpoint)));
 
+		proxy.createShell(shell);
+
+		registerShell(shell, endpoint);
+	}
+
+	private void registerShell(AssetAdministrationShell shell, String endpoint) {
+		String combinedEndpoint = VABPathTools.concatenatePaths(endpoint, AASAggregatorAPIHelper.getAASAccessPath(shell.getIdentification()));
+		shellDirectory.register(new AASDescriptor(shell, new Endpoint(combinedEndpoint)));
+	}
+
+	private String extractFirstEndpointAddress(ModelDescriptor descriptor) {
+		return descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress();
 	}
 }

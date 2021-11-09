@@ -100,6 +100,9 @@ public class AASDescriptor extends ModelDescriptor {
 	/**
 	 * Create a new descriptor with minimal information (idShort is assumed to be
 	 * set to "")
+	 * 
+	 * @param aasid
+	 * @param endpoint
 	 */
 	public AASDescriptor(IIdentifier aasid, Endpoint endpoint) {
 		this("", aasid, endpoint);
@@ -107,6 +110,9 @@ public class AASDescriptor extends ModelDescriptor {
 
 	/**
 	 * Add a sub model descriptor
+	 * 
+	 * @param desc
+	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public AASDescriptor addSubmodelDescriptor(SubmodelDescriptor desc) {

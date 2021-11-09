@@ -73,8 +73,8 @@ public class ObservableAASRegistryService extends Observable<IAASRegistryService
 	}
 
 	@Override
-	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException {
-		registry.deleteShell(shellIdentifier);
+	public void deleteModel(IIdentifier shellIdentifier) throws ProviderException {
+		registry.deleteModel(shellIdentifier);
 		observers.stream().forEach(o -> o.shellDeleted(shellIdentifier.getId()));
 	}
 
