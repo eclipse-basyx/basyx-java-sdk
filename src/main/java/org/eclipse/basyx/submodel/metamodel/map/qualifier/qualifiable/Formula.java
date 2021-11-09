@@ -54,7 +54,7 @@ public class Formula extends Constraint implements IFormula {
 	/**
 	 * Creates a Formula object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Formula object as raw map
 	 * @return a Formula object, that behaves like a facade for the given map
 	 */

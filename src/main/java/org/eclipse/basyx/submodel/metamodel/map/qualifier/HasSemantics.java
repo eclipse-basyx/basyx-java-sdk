@@ -40,7 +40,7 @@ public class HasSemantics extends VABModelMap<Object> implements IHasSemantics {
 	/**
 	 * Creates a HasSemantics object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a HasSemantics object as raw map
 	 * @return a HasSemantics object, that behaves like a facade for the given map
 	 */

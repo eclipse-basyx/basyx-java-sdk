@@ -72,7 +72,7 @@ public class AnnotatedRelationshipElementXMLConverter {
 	 * Builds the &lt;aas:annotatedRelationshipElement&gt; XML tag for a AnnotatedRelationshipElement
 	 * 
 	 * @param document the XML document
-	 * @param relElem the IAnnotatedRelationshipElement to build the XML for
+	 * @param annotatedElement the IAnnotatedRelationshipElement to build the XML for
 	 * @return the &lt;aas:annotatedRelationshipElement&gt; XML tag for the given AnnotatedRelationshipElement
 	 */
 	public static Element buildAnnotatedRelationshipElement(Document document, IAnnotatedRelationshipElement annotatedElement) {

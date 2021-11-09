@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.StringJoiner;
@@ -22,6 +23,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.eclipse.basyx.vab.coder.json.provider.JSONProvider;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
@@ -36,17 +41,17 @@ import com.google.common.io.ByteSource;
 
 /**
  * VAB provider class that enables access to an IModelProvider via HTTP REST
- * interface<br />
- * <br />
- * REST http interface is as following: <br />
+ * interface<br>
+ * <br>
+ * REST http interface is as following: <br>
  * - GET /aas/submodels/{subModelId} Retrieves submodel with ID {subModelId}
- * <br />
+ * <br>
  * - GET /aas/submodels/{subModelId}/properties/a Retrieve property a of
- * submodel {subModelId}<br />
+ * submodel {subModelId}<br>
  * - GET /aas/submodels/{subModelId}/properties/a/b Retrieve property a/b of
- * submodel {subModelId} <br />
+ * submodel {subModelId} <br>
  * - POST /aas/submodels/{subModelId}/operations/a Invoke operation a of
- * submodel {subModelId}<br />
+ * submodel {subModelId}<br>
  * - POST /aas/submodels/{subModelId}/operations/a/b Invoke operation a/b of
  * submodel {subModelId}
  * 
@@ -147,32 +152,20 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 
 	
 	/**
-	 * <pre>
 	 * Handle HTTP POST operation. Creates a new Property, Operation, Event,
-	 * Submodel or AAS or invokes an operation.
+	 * Submodel or AAS or AASX or invokes an operation.
 	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			String path = extractPath(req);
-			String serValue = extractSerializedValue(req);
+			
+			setPostResponseHeader(resp);
 
-			logger.trace("DoPost: {}", serValue);
-
-			// Setup HTML response header
-			resp.setStatus(201);
-			resp.setContentType("application/json");
-			resp.setCharacterEncoding("UTF-8");
-
-			// Check if request is for property creation or operation invoke
-			if (VABPathTools.isOperationInvokationPath(path)) {
-			// Invoke BaSys VAB 'invoke' primitive
-
-				providerBackend.processBaSysInvoke(path, serValue, resp.getOutputStream());
-
+			if (ServletFileUpload.isMultipartContent(req)) {
+				handleMultipartFormDataRequest(req, path, resp);
 			} else {
-			// Invoke the BaSys 'create' primitive
-				providerBackend.processBaSysCreate(path, serValue, resp.getOutputStream());
+				handleJSONPostRequest(req, path, resp);
 			}
 		} catch (ProviderException e) {
 			int httpCode = ExceptionToHTTPCodeMapper.mapFromException(e);
@@ -300,13 +293,90 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 	 */
 	private String extractSerializedValue(HttpServletRequest req) throws IOException {
 		// https://www.baeldung.com/convert-input-stream-to-string#guava
-		ByteSource byteSource = new ByteSource() {
+        return getByteSource(req).asCharSource(Charsets.UTF_8).read();
+	}
+	
+	/**
+	 * Extracts input streams from request
+	 * @param req
+	 * @return
+	 * @throws IOException
+	 * @throws ServletException 
+	 */
+	private Collection<InputStream> extractInputStreams(HttpServletRequest req) throws IOException, ServletException{
+		Collection<InputStream> fileStreams = new ArrayList<InputStream>();
+		try {
+	        List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(req);
+	        for (FileItem item : items) {
+	            if (!item.isFormField()) {
+	                fileStreams.add(item.getInputStream());
+	            }
+	        }
+	    } catch (FileUploadException e) {
+	    	throw new ServletException("Cannot parse multipart request.", e);
+	    }
+		return fileStreams;
+	}
+	
+	/**
+	 * Gets a {@link ByteSource} from request stream
+	 * @return
+	 */
+	private ByteSource getByteSource(HttpServletRequest req) {
+		return new ByteSource() {
 	        @Override
 	        public InputStream openStream() throws IOException {
 	            return req.getInputStream();
 	        }
 	    };
-	 
-	    return byteSource.asCharSource(Charsets.UTF_8).read();
+	}
+	
+	/**
+	 * Setup HTML response header for HttpPost
+	 * @param resp
+	 */
+	private void setPostResponseHeader(HttpServletResponse resp) {
+		resp.setStatus(201);
+		resp.setContentType("application/json");
+		resp.setCharacterEncoding("UTF-8");
+	}
+
+
+	/**
+	 * Handles multipart/form-data request in HttpPost
+	 * @param req
+	 * @param path
+	 * @param resp
+	 * @throws IOException
+	 * @throws ServletException 
+	 */
+	private void handleMultipartFormDataRequest(HttpServletRequest req, String path, HttpServletResponse resp) throws IOException, ServletException {
+		Collection<InputStream> fileStreams = extractInputStreams(req);	
+		for (InputStream fileStream : fileStreams) {
+		    providerBackend.processBaSysUpload(path, fileStream, resp.getOutputStream());
+		    fileStream.close();	
+		}
+	}
+
+
+	/**
+	 * Handles POST request with JSON body
+	 * @param req
+	 * @param path
+	 * @param resp
+	 * @throws IOException
+	 */
+	private void handleJSONPostRequest(HttpServletRequest req, String path, HttpServletResponse resp) throws IOException {
+		String serValue = extractSerializedValue(req);
+		logger.trace("DoPost: {}", serValue);
+		
+		// Check if request is for property creation or operation invoke
+		if (VABPathTools.isOperationInvokationPath(path)) {
+			// Invoke BaSys VAB 'invoke' primitive
+			providerBackend.processBaSysInvoke(path, serValue, resp.getOutputStream());
+		} else {
+			// Invoke the BaSys 'create' primitive
+			providerBackend.processBaSysCreate(path, serValue, resp.getOutputStream());
+		}
 	}
 }

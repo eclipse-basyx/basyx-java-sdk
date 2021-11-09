@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This Class is a List, which holds LangString Objects <br/>
+ * This Class is a List, which holds LangString Objects <br>
  * It is used to hold a text in multiple languages
  * 
  * @author conradi, haque
@@ -58,7 +58,7 @@ public class LangStrings extends HashSet<LangString> {
 	/**
 	 * Creates a LangStrings object from a collection of map
 	 * 
-	 * @param obj a LangStrings object as raw collection of map
+	 * @param maps a LangStrings object as raw collection of map
 	 * @return a LangStrings object, that behaves like a facade for
 	 *         the given map
 	 */
@@ -75,6 +75,42 @@ public class LangStrings extends HashSet<LangString> {
 		return ret;
 	}
 	
+	/**
+	 * QoL method which creates a <code>LangStrings</code> with the specified strings. The strings must
+	 * be given in pairs, such that the first string is the language code and the second is the text.
+	 * 
+	 * <p>
+	 * Examples:
+	 * 
+	 * <pre>
+	 * {@code
+	 * // Creates a LangStrings with two languages: 
+	 * LangStrings ls1 = LangStrings.fromStringPairs("en", "Manual", "de", "Betriebsanleitung");
+	 * 
+	 * // Throws an exception:
+	 * LangStrings ls2 = LangStrings.fromStringPairs("en");
+	 * }
+	 * </pre>
+	 * 
+	 * @param strings A even-numbered set of strings where every pair of two strings describes one
+	 *                LangString.
+	 * 
+	 * @return A new instance of <code>LangStrings</code>.
+	 * 
+	 * @throws IllegalArgumentException if <code>strings</code> contains an odd number of elements.
+	 */
+	public static LangStrings fromStringPairs(String... strings) {
+		if ((strings.length % 2) == 1) {
+			throw new IllegalArgumentException("strings must have an even number of items.");
+		}
+
+		LangStrings result = new LangStrings();
+		for (int i = 0; i < strings.length; i = i + 2) {
+			result.add(new LangString(strings[i], strings[i + 1]));
+		}
+		return result;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static boolean isLangStrings(Object value) {
 		if(!(value instanceof Collection<?>)) {
@@ -89,7 +125,7 @@ public class LangStrings extends HashSet<LangString> {
 	/**
 	 * 
 	 * @param language
-	 * @return The String for the specified language or <br/>
+	 * @return The String for the specified language or <br>
 	 * an empty String if no matching LangString is found
 	 */
 	public String get(String language) {

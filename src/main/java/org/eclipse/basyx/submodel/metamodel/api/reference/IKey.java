@@ -44,7 +44,7 @@ public interface IKey {
 	public String getValue();
 
 	/**
-	 * Gets the type of the key value. <br />
+	 * Gets the type of the key value. <br>
 	 * In case of idType = idShort local shall be true. In case type=GlobalReference
 	 * idType shall not be IdShort.
 	 * 

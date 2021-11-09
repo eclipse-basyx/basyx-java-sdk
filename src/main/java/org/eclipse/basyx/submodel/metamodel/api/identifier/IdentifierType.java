@@ -13,9 +13,9 @@ import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnum;
 import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnumHelper;
 
 /**
- * Enumeration of different types of Identifiers for global identification <br/>
- * Since in Java there is no enum inheritance, it is implemented as class <br/>
- * <br/>
+ * Enumeration of different types of Identifiers for global identification <br>
+ * Since in Java there is no enum inheritance, it is implemented as class <br>
+ * <br>
  * 
  * @author schnicke
  *

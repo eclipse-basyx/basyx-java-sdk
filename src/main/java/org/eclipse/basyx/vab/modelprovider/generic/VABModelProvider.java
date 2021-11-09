@@ -9,9 +9,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.modelprovider.generic;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.eclipse.basyx.vab.exception.provider.NotAnInvokableException;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceAlreadyExistsException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -105,7 +108,6 @@ public class VABModelProvider implements IModelProvider {
 		handler.deleteValue(targetElement, obj);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object invokeOperation(String path, Object... parameters) {
 		
@@ -115,10 +117,64 @@ public class VABModelProvider implements IModelProvider {
 
 		// Invoke operation for function interfaces
 		if (childElement instanceof Function<?, ?>) {
-			Function<Object[], Object> function = (Function<Object[], Object>) childElement;
-			return function.apply(parameters);
+			return runFunction(childElement, parameters);
+		} else if (childElement instanceof Supplier<?>) {
+			return runSupplier(childElement);
+		} else if (childElement instanceof Consumer<?>) {
+			return runConsumer(childElement, parameters);
+		} else if (childElement instanceof Runnable) {
+			return runRunnable(childElement);
 		} else {
 			throw new NotAnInvokableException("Element \"" + path + "\" is not a function.");
+		}
+	}
+
+	private Object runRunnable(Object childElement) {
+		Runnable runnable = (Runnable) childElement;
+		try {
+			runnable.run();
+		} catch (ProviderException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProviderException(e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object runConsumer(Object childElement, Object... parameters) {
+		Consumer<Object> consumer = (Consumer<Object>) childElement;
+		try {
+			consumer.accept(parameters);
+		} catch (ProviderException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProviderException(e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object runSupplier(Object childElement) {
+		Supplier<Object> supplier = (Supplier<Object>) childElement;
+		try {
+			return supplier.get();
+		} catch (ProviderException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProviderException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object runFunction(Object childElement, Object... parameters) {
+		Function<Object[], Object> function = (Function<Object[], Object>) childElement;
+		try {
+			return function.apply(parameters);
+		} catch (ProviderException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProviderException(e);
 		}
 	}
 

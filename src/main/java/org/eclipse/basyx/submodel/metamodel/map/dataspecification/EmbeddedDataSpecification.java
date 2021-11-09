@@ -25,7 +25,7 @@ public class EmbeddedDataSpecification extends VABModelMap<Object> implements IE
 	/**
 	 * Creates a EmbeddedDataSpecification object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a EmbeddedDataSpecification object as raw map
 	 * @return a EmbeddedDataSpecification object, that behaves like a facade for the given map
 	 */

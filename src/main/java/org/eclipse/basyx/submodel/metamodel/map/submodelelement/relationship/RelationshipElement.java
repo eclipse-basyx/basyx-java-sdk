@@ -20,7 +20,7 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 
 /**
- * RelationshipElement as defined in DAAS document <br/>
+ * RelationshipElement as defined in DAAS document <br>
  * A relationship element is used to define a relationship between two referable
  * elements.
  * 

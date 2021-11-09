@@ -178,6 +178,20 @@ public class BaSyxContext extends HashMap<String, HttpServlet> {
 	}
 	
 	/**
+	 * Return Tomcat context path.
+	 */
+	public String getContextPath() {
+	    return contextPath;
+	}
+	
+	/**
+	 * Return Tomcat hostname.
+	 */
+	public String getHostname() {
+	    return hostname;
+	}
+	
+	/**
 	 * Returns whether the secured connection enabled or not
 	 * @return
 	 */

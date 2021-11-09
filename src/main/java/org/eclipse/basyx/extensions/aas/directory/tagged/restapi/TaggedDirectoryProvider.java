@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.restapi;
@@ -28,7 +28,7 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 	public static final String API_ACCESS = "?tags=";
 
 	public TaggedDirectoryProvider() {
-		this(new MapTaggedDirectory(new HashMap<>(), new HashMap<>()));
+		this(new MapTaggedDirectory(new HashMap<>(), new HashMap<>(), new HashMap<>()));
 	}
 
 	public TaggedDirectoryProvider(MapTaggedDirectory directory) {
@@ -45,7 +45,7 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 			return super.getValue(path);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {

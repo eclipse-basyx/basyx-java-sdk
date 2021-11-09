@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
@@ -47,26 +48,19 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 		return new SubmodelElementProvider(defaultProvider);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue(String path) throws ProviderException {
 		path = VABPathTools.stripSlashes(path);
 		String[] pathElements = VABPathTools.splitPath(path);
 
 		if (path.isEmpty()) {
-			// Convert the internally used Map to a Collection before returning the smECollection
-			Map<String, Object> map = (Map<String, Object>) proxy.getValue(path);
-			SubmodelElementCollection smElemColl = SubmodelElementCollection.createAsFacade(map);
-			return SubmodelElementMapCollectionConverter.smElementToMap(smElemColl);
-		} else if(path.equals(MultiSubmodelElementProvider.VALUE)) {
-			// Return only a Collection of Elements. Not the internally used Map.
-			return SubmodelElementMapCollectionConverter.convertIDMapToCollection(proxy.getValue(path));
+			return getSubmodelElementCollection();
+		} else if(isValueAccess(path)) {
+			return getElements();
+		} else if (isValuesAccess(path)) {
+			return getElementsValues();			
 		} else {
-			// Directly access an element inside of the collection
-			String idShort = pathElements[0];
-			String subPath = VABPathTools.buildPath(pathElements, 1);
-			
-			return getElementProvider(idShort).getValue(subPath);
+			return getElementByIdShort(pathElements);
 		}
 	}
 
@@ -81,7 +75,7 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 			Map<String, Object> value =
 					SubmodelElementMapCollectionConverter.mapToSmECollection((Map<String, Object>) newValue);
 			proxy.setValue(path, value);
-		} else if(path.equals(MultiSubmodelElementProvider.VALUE)) {
+		} else if(isValueAccess(path)) {
 			// Convert the Collection of Elements to the internally used Map
 			Map<String, Object> value = SubmodelElementMapCollectionConverter.convertCollectionToIDMap(newValue);
 			proxy.setValue(path, value);
@@ -120,7 +114,7 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 		String[] pathElements = VABPathTools.splitPath(path);
 		
 		// "value" is a keyword and can not be used as the ID of an Element
-		if (path.isEmpty() || path.equals(MultiSubmodelElementProvider.VALUE)) {
+		if (path.isEmpty() || isValueAccess(path)) {
 			throw new MalformedRequestException("Path must not be empty or /value");
 		} else {
 			// If Path contains only one Element, use the proxy directly
@@ -145,7 +139,7 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 		path = VABPathTools.stripSlashes(path);
 		String[] pathElements = VABPathTools.splitPath(path);
 
-		if (path.isEmpty() || path.equals(MultiSubmodelElementProvider.VALUE)) {
+		if (path.isEmpty() || isValueAccess(path)) {
 			throw new MalformedRequestException("Path must not be empty or /value");
 		} else {
 			// Directly access an element inside of the collection
@@ -153,5 +147,57 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 			String subPath = VABPathTools.buildPath(pathElements, 1);
 			return getElementProvider(idShort).invokeOperation(subPath, parameter);
 		}
+	}
+	
+	private boolean isValueAccess(String path) {
+		return path.equals(MultiSubmodelElementProvider.VALUE);
+	}
+	
+	private boolean isValuesAccess(String path) {
+		return path.equals(SubmodelProvider.VALUES);
+	}
+	
+	/**
+	 * Gets single element by idShort
+	 * @param pathElements containing idShort as the first item
+	 * @return
+	 */
+	private Object getElementByIdShort(String[] pathElements) {
+		String idShort = pathElements[0];
+		String subPath = VABPathTools.buildPath(pathElements, 1);
+		
+		return getElementProvider(idShort).getValue(subPath);
+	}
+	
+	/**
+	 * Gets elements values from the proxy
+	 * Converts the internally used Map to a Collection before returning the smECollection
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getElementsValues() {
+		Map<String, Object> map = (Map<String, Object>) proxy.getValue("");
+		SubmodelElementCollection smElemColl = SubmodelElementCollection.createAsFacade(map);
+		return smElemColl.getValues();
+	}
+	
+	/**
+	 * Gets element collection from the proxy
+	 * @return Only a Collection of Elements. Not the internally used Map.
+	 */
+	private Collection<Map<String, Object>> getElements() {
+		return SubmodelElementMapCollectionConverter.convertIDMapToCollection(proxy.getValue(MultiSubmodelElementProvider.VALUE));
+	}
+	
+	/**
+	 * Gets Submodel Element Collection from the proxy
+	 * Converts the internally used Map to a Collection before returning the smECollection
+	 * @return map of the SMElementCollection
+	 */
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getSubmodelElementCollection() {
+		Map<String, Object> map = (Map<String, Object>) proxy.getValue("");
+		SubmodelElementCollection smElemColl = SubmodelElementCollection.createAsFacade(map);
+		return SubmodelElementMapCollectionConverter.smElementToMap(smElemColl);
 	}
 }

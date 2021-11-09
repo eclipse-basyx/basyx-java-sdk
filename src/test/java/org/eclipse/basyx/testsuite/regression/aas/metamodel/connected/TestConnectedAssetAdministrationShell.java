@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.metamodel.connected;
@@ -18,6 +18,7 @@ import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShe
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.restapi.AASModelProvider;
@@ -35,7 +36,7 @@ import org.junit.Test;
 /**
  * Tests the connected implementation of {@link IAssetAdministrationShell} based
  * on the AAS test suite <br />
- * 
+ *
  * @author schnicke
  *
  */
@@ -56,9 +57,9 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 		// Create AAS registry
 		IAASRegistry registry = new InMemoryRegistry();
 		// Create AAS Descriptor
-		AASDescriptor aasDescriptor = new AASDescriptor(AASID, "/aas");
+		AASDescriptor aasDescriptor = new AASDescriptor(AASID, new Endpoint("/aas"));
 		// Create Submodel Descriptor
-		SubmodelDescriptor smDescriptor2 = new SubmodelDescriptor(SMIDSHORT, SMID, "/aas/submodels/" + SMIDSHORT + "/submodel");
+		SubmodelDescriptor smDescriptor2 = new SubmodelDescriptor(SMIDSHORT, SMID, new Endpoint("/aas/submodels/" + SMIDSHORT + "/submodel"));
 		// Add Submodel descriptor to aas descriptor
 		aasDescriptor.addSubmodelDescriptor(smDescriptor2);
 

@@ -24,7 +24,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementC
 import org.eclipse.basyx.submodel.types.helper.SubmodelElementRetrievalHelper;
 
 /**
- * Markings as defined in the AAS Digital Nameplate Template document <br/>
+ * Markings as defined in the AAS Digital Nameplate Template document <br>
  * It is a submodel element collection which contains a collection of product markings
  * 
  * Note: CE marking is declared as mandatory according to EU Machine Directive 2006/42/EC.
@@ -127,7 +127,7 @@ public class Markings extends SubmodelElementCollection {
 
      * Note: CE marking is declared as mandatory according to EU Machine
      * Directive 2006/42/EC.
-	 * @param markingName
+	 * @param markings
 	 */
 	public void setMarking(List<Marking> markings) {
 		if (markings != null && markings.size() > 0) {

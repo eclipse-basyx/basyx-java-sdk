@@ -18,7 +18,7 @@ public class DataSpecificationContent extends VABModelMap<Object> implements IDa
 	/**
 	 * Creates a DataSpecificationContent object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a DataSpecificationContent object as raw map
 	 * @return a DataSpecificationContent object, that behaves like a facade for the given map
 	 */

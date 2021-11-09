@@ -101,7 +101,7 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 	}
 	
 	/**
-	 * Creates a ProviderException from a String received form the Server</br>
+	 * Creates a ProviderException from a String received form the Server<br>
 	 * The String has to be formated e.g. "ResourceNotFoundException: Requested Item
 	 * was not found"
 	 * 

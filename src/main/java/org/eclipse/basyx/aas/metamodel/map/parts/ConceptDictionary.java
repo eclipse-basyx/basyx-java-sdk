@@ -64,7 +64,7 @@ public class ConceptDictionary extends VABModelMap<Object> implements IConceptDi
 	/**
 	 * Creates a ConceptDictionary object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a ConceptDictionary object as raw map
 	 * @return a ConceptDictionary object, that behaves like a facade for the given
 	 *         map

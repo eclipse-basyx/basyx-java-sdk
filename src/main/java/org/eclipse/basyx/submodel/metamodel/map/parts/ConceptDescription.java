@@ -67,7 +67,7 @@ public class ConceptDescription extends VABModelMap<Object> implements IConceptD
 	/**
 	 * Creates a DataSpecificationIEC61360 object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a DataSpecificationIEC61360 object as raw map
 	 * @return a DataSpecificationIEC61360 object, that behaves like a facade for
 	 *         the given map

@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.coder.json.metaprotocol;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -77,6 +78,19 @@ public class Result extends HashMap<String, Object> {
 
 	public Result(Exception e) {
 		this(false, getMessageListFromException(e));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Result createAsFacade(Map<String, Object> map) {
+		boolean success = (Boolean) map.get(SUCCESS);
+		Object entity = map.get(ENTITY);
+		List<Message> messages = new ArrayList<>();
+		
+		for(Map<String, Object> messageMap: (List<Map<String, Object>>)map.get(MESSAGES)) {
+			messages.add(Message.createAsFacade(messageMap));
+		}
+		
+		return new Result(success, entity, messages);
 	}
 
 	private static List<Message> getMessageListFromException(Exception e) {

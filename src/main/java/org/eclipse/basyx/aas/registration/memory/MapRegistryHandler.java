@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.aas.registration.memory;
@@ -14,72 +14,85 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * Implements a preconfigured registry based on the Map interface
  */
 public class MapRegistryHandler implements IRegistryHandler {
-	protected Map<String, AASDescriptor> descriptorMap;
+	protected Map<String, AASDescriptor> shellDescriptorMap;
+	protected Map<String, SubmodelDescriptor> submodelDescriptorMap;
 
 	/**
 	 * Constructor that takes a reference to a map as a base for the registry
 	 * entries
 	 */
-	public MapRegistryHandler(Map<String, AASDescriptor> rootMap) {
-		descriptorMap = rootMap;
+	public MapRegistryHandler(Map<String, AASDescriptor> shellRootMap, Map<String, SubmodelDescriptor> submodelRootMap) {
+		shellDescriptorMap = shellRootMap;
+		submodelDescriptorMap = submodelRootMap;
 	}
 
 	@Override
-	public boolean contains(IIdentifier id) {
-		return descriptorMap.containsKey(id.getId());
+	public boolean containsShell(IIdentifier shellIdentifier) {
+		return shellDescriptorMap.containsKey(shellIdentifier.getId());
 	}
 
 	@Override
-	public void remove(IIdentifier id) {
-		AASDescriptor removed = descriptorMap.remove(id.getId());
-
-		IIdentifier aasId = removed.getIdentifier();
-		if (!aasId.getId().equals(id.getId())) {
-			// id is an assetId => also remove the aasId-mapping
-			descriptorMap.remove(aasId.getId());
-		} else {
-			IAsset asset = removed.getAsset();
-			if (asset != null) {
-				IIdentifier assetId = asset.getIdentification();
-				descriptorMap.remove(assetId.getId());
-			}
-		}
+	public boolean containsSubmodel(IIdentifier submodelIdentifier) {
+		return submodelDescriptorMap.containsKey(submodelIdentifier.getId());
 	}
 
 	@Override
-	public void insert(AASDescriptor descriptor) {
-		// insert with descriptor id
-		String id = descriptor.getIdentifier().getId();
-		descriptorMap.put(id, descriptor);
-
-		// insert with asset id if present
-		IAsset asset = descriptor.getAsset();
-		if (asset != null) {
-			String assetId = asset.getIdentification().getId();
-			descriptorMap.put(assetId, descriptor);
-		}
+	public void removeShell(IIdentifier shellIdentifier) {
+		shellDescriptorMap.remove(shellIdentifier.getId());
 	}
 
 	@Override
-	public void update(AASDescriptor descriptor) {
-		insert(descriptor); // has no semantic difference for hashmaps
+	public void removeSubmodel(IIdentifier submodelIdentifier) {
+		submodelDescriptorMap.remove(submodelIdentifier.getId());
 	}
 
 	@Override
-	public AASDescriptor get(IIdentifier id) {
-		return descriptorMap.get(id.getId());
+	public void insertShell(AASDescriptor shellDescriptor) {
+		String id = shellDescriptor.getIdentifier().getId();
+		shellDescriptorMap.put(id, shellDescriptor);
 	}
 
 	@Override
-	public List<AASDescriptor> getAll() {
-		return new ArrayList<>(new HashSet<>(descriptorMap.values()));
+	public void insertSubmodel(SubmodelDescriptor submodelDescriptor) {
+		String id = submodelDescriptor.getIdentifier().getId();
+		submodelDescriptorMap.put(id, submodelDescriptor);
+	}
+
+	@Override
+	public void updateShell(AASDescriptor modelDescriptor) {
+		insertShell(modelDescriptor); // has no semantic difference for hashmaps
+	}
+
+	@Override
+	public void updateSubmodel(SubmodelDescriptor modelDescriptor) {
+		insertSubmodel(modelDescriptor); // has no semantic difference for hashmaps
+	}
+
+	@Override
+	public AASDescriptor getShell(IIdentifier shellIdentifier) {
+		return shellDescriptorMap.get(shellIdentifier.getId());
+	}
+
+	@Override
+	public List<AASDescriptor> getAllShells() {
+		return new ArrayList<>(new HashSet<>(shellDescriptorMap.values()));
+	}
+
+	@Override
+	public SubmodelDescriptor getSubmodel(IIdentifier submodelIdentifier) {
+		return submodelDescriptorMap.get(submodelIdentifier.getId());
+	}
+
+	@Override
+	public List<SubmodelDescriptor> getAllSubmodels() {
+		return new ArrayList<>(new HashSet<>(submodelDescriptorMap.values()));
 	}
 }

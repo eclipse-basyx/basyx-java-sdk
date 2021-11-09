@@ -32,7 +32,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
-import org.eclipse.basyx.submodel.metamodel.facade.SubmodelValuesHelper;
+import org.eclipse.basyx.submodel.metamodel.facade.ElementContainerValuesHelper;
 import org.eclipse.basyx.submodel.metamodel.map.helper.ElementContainerHelper;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformation;
@@ -50,8 +50,8 @@ import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
  * A submodel defines a specific aspect of the asset represented by the AAS.
- * <br />
- * <br />
+ * <br>
+ * <br>
  * A submodel is used to structure the digital representation and technical
  * functionality of an Administration Shell into distinguishable parts. Each
  * submodel refers to a well-defined domain or subject matter. Submodels can
@@ -316,7 +316,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	@Override
 	public Map<String, Object> getValues() {
-		return SubmodelValuesHelper.getSubmodelValue(this);
+		return ElementContainerValuesHelper.getSubmodelValue(this);
 	}
 	
 	@Override

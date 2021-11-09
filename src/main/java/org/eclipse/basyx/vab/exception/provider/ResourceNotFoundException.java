@@ -9,6 +9,9 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.exception.provider;
 
+import java.util.List;
+
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 
 /**
  * Exception that indicates that a requested resource (AAS, sub model, property) was not found
@@ -34,5 +37,9 @@ public class ResourceNotFoundException extends ProviderException {
 	
 	public ResourceNotFoundException(Exception e) {
 		super(e);
+	}
+	
+	public ResourceNotFoundException(List<Message> msgs) {
+		super(msgs);
 	}
 }

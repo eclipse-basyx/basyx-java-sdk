@@ -94,7 +94,7 @@ public class VABModelMap<V extends Object> implements Map<String, V> {
 	}
 
 	/**
-	 * Get element from qualified path <br />
+	 * Get element from qualified path <br>
 	 * To retrieve the root element, use "" as path
 	 * 
 	 * @param path

@@ -58,6 +58,29 @@ public class InvocationRequest extends VABModelMap<Object> {
 
 		return ret;
 	}
+	
+	/**
+	 * Returns true if the given map is recognized as an InvocationRequest
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean isInvocationRequest(Object value) {
+		if(!(value instanceof Map<?, ?>)) {
+			return false;
+		}
+		
+		Map<String, Object> map = (Map<String, Object>) value;
+		
+		return isValid(map);
+	}
+	
+	/**
+	 * Check whether all mandatory elements for the metamodel
+	 * exist in a map
+	 * @return true/false
+	 */
+	public static boolean isValid(Map<String, Object> map) {
+		return map.containsKey(REQUESTID) && map.containsKey(TIMEOUT);
+	}
 
 	/**
 	 * Unwraps the values of the inputVars in the order of occurance in the collection of input arguments

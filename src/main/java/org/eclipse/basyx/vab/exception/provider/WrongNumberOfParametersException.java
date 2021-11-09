@@ -18,11 +18,16 @@ public class WrongNumberOfParametersException extends MalformedRequestException 
 	 * Version information for serialized instances
 	 */
 	private static final long serialVersionUID = 1L;
+
 	public WrongNumberOfParametersException(String operationIdShort, Collection<IOperationVariable> expected, Object... actual) {
-		super(constructErrorMessage(operationIdShort, expected, actual));
+		super(constructErrorMessage(operationIdShort, expected, actual.length));
 	}
 
-	private static String constructErrorMessage(String operationIdShort, Collection<IOperationVariable> expected, Object... actual) {
-		return "Operation with idShort " + operationIdShort + " was called using the wrong number of parameters. Expected size: " + expected.size() + ", actual: " + actual.length;
+	public WrongNumberOfParametersException(String operationIdShort, Collection<IOperationVariable> expected, int actualSize) {
+		super(constructErrorMessage(operationIdShort, expected, actualSize));
+	}
+
+	private static String constructErrorMessage(String operationIdShort, Collection<IOperationVariable> expected, int actualSize) {
+		return "Operation with idShort " + operationIdShort + " was called using the wrong number of parameters. Expected size: " + expected.size() + ", actual size: " + actualSize;
 	}
 }

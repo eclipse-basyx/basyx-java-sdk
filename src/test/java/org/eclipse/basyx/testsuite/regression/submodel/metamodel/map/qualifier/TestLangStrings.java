@@ -100,4 +100,22 @@ public class TestLangStrings {
 		assertFalse(LangStrings.isLangStrings(langStrings));
 	}
 	
+	@Test
+	public void testFromStringPairs() {
+	    LangStrings langStrings = LangStrings.fromStringPairs(LANGUAGE1, TEXT1, LANGUAGE2, TEXT2);
+	    assertEquals(2, langStrings.getLanguages().size());
+	    assertEquals(TEXT1, langStrings.get(LANGUAGE1));
+	    assertEquals(TEXT2, langStrings.get(LANGUAGE2));
+	}
+	
+	@Test
+    public void testFromStringPairsWithEmptyInput() {
+        LangStrings langStrings = LangStrings.fromStringPairs();
+        assertEquals(0, langStrings.getLanguages().size());
+    }
+	
+	@Test(expected = IllegalArgumentException.class)
+    public void testFromStringPairsWithOddNumber() {
+        LangStrings.fromStringPairs(LANGUAGE1);
+    }
 }

@@ -60,4 +60,11 @@ public interface ISubmodelElementCollection extends ISubmodelElement, IElementCo
 	 */
 	@Override
 	public Map<String, IOperation> getOperations();
+	
+	/**
+	 * Gets a {@literal Map<IdShort, smElement.getValue() >} containing the values of all submodelElements
+	 * 
+	 * @return a Map with the values of all submodelElements
+	 */
+	public Map<String, Object> getValues();
 }

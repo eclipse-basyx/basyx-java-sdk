@@ -19,7 +19,7 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 
 /**
- * Interface for the Asset Administration Shell Aggregator API <br />
+ * Interface for the Asset Administration Shell Aggregator API <br>
  * It is used to manage multiple AASs at the same endpoint
  * 
  * @author conradi

@@ -31,9 +31,9 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
- * Asset class as described in DAAS document<br/>
- * An Asset describes meta data of an asset that is represented by an AAS. <br/>
- * The asset may either represent an asset type or an asset instance.<br/>
+ * Asset class as described in DAAS document<br>
+ * An Asset describes meta data of an asset that is represented by an AAS. <br>
+ * The asset may either represent an asset type or an asset instance.<br>
  * The asset has a globally unique identifier plus � if needed � additional
  * domain specific (proprietary) identifiers.
  * 
@@ -90,7 +90,7 @@ public class Asset extends VABModelMap<Object> implements IAsset {
 	/**
 	 * Creates a Asset object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Asset object as raw map
 	 * @return a Asset object, that behaves like a facade for the given map
 	 */

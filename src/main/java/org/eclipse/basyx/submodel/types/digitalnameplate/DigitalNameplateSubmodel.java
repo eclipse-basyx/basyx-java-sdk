@@ -34,7 +34,7 @@ import org.eclipse.basyx.submodel.types.digitalnameplate.submodelelementcollecti
 import org.eclipse.basyx.submodel.types.digitalnameplate.submodelelementcollections.markings.Markings;
 
 /**
- * DigitalNameplateSubmodel as defined in the AAS Digital Nameplate Template document <br/>
+ * DigitalNameplateSubmodel as defined in the AAS Digital Nameplate Template document <br>
  * this contains the nameplate information attached to the product
  * 
  * @author haque

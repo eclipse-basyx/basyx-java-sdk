@@ -27,19 +27,18 @@ import org.eclipse.basyx.submodel.metamodel.map.parts.ConceptDescription;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
- * AasEnv class 
+ * AasEnv class
  * 
  * @author gordt
  */
 
 public class AasEnv extends VABModelMap<Object> implements IAasEnv {
-	
+
 	public static final String ASSETS = "assets";
 	public static final String ASSETADMINISTRATIONSHELLS = "assetAdministrationShells";
 	public static final String SUBMODELS = "submodels";
 	public static final String CONCEPTDESCRIPTIONS = "conceptDescriptions";
 	public static final String MODELTYPE = "AasEnv";
-
 
 	public AasEnv() {
 		// Add model type
@@ -57,7 +56,7 @@ public class AasEnv extends VABModelMap<Object> implements IAasEnv {
 	/**
 	 * Creates a AssetAdministrationShell object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a AssetAdministrationShell object as raw map
 	 * @return a AssetAdministrationShell object, that behaves like a facade for the
 	 *         given map
@@ -69,48 +68,46 @@ public class AasEnv extends VABModelMap<Object> implements IAasEnv {
 		}
 
 		AasEnv ret = new AasEnv();
-		
+
 		Collection<IAsset> assetsTarget = new LinkedList<>();
 		if (map.get(ASSETS) != null && map.get(ASSETS) instanceof Collection) {
 			Collection<Map<String, Object>> objectMapCollection = (Collection<Map<String, Object>>) map.get(ASSETS);
-			for(Map<String, Object> objectMap : objectMapCollection) {
+			for (Map<String, Object> objectMap : objectMapCollection) {
 				assetsTarget.add(Asset.createAsFacade(objectMap));
 			}
 		}
 		ret.put(ASSETS, assetsTarget);
-		
+
 		Collection<IAssetAdministrationShell> aasTarget = new LinkedList<>();
 		if (map.get(ASSETADMINISTRATIONSHELLS) != null && map.get(ASSETADMINISTRATIONSHELLS) instanceof Collection) {
 			Collection<Map<String, Object>> objectMapCollection = (Collection<Map<String, Object>>) map.get(ASSETADMINISTRATIONSHELLS);
-			for(Map<String, Object> objectMap : objectMapCollection) {
+			for (Map<String, Object> objectMap : objectMapCollection) {
 				aasTarget.add(AssetAdministrationShell.createAsFacade(objectMap));
 			}
 		}
 		ret.put(ASSETADMINISTRATIONSHELLS, aasTarget);
-		
+
 		Collection<ISubmodel> submodelsTarget = new LinkedList<>();
 		if (map.get(SUBMODELS) != null && map.get(SUBMODELS) instanceof Collection) {
 			Collection<Map<String, Object>> objectMapCollection = (Collection<Map<String, Object>>) map.get(SUBMODELS);
-			for(Map<String, Object> objectMap : objectMapCollection) {
+			for (Map<String, Object> objectMap : objectMapCollection) {
 				submodelsTarget.add(Submodel.createAsFacade(objectMap));
 			}
 		}
 		ret.put(SUBMODELS, submodelsTarget);
-		
+
 		Collection<IConceptDescription> conceptDescriptionsTarget = new LinkedList<>();
 		if (map.get(CONCEPTDESCRIPTIONS) != null && map.get(CONCEPTDESCRIPTIONS) instanceof Collection) {
 			Collection<Map<String, Object>> objectMapCollection = (Collection<Map<String, Object>>) map.get(CONCEPTDESCRIPTIONS);
-			for(Map<String, Object> objectMap : objectMapCollection) {
+			for (Map<String, Object> objectMap : objectMapCollection) {
 				conceptDescriptionsTarget.add(ConceptDescription.createAsFacade(objectMap));
 			}
 		}
 		ret.put(CONCEPTDESCRIPTIONS, conceptDescriptionsTarget);
-		
+
 		return ret;
 	}
-	
-	
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<IAsset> getAssets() {
@@ -123,7 +120,7 @@ public class AasEnv extends VABModelMap<Object> implements IAasEnv {
 	public void setAssets(Collection<IAsset> assets) {
 		put(ASSETS, assets);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<IAssetAdministrationShell> getAssetAdministrationShells() {
@@ -136,7 +133,12 @@ public class AasEnv extends VABModelMap<Object> implements IAasEnv {
 	public void setAssetAdministrationShells(Collection<IAssetAdministrationShell> assetAdministrationShells) {
 		put(ASSETADMINISTRATIONSHELLS, assetAdministrationShells);
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public void addAssetAdministrationShell(IAssetAdministrationShell aas) {
+		((Collection<IAssetAdministrationShell>) get(ASSETADMINISTRATIONSHELLS)).add(aas);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<ISubmodel> getSubmodels() {
@@ -148,6 +150,11 @@ public class AasEnv extends VABModelMap<Object> implements IAasEnv {
 
 	public void setSubmodels(Collection<ISubmodel> submodels) {
 		put(SUBMODELS, submodels);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void addSubmodel(ISubmodel submodel) {
+		((Collection<ISubmodel>) get(SUBMODELS)).add(submodel);
 	}
 
 	@SuppressWarnings("unchecked")

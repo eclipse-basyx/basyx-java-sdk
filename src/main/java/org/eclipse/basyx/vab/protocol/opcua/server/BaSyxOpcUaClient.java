@@ -13,6 +13,10 @@ import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 
+/**
+ * @deprecated As of version 1.1. Was never actually used, so no direct replacement available.
+ */
+@Deprecated
 public interface BaSyxOpcUaClient {
 
     void run(OpcUaClient client, CompletableFuture<OpcUaClient> future) throws Exception;

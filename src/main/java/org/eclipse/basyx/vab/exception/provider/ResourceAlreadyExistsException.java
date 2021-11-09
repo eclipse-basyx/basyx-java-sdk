@@ -9,6 +9,10 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.exception.provider;
 
+import java.util.List;
+
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
+
 /**
  * Used to indicate by a ModelProvider,
  * that a resource to be created already exists
@@ -34,5 +38,9 @@ public class ResourceAlreadyExistsException extends ProviderException {
 	
 	public ResourceAlreadyExistsException(Exception e) {
 		super(e);
+	}
+	
+	public ResourceAlreadyExistsException(List<Message> msgs) {
+		super(msgs);
 	}
 }

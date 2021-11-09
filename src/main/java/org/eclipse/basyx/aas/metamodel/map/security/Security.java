@@ -37,7 +37,7 @@ public class Security extends VABModelMap<Object> implements ISecurity {
 	/**
 	 * Creates a Security object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Security object as raw map
 	 * @return a Security object, that behaves like a facade for the given map
 	 */

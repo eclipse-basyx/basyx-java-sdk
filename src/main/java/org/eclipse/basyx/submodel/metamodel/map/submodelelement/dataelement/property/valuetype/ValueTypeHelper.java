@@ -24,8 +24,8 @@ import javax.xml.namespace.QName;
 /**
  * Provides utility functions for
  * {@link org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType
- * PropertyValueTypeDef} <br />
- * * Creating a PropertyValueTypeDef from name <br/>
+ * PropertyValueTypeDef} <br>
+ * * Creating a PropertyValueTypeDef from name <br>
  * * Creating a PropertyValueTypeDef for an object
  * 
  * @author schnicke

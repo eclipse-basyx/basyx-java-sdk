@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.basyx.aas.factory.xml.AASXPackageExplorerCompatibilityHandler;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
@@ -93,6 +94,9 @@ public class AssetXMLConverter {
 	private static AssetKind parseAssetKind(Map<String, Object> xmlObject) {
 		String assetKindValue = XMLHelper.getString(xmlObject.get(ASSET_KIND));
 		if (!Strings.isNullOrEmpty(assetKindValue)) {
+			
+			assetKindValue = AASXPackageExplorerCompatibilityHandler.convertAssetKind(assetKindValue);
+			
 			return AssetKind.fromString(assetKindValue);
 		} else {
 			throw new RuntimeException("Necessary value 'AssetKind' was not found for one of the Assets in the XML file.");

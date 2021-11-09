@@ -67,7 +67,7 @@ public class Identifiable extends Referable implements IIdentifiable {
 	/**
 	 * Creates a Identifiable object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Identifiable object as raw map
 	 * @return a Identifiable object, that behaves like a facade for the given map
 	 */

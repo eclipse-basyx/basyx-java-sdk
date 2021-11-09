@@ -45,7 +45,7 @@ public class MultiSubmodelElementProvider implements IModelProvider {
 	}
 
 	/**
-	 * The elements are stored in a map => convert them to a list
+	 * The elements are stored in a map {@literal =>} convert them to a list
 	 */
 	@SuppressWarnings("unchecked")
 	protected Collection<Map<String, Object>> getElementsList() {
