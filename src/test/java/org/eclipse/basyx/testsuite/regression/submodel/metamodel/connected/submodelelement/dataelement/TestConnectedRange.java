@@ -10,15 +10,12 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement.dataelement;
 
 import static org.junit.Assert.assertEquals;
-
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedRange;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.Range;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.RangeValue;
-import org.eclipse.basyx.submodel.restapi.SubmodelElementProvider;
-import org.eclipse.basyx.testsuite.regression.vab.manager.VABConnectionManagerStub;
-import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
-import org.eclipse.basyx.vab.support.TypeDestroyingProvider;
+import org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement.SubmodelElementTestHelper;
+import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,10 +34,10 @@ public class TestConnectedRange {
 	public void build() {
 		range = new Range(ValueType.Integer, new Integer(1), new Integer(10));
 		range.setIdShort("testIdShort");
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(range))));
+		
+		VABElementProxy manager = SubmodelElementTestHelper.createManager(range);
 
-		connectedRange = new ConnectedRange(manager.connectToVABElement(""));
+		connectedRange = new ConnectedRange(manager);
 	}
 	
 	/**
@@ -89,5 +86,20 @@ public class TestConnectedRange {
 		assertEquals(2, connectedRange.getMin());
 		assertEquals(8, connectedRange.getMax());
 		assertEquals(range.getValueType(), connectedRange.getValueType());
+	}
+	
+	@Test
+	public void setValueUpdatesValueCorrectly() {
+		triggerCachingOfSubmodelElement();
+
+		RangeValue expected = new RangeValue(10, 20);
+		
+		connectedRange.setValue(expected);
+		
+		assertEquals(expected, connectedRange.getValue());
+	}
+
+	private void triggerCachingOfSubmodelElement() {
+		connectedRange.getElem();
 	}
 }

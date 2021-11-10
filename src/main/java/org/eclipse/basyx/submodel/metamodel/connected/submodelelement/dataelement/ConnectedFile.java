@@ -28,7 +28,6 @@ public class ConnectedFile extends ConnectedDataElement implements IFile {
 
 	@Override
 	public String getValue() {
-		
 		// FIXME: This is a hack, fix this when API is clear
 		return (String) getProxy().getValue(Property.VALUE);
 	}
@@ -47,9 +46,9 @@ public class ConnectedFile extends ConnectedDataElement implements IFile {
 	public File getLocalCopy() {
 		return File.createAsFacade(getElem()).getLocalCopy();
 	}
-
+	
 	@Override
 	public void setValue(String value) {
-		setValue((Object) value);
+		super.setValue(value);
 	}
 }

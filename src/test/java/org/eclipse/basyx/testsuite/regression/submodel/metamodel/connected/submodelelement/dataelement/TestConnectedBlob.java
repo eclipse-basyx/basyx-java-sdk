@@ -11,16 +11,12 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.subm
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedBlob;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.Blob;
-import org.eclipse.basyx.submodel.restapi.SubmodelElementProvider;
-import org.eclipse.basyx.testsuite.regression.vab.manager.VABConnectionManagerStub;
-import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
-import org.eclipse.basyx.vab.support.TypeDestroyingProvider;
+import org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement.SubmodelElementTestHelper;
+import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,18 +30,19 @@ public class TestConnectedBlob {
 	public final String BLOB_CONTENT = "BLOB_VALUE";
 
 	protected ConnectedBlob connectedBlob;
-	protected Blob blob;
+	protected Blob blob;	
 	
 	@Before
 	public void build() {
 		blob = new Blob("testIdShort", "mimeType");
+		
 		byte[] value = BLOB_CONTENT.getBytes(StandardCharsets.UTF_8);
+		
 		blob.setByteArrayValue(value);
 		
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(blob))));
+		VABElementProxy manager = SubmodelElementTestHelper.createManager(blob);
 
-		connectedBlob = new ConnectedBlob(manager.connectToVABElement(""));
+		connectedBlob = new ConnectedBlob(manager);
 	}
 	
 	/**
@@ -56,7 +53,6 @@ public class TestConnectedBlob {
 		assertEquals(blob.getValue(), connectedBlob.getValue());
 		byte[] byteArray = BLOB_CONTENT.getBytes(StandardCharsets.UTF_8);
 		assertEquals(Base64.getEncoder().encodeToString(byteArray), blob.getValue());
-
 	}
 
 	/**
@@ -114,5 +110,20 @@ public class TestConnectedBlob {
 		String newStringValue = Base64.getEncoder().encodeToString(newArrayValue);
 		connectedBlob.setValue(newStringValue);
 		assertEquals("NEW", connectedBlob.getUTF8String());
+	}
+	
+	@Test
+	public void setValueUpdatesValueCorrectly() {
+		triggerCachingOfSubmodelElement();
+
+		byte[] expected = BLOB_CONTENT.getBytes(StandardCharsets.US_ASCII);
+		
+		connectedBlob.setValue(Base64.getEncoder().encodeToString(expected));
+		
+		assertEquals(Base64.getEncoder().encodeToString(expected), connectedBlob.getValue());
+	}
+
+	private void triggerCachingOfSubmodelElement() {
+		connectedBlob.getElem();
 	}
 }
