@@ -156,18 +156,17 @@ public class AASRegistry implements IAASRegistry {
 
 	@Override
 	public void deleteSubmodelFromShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		String submodelId = submodelIdentifier.getId();
 		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not delete submodel descriptor for Shell " + shellIdentifier.getId() + " since the Shell does not exist");
 		}
-		if (shellDescriptor.getSubmodelDescriptorFromIdentifierId(submodelId) == null) {
+		if (shellDescriptor.getSubmodelDescriptorFromIdentifier(submodelIdentifier) == null) {
 			throw new ResourceNotFoundException("Could not delete submodel descriptor for Shell " + shellIdentifier.getId() + " since the Submodel does not exist");
 		}
 
 		shellDescriptor.removeSubmodelDescriptor(submodelIdentifier);
 		handler.updateShell(shellDescriptor);
-		logger.debug("Deleted submodel " + submodelId + " from Shell " + shellIdentifier.getId());
+		logger.debug("Deleted submodel " + submodelIdentifier.getId() + " from Shell " + shellIdentifier.getId());
 	}
 
 	@Override
@@ -186,7 +185,7 @@ public class AASRegistry implements IAASRegistry {
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not look up descriptor for Submodel " + submodelIdentifier + " of Shell " + shellIdentifier + " since the Shell does not exist");
 		}
-		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifierId(submodelIdentifier.getId());
+		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifier(submodelIdentifier);
 		if (submodelDescriptor == null) {
 			throw new ResourceNotFoundException("Could not look up descriptor for Submodel " + submodelIdentifier + " of Shell " + shellIdentifier + " since the submodel does not exist");
 		}

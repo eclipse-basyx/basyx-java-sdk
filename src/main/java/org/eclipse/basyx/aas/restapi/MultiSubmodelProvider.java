@@ -301,7 +301,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 					filter(id -> !localIds.contains(id.getId())).collect(Collectors.toList());
 
 			if(!missingIds.isEmpty()) {
-				List<String> missingEndpoints = missingIds.stream().map(id -> desc.getSubmodelDescriptorFromIdentifierId(id.getId()))
+				List<String> missingEndpoints = missingIds.stream().map(submodelIdentifier -> desc.getSubmodelDescriptorFromIdentifier(submodelIdentifier))
 						.map(smDesc -> smDesc.getFirstEndpoint().getProtocolInformation().getEndpointAddress()).collect(Collectors.toList());
 
 				// Check if any of the missing Submodels have the same address as the AAS.

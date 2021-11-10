@@ -184,7 +184,7 @@ public abstract class TestRegistryProviderSuite {
 		assertEquals(shellEndpoint1, shellDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 
 		// Check, if the SM descriptor in the AASDescriptor is correct
-		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifierId(submodelIdentifier1.getId());
+		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifier(submodelIdentifier1);
 		validateSubmodelDescriptor1(submodelDescriptor);
 	}
 
@@ -419,7 +419,12 @@ public abstract class TestRegistryProviderSuite {
 		// Ensure that the submodel was correctly removed
 		aasDesc = proxy.lookupShell(shellIdentifier1);
 		assertNotNull(aasDesc.getSubmodelDescriptorFromIdShort(submodelIdShort1));
-		assertNull(aasDesc.getSubmodelDescriptorFromIdShort(submodelIdShort2));
+		try {
+			aasDesc.getSubmodelDescriptorFromIdShort(submodelIdShort2);
+			fail();
+		} catch (ResourceNotFoundException e) {
+			// expected
+		}
 	}
 
 	/**

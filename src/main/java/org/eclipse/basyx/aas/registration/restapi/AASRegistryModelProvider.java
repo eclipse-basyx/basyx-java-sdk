@@ -182,7 +182,9 @@ public class AASRegistryModelProvider implements IModelProvider {
 	}
 
 	private Object getSingleSubmodelDescriptorForShellDescriptor(String shellId, String submodelId) {
-		return getSubmodelDescriptor(new ModelUrn(shellId), submodelId);
+		ModelUrn shellIdentifier = new ModelUrn(shellId);
+		ModelUrn submodelIdentifier = new ModelUrn(submodelId);
+		return getSubmodelDescriptor(shellIdentifier, submodelIdentifier);
 	}
 
 	@Override
@@ -285,7 +287,8 @@ public class AASRegistryModelProvider implements IModelProvider {
 
 	private void deleteSubmodelDescriptorForShellDescriptor(String shellId, String submodelId) {
 		ModelUrn shellIdentifier = new ModelUrn(shellId);
-		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptor(shellIdentifier, submodelId);
+		ModelUrn submodelIdentifier = new ModelUrn(submodelId);
+		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptor(shellIdentifier, submodelIdentifier);
 
 		registry.deleteSubmodelFromShell(shellIdentifier, submodelDescriptor.getIdentifier());
 	}
@@ -325,24 +328,24 @@ public class AASRegistryModelProvider implements IModelProvider {
 	 * ResourceNotFoundException if aas does not exist.
 	 *
 	 * @param shellIdentifier
-	 *            id of the shell
-	 * @param submodelId
-	 *            id of the submodel
+	 *            identifier of the shell
+	 * @param submodelIdentifier
+	 *            identifier of the submodel
 	 * @return the SubmodelDescriptor with the given id
 	 * @throws ResourceNotFoundException
 	 *             if aasId does not exist
 	 */
-	private SubmodelDescriptor getSubmodelDescriptor(IIdentifier shellIdentifier, String submodelId) throws ResourceNotFoundException {
+	private SubmodelDescriptor getSubmodelDescriptor(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ResourceNotFoundException {
 		AASDescriptor shellDescriptor = registry.lookupShell(shellIdentifier);
 
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Specified shellId '" + shellIdentifier.getId() + "' does not exist.");
 		}
 
-		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifierId(submodelId);
+		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifier(submodelIdentifier);
 
 		if (submodelDescriptor == null) {
-			throw new ResourceNotFoundException("Specified SubmodelId '" + submodelId + "' for Shell '" + shellIdentifier.getId() + "' does not exist.");
+			throw new ResourceNotFoundException("Specified SubmodelId '" + submodelIdentifier + "' for Shell '" + shellIdentifier.getId() + "' does not exist.");
 		}
 
 		return submodelDescriptor;

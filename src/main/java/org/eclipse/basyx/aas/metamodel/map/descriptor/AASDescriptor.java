@@ -22,28 +22,31 @@ import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
 import org.eclipse.basyx.aas.metamodel.map.parts.GlobalAssetId;
 import org.eclipse.basyx.aas.metamodel.map.parts.SpecificAssetId;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
-import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 /**
- * AAS descriptor class
+ * Shell descriptor class
  * 
  * @author kuhn, pschorn, espen
  *
  */
 public class AASDescriptor extends ModelDescriptor {
+	// TODO: Builder Pattern
 	public static final String MODELTYPE = "AssetAdministrationShellDescriptor";
 	public static final String GLOBAL_ASSET_ID = "globalAssetId";
 	public static final String SPECIFIC_ASSET_IDS = "specificAssetId";
 
+	protected AASDescriptor() {
+		super();
+	}
+
 	/**
-	 * Create descriptor from existing hash map.
+	 * Create shell descriptor from existing hash map.
 	 * 
 	 * @param map
-	 *            The map, the AASDesbriptor is to be built from
+	 *            The map, the shell descriptor is to be built from
 	 */
 	public AASDescriptor(Map<String, Object> map) {
 		super(map);
@@ -52,42 +55,19 @@ public class AASDescriptor extends ModelDescriptor {
 		putAll(map);
 	}
 
-	protected AASDescriptor() {
-		super();
-	}
-
 	/**
-	 * Create a new aas descriptor that retrieves the necessary information from a
-	 * passed AssetAdministrationShell.
+	 * Create a new shell descriptor with minimal information (idShort is assumed to
+	 * be set to an empty string).
 	 * 
-	 * @param assetAdministrationShell
+	 * @param shellIdentifier
 	 * @param endpoint
 	 */
-	public AASDescriptor(IAssetAdministrationShell assetAdministrationShell, Endpoint endpoint) {
-		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), endpoint);
+	public AASDescriptor(IIdentifier shellIdentifier, Endpoint endpoint) {
+		this("", shellIdentifier, endpoint);
 	}
 
 	/**
-	 * Create a new aas descriptor with shellId, idShort, globalAssetId,
-	 * specificAssetId, and endpoint.
-	 * 
-	 * @param idShort
-	 * @param aasid
-	 * @param globalAssetId
-	 * @param specificAssetIds
-	 * @param endpoint
-	 */
-	public AASDescriptor(String idShort, IIdentifier aasid, GlobalAssetId globalAssetId, SpecificAssetId specificAssetIds, Endpoint endpoint) {
-		super(idShort, aasid, endpoint);
-
-		put(GLOBAL_ASSET_ID, globalAssetId);
-		put(SPECIFIC_ASSET_IDS, specificAssetIds);
-		put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
-		putAll(new ModelType(MODELTYPE));
-	}
-
-	/**
-	 * Create a new aas descriptor with minimal information.
+	 * Create a new shell descriptor with minimal information.
 	 * 
 	 * @param idShort
 	 * @param shellIdentifier
@@ -101,132 +81,106 @@ public class AASDescriptor extends ModelDescriptor {
 	}
 
 	/**
-	 * Create a new aas descriptor with minimal information (idShort is assumed to
-	 * be set to "").
+	 * Create a new shell descriptor that retrieves the necessary information from a
+	 * passed AssetAdministrationShell.
 	 * 
-	 * @param aasid
+	 * @param assetAdministrationShell
 	 * @param endpoint
 	 */
-	public AASDescriptor(IIdentifier aasid, Endpoint endpoint) {
-		this("", aasid, endpoint);
+	public AASDescriptor(IAssetAdministrationShell assetAdministrationShell, Endpoint endpoint) {
+		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), endpoint);
 	}
 
 	/**
-	 * Add a sub model descriptor to this aas descriptor
+	 * Create a new shell descriptor with shellId, idShort, globalAssetId,
+	 * specificAssetId, and endpoint.
+	 *
+	 * @param idShort
+	 * @param aasid
+	 * @param globalAssetId
+	 * @param specificAssetIds
+	 * @param endpoint
+	 */
+	public AASDescriptor(String idShort, IIdentifier aasid, GlobalAssetId globalAssetId, SpecificAssetId specificAssetIds, Endpoint endpoint) {
+		// TODO: globalAssetId, specificAssetIds are mutually exclusive
+		// TODO: constructor from Collection<SpecificAssetId> specificAssetIds
+		super(idShort, aasid, endpoint);
+
+		put(GLOBAL_ASSET_ID, globalAssetId);
+		put(SPECIFIC_ASSET_IDS, specificAssetIds);
+		put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
+		putAll(new ModelType(MODELTYPE));
+	}
+
+	/**
+	 * Add a sub model descriptor to this shell descriptor
 	 * 
-	 * @param desc
+	 * @param submodelDescriptor
 	 * @return this AASDescriptor (Enables method chaining)
 	 */
-	public AASDescriptor addSubmodelDescriptor(SubmodelDescriptor desc) {
-		Object submodels = extractShellSubmodels();
-		Collection<Map<String, Object>> submodelDescriptors = convertSubmodelsToList(submodels);
+	public AASDescriptor addSubmodelDescriptor(SubmodelDescriptor submodelDescriptor) {
+		Collection<Map<String, Object>> submodelDescriptors = getSubmodelsDescriptorsAsCollection();
 
-		submodelDescriptors.add(desc);
+		submodelDescriptors.add(submodelDescriptor);
 		put(AssetAdministrationShell.SUBMODELS, submodelDescriptors);
 
 		return this;
 	}
 
 	/**
-	 * Removes a submodel descriptor from a shell using a given submodel idShort.
-	 * 
-	 * @param idShort
-	 */
-	public void removeSubmodelDescriptor(String idShort) {
-		tryRemoveSubmodelDescriptor(idShort);
-	}
-
-	/**
-	 * Removes a submodel descriptor from a shell using a given submodel identifier.
-	 * 
-	 * @param identifier
-	 */
-	public void removeSubmodelDescriptor(IIdentifier identifier) {
-		tryRemoveSubmodelDescriptor(identifier);
-	}
-
-	/**
 	 * Tries to remove a submodel descriptor from a shell using a given submodel
 	 * idShort.
 	 * 
-	 * @param submodelDescriptor
-	 *            The SubmodelDescriptor to be removed
 	 * @param idShort
-	 *            The submodel idShort to be used
 	 */
-	private void tryRemoveSubmodelDescriptor(String idShort) {
-		try {
-			Optional<SubmodelDescriptor> submodelDescriptor = getSubmodelDescriptors().stream().filter(x -> x.getIdShort().equals(idShort)).findAny();
-			removeSubmodelDescriptorHelper(submodelDescriptor);
-		} catch (NullPointerException e) {
-			throw new ResourceNotFoundException("SubmodelDescriptor with idShort '" + idShort + "' does not exist.");
-		}
+	public void removeSubmodelDescriptor(String submodelIdShort) {
+		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptorFromIdShort(submodelIdShort);
+		getSubmodelsDescriptorsAsCollection().remove(submodelDescriptor);
 	}
 
 	/**
 	 * Tries to remove a submodel descriptor from a shell using a given submodel
 	 * identifier.
 	 * 
-	 * @param submodelDescriptor
-	 *            The submodel descriptor to be removed
-	 * @param identifier
-	 *            The submodel identifier to be used
+	 * @param submodelIdentifier
 	 */
-	private void tryRemoveSubmodelDescriptor(IIdentifier identifier) {
-		try {
-			Optional<SubmodelDescriptor> submodelDescriptor = getSubmodelDescriptors().stream().filter(x -> x.getIdentifier().getId().equals(identifier.getId())).findAny();
-			removeSubmodelDescriptorHelper(submodelDescriptor);
-		} catch (NullPointerException e) {
-			throw new ResourceNotFoundException("SubmodelDescriptor with identifier '" + identifier.getId() + "' does not exist.");
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private void removeSubmodelDescriptorHelper(Optional<SubmodelDescriptor> submodelDescriptor) throws NullPointerException {
-		// Don't use getSubmodelDescriptors here since it returns a copy
-		((Collection<Object>) extractShellSubmodels()).remove(submodelDescriptor.get());
+	public void removeSubmodelDescriptor(IIdentifier submodelIdentifier) {
+		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptorFromIdentifier(submodelIdentifier);
+		getSubmodelsDescriptorsAsCollection().remove(submodelDescriptor);
+		// TODO: PUT neu machen
 	}
 
 	/**
 	 * Retrieves a submodel descriptor based on the globally unique id of the
 	 * submodel.
 	 * 
-	 * @param subModelId
+	 * @param submodelId
 	 * @return SubmodelDescriptor by identifier from Shell
 	 */
-	public SubmodelDescriptor getSubmodelDescriptorFromIdentifierId(String subModelId) {
-		// Sub model descriptors are stored in a list
-		Object submodels = extractShellSubmodels();
-		Collection<Map<String, Object>> smDescriptorMaps = convertSubmodelsToList(submodels);
+	public SubmodelDescriptor getSubmodelDescriptorFromIdentifier(IIdentifier submodelIdentifier) {
+		Optional<SubmodelDescriptor> submodelDescriptor = getSubmodelDescriptors().stream().filter(x -> x.getIdentifier().equals(submodelIdentifier)).findAny();
 
-		// Go through all descriptors (as maps) and find the one with the subModelId
-		for (Map<String, Object> smDescriptorMap : smDescriptorMaps) {
-			// Use a facade to access the identifier
-			IIdentifier id = Identifiable.createAsFacade(smDescriptorMap, KeyElements.SUBMODEL).getIdentification();
-			if (id.getId().equals(subModelId)) {
-				return new SubmodelDescriptor(smDescriptorMap);
-			}
+		if (submodelDescriptor.isPresent()) {
+			return submodelDescriptor.get();
+		} else {
+			throw new ResourceNotFoundException("The SubmodelDescriptor with given identifier '" + submodelIdentifier.getId() + "' does not exist.");
 		}
-
-		// No descriptor found
-		return null;
 	}
 
 	/**
 	 * Retrieves a submodel descriptor based on the idShort of the submodel
 	 * 
-	 * @param idShort
+	 * @param submodelIdShort
 	 * @return
 	 */
-	public SubmodelDescriptor getSubmodelDescriptorFromIdShort(String idShort) {
-		return getSubmodelDescriptors().stream().filter(x -> x.getIdShort().equals(idShort)).findAny().orElse(null); // TODO: Exception
-	}
+	public SubmodelDescriptor getSubmodelDescriptorFromIdShort(String submodelIdShort) {
+		Optional<SubmodelDescriptor> submodelDescriptor = getSubmodelDescriptors().stream().filter(x -> x.getIdShort().equals(submodelIdShort)).findAny();
 
-	/**
-	 * Get a specific sub model descriptor from a ModelUrn
-	 */
-	public SubmodelDescriptor getSubmodelDescriptor(ModelUrn submodelUrn) {
-		return getSubmodelDescriptorFromIdentifierId(submodelUrn.getURN());
+		if (submodelDescriptor.isPresent()) {
+			return submodelDescriptor.get();
+		} else {
+			throw new ResourceNotFoundException("The SubmodelDescriptor with given idShort '" + submodelIdShort + "' does not exist.");
+		}
 	}
 
 	/**
@@ -235,18 +189,14 @@ public class AASDescriptor extends ModelDescriptor {
 	 * @return
 	 */
 	public Collection<SubmodelDescriptor> getSubmodelDescriptors() {
-		Object submodels = extractShellSubmodels();
-		Collection<Map<String, Object>> descriptors = convertSubmodelsToList(submodels);
-		return descriptors.stream().map(SubmodelDescriptor::new).collect(Collectors.toSet());
-	}
-
-	private Object extractShellSubmodels() {
-		return get(AssetAdministrationShell.SUBMODELS);
+		Collection<Map<String, Object>> submodelDescriptors = getSubmodelsDescriptorsAsCollection();
+		return submodelDescriptors.stream().map(SubmodelDescriptor::new).collect(Collectors.toSet());
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<Map<String, Object>> convertSubmodelsToList(Object submodelMap) {
-		return (Collection<Map<String, Object>>) submodelMap;
+	private Collection<Map<String, Object>> getSubmodelsDescriptorsAsCollection() {
+		Object submodelDescriptorMap = get(AssetAdministrationShell.SUBMODELS);
+		return (Collection<Map<String, Object>>) submodelDescriptorMap;
 	}
 
 	@Override
