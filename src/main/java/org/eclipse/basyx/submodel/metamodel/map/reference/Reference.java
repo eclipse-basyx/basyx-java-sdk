@@ -156,7 +156,7 @@ public class Reference extends VABModelMap<Object> implements IReference {
 			return false;
 		}
 		
-		return ((Collection<Key>) map.get(KEY)).stream().allMatch(Key::isKey);
+		return ((Collection<?>) map.get(KEY)).stream().allMatch(Key::isKey);
 	}
 
 	@SuppressWarnings("unchecked")
