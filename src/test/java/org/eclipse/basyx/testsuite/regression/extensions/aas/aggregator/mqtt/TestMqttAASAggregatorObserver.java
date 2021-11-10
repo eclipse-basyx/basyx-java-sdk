@@ -10,6 +10,7 @@
 package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.mqtt;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,7 +20,6 @@ import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.observing.ObservableAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
-import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;

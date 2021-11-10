@@ -19,7 +19,7 @@ import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
+import org.eclipse.basyx.registry.proxy.RegistryProxy;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 public class AASAggregatorProxy implements IAASAggregator {
 	protected IModelProvider provider;
-	private static Logger logger = LoggerFactory.getLogger(AASRegistryProxy.class);
+	private static Logger logger = LoggerFactory.getLogger(RegistryProxy.class);
 	
 	/**
 	 * Constructor for an AAS aggregator proxy based on a HTTP connection

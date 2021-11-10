@@ -16,13 +16,13 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.map.MapTaggedDirectory;
+import org.eclipse.basyx.registry.restapi.RegistryModelProvider;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
-public class TaggedDirectoryProvider extends AASRegistryModelProvider {
+public class TaggedDirectoryProvider extends RegistryModelProvider {
 	private MapTaggedDirectory directory;
 	public static final String PREFIX = "api/v1/directory";
 	public static final String API_ACCESS = "?tags=";

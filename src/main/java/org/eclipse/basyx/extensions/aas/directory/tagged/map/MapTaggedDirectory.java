@@ -15,22 +15,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.aas.registration.memory.AASRegistry;
-import org.eclipse.basyx.aas.registration.memory.MapRegistryHandler;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.registry.memory.Registry;
+import org.eclipse.basyx.registry.memory.MapRegistryHandler;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
- * Map implementation of a tagged directory. It extends {@link AASRegistry} by
+ * Map implementation of a tagged directory. It extends {@link Registry} by
  * additionally managing a map of tags
  *
  * @author schnicke
  *
  */
-public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirectory {
+public class MapTaggedDirectory extends Registry implements IAASTaggedDirectory {
 	private Map<String, Set<TaggedAASDescriptor>> tagMap;
 
 	/**

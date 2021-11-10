@@ -9,9 +9,9 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.bundle;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**

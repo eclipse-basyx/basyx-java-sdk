@@ -19,11 +19,11 @@ import org.eclipse.basyx.aas.manager.api.IAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
+import org.eclipse.basyx.registry.api.IRegistry;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.ModelDescriptor;
+import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.connected.ConnectedSubmodel;
@@ -46,7 +46,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
  */
 public class ConnectedAssetAdministrationShellManager implements IAssetAdministrationShellManager {
 
-	protected IAASRegistry shellDirectory;
+	protected IRegistry shellDirectory;
 	protected IConnectorFactory connectorFactory;
 	protected ModelProxyFactory proxyFactory;
 
@@ -55,7 +55,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	 *
 	 * @param directory
 	 */
-	public ConnectedAssetAdministrationShellManager(IAASRegistry directory) {
+	public ConnectedAssetAdministrationShellManager(IRegistry directory) {
 		this(directory, new HTTPConnectorFactory());
 	}
 
@@ -63,7 +63,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	 * @param directory
 	 * @param provider
 	 */
-	public ConnectedAssetAdministrationShellManager(IAASRegistry directory, IConnectorFactory provider) {
+	public ConnectedAssetAdministrationShellManager(IRegistry directory, IConnectorFactory provider) {
 		this.shellDirectory = directory;
 		this.connectorFactory = provider;
 		this.proxyFactory = new ModelProxyFactory(provider);

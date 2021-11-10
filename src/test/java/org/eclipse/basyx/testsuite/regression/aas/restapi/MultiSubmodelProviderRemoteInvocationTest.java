@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.restapi.AASModelProvider;
 import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
+import org.eclipse.basyx.registry.api.IRegistry;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.ModelUrn;
+import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
+import org.eclipse.basyx.registry.memory.InMemoryRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
@@ -67,7 +67,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 	private MultiSubmodelProvider provider;
 
 	// Creating a new AAS Registry
-	private IAASRegistry registry = new InMemoryRegistry();
+	private IRegistry registry = new InMemoryRegistry();
 
 	@Before
 	public void init() {

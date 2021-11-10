@@ -14,7 +14,7 @@ import java.util.Collection;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
+import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -125,7 +125,7 @@ public class AASBundleHelper {
 	 * @param aasAggregatorPath
 	 *            the aggregator path, e.g. <i>http://localhost:4000/shells</i>
 	 */
-	public static void register(IAASRegistry registry, Collection<AASBundle> bundles, String aasAggregatorPath) {
+	public static void register(IRegistry registry, Collection<AASBundle> bundles, String aasAggregatorPath) {
 		bundles.stream().map(b -> AASBundleDescriptorFactory.createAASDescriptor(b, aasAggregatorPath)).forEach(registry::register);
 	}
 
@@ -137,7 +137,7 @@ public class AASBundleHelper {
 	 * @param bundles
 	 *            the AASBundles to be deregistred
 	 */
-	public static void deregister(IAASRegistry registry, Collection<AASBundle> bundles) {
+	public static void deregister(IRegistry registry, Collection<AASBundle> bundles) {
 		if (registry != null && bundles != null) {
 			for (AASBundle bundle : bundles) {
 				IAssetAdministrationShell aas = bundle.getAAS();
@@ -158,7 +158,7 @@ public class AASBundleHelper {
 		return path.toString();
 	}
 
-	private static void tryDeregisterModel(IAASRegistry registry, IIdentifier identifier, String loggerInfo) {
+	private static void tryDeregisterModel(IRegistry registry, IIdentifier identifier, String loggerInfo) {
 		try {
 			registry.deleteModel(identifier);
 		} catch (ProviderException e) {
