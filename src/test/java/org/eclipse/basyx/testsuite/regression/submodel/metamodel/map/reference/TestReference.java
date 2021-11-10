@@ -94,15 +94,10 @@ public class TestReference {
 	public void testIsReference() {
 		Identifiable identifiable = new Identifiable("2.0", "5", "testIDShort", "testCategory", new LangStrings("Eng", "test"), IdentifierType.IRI, "newId");
 		Reference reference = new Reference(identifiable, KEY_ELEMENTS, IS_LOCAL);
-		
 		assertTrue(Reference.isReference(reference));
-		
 		assertTrue(Reference.isReference(TypeDestroyer.destroyType(reference)));
-		
 		reference.put(Reference.KEY, "nonsense");
-		
 		assertFalse(Reference.isReference(reference));
-		
 		assertFalse(Reference.isReference(TypeDestroyer.destroyType(reference)));
 	}
 }
