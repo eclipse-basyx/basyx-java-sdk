@@ -27,6 +27,7 @@ import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
+import org.eclipse.basyx.vab.support.TypeDestroyer;
 import org.junit.Test;
 
 
@@ -96,8 +97,14 @@ public class TestReference {
 		
 		assertTrue(Reference.isReference(reference));
 		
+		//Added new test case for java.util.HashMap cannot be cast to org.eclipse.basyx.submodel.metamodel.map.reference.Key
+		assertTrue(Reference.isReference(TypeDestroyer.destroyType(reference)));
+		
 		reference.put(Reference.KEY, "nonsense");
 		
 		assertFalse(Reference.isReference(reference));
+		
+		//Added new test case for java.util.HashMap cannot be cast to org.eclipse.basyx.submodel.metamodel.map.reference.Key
+		assertFalse(Reference.isReference(TypeDestroyer.destroyType(reference)));
 	}
 }
