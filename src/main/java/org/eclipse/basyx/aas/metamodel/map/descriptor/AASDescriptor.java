@@ -131,7 +131,7 @@ public class AASDescriptor extends ModelDescriptor {
 	 * Tries to remove a submodel descriptor from a shell using a given submodel
 	 * idShort.
 	 * 
-	 * @param idShort
+	 * @param submodelIdShort
 	 */
 	public void removeSubmodelDescriptor(String submodelIdShort) {
 		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptorFromIdShort(submodelIdShort);
@@ -147,15 +147,14 @@ public class AASDescriptor extends ModelDescriptor {
 	public void removeSubmodelDescriptor(IIdentifier submodelIdentifier) {
 		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptorFromIdentifier(submodelIdentifier);
 		getSubmodelsDescriptorsAsCollection().remove(submodelDescriptor);
-		// TODO: PUT neu machen
 	}
 
 	/**
 	 * Retrieves a submodel descriptor based on the globally unique id of the
 	 * submodel.
 	 * 
-	 * @param submodelId
-	 * @return SubmodelDescriptor by identifier from Shell
+	 * @param submodelIdentifier
+	 * @return SubmodelDescriptor by identifier of the submodel
 	 */
 	public SubmodelDescriptor getSubmodelDescriptorFromIdentifier(IIdentifier submodelIdentifier) {
 		Optional<SubmodelDescriptor> submodelDescriptor = getSubmodelDescriptors().stream().filter(x -> x.getIdentifier().equals(submodelIdentifier)).findAny();
@@ -168,10 +167,10 @@ public class AASDescriptor extends ModelDescriptor {
 	}
 
 	/**
-	 * Retrieves a submodel descriptor based on the idShort of the submodel
+	 * Retrieves a submodel descriptor based on the idShort of the submodel.
 	 * 
 	 * @param submodelIdShort
-	 * @return
+	 * @return SubmodelDescriptor by idShort of the submodel
 	 */
 	public SubmodelDescriptor getSubmodelDescriptorFromIdShort(String submodelIdShort) {
 		Optional<SubmodelDescriptor> submodelDescriptor = getSubmodelDescriptors().stream().filter(x -> x.getIdShort().equals(submodelIdShort)).findAny();
@@ -184,9 +183,9 @@ public class AASDescriptor extends ModelDescriptor {
 	}
 
 	/**
-	 * Retrieves all submodel descriptors of the aas described by this descriptor
+	 * Retrieves all submodel descriptors of the shell described by this descriptor
 	 * 
-	 * @return
+	 * @return Collection of submodel descriptors from the current shell
 	 */
 	public Collection<SubmodelDescriptor> getSubmodelDescriptors() {
 		Collection<Map<String, Object>> submodelDescriptors = getSubmodelsDescriptorsAsCollection();
@@ -205,18 +204,18 @@ public class AASDescriptor extends ModelDescriptor {
 	}
 
 	/**
-	 * Validates the aas descriptor by checking whether idShort, identification and
-	 * endpoints key is present in the given map and checking the type of submodel
-	 * descriptors.
+	 * Validates the shell descriptor by checking whether idShort, identification
+	 * and endpoints key is present in the given map and checking the type of
+	 * submodel descriptors.
 	 *
 	 * @param map
 	 */
 	@Override
 	public void validate(Map<String, Object> map) {
 		super.validate(map);
-		if (!MapHasSubmodels(map)) {
+		if (!hasMapSubmodels(map)) {
 			map.put(AssetAdministrationShell.SUBMODELS, new HashSet<>());
-		} else if (MapHasSubmodels(map) && !isInstanceOfCollection(map)) {
+		} else if (hasMapSubmodels(map) && !isInstanceOfCollection(map)) {
 			throw new MalformedRequestException("Passed entry for " + AssetAdministrationShell.SUBMODELS + " is not a list of submodelDescriptors!");
 		}
 	}
@@ -225,12 +224,12 @@ public class AASDescriptor extends ModelDescriptor {
 		return map.get(AssetAdministrationShell.SUBMODELS) instanceof Collection<?>;
 	}
 
-	private boolean MapHasSubmodels(Map<String, Object> map) {
+	private boolean hasMapSubmodels(Map<String, Object> map) {
 		return map.containsKey(AssetAdministrationShell.SUBMODELS);
 	}
 
 	/**
-	 * @return The specific asset ids of this aas.
+	 * @return The specific asset ids of this shell.
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<SpecificAssetId> getSpecificAssetIds() {
@@ -238,15 +237,15 @@ public class AASDescriptor extends ModelDescriptor {
 		if (!(specificAssetIds instanceof Collection<?>)) {
 			return new ArrayList<>();
 		}
-		Collection<SpecificAssetId> ret = new ArrayList<SpecificAssetId>();
+		Collection<SpecificAssetId> returnCollection = new ArrayList<SpecificAssetId>();
 		for (Map<String, Object> specificAssetIdsMap : (Collection<Map<String, Object>>) specificAssetIds) {
-			ret.add(SpecificAssetId.createAsFacade(specificAssetIdsMap));
+			returnCollection.add(SpecificAssetId.createAsFacade(specificAssetIdsMap));
 		}
-		return ret;
+		return returnCollection;
 	}
 
 	/**
-	 * @return The global asset id of this aas.
+	 * @return The global asset id of this shell.
 	 */
 	@SuppressWarnings("unchecked")
 	public GlobalAssetId getGlobalAssetId() {
