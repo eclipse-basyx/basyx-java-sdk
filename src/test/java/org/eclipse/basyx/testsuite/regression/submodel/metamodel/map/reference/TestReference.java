@@ -97,7 +97,6 @@ public class TestReference {
 		assertTrue(Reference.isReference(reference));
 		assertTrue(Reference.isReference(TypeDestroyer.destroyType(reference)));
 		reference.put(Reference.KEY, "nonsense");
-		
 		assertFalse(Reference.isReference(reference));
 		assertFalse(Reference.isReference(TypeDestroyer.destroyType(reference)));
 	}
