@@ -121,7 +121,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -143,14 +143,14 @@
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>sdk-client</artifactId>
-			<version>0.3.3</version>
+			<version>0.3.6</version>
 		</dependency>
 
 		<!-- Eclipse Milo (for OPC-UA server) -->
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>sdk-server</artifactId>
-			<version>0.3.3</version>
+			<version>0.3.6</version>
 		</dependency>
 
 		<!-- Java Servlet API (for HTTP provider) -->
@@ -197,9 +197,9 @@
 
 		<!-- Logger -->
 		<dependency>
-    		<groupId>ch.qos.logback</groupId>
-    		<artifactId>logback-classic</artifactId>
-    		<version>1.2.3</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
 		</dependency>
 		
 		<!-- Used by Logback to compile filter expressions from logback.xml -->
