@@ -81,11 +81,22 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		return Referable.createAsFacade(this, null).getIdShort();
 	}
 
+	/**
+	 * Gets the administration of this descriptor
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public AdministrativeInformation getAdministration() {
 		Map<String, Object> administrativeInformation = (Map<String, Object>) get(Identifiable.ADMINISTRATION);
 		return AdministrativeInformation.createAsFacade(administrativeInformation);
 	}
 
+	/**
+	 * Sets the administration for this descriptor
+	 * 
+	 * @param administration
+	 */
 	public void setAdministration(AdministrativeInformation administration) {
 		put(Identifiable.ADMINISTRATION, administration);
 	}
@@ -157,6 +168,11 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		setEndpoints(endpointsCollection);
 	}
 
+	/**
+	 * removes an Endpoint from the Endpoints-Collection
+	 * 
+	 * @param endpoint
+	 */
 	public void removeEndpoint(String endpoint) {
 		Collection<Endpoint> endpointsCollection = getEndpoints();
 

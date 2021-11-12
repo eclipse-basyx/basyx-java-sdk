@@ -76,8 +76,7 @@ public abstract class ModelDescriptorTestSuite {
 	}
 
 	@Test
-	public void removeDescription()
-	{
+	public void removeDescription() {
 		addDescriptions();
 		descriptor.removeDescription(DESCRIPTION);
 		Collection<LangString> descriptions = descriptor.getDescriptions();
