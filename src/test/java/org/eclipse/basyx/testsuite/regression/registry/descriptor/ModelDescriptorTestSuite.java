@@ -19,6 +19,7 @@ import java.util.Collection;
 import org.eclipse.basyx.registry.descriptor.ModelDescriptor;
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformation;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangString;
 import org.junit.Test;
 
 /**
@@ -32,6 +33,8 @@ public abstract class ModelDescriptorTestSuite {
 	private static final String TESTENDPOINT2 = "dummy2.com";
 	private static final String TEST_ADMINISTRATION_VERSION = "v0";
 	private static final String TEST_ADMINISTRATION_REVISION = "a";
+	private static final LangString DESCRIPTION = new LangString("DE", "Beschreibung");
+	private static final LangString DESCRIPTION2 = new LangString("EN", "Description");
 
 	private ModelDescriptor descriptor;
 
@@ -61,8 +64,32 @@ public abstract class ModelDescriptorTestSuite {
 		AdministrativeInformation adminInformation = descriptor.getAdministration();
 		assertEquals(TEST_ADMINISTRATION_VERSION, adminInformation.getVersion());
 		assertEquals(TEST_ADMINISTRATION_REVISION, adminInformation.getRevision());
-		assertEquals("", adminInformation.getRevision());
-		assertEquals("", adminInformation.getVersion());
+	}
+
+	@Test
+	public void addDescription() {
+		addDescriptions();
+		Collection<LangString> descriptions = descriptor.getDescriptions();
+		assertTrue(descriptions.stream().anyMatch(description -> description.equals(DESCRIPTION)));
+		assertTrue(descriptions.stream().anyMatch(description -> description.equals(DESCRIPTION2)));
+		assertEquals(2, descriptions.size());
+	}
+
+	@Test
+	public void removeDescription()
+	{
+		addDescriptions();
+		descriptor.removeDescription(DESCRIPTION);
+		Collection<LangString> descriptions = descriptor.getDescriptions();
+		assertTrue(!descriptions.stream().anyMatch(description -> description.equals(DESCRIPTION)));
+		assertTrue(descriptions.stream().anyMatch(description -> description.equals(DESCRIPTION2)));
+		assertEquals(1, descriptions.size());
+	}
+
+	private void addDescriptions() {
+		descriptor = retrieveModelDescriptor();
+		descriptor.addDescription(DESCRIPTION);
+		descriptor.addDescription(DESCRIPTION2);
 	}
 
 	private void addEndpoints() {

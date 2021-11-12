@@ -108,12 +108,12 @@ public class MqttRegistryServiceObserver extends MqttEventService implements IRe
 
 	@Override
 	public void submodelRegistered(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(shellIdentifier, submodelIdentifier));
+		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatShellSubmodelId(shellIdentifier, submodelIdentifier));
 	}
 
 	@Override
 	public void submodelUpdated(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		sendMqttMessage(TOPIC_UPDATESUBMODEL, concatAasSmId(shellIdentifier, submodelIdentifier));
+		sendMqttMessage(TOPIC_UPDATESUBMODEL, concatShellSubmodelId(shellIdentifier, submodelIdentifier));
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class MqttRegistryServiceObserver extends MqttEventService implements IRe
 
 	@Override
 	public void shellSubmodelDeleted(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(shellIdentifier, submodelIdentifier));
+		sendMqttMessage(TOPIC_DELETESUBMODEL, concatShellSubmodelId(shellIdentifier, submodelIdentifier));
 	}
 
 	@Override

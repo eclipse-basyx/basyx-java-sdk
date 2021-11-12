@@ -116,13 +116,13 @@ public class MqttRegistryService extends MqttEventService implements IRegistry {
 	@Override
 	public void registerSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
 		this.observedRegistryService.registerSubmodelForShell(shellIdentifier, submodelDescriptor);
-		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(shellIdentifier, submodelDescriptor.getIdentifier()));
+		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatShellSubmodelId(shellIdentifier, submodelDescriptor.getIdentifier()));
 	}
 
 	@Override
 	public void updateSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
 		this.observedRegistryService.updateSubmodelForShell(shellIdentifier, submodelDescriptor);
-		sendMqttMessage(TOPIC_UPDATESUBMODEL, concatAasSmId(shellIdentifier, submodelDescriptor.getIdentifier()));
+		sendMqttMessage(TOPIC_UPDATESUBMODEL, concatShellSubmodelId(shellIdentifier, submodelDescriptor.getIdentifier()));
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class MqttRegistryService extends MqttEventService implements IRegistry {
 	@Override
 	public void deleteSubmodelFromShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
 		this.observedRegistryService.deleteSubmodelFromShell(shellIdentifier, submodelIdentifier);
-		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(shellIdentifier, submodelIdentifier));
+		sendMqttMessage(TOPIC_DELETESUBMODEL, concatShellSubmodelId(shellIdentifier, submodelIdentifier));
 	}
 
 	@Override

@@ -134,7 +134,7 @@ public abstract class TestMqttRegistrySuit {
 
 		proxyAPI.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
-		assertEquals(MqttEventService.concatAasSmId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
+		assertEquals(MqttEventService.concatShellSubmodelId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
 		assertEquals(MqttEventService.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
 	}
 
@@ -150,7 +150,7 @@ public abstract class TestMqttRegistrySuit {
 	public void testDeleteSubmodel() {
 		proxyAPI.deleteSubmodelFromShell(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
-		assertEquals(MqttEventService.concatAasSmId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
+		assertEquals(MqttEventService.concatShellSubmodelId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
 		assertEquals(MqttEventService.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 }

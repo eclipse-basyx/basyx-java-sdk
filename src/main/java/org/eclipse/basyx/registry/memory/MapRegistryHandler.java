@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
 import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 
 /**
  * Implements a preconfigured registry based on the Map interface
@@ -57,13 +58,27 @@ public class MapRegistryHandler implements IRegistryHandler {
 	@Override
 	public void insertShell(AASDescriptor shellDescriptor) {
 		String id = shellDescriptor.getIdentifier().getId();
+		checkShellIdentifierInUseBySubmodel(shellDescriptor.getIdentifier());
 		shellDescriptorMap.put(id, shellDescriptor);
+	}
+
+	private void checkShellIdentifierInUseBySubmodel(IIdentifier shellIdentifier) {
+		if (containsSubmodel(shellIdentifier)) {
+			throw new MalformedRequestException("ShellIdentifier ' " + shellIdentifier + "' already exists as SubmodelIdentifier but must be globally unique.");
+		}
 	}
 
 	@Override
 	public void insertSubmodel(SubmodelDescriptor submodelDescriptor) {
 		String id = submodelDescriptor.getIdentifier().getId();
+		checkSubmodelIdentifierInUseByShell(submodelDescriptor.getIdentifier());
 		submodelDescriptorMap.put(id, submodelDescriptor);
+	}
+
+	private void checkSubmodelIdentifierInUseByShell(IIdentifier submodelIdentifier) {
+		if (containsShell(submodelIdentifier)) {
+			throw new MalformedRequestException("SubmodelIdentifier ' " + submodelIdentifier + "' already exists as SehllIdentifier but must be globally unique.");
+		}
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformation;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangString;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.model.VABModelMap;
@@ -89,9 +90,59 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		put(Identifiable.ADMINISTRATION, administration);
 	}
 
-	// public Collection<LangStrings> getDescription(){
-	//
-	// }
+	/**
+	 * Get all Descriptions of ModelDescriptor
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Collection<LangString> getDescriptions() {
+		Collection<LangString> descriptionMap = (Collection<LangString>) get(Identifiable.DESCRIPTION);
+		return descriptionMap;
+	}
+
+	/**
+	 * Add description to ModelDescriptor
+	 * 
+	 * @param langString
+	 */
+	public void addDescription(LangString langString) {
+		Collection<LangString> descriptionCollection = getDescriptions();
+		if (descriptionCollection == null) {
+			descriptionCollection = new ArrayList<LangString>();
+		}
+		descriptionCollection.add(langString);
+		setDescription(descriptionCollection);
+	}
+
+	/**
+	 * setDescription for ModelDescriptor
+	 * 
+	 * @param descriptionCollection
+	 */
+	public void setDescription(Collection<LangString> descriptionCollection) {
+		put(Identifiable.DESCRIPTION, descriptionCollection);
+	}
+
+	/**
+	 * removes an Description from the Descriptions-Collection.
+	 * 
+	 * @param description
+	 *            The Description to be removed
+	 */
+	public void removeDescription(LangString description) {
+		Collection<LangString> descriptionsCollection = getDescriptions();
+
+		Iterator<LangString> iterator = descriptionsCollection.iterator();
+		while (iterator.hasNext()) {
+			LangString currentDescription = iterator.next();
+			if (currentDescription.equals(description)) {
+				iterator.remove();
+				break;
+			}
+		}
+		setDescription(descriptionsCollection);
+	}
 
 	/**
 	 * Adds an endpoint

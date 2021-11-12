@@ -144,7 +144,7 @@ public class MqttEventService {
 		}
 	}
 
-	public static String concatAasSmId(IIdentifier aasId, IIdentifier smId) {
-		return "(" + aasId.getId() + "," + smId.getId() + ")";
+	public static String concatShellSubmodelId(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
+		return "(" + shellIdentifier.getId() + "," + submodelIdentifier.getId() + ")";
 	}
 }
