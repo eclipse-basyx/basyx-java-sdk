@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**

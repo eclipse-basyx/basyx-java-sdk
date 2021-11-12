@@ -40,7 +40,7 @@ public class ObservableAASAggregatorTest {
 	public void setup() {
 		IAASAggregator aggregator = new AASAggregator();
 		shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset(AASID, AASIDENTIFIER, AssetKind.INSTANCE));
-		aggregator.createAAS(shell);
+		aggregator.createShell(shell);
 		
 		observerdAASAggregator = new ObservableAASAggregator(aggregator);
 		
@@ -56,7 +56,7 @@ public class ObservableAASAggregatorTest {
 		String aasId2 = "aas2";
 		Identifier identifier2 = new Identifier(IdentifierType.IRDI, aasId2);
 		AssetAdministrationShell shell2 = new AssetAdministrationShell(aasId2, identifier2, new Asset("assetid2", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
-		observerdAASAggregator.createAAS(shell2);
+		observerdAASAggregator.createShell(shell2);
 		
 		assertEquals(aasId2, observer.aasId);
 		assertTrue(observer.createdNotified);

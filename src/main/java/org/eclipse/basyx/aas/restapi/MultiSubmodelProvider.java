@@ -17,12 +17,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
+import org.eclipse.basyx.registry.api.IRegistry;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
@@ -102,7 +102,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	/**
 	 * Store AAS Registry
 	 */
-	protected IAASRegistry registry = null;
+	protected IRegistry registry = null;
 
 	/**
 	 * Store HTTP Connector
@@ -163,7 +163,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 * @param registry
 	 * @param provider
 	 */
-	public MultiSubmodelProvider(IAASRegistry registry, IConnectorFactory provider) {
+	public MultiSubmodelProvider(IRegistry registry, IConnectorFactory provider) {
 		this();
 		this.registry = registry;
 		this.connectorFactory = provider;
@@ -172,7 +172,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	/**
 	 * Constructor that accepts a registry, a connection provider and API providers
 	 */
-	public MultiSubmodelProvider(AASModelProvider contentProvider, IAASRegistry registry,
+	public MultiSubmodelProvider(AASModelProvider contentProvider, IRegistry registry,
 			IConnectorFactory connectorFactory, ISubmodelAPIFactory smApiProvider, IAASAPIFactory aasApiProvider) {
 		this(contentProvider, aasApiProvider, smApiProvider);
 		this.registry = registry;
@@ -186,7 +186,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 * @param registry
 	 * @param provider
 	 */
-	public MultiSubmodelProvider(AASModelProvider contentProvider, IAASRegistry registry, HTTPConnectorFactory provider) {
+	public MultiSubmodelProvider(AASModelProvider contentProvider, IRegistry registry, HTTPConnectorFactory provider) {
 		this(contentProvider);
 		this.registry = registry;
 		this.connectorFactory = provider;
@@ -301,7 +301,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 					filter(id -> !localIds.contains(id.getId())).collect(Collectors.toList());
 
 			if(!missingIds.isEmpty()) {
-				List<String> missingEndpoints = missingIds.stream().map(id -> desc.getSubmodelDescriptorFromIdentifierId(id.getId()))
+				List<String> missingEndpoints = missingIds.stream().map(submodelIdentifier -> desc.getSubmodelDescriptorFromIdentifier(submodelIdentifier))
 						.map(smDesc -> smDesc.getFirstEndpoint().getProtocolInformation().getEndpointAddress()).collect(Collectors.toList());
 
 				// Check if any of the missing Submodels have the same address as the AAS.

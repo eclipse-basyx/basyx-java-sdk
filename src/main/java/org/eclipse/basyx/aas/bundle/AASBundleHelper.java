@@ -14,8 +14,9 @@ import java.util.Collection;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
+import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
@@ -24,16 +25,16 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * This class can be used to check if all required resources are present on a server<br>
+ * This class can be used to check if all required resources are present on a
+ * server<br>
  * (e.g. after a restart) and upload them if necessary.
  * 
  * @author conradi
  *
  */
 public class AASBundleHelper {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(AASBundleHelper.class);
 
 	/**
@@ -42,57 +43,78 @@ public class AASBundleHelper {
 	 * Adds missing ones to the Aggregator.<br>
 	 * If a given object already exists in the Aggregator it will NOT be replaced.
 	 * 
-	 * @param aggregator the Aggregator to be populated
-	 * @param bundles the AASBundles
+	 * @param aggregator
+	 *            the Aggregator to be populated
+	 * @param bundles
+	 *            the AASBundles
 	 * @return true if an AAS/SM was uploaded; false otherwise
 	 */
 	public static boolean integrate(IAASAggregator aggregator, Collection<AASBundle> bundles) {
-		
-		if(aggregator == null || bundles == null) {
+
+		if (aggregator == null || bundles == null) {
 			throw new RuntimeException("'aggregator' and 'bundles' must not be null.");
 		}
-		
+
 		boolean objectUploaded = false;
-		
-		for(AASBundle bundle: bundles) {
+
+		for (AASBundle bundle : bundles) {
 			IAssetAdministrationShell aas = bundle.getAAS();
-			
-			try {				
+
+			try {
 				aggregator.getAAS(aas.getIdentification());
 				// If no ResourceNotFoundException occurs, AAS exists on server
 				// -> no further action required
-			} catch(ResourceNotFoundException e) {
+			} catch (ResourceNotFoundException e) {
 				// AAS does not exist and needs to be pushed to the server
 				// Cast Interface to concrete class
-				if(aas instanceof AssetAdministrationShell) {
-					aggregator.createAAS((AssetAdministrationShell) aas);
-					objectUploaded = true;
-				} else {
+				if (!isShell(aas)) {
 					throw new RuntimeException("aas Objects in bundles need to be instance of 'AssetAdministrationShell'");
 				}
+				aggregator.createShell((AssetAdministrationShell) aas);
+				objectUploaded = true;
 			}
-			
+
 			IModelProvider provider = aggregator.getAASProvider(aas.getIdentification());
 			for (ISubmodel sm : bundle.getSubmodels()) {
 				try {
-					provider.getValue("/aas/submodels/" + sm.getIdShort() + "/" + SubmodelProvider.SUBMODEL);
+					provider.getValue(createSubmodelPath(sm));
 					// If no ResourceNotFoundException occurs, SM exists on server
 					// -> no further action required
 				} catch (ResourceNotFoundException e) {
 					// AAS does not exist and needs to be pushed to the server
 					// Check if ISubmodel is a concrete Submodel
-					if (sm instanceof Submodel) {
-						provider.setValue("/aas/submodels/" + sm.getIdShort(), sm);
-						objectUploaded = true;
-					} else {
+					if (!isSubmodel(sm)) {
 						throw new RuntimeException("sm Objects in bundles need to be instance of 'Submodel'");
 					}
+					bindSubmodelToPath(provider, "/aas/submodels/" + sm.getIdShort(), sm);
+					objectUploaded = true;
+
 				}
 			}
 		}
 		return objectUploaded;
 	}
-	
+
+	private static void bindSubmodelToPath(IModelProvider provider, String path, ISubmodel sm) {
+		provider.setValue(path, sm);
+	}
+
+	private static String createSubmodelPath(ISubmodel sm) {
+		StringBuilder path = new StringBuilder("/aas/submodels/");
+		path.append(sm.getIdShort());
+		path.append("/");
+		path.append(SubmodelProvider.SUBMODEL);
+		return path.toString();
+	}
+
+	private static boolean isSubmodel(ISubmodel sm) {
+		return sm instanceof Submodel;
+	}
+
+	private static boolean isShell(IAssetAdministrationShell aas) {
+		return aas instanceof AssetAdministrationShell;
+	}
+
 	/**
 	 * Registers a given set of bundles with the registry
 	 * 
@@ -103,37 +125,45 @@ public class AASBundleHelper {
 	 * @param aasAggregatorPath
 	 *            the aggregator path, e.g. <i>http://localhost:4000/shells</i>
 	 */
-	public static void register(IAASRegistry registry, Collection<AASBundle> bundles, String aasAggregatorPath) {
+	public static void register(IRegistry registry, Collection<AASBundle> bundles, String aasAggregatorPath) {
 		bundles.stream().map(b -> AASBundleDescriptorFactory.createAASDescriptor(b, aasAggregatorPath)).forEach(registry::register);
 	}
-	
+
 	/**
 	 * Deregisters a given set of bundles from a given registry
 	 * 
-	 * @param registry the registry to deregister from
-	 * @param bundles the AASBundles to be deregistred
+	 * @param registry
+	 *            the registry to deregister from
+	 * @param bundles
+	 *            the AASBundles to be deregistred
 	 */
-	public static void deregister(IAASRegistry registry, Collection<AASBundle> bundles) {
-		if(registry != null && bundles != null) {
-			for(AASBundle bundle: bundles) {
+	public static void deregister(IRegistry registry, Collection<AASBundle> bundles) {
+		if (registry != null && bundles != null) {
+			for (AASBundle bundle : bundles) {
 				IAssetAdministrationShell aas = bundle.getAAS();
-				
-				try {
-					registry.deleteShell(aas.getIdentification());
-				} catch (ProviderException e) {
-					logger.info("The AAS '" + aas.getIdShort() + "' can't be deregistered. It was not found in registry.");
-					// Just continue if deregistration failed
-				}
-				
-				for(ISubmodel sm: bundle.getSubmodels()) {
-					try {
-						registry.deleteShell(sm.getIdentification());
-					} catch (ProviderException e) {
-						logger.info("The SM '" + sm.getIdShort() + "' can't be deregistered. It was not found in registry.");
-						// Just continue if deregistration failed
-					}
+
+				tryDeregisterModel(registry, aas.getIdentification(), createLoggerInfo(aas.getIdShort()));
+
+				for (ISubmodel sm : bundle.getSubmodels()) {
+					tryDeregisterModel(registry, sm.getIdentification(), createLoggerInfo(sm.getIdShort()));
 				}
 			}
+		}
+	}
+
+	private static String createLoggerInfo(String idShort) {
+		StringBuilder path = new StringBuilder("The Model '");
+		path.append(idShort);
+		path.append("' can't be deregistered. It was not found in registry.");
+		return path.toString();
+	}
+
+	private static void tryDeregisterModel(IRegistry registry, IIdentifier identifier, String loggerInfo) {
+		try {
+			registry.deleteModel(identifier);
+		} catch (ProviderException e) {
+			logger.info(loggerInfo);
+			// If deregistration failed: continue
 		}
 	}
 }

@@ -20,14 +20,14 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.aas.metamodel.map.parts.Endpoint;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.restapi.AASModelProvider;
 import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
+import org.eclipse.basyx.registry.api.IRegistry;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.ModelUrn;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
+import org.eclipse.basyx.registry.memory.InMemoryRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -52,7 +52,7 @@ import org.junit.Test;
 public class TestConnectedAssetAdministrationShellManager {
 	ConnectedAssetAdministrationShellManager manager;
 	ConnectorProviderStub connectorProvider;
-	IAASRegistry registry;
+	IRegistry registry;
 
 	/**
 	 * Create infrastructure
@@ -81,7 +81,7 @@ public class TestConnectedAssetAdministrationShellManager {
 
 		// Create an AAS containing a reference to the created Submodel
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 
 		// Check descriptor for correct endpoint
 		String endpoint = registry.lookupShell(aasId).getFirstEndpoint().getProtocolInformation().getEndpointAddress();
@@ -150,7 +150,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		prepareConnectorProvider(provider);
 
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 
 		Submodel sm = new Submodel(smIdShort, smId);
 		manager.createSubmodel(aasId, sm);
@@ -174,7 +174,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		prepareConnectorProvider(provider);
 
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 		manager.deleteAAS(aas.getIdentification());
 		try {
 			manager.retrieveAAS(aas.getIdentification());

@@ -15,16 +15,16 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.restapi.TaggedDirectoryProvider;
+import org.eclipse.basyx.registry.proxy.RegistryProxy;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 
-public class TaggedDirectoryProxy extends AASRegistryProxy implements IAASTaggedDirectory {
+public class TaggedDirectoryProxy extends RegistryProxy implements IAASTaggedDirectory {
 
 	private IModelProvider taggedProvider;
 
