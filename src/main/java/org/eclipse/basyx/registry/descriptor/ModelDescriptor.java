@@ -19,6 +19,7 @@ import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformation;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
@@ -78,6 +79,19 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		// idShort
 		return Referable.createAsFacade(this, null).getIdShort();
 	}
+
+	public AdministrativeInformation getAdministration() {
+		Map<String, Object> administrativeInformation = (Map<String, Object>) get(Identifiable.ADMINISTRATION);
+		return AdministrativeInformation.createAsFacade(administrativeInformation);
+	}
+
+	public void setAdministration(AdministrativeInformation administration) {
+		put(Identifiable.ADMINISTRATION, administration);
+	}
+
+	// public Collection<LangStrings> getDescription(){
+	//
+	// }
 
 	/**
 	 * Adds an endpoint

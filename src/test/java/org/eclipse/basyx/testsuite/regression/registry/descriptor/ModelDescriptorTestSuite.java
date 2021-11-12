@@ -11,12 +11,14 @@
 
 package org.eclipse.basyx.testsuite.regression.registry.descriptor;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
 import org.eclipse.basyx.registry.descriptor.ModelDescriptor;
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformation;
 import org.junit.Test;
 
 /**
@@ -28,6 +30,9 @@ import org.junit.Test;
 public abstract class ModelDescriptorTestSuite {
 	private static final String TESTENDPOINT = "dummy.com";
 	private static final String TESTENDPOINT2 = "dummy2.com";
+	private static final String TEST_ADMINISTRATION_VERSION = "v0";
+	private static final String TEST_ADMINISTRATION_REVISION = "a";
+
 	private ModelDescriptor descriptor;
 
 	public abstract ModelDescriptor retrieveModelDescriptor();
@@ -47,6 +52,17 @@ public abstract class ModelDescriptorTestSuite {
 		Collection<Endpoint> endpoints = descriptor.getEndpoints();
 		assertTrue(!endpoints.stream().anyMatch(x -> x.getProtocolInformation().getEndpointAddress().equals(TESTENDPOINT)));
 		assertTrue(endpoints.stream().anyMatch(x -> x.getProtocolInformation().getEndpointAddress().equals(TESTENDPOINT2)));
+	}
+
+	@Test
+	public void setAdministration() {
+		descriptor = retrieveModelDescriptor();
+		descriptor.setAdministration(new AdministrativeInformation(TEST_ADMINISTRATION_VERSION, TEST_ADMINISTRATION_REVISION));
+		AdministrativeInformation adminInformation = descriptor.getAdministration();
+		assertEquals(TEST_ADMINISTRATION_VERSION, adminInformation.getVersion());
+		assertEquals(TEST_ADMINISTRATION_REVISION, adminInformation.getRevision());
+		assertEquals("", adminInformation.getRevision());
+		assertEquals("", adminInformation.getVersion());
 	}
 
 	private void addEndpoints() {
