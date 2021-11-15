@@ -9,21 +9,21 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package org.eclipse.basyx.registry;
+package org.eclipse.basyx.registry.proxy;
 
-import org.eclipse.basyx.registry.restapi.RegistryPath;
+import org.eclipse.basyx.registry.restapi.RegistryServerAPIHelper;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**
- * API helper for AAS Registry
+ * API client helper for AAS Registry
  *
  * @author haque, fischer
  *
  */
-public class RegistryAPIHelper {
+public class RegistryClientAPIHelper {
 
-	private RegistryAPIHelper() {
+	private RegistryClientAPIHelper() {
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class RegistryAPIHelper {
 	 * @return base access path for shellDescriptors
 	 */
 	public static String getAllShellDescriptorsPath() {
-		return VABPathTools.concatenatePaths(RegistryPath.PREFIX, RegistryPath.SHELL_DESCRIPTORS);
+		return VABPathTools.concatenatePaths(RegistryServerAPIHelper.PREFIX, RegistryServerAPIHelper.SHELL_DESCRIPTORS);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public class RegistryAPIHelper {
 	 * @return base access path for submodelDescriptors
 	 */
 	public static String getAllSubmodelDescriptorsPath() {
-		return VABPathTools.concatenatePaths(RegistryPath.PREFIX, RegistryPath.SUBMODEL_DESCRIPTORS);
+		return VABPathTools.concatenatePaths(RegistryServerAPIHelper.PREFIX, RegistryServerAPIHelper.SUBMODEL_DESCRIPTORS);
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class RegistryAPIHelper {
 	 * @return access path for all submodels of a given shell
 	 */
 	public static String getSingleShellDescriptorAllSubmodelDescriptorsPath(IIdentifier shellIdentifier) {
-		return VABPathTools.concatenatePaths(getSingleShellDescriptorPath(shellIdentifier), RegistryPath.SUBMODEL_DESCRIPTORS);
+		return VABPathTools.concatenatePaths(getSingleShellDescriptorPath(shellIdentifier), RegistryServerAPIHelper.SUBMODEL_DESCRIPTORS);
 	}
 
 	/**

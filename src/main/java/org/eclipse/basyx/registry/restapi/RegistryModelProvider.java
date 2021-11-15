@@ -9,7 +9,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.registry.restapi;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -44,15 +43,6 @@ public class RegistryModelProvider implements IModelProvider {
 		this(new InMemoryRegistry());
 	}
 
-	private RegistryPath preparePath(String path) throws MalformedRequestException {
-		try {
-			return new RegistryPath(path);
-		} catch (UnsupportedEncodingException e) {
-			// Malformed request because of unsupported encoding
-			throw new MalformedRequestException("Path has to be encoded as UTF-8 string.");
-		}
-	}
-
 	/**
 	 * Checks if a given Object is a Map and checks if it has the correct modelType.
 	 *
@@ -65,18 +55,14 @@ public class RegistryModelProvider implements IModelProvider {
 	 */
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> checkModelType(String expectedModelType, Object value) throws MalformedRequestException {
-		// check if the given value is a Map
 		if (!(value instanceof Map)) {
 			throw new MalformedRequestException("Given newValue is not a Map");
 		}
 
 		Map<String, Object> map = (Map<String, Object>) value;
 
-		// check if the given Map contains an AAS
 		String type = ModelType.createAsFacade(map).getName();
 
-		// have to accept Objects without modeltype information,
-		// as modeltype is not part of the public metamodel
 		if (!expectedModelType.equals(type) && type != null) {
 			throw new MalformedRequestException("Given newValue map has not the correct ModelType");
 		}
@@ -115,20 +101,20 @@ public class RegistryModelProvider implements IModelProvider {
 
 	@Override
 	public Object getValue(String path) throws ProviderException {
-		RegistryPath registryPath = preparePath(path);
+		RegistryServerAPIHelper registryServerAPIHelper = new RegistryServerAPIHelper(path);
 
-		if (registryPath.isAllShellDescriptorsPath()) {
+		if (registryServerAPIHelper.isAllShellDescriptorsPath()) {
 			return getAllShellDescriptors();
-		} else if (registryPath.isSingleShellDescriptorPath()) {
-			return getSingleShellDescriptor(registryPath.getFirstDescriptorId());
-		} else if (registryPath.isSingleShellDescriptorAllSubmodelDescriptorsPath()) {
-			return getAllSubmodelDescriptorsForShellDescriptor(registryPath.getFirstDescriptorId());
-		} else if (registryPath.isAllSubmodelDescriptorsPath()) {
+		} else if (registryServerAPIHelper.isSingleShellDescriptorPath()) {
+			return getSingleShellDescriptor(registryServerAPIHelper.getFirstDescriptorId());
+		} else if (registryServerAPIHelper.isSingleShellDescriptorAllSubmodelDescriptorsPath()) {
+			return getAllSubmodelDescriptorsForShellDescriptor(registryServerAPIHelper.getFirstDescriptorId());
+		} else if (registryServerAPIHelper.isAllSubmodelDescriptorsPath()) {
 			return getAllSubmodelDescriptors();
-		} else if (registryPath.isSingleSubmodelDescriptorPath()) {
-			return getSingleSubmodelDescriptor(registryPath.getFirstDescriptorId());
+		} else if (registryServerAPIHelper.isSingleSubmodelDescriptorPath()) {
+			return getSingleSubmodelDescriptor(registryServerAPIHelper.getFirstDescriptorId());
 		} else {
-			return getSingleSubmodelDescriptorForShellDescriptor(registryPath.getFirstDescriptorId(), registryPath.getSecondDescriptorId());
+			return getSingleSubmodelDescriptorForShellDescriptor(registryServerAPIHelper.getFirstDescriptorId(), registryServerAPIHelper.getSecondDescriptorId());
 		}
 	}
 
@@ -189,14 +175,14 @@ public class RegistryModelProvider implements IModelProvider {
 
 	@Override
 	public void setValue(String path, Object newValue) throws ProviderException {
-		RegistryPath registryPath = preparePath(path);
+		RegistryServerAPIHelper registryServerAPIHelper = new RegistryServerAPIHelper(path);
 
-		if (registryPath.isSingleShellDescriptorPath()) {
-			updateShellDescriptor(newValue, registryPath.getFirstDescriptorId());
-		} else if (registryPath.isSingleSubmodelDescriptorPath()) {
-			updateSubmodelDescriptor(newValue, registryPath.getFirstDescriptorId());
-		} else if (registryPath.isSingleShellDescriptorSingleSubmodelDescriptorPath()) {
-			updateSubmodelDescriptorForShellDescriptor(newValue, registryPath.getFirstDescriptorId());
+		if (registryServerAPIHelper.isSingleShellDescriptorPath()) {
+			updateShellDescriptor(newValue, registryServerAPIHelper.getFirstDescriptorId());
+		} else if (registryServerAPIHelper.isSingleSubmodelDescriptorPath()) {
+			updateSubmodelDescriptor(newValue, registryServerAPIHelper.getFirstDescriptorId());
+		} else if (registryServerAPIHelper.isSingleShellDescriptorSingleSubmodelDescriptorPath()) {
+			updateSubmodelDescriptorForShellDescriptor(newValue, registryServerAPIHelper.getFirstDescriptorId());
 		} else {
 			throw new MalformedRequestException("Unknown path " + path);
 		}
@@ -204,14 +190,14 @@ public class RegistryModelProvider implements IModelProvider {
 
 	@Override
 	public void createValue(String path, Object newValue) throws ProviderException {
-		RegistryPath registryPath = preparePath(path);
+		RegistryServerAPIHelper registryServerAPIHelper = new RegistryServerAPIHelper(path);
 
-		if (registryPath.isAllShellDescriptorsPath()) {
+		if (registryServerAPIHelper.isAllShellDescriptorsPath()) {
 			registerShellDescriptor(newValue);
-		} else if (registryPath.isAllSubmodelDescriptorsPath()) {
+		} else if (registryServerAPIHelper.isAllSubmodelDescriptorsPath()) {
 			registerSubmodelDescriptor(newValue);
-		} else if (registryPath.isSingleShellDescriptorAllSubmodelDescriptorsPath()) {
-			registerSubmodelDescriptorForShellDescriptor(newValue, registryPath.getFirstDescriptorId());
+		} else if (registryServerAPIHelper.isSingleShellDescriptorAllSubmodelDescriptorsPath()) {
+			registerSubmodelDescriptorForShellDescriptor(newValue, registryServerAPIHelper.getFirstDescriptorId());
 		} else {
 			throw new MalformedRequestException("Unknown path " + path);
 		}
@@ -269,7 +255,7 @@ public class RegistryModelProvider implements IModelProvider {
 
 	@Override
 	public void deleteValue(String path) throws ProviderException {
-		RegistryPath registryPath = preparePath(path);
+		RegistryServerAPIHelper registryPath = new RegistryServerAPIHelper(path);
 
 		if (registryPath.isAllShellDescriptorsPath() || registryPath.isAllSubmodelDescriptorsPath() || registryPath.isSingleShellDescriptorAllSubmodelDescriptorsPath()) {
 			throw new MalformedRequestException("Delete with empty path is not supported by registry");

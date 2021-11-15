@@ -15,7 +15,13 @@ import java.net.URLDecoder;
 
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 
-public class RegistryPath {
+/**
+ * API server helper for AAS Registry
+ *
+ * @author fischer, fried, jung
+ *
+ */
+public class RegistryServerAPIHelper {
 	public static final String PREFIX = "registry";
 	public static final String SHELL_DESCRIPTORS = "shell-descriptors";
 	public static final String SUBMODEL_DESCRIPTORS = "submodel-descriptors";
@@ -39,7 +45,7 @@ public class RegistryPath {
 	 *
 	 * @param path
 	 */
-	public RegistryPath(String path) throws UnsupportedEncodingException {
+	public RegistryServerAPIHelper(String path) {
 		if (path.isEmpty()) {
 			throw new MalformedRequestException("A correct registry path must be given.");
 		}
@@ -51,7 +57,7 @@ public class RegistryPath {
 		populateCheckVariables();
 	}
 
-	private void populatePrivateVariables(String path) throws UnsupportedEncodingException {
+	private void populatePrivateVariables(String path) {
 		String[] splittedPath = path.split("/");
 
 		pathPrefix = splittedPath.length > 0 ? utf8Decode(splittedPath[0]) : null;
@@ -65,8 +71,12 @@ public class RegistryPath {
 		}
 	}
 
-	private String utf8Decode(String string) throws UnsupportedEncodingException {
-		return URLDecoder.decode(string, ENCODING);
+	private String utf8Decode(String string) {
+		try {
+			return URLDecoder.decode(string, ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			throw new MalformedRequestException("Path has to be encoded as UTF-8 string.");
+		}
 	}
 
 	private void checkIfPathPrefixIsValid() {

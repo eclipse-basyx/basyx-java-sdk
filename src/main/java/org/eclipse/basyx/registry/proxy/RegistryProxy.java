@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.eclipse.basyx.registry.RegistryAPIHelper;
 import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
 import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.registry.restapi.RegistryPath;
+import org.eclipse.basyx.registry.restapi.RegistryServerAPIHelper;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
@@ -52,8 +51,8 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	 * @return
 	 */
 	private static String harmonizeURL(String url) {
-		if (url.endsWith(RegistryPath.PREFIX)) {
-			url = url.substring(0, url.length() - RegistryPath.PREFIX.length());
+		if (url.endsWith(RegistryServerAPIHelper.PREFIX)) {
+			url = url.substring(0, url.length() - RegistryServerAPIHelper.PREFIX.length());
 		}
 		return url;
 	}
@@ -81,7 +80,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public void register(AASDescriptor shellDescriptor) throws ProviderException {
 		try {
-			String allAASDescriptorsPath = RegistryAPIHelper.getAllShellDescriptorsPath();
+			String allAASDescriptorsPath = RegistryClientAPIHelper.getAllShellDescriptorsPath();
 
 			provider.createValue(allAASDescriptorsPath, shellDescriptor);
 		} catch (Exception e) {
@@ -102,7 +101,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public void register(SubmodelDescriptor submodelDescriptor) throws ProviderException {
 		try {
-			String allSubmodelDescriptorsPath = RegistryAPIHelper.getAllSubmodelDescriptorsPath();
+			String allSubmodelDescriptorsPath = RegistryClientAPIHelper.getAllSubmodelDescriptorsPath();
 
 			provider.createValue(allSubmodelDescriptorsPath, submodelDescriptor);
 		} catch (Exception e) {
@@ -125,7 +124,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public void registerSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
 		try {
-			String allSubmodelDescriptorsPath = RegistryAPIHelper.getSingleShellDescriptorAllSubmodelDescriptorsPath(shellIdentifier);
+			String allSubmodelDescriptorsPath = RegistryClientAPIHelper.getSingleShellDescriptorAllSubmodelDescriptorsPath(shellIdentifier);
 
 			provider.createValue(allSubmodelDescriptorsPath, submodelDescriptor);
 		} catch (Exception e) {
@@ -148,7 +147,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public void updateSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
 		try {
-			String allSubmodelDescriptorsPath = RegistryAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(shellIdentifier, submodelDescriptor.getIdentifier());
+			String allSubmodelDescriptorsPath = RegistryClientAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(shellIdentifier, submodelDescriptor.getIdentifier());
 
 			provider.setValue(allSubmodelDescriptorsPath, submodelDescriptor);
 		} catch (Exception e) {
@@ -170,7 +169,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public void updateShell(IIdentifier shellIdentifier, AASDescriptor shellDescriptor) throws ProviderException {
 		try {
-			String singleAASDescriptorPath = RegistryAPIHelper.getSingleShellDescriptorPath(shellDescriptor.getIdentifier());
+			String singleAASDescriptorPath = RegistryClientAPIHelper.getSingleShellDescriptorPath(shellDescriptor.getIdentifier());
 
 			provider.setValue(singleAASDescriptorPath, shellDescriptor);
 		} catch (Exception e) {
@@ -192,7 +191,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public void updateSubmodel(IIdentifier submodelIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
 		try {
-			String singleSubmodelDescriptorsPath = RegistryAPIHelper.getSingleSubmodelDescriptorPath(submodelDescriptor.getIdentifier());
+			String singleSubmodelDescriptorsPath = RegistryClientAPIHelper.getSingleSubmodelDescriptorPath(submodelDescriptor.getIdentifier());
 
 			provider.setValue(singleSubmodelDescriptorsPath, submodelDescriptor);
 		} catch (Exception e) {
@@ -212,7 +211,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	 */
 	@Override
 	public void deleteModel(IIdentifier shellIdentifier) throws ProviderException {
-		this.removeMapping(RegistryAPIHelper.getSingleShellDescriptorPath(shellIdentifier));
+		this.removeMapping(RegistryClientAPIHelper.getSingleShellDescriptorPath(shellIdentifier));
 	}
 
 	/**
@@ -223,7 +222,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	 */
 	@Override
 	public void deleteSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
-		this.removeMapping(RegistryAPIHelper.getSingleSubmodelDescriptorPath(submodelIdentifier));
+		this.removeMapping(RegistryClientAPIHelper.getSingleSubmodelDescriptorPath(submodelIdentifier));
 	}
 
 	/**
@@ -236,7 +235,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public void deleteSubmodelFromShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
 		try {
-			provider.deleteValue(RegistryAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(shellIdentifier, submodelIdentifier));
+			provider.deleteValue(RegistryClientAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(shellIdentifier, submodelIdentifier));
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -257,7 +256,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@SuppressWarnings("unchecked")
 	public AASDescriptor lookupShell(IIdentifier shellIdentifier) throws ProviderException {
 		try {
-			Object result = provider.getValue(RegistryAPIHelper.getSingleShellDescriptorPath(shellIdentifier));
+			Object result = provider.getValue(RegistryClientAPIHelper.getSingleShellDescriptorPath(shellIdentifier));
 			return new AASDescriptor((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
@@ -278,7 +277,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public List<AASDescriptor> lookupAllShells() throws ProviderException {
 		try {
-			Object result = provider.getValue(RegistryAPIHelper.getAllShellDescriptorsPath());
+			Object result = provider.getValue(RegistryClientAPIHelper.getAllShellDescriptorsPath());
 			Collection<?> aasDescriptors = (Collection<?>) result;
 			return aasDescriptors.stream().map(x -> new AASDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
@@ -301,7 +300,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@SuppressWarnings("unchecked")
 	public SubmodelDescriptor lookupSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
 		try {
-			Object result = provider.getValue(RegistryAPIHelper.getSingleSubmodelDescriptorPath(submodelIdentifier));
+			Object result = provider.getValue(RegistryClientAPIHelper.getSingleSubmodelDescriptorPath(submodelIdentifier));
 			return new SubmodelDescriptor((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
@@ -322,7 +321,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public List<SubmodelDescriptor> lookupAllSubmodels() throws ProviderException {
 		try {
-			Object result = provider.getValue(RegistryAPIHelper.getAllSubmodelDescriptorsPath());
+			Object result = provider.getValue(RegistryClientAPIHelper.getAllSubmodelDescriptorsPath());
 			Collection<?> submodelDescriptors = (Collection<?>) result;
 			return submodelDescriptors.stream().map(x -> new SubmodelDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
@@ -345,7 +344,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public List<SubmodelDescriptor> lookupAllSubmodelsForShell(IIdentifier shellIdentifier) throws ProviderException {
 		try {
-			Object result = provider.getValue(RegistryAPIHelper.getSingleShellDescriptorAllSubmodelDescriptorsPath(shellIdentifier));
+			Object result = provider.getValue(RegistryClientAPIHelper.getSingleShellDescriptorAllSubmodelDescriptorsPath(shellIdentifier));
 			Collection<?> descriptors = (Collection<?>) result;
 			return descriptors.stream().map(x -> new SubmodelDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
@@ -370,7 +369,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	@Override
 	public SubmodelDescriptor lookupSubmodel(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
 		try {
-			Object result = provider.getValue(RegistryAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(shellIdentifier, submodelIdentifier));
+			Object result = provider.getValue(RegistryClientAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(shellIdentifier, submodelIdentifier));
 			return new SubmodelDescriptor((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {

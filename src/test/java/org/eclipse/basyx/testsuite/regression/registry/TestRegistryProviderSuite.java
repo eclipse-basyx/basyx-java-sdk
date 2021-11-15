@@ -11,7 +11,6 @@ package org.eclipse.basyx.testsuite.regression.registry;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
@@ -331,7 +330,7 @@ public abstract class TestRegistryProviderSuite {
 	 * Tests overwriting the descriptor of a Shell
 	 */
 	@Test
-	public void overwritingShellDescriptor() {
+	public void overwriteShellDescriptor() {
 		AASDescriptor shellDescriptor = new AASDescriptor(shellIdShort1, shellIdentifier1, globalAssetId1, specificAssetIds1, new Endpoint("http://testendpoint/"));
 		proxy.updateShell(shellDescriptor.getIdentifier(), shellDescriptor);
 		AASDescriptor retrievedShellDescriptor = proxy.lookupShell(shellIdentifier1);
@@ -342,7 +341,7 @@ public abstract class TestRegistryProviderSuite {
 	 * Tests overwriting the descriptor of a Submodel
 	 */
 	@Test
-	public void overwritingSubmodelDescriptor() {
+	public void overwriteSubmodelDescriptor() {
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodelIdShort1, submodelIdentifier1, new Endpoint("http://testendpoint/"));
 		proxy.updateSubmodel(submodelDescriptor.getIdentifier(), submodelDescriptor);
 		SubmodelDescriptor retrievedSubmodelDescriptor = proxy.lookupSubmodel(submodelIdentifier1);
@@ -353,7 +352,7 @@ public abstract class TestRegistryProviderSuite {
 	 * Tests overwriting a not existing descriptor of a Shell
 	 */
 	@Test(expected = ResourceNotFoundException.class)
-	public void overwritingNotExistingShellDescriptor() {
+	public void overwriteNotExistingShellDescriptor() {
 		AASDescriptor shellDescriptor = new AASDescriptor("notExistingShell", new Identifier(IdentifierType.CUSTOM, "notExisitingShellIdentifier"), new Endpoint("http://testendpoint/"));
 		proxy.updateShell(shellDescriptor.getIdentifier(), shellDescriptor);
 	}
@@ -362,7 +361,7 @@ public abstract class TestRegistryProviderSuite {
 	 * Tests overwriting a not existing descriptor of a Submodel
 	 */
 	@Test(expected = ResourceNotFoundException.class)
-	public void overwritingNotExistingSubmodelDescriptor() {
+	public void overwriteNotExistingSubmodelDescriptor() {
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor("notExistingSubmodel", new Identifier(IdentifierType.CUSTOM, "notExistingSubmodelIdentifier"), new Endpoint("http://testendpoint/"));
 		proxy.updateSubmodel(submodelDescriptor.getIdentifier(), submodelDescriptor);
 	}
@@ -418,24 +417,6 @@ public abstract class TestRegistryProviderSuite {
 		} catch (ResourceNotFoundException e) {
 			// expected
 		}
-	}
-
-	/**
-	 * Test for correct specificAssetIds. specificAssetIds is currently an empty map
-	 */
-	@Test
-	public void specificAssetIds() {
-		AASDescriptor shellDescriptor = proxy.lookupShell(shellIdentifier1);
-		assertTrue(shellDescriptor.getSpecificAssetIds().isEmpty());
-	}
-
-	/**
-	 * Test for correct globalAssetId. globalAssetId is currently empty
-	 */
-	@Test
-	public void globalAssetId() {
-		AASDescriptor shellDescriptor = proxy.lookupShell(shellIdentifier1);
-		assertTrue(shellDescriptor.getGlobalAssetId().isEmpty());
 	}
 
 	@Test(expected = MalformedRequestException.class)
