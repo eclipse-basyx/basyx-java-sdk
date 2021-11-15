@@ -89,17 +89,17 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	@After
 	public void tearDown() {
 		try {
-			proxy.deleteModel(taggedAAS1);
+			proxy.deleteShell(taggedAAS1);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
 		try {
-			proxy.deleteModel(taggedAAS2);
+			proxy.deleteShell(taggedAAS2);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
 		try {
-			proxy.deleteModel(taggedAAS3);
+			proxy.deleteShell(taggedAAS3);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}

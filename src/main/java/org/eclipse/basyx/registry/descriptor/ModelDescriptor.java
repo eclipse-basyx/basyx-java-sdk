@@ -41,34 +41,35 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 	}
 
 	/**
-	 * Create descriptor from existing hash map
+	 * Creates a descriptor from existing hash map
+	 * 
+	 * @param map
 	 */
 	public ModelDescriptor(Map<String, Object> map) {
 		this();
-		// Put all elements from map into this descriptor
 		this.putAll(map);
 	}
 
 	/**
-	 * Create a new descriptor with minimal information
+	 * Creates a descriptor with minimal information
+	 * 
+	 * @param idShort
+	 * @param identifier
+	 * @param endpoint
 	 */
-	public ModelDescriptor(String idShort, IIdentifier id, Endpoint endpoint) {
+	public ModelDescriptor(String idShort, IIdentifier identifier, Endpoint endpoint) {
 		this();
 
-		// Set idShort
 		put(Referable.IDSHORT, idShort);
 
-		// Set Identifier, make sure the stored data structure is a map
-		Identifier identifierMap = new Identifier(id.getIdType(), id.getId());
+		Identifier identifierMap = new Identifier(identifier.getIdType(), identifier.getId());
 		put(Identifiable.IDENTIFICATION, identifierMap);
 
-		// Set Endpoints
 		setEndpoints(Arrays.asList(endpoint));
 	}
 
-	/**
-	 * Return AAS ID
-	 */
+	// TODO: Constructor / Builder for description and administration
+
 	@SuppressWarnings("unchecked")
 	public IIdentifier getIdentifier() {
 		Map<String, Object> identifierModel = (Map<String, Object>) get(Identifiable.IDENTIFICATION);
@@ -81,42 +82,22 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		return Referable.createAsFacade(this, null).getIdShort();
 	}
 
-	/**
-	 * Gets the administration of this descriptor
-	 * 
-	 * @return
-	 */
 	@SuppressWarnings("unchecked")
 	public AdministrativeInformation getAdministration() {
 		Map<String, Object> administrativeInformation = (Map<String, Object>) get(Identifiable.ADMINISTRATION);
 		return AdministrativeInformation.createAsFacade(administrativeInformation);
 	}
 
-	/**
-	 * Sets the administration for this descriptor
-	 * 
-	 * @param administration
-	 */
 	public void setAdministration(AdministrativeInformation administration) {
 		put(Identifiable.ADMINISTRATION, administration);
 	}
 
-	/**
-	 * Get all Descriptions of ModelDescriptor
-	 * 
-	 * @return
-	 */
 	@SuppressWarnings("unchecked")
 	public Collection<LangString> getDescriptions() {
 		Collection<LangString> descriptionMap = (Collection<LangString>) get(Identifiable.DESCRIPTION);
 		return descriptionMap;
 	}
 
-	/**
-	 * Add description to ModelDescriptor
-	 * 
-	 * @param langString
-	 */
 	public void addDescription(LangString langString) {
 		Collection<LangString> descriptionCollection = getDescriptions();
 		if (descriptionCollection == null) {
@@ -126,21 +107,10 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		setDescription(descriptionCollection);
 	}
 
-	/**
-	 * setDescription for ModelDescriptor
-	 * 
-	 * @param descriptionCollection
-	 */
 	public void setDescription(Collection<LangString> descriptionCollection) {
 		put(Identifiable.DESCRIPTION, descriptionCollection);
 	}
 
-	/**
-	 * removes an Description from the Descriptions-Collection.
-	 * 
-	 * @param description
-	 *            The Description to be removed
-	 */
 	public void removeDescription(LangString description) {
 		Collection<LangString> descriptionsCollection = getDescriptions();
 
@@ -155,31 +125,20 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		setDescription(descriptionsCollection);
 	}
 
-	/**
-	 * Adds an endpoint
-	 *
-	 * @param endpoint
-	 */
 	public void addEndpoint(Endpoint endpoint) {
 		Collection<Endpoint> endpointsCollection = getEndpoints();
-
-		// Map<String, Object> endpointWrapper = convertEndpointToMap(endpoint, "http");
 		endpointsCollection.add(endpoint);
+
 		setEndpoints(endpointsCollection);
 	}
 
-	/**
-	 * removes an Endpoint from the Endpoints-Collection
-	 * 
-	 * @param endpoint
-	 */
-	public void removeEndpoint(String endpoint) {
+	public void removeEndpoint(String endpointAddress) {
 		Collection<Endpoint> endpointsCollection = getEndpoints();
 
 		Iterator<Endpoint> iterator = endpointsCollection.iterator();
 		while (iterator.hasNext()) {
 			Endpoint curEndpoint = iterator.next();
-			if (curEndpoint.getProtocolInformation().getEndpointAddress().equalsIgnoreCase(endpoint)) {
+			if (curEndpoint.getProtocolInformation().getEndpointAddress().equalsIgnoreCase(endpointAddress)) {
 				iterator.remove();
 				break;
 			}
@@ -187,41 +146,39 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		setEndpoints(endpointsCollection);
 	}
 
-	/**
-	 * Return first AAS endpoint
-	 */
-	@SuppressWarnings("unchecked")
 	public Endpoint getFirstEndpoint() {
 		Object endpoints = get(ENDPOINTS);
 		if (endpoints instanceof Collection<?>) {
-			Collection<Map<String, Object>> endpointCollection = (Collection<Map<String, Object>>) endpoints;
-			Map<String, Object> endpointMap = endpointCollection.iterator().next();
-
-			return Endpoint.createAsFacade(endpointMap);
+			return getFirstEndpointFromCollection(endpoints);
 		} else {
 			return null;
 		}
 	}
 
-	/**
-	 * Return all AAS endpoints
-	 */
 	@SuppressWarnings("unchecked")
+	private Endpoint getFirstEndpointFromCollection(Object endpoints) {
+		Collection<Map<String, Object>> endpointCollection = (Collection<Map<String, Object>>) endpoints;
+		Map<String, Object> endpointMap = endpointCollection.iterator().next();
+
+		return Endpoint.createAsFacade(endpointMap);
+	}
+
 	public Collection<Endpoint> getEndpoints() {
 		Object endpoints = get(ENDPOINTS);
-		// Extract String from endpoint for set or list representations of the endpoint
-		// wrappers
 		if (endpoints instanceof Collection<?>) {
-			// Create a new return list and insert all endpoints. If the endpoints are
-			// created using Arrays.asList() which is immutable, this can be solved
-			Collection<Endpoint> ret = new ArrayList<Endpoint>();
-			for (Map<String, Object> endpointMap : (Collection<Map<String, Object>>) endpoints) {
-				ret.add(Endpoint.createAsFacade(endpointMap));
-			}
-			return ret;
+			return getAllEndpointsFromCollection(endpoints);
 		} else {
 			return new ArrayList<>();
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Collection<Endpoint> getAllEndpointsFromCollection(Object endpoints) {
+		Collection<Endpoint> ret = new ArrayList<Endpoint>();
+		for (Map<String, Object> endpointMap : (Collection<Map<String, Object>>) endpoints) {
+			ret.add(Endpoint.createAsFacade(endpointMap));
+		}
+		return ret;
 	}
 
 	/**

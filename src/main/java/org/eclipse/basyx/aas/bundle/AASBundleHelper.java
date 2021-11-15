@@ -160,7 +160,7 @@ public class AASBundleHelper {
 
 	private static void tryDeregisterModel(IRegistry registry, IIdentifier identifier, String loggerInfo) {
 		try {
-			registry.deleteModel(identifier);
+			registry.deleteShell(identifier);
 		} catch (ProviderException e) {
 			logger.info(loggerInfo);
 			// If deregistration failed: continue

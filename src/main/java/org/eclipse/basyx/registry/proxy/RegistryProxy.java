@@ -210,7 +210,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	 * @throws ProviderException
 	 */
 	@Override
-	public void deleteModel(IIdentifier shellIdentifier) throws ProviderException {
+	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException {
 		this.removeMapping(RegistryClientAPIHelper.getSingleShellDescriptorPath(shellIdentifier));
 	}
 
@@ -367,7 +367,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public SubmodelDescriptor lookupSubmodel(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
+	public SubmodelDescriptor lookupSubmodelForShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
 		try {
 			Object result = provider.getValue(RegistryClientAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(shellIdentifier, submodelIdentifier));
 			return new SubmodelDescriptor((Map<String, Object>) result);

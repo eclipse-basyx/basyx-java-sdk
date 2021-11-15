@@ -126,14 +126,14 @@ public class MqttRegistryService extends MqttEventService implements IRegistry {
 	}
 
 	@Override
-	public void deleteModel(IIdentifier shellIdentifier) throws ProviderException {
-		this.observedRegistryService.deleteModel(shellIdentifier);
+	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException {
+		this.observedRegistryService.deleteShell(shellIdentifier);
 		sendMqttMessage(TOPIC_DELETEAAS, shellIdentifier.getId());
 	}
 
 	@Override
 	public void deleteSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
-		this.observedRegistryService.deleteModel(submodelIdentifier);
+		this.observedRegistryService.deleteShell(submodelIdentifier);
 		sendMqttMessage(TOPIC_DELETESUBMODEL, submodelIdentifier.getId());
 	}
 
@@ -159,8 +159,8 @@ public class MqttRegistryService extends MqttEventService implements IRegistry {
 	}
 
 	@Override
-	public SubmodelDescriptor lookupSubmodel(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
-		return this.observedRegistryService.lookupSubmodel(shellIdentifier, submodelIdentifier);
+	public SubmodelDescriptor lookupSubmodelForShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
+		return this.observedRegistryService.lookupSubmodelForShell(shellIdentifier, submodelIdentifier);
 	}
 
 	@Override

@@ -83,7 +83,7 @@ public interface IRegistry {
 	 * @param identifier
 	 * @throws ProviderException
 	 */
-	public void deleteModel(IIdentifier identifier) throws ProviderException;
+	public void deleteShell(IIdentifier identifier) throws ProviderException;
 
 	/**
 	 * Deletes the SubmodelDescriptor from the registry with the given identifier.
@@ -145,7 +145,7 @@ public interface IRegistry {
 	 * @return the SubmodelDescriptor
 	 * @throws ProviderException
 	 */
-	public SubmodelDescriptor lookupSubmodel(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException;
+	public SubmodelDescriptor lookupSubmodelForShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException;
 
 	/**
 	 * Retrieves all SubmodelDescriptors for the Shell with the given aasIdentifier.

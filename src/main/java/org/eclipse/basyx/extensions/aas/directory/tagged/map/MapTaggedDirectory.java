@@ -81,10 +81,10 @@ public class MapTaggedDirectory extends Registry implements IAASTaggedDirectory 
 	}
 
 	@Override
-	public void deleteModel(IIdentifier shellIdentifier) {
+	public void deleteShell(IIdentifier shellIdentifier) {
 		// Let MapRegistry take care of the registry part and only manage the tags
 		AASDescriptor desc = super.lookupShell(shellIdentifier);
-		super.deleteModel(shellIdentifier);
+		super.deleteShell(shellIdentifier);
 
 		if (desc instanceof TaggedAASDescriptor) {
 			((TaggedAASDescriptor) desc).getTags().stream().forEach(t -> tagMap.get(t).remove(desc));

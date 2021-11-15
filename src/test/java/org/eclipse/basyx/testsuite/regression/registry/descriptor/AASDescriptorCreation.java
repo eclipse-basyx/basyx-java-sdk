@@ -9,7 +9,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.registry.descriptor;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
 import org.eclipse.basyx.registry.descriptor.ModelDescriptor;
 import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
@@ -36,12 +34,12 @@ import org.junit.Test;
  * @author schnicke
  *
  */
-public class TestAASDescriptor extends ModelDescriptorTestSuite {
+public class AASDescriptorCreation extends ModelDescriptorTestSuite {
 
 	private Map<String, Object> map;
 
 	@Before
-	public void initialize() {
+	public void setUp() {
 		map = new HashMap<String, Object>();
 		map.put(Referable.IDSHORT, "123");
 		map.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRDI, "123"));
@@ -49,95 +47,74 @@ public class TestAASDescriptor extends ModelDescriptorTestSuite {
 		map.put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
 	}
 
-	/**
-	 * Tests retrieval of all registered submodel descriptors
-	 */
-	@Test
-	public void testGetAllSubmodels() {
-		// Setup descriptor and add one submodel descriptor
-
-		AASDescriptor descriptor = new AASDescriptor(new Identifier(IdentifierType.CUSTOM, "Test"), new Endpoint("http://a.b/c/aas"));
-		descriptor.addSubmodelDescriptor(new SubmodelDescriptor("SM1", new Identifier(IdentifierType.CUSTOM, "SM1"), new Endpoint("http://a.b/c/aas/submodels/SM1")));
-
-		// Assert correct retrieval
-		assertEquals(1, descriptor.getSubmodelDescriptors().size());
-		assertEquals("SM1", descriptor.getSubmodelDescriptors().iterator().next().getIdentifier().getId());
-
-		// Add a second descriptor
-		descriptor.addSubmodelDescriptor(new SubmodelDescriptor("SM2", new Identifier(IdentifierType.CUSTOM, "SM2"), new Endpoint("http://a.b/c/aas/submodels/SM2")));
-
-		// Assert correct retrieval
-		assertEquals(2, descriptor.getSubmodelDescriptors().size());
-	}
-
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateNoIdShort() {
+	public void validateNoIdShort() {
 		map.remove(Referable.IDSHORT);
 		new AASDescriptor(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateNullIdShort() {
+	public void validateNullIdShort() {
 		map.put(Referable.IDSHORT, null);
 		new AASDescriptor(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateWrongIdShort() {
+	public void validateWrongIdShort() {
 		map.put(Referable.IDSHORT, 0);
 		new AASDescriptor(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateNoIdentification() {
+	public void validateNoIdentification() {
 		map.remove(Identifiable.IDENTIFICATION);
 		new AASDescriptor(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateNullIdentification() {
+	public void validateNullIdentification() {
 		map.put(Identifiable.IDENTIFICATION, null);
 		new AASDescriptor(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateWrongdentification() {
+	public void validateWrongdentification() {
 		map.put(Identifiable.IDENTIFICATION, "testId");
 		new AASDescriptor(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateNoEndpoints() {
+	public void validateNoEndpoints() {
 		map.remove(ModelDescriptor.ENDPOINTS);
 		new AASDescriptor(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateNullEndpoints() {
+	public void validateNullEndpoints() {
 		map.put(ModelDescriptor.ENDPOINTS, null);
 		new AASDescriptor(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateWrongEndpoints() {
+	public void validateWrongEndpoints() {
 		map.put(ModelDescriptor.ENDPOINTS, "testEndpoint");
 		new AASDescriptor(map);
 	}
 
 	@Test
-	public void testValidateNoSubmodels() {
+	public void validateNoSubmodels() {
 		map.remove(AssetAdministrationShell.SUBMODELS);
 		assertNotNull(new AASDescriptor(map).getSubmodelDescriptors());
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateNullSubmodels() {
+	public void validateNullSubmodels() {
 		map.put(AssetAdministrationShell.SUBMODELS, null);
 		new AASDescriptor(map).getSubmodelDescriptors();
 	}
 
 	@Test(expected = MalformedRequestException.class)
-	public void testValidateWrongSubmodels() {
+	public void validateWrongSubmodels() {
 		map.put(AssetAdministrationShell.SUBMODELS, "testSubmodel");
 		new AASDescriptor(map).getSubmodelDescriptors();
 	}

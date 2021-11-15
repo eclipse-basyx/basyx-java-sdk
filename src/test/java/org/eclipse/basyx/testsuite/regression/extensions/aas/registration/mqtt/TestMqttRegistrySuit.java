@@ -105,7 +105,7 @@ public abstract class TestMqttRegistrySuit {
 
 	private void deleteAASFromRegistryIfExisting() {
 		try {
-			proxyAPI.deleteModel(AASIDENTIFIER);
+			proxyAPI.deleteShell(AASIDENTIFIER);
 		} catch (ProviderException e) {
 		}
 	}
@@ -140,7 +140,7 @@ public abstract class TestMqttRegistrySuit {
 
 	@Test
 	public void testDeleteAAS() {
-		proxyAPI.deleteModel(AASIDENTIFIER);
+		proxyAPI.deleteShell(AASIDENTIFIER);
 
 		assertEquals(AASID, listener.lastPayload);
 		assertEquals(MqttEventService.TOPIC_DELETEAAS, listener.lastTopic);

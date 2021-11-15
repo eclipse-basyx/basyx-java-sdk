@@ -72,7 +72,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	@Override
 	public ISubmodel retrieveSubmodel(IIdentifier aasId, IIdentifier smId) {
 		// look up SM descriptor in the registry
-		SubmodelDescriptor submodelDescriptor = shellDirectory.lookupSubmodel(aasId, smId);
+		SubmodelDescriptor submodelDescriptor = shellDirectory.lookupSubmodelForShell(aasId, smId);
 
 		// get address of the submodel descriptor
 		String submodelEndpointAddress = extractFirstEndpointAddress(submodelDescriptor);
@@ -131,7 +131,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		proxyFactory.createProxy(shellEndpointAddress).deleteValue("");
 
 		// Delete from Registry
-		shellDirectory.deleteModel(id);
+		shellDirectory.deleteShell(id);
 
 		// TODO: How to handle submodels -> Lifecycle needs to be clarified
 	}

@@ -90,12 +90,12 @@ public abstract class TestRegistryProviderSuite {
 	@After
 	public void tearDown() {
 		try {
-			proxy.deleteModel(shellIdentifier1);
+			proxy.deleteShell(shellIdentifier1);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
 		try {
-			proxy.deleteModel(shellIdentifier2);
+			proxy.deleteShell(shellIdentifier2);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
@@ -137,10 +137,8 @@ public abstract class TestRegistryProviderSuite {
 	 * Tests getting all entries from the registry and validates the result.
 	 */
 	@Test
-	public void getMultipleShell() {
-		// Get all registered Shells
+	public void getMultipleShells() {
 		List<AASDescriptor> result = proxy.lookupAllShells();
-		// Check, if both shells are registered. Ordering does not matter
 		assertEquals(2, result.size());
 		if (result.get(0).getIdShort().equals(shellIdShort1)) {
 			validateShellDescriptor1(result.get(0));
@@ -155,7 +153,7 @@ public abstract class TestRegistryProviderSuite {
 	 * Tests getting all entries from the registry and validates the result.
 	 */
 	@Test
-	public void getMultipleSubmodel() {
+	public void getMultipleSubmodels() {
 		// Get all registered submodels
 		List<SubmodelDescriptor> result = proxy.lookupAllSubmodels();
 		// Check, if both AAS are registered. Ordering does not matter
@@ -169,34 +167,21 @@ public abstract class TestRegistryProviderSuite {
 		}
 	}
 
-	/**
-	 * Checks, if the given descriptor is valid. Should contain the values of the
-	 * first shellDescriptor as given by the test setup
-	 */
 	protected void validateShellDescriptor1(AASDescriptor shellDescriptor) {
 		assertEquals(shellIdentifier1.getId(), shellDescriptor.getIdentifier().getId());
 		assertEquals(shellIdentifier1.getIdType(), shellDescriptor.getIdentifier().getIdType());
 		assertEquals(shellEndpoint1, shellDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 
-		// Check, if the SM descriptor in the AASDescriptor is correct
 		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifier(submodelIdentifier1);
 		validateSubmodelDescriptor1(submodelDescriptor);
 	}
 
-	/**
-	 * Checks, if the given descriptor is valid. Should contain the values of the
-	 * second shellDescriptor as given by the test setup
-	 */
 	protected void validateShellDescriptor2(AASDescriptor descriptor) {
 		assertEquals(shellIdentifier2.getId(), descriptor.getIdentifier().getId());
 		assertEquals(shellIdentifier2.getIdType(), descriptor.getIdentifier().getIdType());
 		assertEquals(shellEndpoint2, descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 	}
 
-	/**
-	 * Checks, if the given descriptor is valid. Should contain the values of the
-	 * first submodelDescriptor as given by the test setup
-	 */
 	protected void validateSubmodelDescriptor1(SubmodelDescriptor submodelDescriptor) {
 		assertEquals(submodelIdentifier1.getId(), submodelDescriptor.getIdentifier().getId());
 		assertEquals(submodelIdentifier1.getIdType(), submodelDescriptor.getIdentifier().getIdType());
@@ -204,10 +189,6 @@ public abstract class TestRegistryProviderSuite {
 		assertEquals(submodelEndpoint1, submodelDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 	}
 
-	/**
-	 * Checks, if the given descriptor is valid. Should contain the values of the
-	 * second submodelDescriptor as given by the test setup
-	 */
 	protected void validateSubmodelDescriptor2(SubmodelDescriptor submodelDescriptor) {
 		assertEquals(submodelIdentifier2.getId(), submodelDescriptor.getIdentifier().getId());
 		assertEquals(submodelIdentifier2.getIdType(), submodelDescriptor.getIdentifier().getIdType());
@@ -215,15 +196,12 @@ public abstract class TestRegistryProviderSuite {
 		assertEquals(submodelEndpoint2, submodelDescriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 	}
 
-	/**
-	 * Tests deletion for shellDescriptors
-	 */
 	@Test
 	public void testDeleteShellDescriptors() {
 		assertNotNull(proxy.lookupShell(shellIdentifier1));
 		assertNotNull(proxy.lookupShell(shellIdentifier2));
 
-		proxy.deleteModel(shellIdentifier2);
+		proxy.deleteShell(shellIdentifier2);
 
 		// After aas2 has been deleted, only aas1 should be registered
 		assertNotNull(proxy.lookupShell(shellIdentifier1));
@@ -234,7 +212,7 @@ public abstract class TestRegistryProviderSuite {
 			// expected
 		}
 
-		proxy.deleteModel(shellIdentifier1);
+		proxy.deleteShell(shellIdentifier1);
 
 		// After aas1 has been deleted, both should not be registered any more
 		try {
@@ -310,7 +288,7 @@ public abstract class TestRegistryProviderSuite {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void deleteNotExistingShell() {
-		proxy.deleteModel(new Identifier(IdentifierType.CUSTOM, "nonExistent"));
+		proxy.deleteShell(new Identifier(IdentifierType.CUSTOM, "nonExistent"));
 	}
 
 	@Test
@@ -322,7 +300,7 @@ public abstract class TestRegistryProviderSuite {
 
 	@Test
 	public void retrieveSpecificSubmodelDescriptor() {
-		SubmodelDescriptor submodelDescriptor = proxy.lookupSubmodel(shellIdentifier1, submodelIdentifier1);
+		SubmodelDescriptor submodelDescriptor = proxy.lookupSubmodelForShell(shellIdentifier1, submodelIdentifier1);
 		assertEquals(submodelIdShort1, submodelDescriptor.getIdShort());
 	}
 
@@ -345,6 +323,17 @@ public abstract class TestRegistryProviderSuite {
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodelIdShort1, submodelIdentifier1, new Endpoint("http://testendpoint/"));
 		proxy.updateSubmodel(submodelDescriptor.getIdentifier(), submodelDescriptor);
 		SubmodelDescriptor retrievedSubmodelDescriptor = proxy.lookupSubmodel(submodelIdentifier1);
+		assertEquals(submodelDescriptor.getFirstEndpoint(), retrievedSubmodelDescriptor.getFirstEndpoint());
+	}
+
+	/**
+	 * Tests overwriting the submodel descriptor in a shell
+	 */
+	@Test
+	public void overwriteSubmodelDescriptorInShell() {
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodelIdShort1, submodelIdentifier1, new Endpoint("http://testendpoint/"));
+		proxy.updateSubmodelForShell(shellIdentifier1, submodelDescriptor);
+		SubmodelDescriptor retrievedSubmodelDescriptor = proxy.lookupSubmodelForShell(shellIdentifier1, submodelIdentifier1);
 		assertEquals(submodelDescriptor.getFirstEndpoint(), retrievedSubmodelDescriptor.getFirstEndpoint());
 	}
 

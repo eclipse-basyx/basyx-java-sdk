@@ -250,7 +250,7 @@ public class RegistryModelProvider implements IModelProvider {
 		ModelUrn shellIdentifier = new ModelUrn(shellId);
 		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptorFromMap(newValue);
 
-		registry.registerSubmodelForShell(shellIdentifier, submodelDescriptor);
+		registry.updateSubmodelForShell(shellIdentifier, submodelDescriptor);
 	}
 
 	@Override
@@ -286,7 +286,7 @@ public class RegistryModelProvider implements IModelProvider {
 			throw new ResourceNotFoundException("Shell '" + shellId + "' to be deleted does not exist.");
 		}
 
-		registry.deleteModel(shellId);
+		registry.deleteShell(shellId);
 	}
 
 	private void deleteSubmodelDescriptor(String submodelIdentifier) {

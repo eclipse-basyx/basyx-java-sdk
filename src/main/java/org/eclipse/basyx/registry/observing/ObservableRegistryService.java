@@ -73,8 +73,8 @@ public class ObservableRegistryService extends Observable<IRegistryServiceObserv
 	}
 
 	@Override
-	public void deleteModel(IIdentifier shellIdentifier) throws ProviderException {
-		registry.deleteModel(shellIdentifier);
+	public void deleteShell(IIdentifier shellIdentifier) throws ProviderException {
+		registry.deleteShell(shellIdentifier);
 		observers.stream().forEach(o -> o.shellDeleted(shellIdentifier.getId()));
 	}
 
@@ -105,8 +105,8 @@ public class ObservableRegistryService extends Observable<IRegistryServiceObserv
 	}
 
 	@Override
-	public SubmodelDescriptor lookupSubmodel(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
-		return registry.lookupSubmodel(aasIdentifier, submodelIdentifier);
+	public SubmodelDescriptor lookupSubmodelForShell(IIdentifier aasIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
+		return registry.lookupSubmodelForShell(aasIdentifier, submodelIdentifier);
 	}
 
 	@Override

@@ -20,48 +20,57 @@ import org.eclipse.basyx.registry.descriptor.ModelDescriptor;
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformation;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangString;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Test suite for Model Descriptor common method testing
  *
- * @author haque, fischer, fried
+ * @author haque, fischer, fried, jung
  *
  */
 public abstract class ModelDescriptorTestSuite {
-	private static final String TESTENDPOINT = "dummy.com";
+	private static final String TESTENDPOINT1 = "dummy.com";
 	private static final String TESTENDPOINT2 = "dummy2.com";
 	private static final String TEST_ADMINISTRATION_VERSION = "v0";
 	private static final String TEST_ADMINISTRATION_REVISION = "a";
-	private static final LangString DESCRIPTION = new LangString("DE", "Beschreibung");
+	private static final LangString DESCRIPTION1 = new LangString("DE", "Beschreibung");
 	private static final LangString DESCRIPTION2 = new LangString("EN", "Description");
 
-	private ModelDescriptor descriptor;
+	private static ModelDescriptor modelDescriptor;
+	private static Endpoint endpoint1;
+	private static Endpoint endpoint2;
 
 	public abstract ModelDescriptor retrieveModelDescriptor();
 
-	@Test
-	public void testAddEndpoint() {
-		addEndpoints();
-		Collection<Endpoint> endpoints = descriptor.getEndpoints();
-		assertTrue(endpoints.stream().anyMatch(x -> x.getProtocolInformation().getEndpointAddress().equals(TESTENDPOINT)));
-		assertTrue(endpoints.stream().anyMatch(x -> x.getProtocolInformation().getEndpointAddress().equals(TESTENDPOINT2)));
+	@BeforeClass
+	public static void setUpClass() {
+		endpoint1 = new Endpoint(TESTENDPOINT1);
+		endpoint2 = new Endpoint(TESTENDPOINT2);
 	}
 
 	@Test
-	public void testRemoveEndpoint() {
+	public void addEndpoint() {
 		addEndpoints();
-		descriptor.removeEndpoint(TESTENDPOINT);
-		Collection<Endpoint> endpoints = descriptor.getEndpoints();
-		assertTrue(!endpoints.stream().anyMatch(x -> x.getProtocolInformation().getEndpointAddress().equals(TESTENDPOINT)));
-		assertTrue(endpoints.stream().anyMatch(x -> x.getProtocolInformation().getEndpointAddress().equals(TESTENDPOINT2)));
+		Collection<Endpoint> endpoints = modelDescriptor.getEndpoints();
+		assertTrue(endpoints.contains(endpoint1));
+		assertTrue(endpoints.contains(endpoint2));
+	}
+
+	@Test
+	public void removeEndpoint() {
+		addEndpoints();
+		modelDescriptor.removeEndpoint(TESTENDPOINT1);
+		Collection<Endpoint> endpoints = modelDescriptor.getEndpoints();
+		assertTrue(!endpoints.contains(endpoint1));
+		assertTrue(endpoints.contains(endpoint2));
 	}
 
 	@Test
 	public void setAdministration() {
-		descriptor = retrieveModelDescriptor();
-		descriptor.setAdministration(new AdministrativeInformation(TEST_ADMINISTRATION_VERSION, TEST_ADMINISTRATION_REVISION));
-		AdministrativeInformation adminInformation = descriptor.getAdministration();
+		modelDescriptor = retrieveModelDescriptor();
+		modelDescriptor.setAdministration(new AdministrativeInformation(TEST_ADMINISTRATION_VERSION, TEST_ADMINISTRATION_REVISION));
+		AdministrativeInformation adminInformation = modelDescriptor.getAdministration();
 		assertEquals(TEST_ADMINISTRATION_VERSION, adminInformation.getVersion());
 		assertEquals(TEST_ADMINISTRATION_REVISION, adminInformation.getRevision());
 	}
@@ -69,31 +78,32 @@ public abstract class ModelDescriptorTestSuite {
 	@Test
 	public void addDescription() {
 		addDescriptions();
-		Collection<LangString> descriptions = descriptor.getDescriptions();
-		assertTrue(descriptions.stream().anyMatch(description -> description.equals(DESCRIPTION)));
-		assertTrue(descriptions.stream().anyMatch(description -> description.equals(DESCRIPTION2)));
+		Collection<LangString> descriptions = modelDescriptor.getDescriptions();
+		assertTrue(descriptions.contains(DESCRIPTION1));
+		assertTrue(descriptions.contains(DESCRIPTION2));
 		assertEquals(2, descriptions.size());
 	}
 
 	@Test
 	public void removeDescription() {
 		addDescriptions();
-		descriptor.removeDescription(DESCRIPTION);
-		Collection<LangString> descriptions = descriptor.getDescriptions();
-		assertTrue(!descriptions.stream().anyMatch(description -> description.equals(DESCRIPTION)));
-		assertTrue(descriptions.stream().anyMatch(description -> description.equals(DESCRIPTION2)));
+		modelDescriptor.removeDescription(DESCRIPTION1);
+		Collection<LangString> descriptions = modelDescriptor.getDescriptions();
+		assertTrue(!descriptions.contains(DESCRIPTION1));
+		assertTrue(descriptions.contains(DESCRIPTION2));
 		assertEquals(1, descriptions.size());
 	}
 
 	private void addDescriptions() {
-		descriptor = retrieveModelDescriptor();
-		descriptor.addDescription(DESCRIPTION);
-		descriptor.addDescription(DESCRIPTION2);
+		modelDescriptor = retrieveModelDescriptor();
+		modelDescriptor.addDescription(DESCRIPTION1);
+		modelDescriptor.addDescription(DESCRIPTION2);
 	}
 
 	private void addEndpoints() {
-		descriptor = retrieveModelDescriptor();
-		descriptor.addEndpoint(new Endpoint(TESTENDPOINT));
-		descriptor.addEndpoint(new Endpoint(TESTENDPOINT2));
+		modelDescriptor = retrieveModelDescriptor();
+		modelDescriptor.addEndpoint(endpoint1);
+		modelDescriptor.addEndpoint(endpoint2);
 	}
+
 }
