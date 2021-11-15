@@ -12,6 +12,8 @@ package org.eclipse.basyx.testsuite.regression.registry.descriptor;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.eclipse.basyx.registry.descriptor.ModelDescriptor;
@@ -46,11 +48,11 @@ public class TestSubmodelDescriptor extends ModelDescriptorTestSuite {
 	private static final String HTTP_ENDPOINT = "testEnd/submodel";
 	private static final String ID_SHORT_STRING = "testIdShort";
 	private static final Identifier IDENTIFIER = new Identifier(ID_TYPE, ID_SHORT_STRING);
-	private static Endpoint httpEndpoint;
+	private static Collection<Endpoint> endpoints;
 
 	@Before
 	public void initialize() {
-		httpEndpoint = new Endpoint(HTTP_ENDPOINT);
+		endpoints = Arrays.asList(new Endpoint(HTTP_ENDPOINT));
 	}
 
 	@Test
@@ -71,7 +73,7 @@ public class TestSubmodelDescriptor extends ModelDescriptorTestSuite {
 		HasDataSpecification hasDataSpecification = new HasDataSpecification(new ArrayList<>(), Collections.singleton(reference));
 		Submodel subModel = new Submodel(hasSemantics, identifiable, qualifiable, hasDataSpecification, hasKind);
 
-		SubmodelDescriptor descriptor = new SubmodelDescriptor(subModel, httpEndpoint);
+		SubmodelDescriptor descriptor = new SubmodelDescriptor(subModel, endpoints);
 		assertEquals(HTTP_ENDPOINT, descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 		assertEquals(ID_SHORT_STRING, descriptor.getIdShort());
 		assertEquals(IDENTIFIER, descriptor.getIdentifier());
@@ -79,7 +81,7 @@ public class TestSubmodelDescriptor extends ModelDescriptorTestSuite {
 
 	@Test
 	public void testConstructor2() {
-		SubmodelDescriptor descriptor = new SubmodelDescriptor(ID_SHORT_STRING, IDENTIFIER, httpEndpoint);
+		SubmodelDescriptor descriptor = new SubmodelDescriptor(ID_SHORT_STRING, IDENTIFIER, endpoints);
 		assertEquals(HTTP_ENDPOINT, descriptor.getFirstEndpoint().getProtocolInformation().getEndpointAddress());
 		assertEquals(ID_SHORT_STRING, descriptor.getIdShort());
 		assertEquals(IDENTIFIER, descriptor.getIdentifier());
@@ -87,6 +89,6 @@ public class TestSubmodelDescriptor extends ModelDescriptorTestSuite {
 
 	@Override
 	public ModelDescriptor retrieveModelDescriptor() {
-		return new SubmodelDescriptor(ID_SHORT_STRING, IDENTIFIER, httpEndpoint);
+		return new SubmodelDescriptor(ID_SHORT_STRING, IDENTIFIER, endpoints);
 	}
 }

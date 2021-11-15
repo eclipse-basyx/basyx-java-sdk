@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.api;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -31,15 +32,14 @@ public class TaggedAASDescriptor extends AASDescriptor {
 	public static final String TAGS = "tags";
 
 	/**
-	 * Create a new aas descriptor that retrieves the necessary information from a
+	 * Create a new shell descriptor that retrieves the necessary information from a
 	 * passend AssetAdministrationShell
 	 *
 	 * @param assetAdministrationShell
-	 * @param endpoint
+	 * @param httpEndpoint
 	 */
-	public TaggedAASDescriptor(IAssetAdministrationShell assetAdministrationShell, String endpoint) {
-		super(assetAdministrationShell, new Endpoint(endpoint));
-		initialize();
+	public TaggedAASDescriptor(IAssetAdministrationShell assetAdministrationShell, String httpEndpoint) {
+		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), httpEndpoint);
 	}
 
 	protected TaggedAASDescriptor() {
@@ -65,8 +65,8 @@ public class TaggedAASDescriptor extends AASDescriptor {
 	/**
 	 * Create a new descriptor with minimal information
 	 */
-	public TaggedAASDescriptor(String idShort, IIdentifier id, String httpEndpoint) {
-		super(idShort, id, new Endpoint(httpEndpoint));
+	public TaggedAASDescriptor(String idShort, IIdentifier shellIdentifier, String httpEndpoint) {
+		super(idShort, shellIdentifier, Arrays.asList(new Endpoint(httpEndpoint)));
 		initialize();
 	}
 

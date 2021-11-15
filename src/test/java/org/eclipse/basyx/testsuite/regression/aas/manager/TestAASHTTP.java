@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -70,11 +71,11 @@ public class TestAASHTTP {
 		InMemoryRegistry registry = new InMemoryRegistry();
 
 		// Create aas descriptor for the aas registry
-		AASDescriptor aasDescriptor = new AASDescriptor(StubAASServlet.AASURN, new Endpoint("http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas"));
+		AASDescriptor aasDescriptor = new AASDescriptor(StubAASServlet.AASURN, Arrays.asList(new Endpoint("http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas")));
 
 		// Create the submodel descriptor
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(StubAASServlet.SMIDSHORT, StubAASServlet.SMURN,
-				new Endpoint("http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel"));
+				Arrays.asList(new Endpoint("http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel")));
 
 		// add submodel descriptor to the aas descriptor
 		aasDescriptor.addSubmodelDescriptor(submodelDescriptor);

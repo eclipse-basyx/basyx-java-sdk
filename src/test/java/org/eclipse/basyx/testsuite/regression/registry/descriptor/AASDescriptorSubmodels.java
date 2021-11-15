@@ -12,6 +12,8 @@ package org.eclipse.basyx.testsuite.regression.registry.descriptor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
 import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
@@ -33,14 +35,14 @@ public class AASDescriptorSubmodels {
 
 	@Before
 	public void setUp() {
-		shellDescriptor = new AASDescriptor(new Identifier(IdentifierType.CUSTOM, "Test"), new Endpoint("http://a.b/c/aas"));
-		submodelDescriptor = new SubmodelDescriptor("SM1", new Identifier(IdentifierType.CUSTOM, "SM1"), new Endpoint("http://a.b/c/aas/submodels/SM1"));
+		shellDescriptor = new AASDescriptor(new Identifier(IdentifierType.CUSTOM, "Test"), Arrays.asList(new Endpoint("http://a.b/c/aas")));
+		submodelDescriptor = new SubmodelDescriptor("SM1", new Identifier(IdentifierType.CUSTOM, "SM1"), Arrays.asList(new Endpoint("http://a.b/c/aas/submodels/SM1")));
 		shellDescriptor.addSubmodelDescriptor(submodelDescriptor);
 	}
 
 	@Test
 	public void addSubmodel() {
-		SubmodelDescriptor newSubmodelDescriptor = new SubmodelDescriptor("SM2", new Identifier(IdentifierType.CUSTOM, "SM2"), new Endpoint("http://a.b/c/aas/submodels/SM2"));
+		SubmodelDescriptor newSubmodelDescriptor = new SubmodelDescriptor("SM2", new Identifier(IdentifierType.CUSTOM, "SM2"), Arrays.asList(new Endpoint("http://a.b/c/aas/submodels/SM2")));
 		shellDescriptor.addSubmodelDescriptor(newSubmodelDescriptor);
 
 		assertEquals(2, shellDescriptor.getSubmodelDescriptors().size());

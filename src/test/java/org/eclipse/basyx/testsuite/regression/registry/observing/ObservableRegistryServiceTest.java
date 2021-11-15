@@ -15,6 +15,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
@@ -36,7 +38,7 @@ public class ObservableRegistryServiceTest {
 
 	private static final String AASID = "aasid1";
 	private static final String SUBMODELID = "submodelid1";
-	private static final String AASENDPOINT = "http://localhost:8080/aasList/" + AASID + "/aas";
+	private static final String AASENDPOINTADDRESS = "http://localhost:8080/aasList/" + AASID + "/aas";
 	private static final Identifier AASIDENTIFIER = new Identifier(IdentifierType.IRI, AASID);
 	private static final Identifier SUBMODELIDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODELID);
 
@@ -49,12 +51,12 @@ public class ObservableRegistryServiceTest {
 		IRegistry registryService = new InMemoryRegistry();
 
 		AssetAdministrationShell shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid1"), AssetKind.INSTANCE));
-		AASDescriptor aasDescriptor = new AASDescriptor(shell, new Endpoint(AASENDPOINT));
+		AASDescriptor aasDescriptor = new AASDescriptor(shell, Arrays.asList(new Endpoint(AASENDPOINTADDRESS)));
 		registryService.register(aasDescriptor);
 
 		Submodel submodel = new Submodel(SUBMODELID, SUBMODELIDENTIFIER);
-		String submodelEndpoint = AASENDPOINT + "/submodels/" + SUBMODELID + "/submodel";
-		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
+		String submodelEndpoint = AASENDPOINTADDRESS + "/submodels/" + SUBMODELID + "/submodel";
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, Arrays.asList(new Endpoint(submodelEndpoint)));
 		registryService.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
 		observedRegistry = new ObservableRegistryService(registryService);
@@ -73,7 +75,7 @@ public class ObservableRegistryServiceTest {
 		AssetAdministrationShell shell = new AssetAdministrationShell(newAASId, newIdentifier, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
 		String aasEndpoint = "http://localhost:8080/aasList/" + newAASId + "/aas";
 
-		AASDescriptor aasDescriptor = new AASDescriptor(shell, new Endpoint(aasEndpoint));
+		AASDescriptor aasDescriptor = new AASDescriptor(shell, Arrays.asList(new Endpoint(aasEndpoint)));
 		observedRegistry.register(aasDescriptor);
 
 		assertEquals(newAASId, observer.shellId);
@@ -85,7 +87,7 @@ public class ObservableRegistryServiceTest {
 		AssetAdministrationShell shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
 		String aasEndpoint = "http://localhost:8080/aasList/" + AASID + "/aas";
 
-		AASDescriptor aasDescriptor = new AASDescriptor(shell, new Endpoint(aasEndpoint));
+		AASDescriptor aasDescriptor = new AASDescriptor(shell, Arrays.asList(new Endpoint(aasEndpoint)));
 		observedRegistry.updateShell(aasDescriptor.getIdentifier(), aasDescriptor);
 
 		assertEquals(AASID, observer.shellId);
@@ -97,8 +99,8 @@ public class ObservableRegistryServiceTest {
 		String submodelid = "submodelid2";
 		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRI, submodelid);
 		Submodel submodel = new Submodel(submodelid, newSubmodelIdentifier);
-		String submodelEndpoint = AASENDPOINT + "/submodels/" + submodelid + "/submodel";
-		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
+		String submodelEndpoint = AASENDPOINTADDRESS + "/submodels/" + submodelid + "/submodel";
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, Arrays.asList(new Endpoint(submodelEndpoint)));
 
 		observedRegistry.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
@@ -111,8 +113,8 @@ public class ObservableRegistryServiceTest {
 	public void testUpdateSubmodel() {
 		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRI, SUBMODELID);
 		Submodel submodel = new Submodel(SUBMODELID, newSubmodelIdentifier);
-		String submodelEndpoint = AASENDPOINT + "/submodels/" + SUBMODELID + "/submodel/new/Endpoint";
-		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
+		String submodelEndpoint = AASENDPOINTADDRESS + "/submodels/" + SUBMODELID + "/submodel/new/Endpoint";
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, Arrays.asList(new Endpoint(submodelEndpoint)));
 
 		observedRegistry.updateSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 

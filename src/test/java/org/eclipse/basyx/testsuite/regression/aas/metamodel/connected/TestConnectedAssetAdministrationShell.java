@@ -12,6 +12,8 @@ package org.eclipse.basyx.testsuite.regression.aas.metamodel.connected;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.Arrays;
+
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
@@ -57,9 +59,9 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 		// Create AAS registry
 		IRegistry registry = new InMemoryRegistry();
 		// Create AAS Descriptor
-		AASDescriptor aasDescriptor = new AASDescriptor(AASID, new Endpoint("/aas"));
+		AASDescriptor aasDescriptor = new AASDescriptor(AASID, Arrays.asList(new Endpoint("/aas")));
 		// Create Submodel Descriptor
-		SubmodelDescriptor smDescriptor2 = new SubmodelDescriptor(SMIDSHORT, SMID, new Endpoint("/aas/submodels/" + SMIDSHORT + "/submodel"));
+		SubmodelDescriptor smDescriptor2 = new SubmodelDescriptor(SMIDSHORT, SMID, Arrays.asList(new Endpoint("/aas/submodels/" + SMIDSHORT + "/submodel")));
 		// Add Submodel descriptor to aas descriptor
 		aasDescriptor.addSubmodelDescriptor(smDescriptor2);
 

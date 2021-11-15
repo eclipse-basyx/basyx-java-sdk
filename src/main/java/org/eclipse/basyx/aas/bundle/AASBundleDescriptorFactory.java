@@ -9,6 +9,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.bundle;
 
+import java.util.Arrays;
+
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
 import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
@@ -37,10 +39,10 @@ public class AASBundleDescriptorFactory {
 
 		String aasBase = VABPathTools.concatenatePaths(normalizedHostBasePath, endpointId, "aas");
 
-		AASDescriptor desc = new AASDescriptor(bundle.getAAS(), new Endpoint(aasBase));
+		AASDescriptor desc = new AASDescriptor(bundle.getAAS(), Arrays.asList(new Endpoint(aasBase)));
 
 		bundle.getSubmodels().stream().forEach(s -> {
-			SubmodelDescriptor smDesc = new SubmodelDescriptor(s, new Endpoint(VABPathTools.concatenatePaths(aasBase, "submodels", s.getIdShort(), "submodel")));
+			SubmodelDescriptor smDesc = new SubmodelDescriptor(s, Arrays.asList(new Endpoint(VABPathTools.concatenatePaths(aasBase, "submodels", s.getIdShort(), "submodel"))));
 			desc.addSubmodelDescriptor(smDesc);
 		});
 

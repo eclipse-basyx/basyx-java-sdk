@@ -13,6 +13,7 @@ package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.mqtt;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
@@ -85,12 +86,12 @@ public abstract class TestMqttRegistrySuit {
 		}
 
 		AssetAdministrationShell shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid1"), AssetKind.INSTANCE));
-		AASDescriptor aasDescriptor = new AASDescriptor(shell, new Endpoint(AASENDPOINT));
+		AASDescriptor aasDescriptor = new AASDescriptor(shell, Arrays.asList(new Endpoint(AASENDPOINT)));
 		proxyAPI.register(aasDescriptor);
 
 		Submodel submodel = new Submodel(SUBMODELID, SUBMODELIDENTIFIER);
 		String submodelEndpoint = AASENDPOINT + "/submodels/" + SUBMODELID + "/submodel";
-		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, Arrays.asList(new Endpoint(submodelEndpoint)));
 		proxyAPI.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
 		listener = new MqttTestListener();
@@ -117,7 +118,7 @@ public abstract class TestMqttRegistrySuit {
 		AssetAdministrationShell shell = new AssetAdministrationShell(newAASId, newIdentifier, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
 		String aasEndpoint = "http://localhost:8080/aasList/" + newAASId + "/aas";
 
-		AASDescriptor aasDescriptor = new AASDescriptor(shell, new Endpoint(aasEndpoint));
+		AASDescriptor aasDescriptor = new AASDescriptor(shell, Arrays.asList(new Endpoint(aasEndpoint)));
 		proxyAPI.register(aasDescriptor);
 
 		assertEquals(newAASId, listener.lastPayload);
@@ -130,7 +131,7 @@ public abstract class TestMqttRegistrySuit {
 		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRI, submodelid);
 		Submodel submodel = new Submodel(submodelid, newSubmodelIdentifier);
 		String submodelEndpoint = AASENDPOINT + "/submodels/" + submodelid + "/submodel";
-		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, new Endpoint(submodelEndpoint));
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, Arrays.asList(new Endpoint(submodelEndpoint)));
 
 		proxyAPI.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 

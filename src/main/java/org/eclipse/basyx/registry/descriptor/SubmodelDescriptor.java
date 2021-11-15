@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.registry.descriptor;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
@@ -42,9 +43,8 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 	 * Create a new aas descriptor with minimal information based on an existing
 	 * submodel.
 	 */
-	public SubmodelDescriptor(ISubmodel sm, Endpoint endpoint) {
-		// Create descriptor with minimal information (id and idShort)
-		this(sm.getIdShort(), sm.getIdentification(), endpoint);
+	public SubmodelDescriptor(ISubmodel sm, Collection<Endpoint> endpoints) {
+		this(sm.getIdShort(), sm.getIdentification(), endpoints);
 
 		putAll(new HasSemantics(sm.getSemanticId()));
 	}
@@ -52,10 +52,9 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 	/**
 	 * Create a new descriptor with minimal information
 	 */
-	public SubmodelDescriptor(String idShort, IIdentifier id, Endpoint endpoint) {
-		super(idShort, id, endpoint);
+	public SubmodelDescriptor(String idShort, IIdentifier id, Collection<Endpoint> endpoints) {
+		super(idShort, id, endpoints);
 
-		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
 

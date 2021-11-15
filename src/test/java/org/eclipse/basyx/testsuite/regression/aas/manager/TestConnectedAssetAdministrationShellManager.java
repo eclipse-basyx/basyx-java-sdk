@@ -13,6 +13,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+
 import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
@@ -102,7 +104,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		String smIdShort = "smName";
 
 		// Register AAS at directory
-		AASDescriptor desc = new AASDescriptor(aasId, new Endpoint("/aas"));
+		AASDescriptor desc = new AASDescriptor(aasId, Arrays.asList(new Endpoint("/aas")));
 		registry.register(desc);
 		IModelProvider provider = new MultiSubmodelProvider(new AASModelProvider(new AssetAdministrationShell()));
 		connectorProvider.addMapping("", provider);

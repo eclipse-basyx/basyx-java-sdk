@@ -60,10 +60,10 @@ public class AASDescriptor extends ModelDescriptor {
 	 * be set to an empty string).
 	 *
 	 * @param shellIdentifier
-	 * @param endpoint
+	 * @param endpoints
 	 */
-	public AASDescriptor(IIdentifier shellIdentifier, Endpoint endpoint) {
-		this("", shellIdentifier, endpoint);
+	public AASDescriptor(IIdentifier shellIdentifier, Collection<Endpoint> endpoints) {
+		this("", shellIdentifier, endpoints);
 	}
 
 	/**
@@ -71,10 +71,10 @@ public class AASDescriptor extends ModelDescriptor {
 	 *
 	 * @param idShort
 	 * @param shellIdentifier
-	 * @param endpoint
+	 * @param endpoints
 	 */
-	public AASDescriptor(String idShort, IIdentifier shellIdentifier, Endpoint endpoint) {
-		super(idShort, shellIdentifier, endpoint);
+	public AASDescriptor(String idShort, IIdentifier shellIdentifier, Collection<Endpoint> endpoints) {
+		super(idShort, shellIdentifier, endpoints);
 
 		put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
 		putAll(new ModelType(MODELTYPE));
@@ -85,31 +85,38 @@ public class AASDescriptor extends ModelDescriptor {
 	 * passed AssetAdministrationShell.
 	 *
 	 * @param assetAdministrationShell
-	 * @param endpoint
+	 * @param endpoints
 	 */
-	public AASDescriptor(IAssetAdministrationShell assetAdministrationShell, Endpoint endpoint) {
-		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), endpoint);
+	public AASDescriptor(IAssetAdministrationShell assetAdministrationShell, Collection<Endpoint> endpoints) {
+		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), endpoints);
 	}
 
 	/**
-	 * Create a new shell descriptor with shellId, idShort, globalAssetId,
-	 * specificAssetId, and endpoint.
+	 * Create a new shell descriptor with shellId, idShort, globalAssetId, and
+	 * endpoint.
 	 *
 	 * @param idShort
 	 * @param aasid
 	 * @param globalAssetId
-	 * @param specificAssetIds
-	 * @param endpoint
+	 * @param endpoints
 	 */
-	public AASDescriptor(String idShort, IIdentifier aasid, GlobalAssetId globalAssetId, SpecificAssetId specificAssetIds, Endpoint endpoint) {
-		// TODO: globalAssetId, specificAssetIds are mutually exclusive
-		// TODO: constructor from Collection<SpecificAssetId> specificAssetIds
-		super(idShort, aasid, endpoint);
-
+	public AASDescriptor(String idShort, IIdentifier aasid, GlobalAssetId globalAssetId, Collection<Endpoint> endpoints) {
+		this(idShort, aasid, endpoints);
 		put(GLOBAL_ASSET_ID, globalAssetId);
+	}
+
+	/**
+	 * Create a new shell descriptor with shellId, idShort, specificAssetIds, and
+	 * endpoint.
+	 *
+	 * @param idShort
+	 * @param aasid
+	 * @param specificAssetIds
+	 * @param endpoints
+	 */
+	public AASDescriptor(String idShort, IIdentifier aasid, Collection<SpecificAssetId> specificAssetIds, Collection<Endpoint> endpoints) {
+		this(idShort, aasid, endpoints);
 		put(SPECIFIC_ASSET_IDS, specificAssetIds);
-		put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
-		putAll(new ModelType(MODELTYPE));
 	}
 
 	/**

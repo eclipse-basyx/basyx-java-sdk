@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -78,9 +79,9 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 		String remoteSmEndpoint = "basyx://localhost:8001/submodel";
 		String localSmEndpoint = "basyx://localhost:8000/aas/submodels/" + LOCALSMIDSHORT;
 
-		AASDescriptor aasDesc = new AASDescriptor(AASIDSHORT1, AASID1, new Endpoint(aasEndpoint));
-		aasDesc.addSubmodelDescriptor(new SubmodelDescriptor(REMOTESMIDSHORT, REMOTESMID, new Endpoint(remoteSmEndpoint)));
-		aasDesc.addSubmodelDescriptor(new SubmodelDescriptor(LOCALSMIDSHORT, LOCALSMID, new Endpoint(localSmEndpoint)));
+		AASDescriptor aasDesc = new AASDescriptor(AASIDSHORT1, AASID1, Arrays.asList(new Endpoint(aasEndpoint)));
+		aasDesc.addSubmodelDescriptor(new SubmodelDescriptor(REMOTESMIDSHORT, REMOTESMID, Arrays.asList(new Endpoint(remoteSmEndpoint))));
+		aasDesc.addSubmodelDescriptor(new SubmodelDescriptor(LOCALSMIDSHORT, LOCALSMID, Arrays.asList(new Endpoint(localSmEndpoint))));
 
 		// Register Asset Administration Shells
 		registry.register(aasDesc);
@@ -142,7 +143,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 	@Test
 	public void testGetRegisteredButNotExistentSM() {
 		// Create a Descriptor for a Submodel (with a local Endpoint), that is not present on the server
-		SubmodelDescriptor smDescriptor = new SubmodelDescriptor("nonexist", new ModelUrn("nonexisting"), new Endpoint("basyx://localhost:8000/aas/submodels/nonexist"));
+		SubmodelDescriptor smDescriptor = new SubmodelDescriptor("nonexist", new ModelUrn("nonexisting"), Arrays.asList(new Endpoint("basyx://localhost:8000/aas/submodels/nonexist")));
 
 		// Register this SubmodelDescriptor
 		registry.registerSubmodelForShell(AASID1, smDescriptor);

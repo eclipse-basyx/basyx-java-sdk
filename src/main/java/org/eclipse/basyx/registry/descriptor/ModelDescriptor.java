@@ -10,7 +10,6 @@
 package org.eclipse.basyx.registry.descriptor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -55,9 +54,9 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 	 * 
 	 * @param idShort
 	 * @param identifier
-	 * @param endpoint
+	 * @param endpoints
 	 */
-	public ModelDescriptor(String idShort, IIdentifier identifier, Endpoint endpoint) {
+	public ModelDescriptor(String idShort, IIdentifier identifier, Collection<Endpoint> endpoints) {
 		this();
 
 		put(Referable.IDSHORT, idShort);
@@ -65,7 +64,7 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		Identifier identifierMap = new Identifier(identifier.getIdType(), identifier.getId());
 		put(Identifiable.IDENTIFICATION, identifierMap);
 
-		setEndpoints(Arrays.asList(endpoint));
+		setEndpoints(endpoints);
 	}
 
 	// TODO: Constructor / Builder for description and administration

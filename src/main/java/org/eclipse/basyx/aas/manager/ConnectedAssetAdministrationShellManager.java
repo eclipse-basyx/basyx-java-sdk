@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.manager;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -159,7 +160,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	private void registerSubmodel(IIdentifier shellIdentifier, Submodel submodel, String shellEndpointAddress) {
 		String submodelEndpointPath = VABPathTools.concatenatePaths(shellEndpointAddress, AssetAdministrationShell.SUBMODELS, submodel.getIdShort(), SubmodelProvider.SUBMODEL);
-		shellDirectory.registerSubmodelForShell(shellIdentifier, new SubmodelDescriptor(submodel, new Endpoint(submodelEndpointPath)));
+		shellDirectory.registerSubmodelForShell(shellIdentifier, new SubmodelDescriptor(submodel, Arrays.asList(new Endpoint(submodelEndpointPath))));
 	}
 
 	@Override
@@ -184,7 +185,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	private void registerShell(AssetAdministrationShell shell, String endpoint) {
 		String combinedEndpoint = VABPathTools.concatenatePaths(endpoint, AASAggregatorAPIHelper.getAASAccessPath(shell.getIdentification()));
-		shellDirectory.register(new AASDescriptor(shell, new Endpoint(combinedEndpoint)));
+		shellDirectory.register(new AASDescriptor(shell, Arrays.asList(new Endpoint(combinedEndpoint))));
 	}
 
 	private String extractFirstEndpointAddress(ModelDescriptor descriptor) {
