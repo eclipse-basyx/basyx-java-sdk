@@ -36,9 +36,11 @@ public class Registry implements IRegistry {
 	@Override
 	public void register(AASDescriptor shellDescriptor) {
 		IIdentifier shellIdentifier = shellDescriptor.getIdentifier();
+
 		if (handler.containsShell(shellIdentifier)) {
 			throw new MalformedRequestException("Can not create a new Shell with an existing identifier.");
 		}
+
 		handler.insertShell(shellDescriptor);
 		logger.debug("Registered {}", shellIdentifier.getId());
 	}
@@ -46,9 +48,11 @@ public class Registry implements IRegistry {
 	@Override
 	public void register(SubmodelDescriptor submodelDescriptor) {
 		IIdentifier submodelIdentifier = submodelDescriptor.getIdentifier();
+
 		if (handler.containsSubmodel(submodelIdentifier)) {
 			throw new MalformedRequestException("Can not create a new Shell with an existing identifier.");
 		}
+
 		handler.insertSubmodel(submodelDescriptor);
 		logger.debug("Registered {}", submodelIdentifier.getId());
 	}
@@ -58,6 +62,7 @@ public class Registry implements IRegistry {
 		if (!handler.containsShell(shellIdentifier)) {
 			throw new ResourceNotFoundException("Could not update Shell " + shellIdentifier.getId() + " since it does not exist.");
 		}
+
 		handler.updateShell(shellDescriptor);
 		logger.debug("Updated {}", shellIdentifier.getId());
 	}
@@ -67,6 +72,7 @@ public class Registry implements IRegistry {
 		if (!handler.containsSubmodel(submodelIdentifier)) {
 			throw new ResourceNotFoundException("Could not update Submodel " + submodelIdentifier.getId() + " since it does not exist.");
 		}
+
 		handler.updateSubmodel(submodelDescriptor);
 		logger.debug("Updated " + submodelIdentifier.getId());
 	}
@@ -117,9 +123,11 @@ public class Registry implements IRegistry {
 	@Override
 	public void deleteShell(IIdentifier shellIdentifier) {
 		String shellId = shellIdentifier.getId();
+
 		if (!handler.containsShell(shellIdentifier)) {
 			throw new ResourceNotFoundException("Could not delete key for Shell " + shellId + " since it does not exist.");
 		}
+
 		handler.removeShell(shellIdentifier);
 		logger.debug("Removed " + shellId);
 	}
@@ -127,9 +135,11 @@ public class Registry implements IRegistry {
 	@Override
 	public void deleteSubmodel(IIdentifier submodelIdentifier) {
 		String submodelId = submodelIdentifier.getId();
+
 		if (!handler.containsSubmodel(submodelIdentifier)) {
 			throw new ResourceNotFoundException("Could not delete key for Submodel " + submodelId + " since it does not exist.");
 		}
+
 		handler.removeSubmodel(submodelIdentifier);
 		logger.debug("Removed " + submodelId);
 	}
@@ -139,6 +149,7 @@ public class Registry implements IRegistry {
 		if (!handler.containsShell(shellIdentifier)) {
 			throw new ResourceNotFoundException("Could not look up descriptor for Shell " + shellIdentifier.getId() + " since it does not exist");
 		}
+
 		return handler.getShell(shellIdentifier);
 	}
 
@@ -157,9 +168,11 @@ public class Registry implements IRegistry {
 	@Override
 	public void deleteSubmodelFromShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
 		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not delete submodel descriptor for Shell " + shellIdentifier.getId() + " since the Shell does not exist");
 		}
+
 		if (shellDescriptor.getSubmodelDescriptorFromIdentifier(submodelIdentifier) == null) {
 			throw new ResourceNotFoundException("Could not delete submodel descriptor for Shell " + shellIdentifier.getId() + " since the Submodel does not exist");
 		}
@@ -172,6 +185,7 @@ public class Registry implements IRegistry {
 	@Override
 	public List<SubmodelDescriptor> lookupAllSubmodelsForShell(IIdentifier shellIdentifier) throws ProviderException {
 		AASDescriptor desc = handler.getShell(shellIdentifier);
+
 		if (desc == null) {
 			throw new ResourceNotFoundException("Could not look up submodels for Shell " + shellIdentifier + " since it does not exist");
 		}
@@ -182,13 +196,17 @@ public class Registry implements IRegistry {
 	@Override
 	public SubmodelDescriptor lookupSubmodelForShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
 		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not look up descriptor for Submodel " + submodelIdentifier + " of Shell " + shellIdentifier + " since the Shell does not exist");
 		}
+
 		SubmodelDescriptor submodelDescriptor = shellDescriptor.getSubmodelDescriptorFromIdentifier(submodelIdentifier);
+
 		if (submodelDescriptor == null) {
 			throw new ResourceNotFoundException("Could not look up descriptor for Submodel " + submodelIdentifier + " of Shell " + shellIdentifier + " since the Submodel does not exist");
 		}
+
 		return submodelDescriptor;
 	}
 

@@ -60,7 +60,7 @@ public abstract class ModelDescriptorTestSuite {
 	@Test
 	public void removeEndpoint() {
 		addEndpoints();
-		modelDescriptor.removeEndpoint(TESTENDPOINT1);
+		modelDescriptor.removeEndpoint(endpoint1);
 		Collection<Endpoint> endpoints = modelDescriptor.getEndpoints();
 		assertTrue(!endpoints.contains(endpoint1));
 		assertTrue(endpoints.contains(endpoint2));

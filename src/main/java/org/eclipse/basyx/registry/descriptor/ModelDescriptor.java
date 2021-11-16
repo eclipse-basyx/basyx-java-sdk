@@ -11,7 +11,6 @@ package org.eclipse.basyx.registry.descriptor;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
@@ -22,6 +21,7 @@ import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformat
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangString;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
@@ -101,15 +101,11 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 
 	public void removeDescription(LangString description) {
 		Collection<LangString> descriptionsCollection = getDescriptions();
-
-		Iterator<LangString> iterator = descriptionsCollection.iterator();
-		while (iterator.hasNext()) {
-			LangString currentDescription = iterator.next();
-			if (currentDescription.equals(description)) {
-				iterator.remove();
-				break;
-			}
+		if (!descriptionsCollection.contains(description)) {
+			throw new ResourceNotFoundException("Description '" + description + "' does not exist.");
 		}
+
+		descriptionsCollection.remove(description);
 		setDescription(descriptionsCollection);
 	}
 
@@ -120,17 +116,14 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		setEndpoints(endpointsCollection);
 	}
 
-	public void removeEndpoint(String endpointAddress) {
+	public void removeEndpoint(Endpoint endpoint) {
 		Collection<Endpoint> endpointsCollection = getEndpoints();
 
-		Iterator<Endpoint> iterator = endpointsCollection.iterator();
-		while (iterator.hasNext()) {
-			Endpoint curEndpoint = iterator.next();
-			if (curEndpoint.getProtocolInformation().getEndpointAddress().equalsIgnoreCase(endpointAddress)) {
-				iterator.remove();
-				break;
-			}
+		if (!endpointsCollection.contains(endpoint)) {
+			throw new ResourceNotFoundException("Endpoint '" + endpoint + "' does not exist.");
 		}
+
+		endpointsCollection.remove(endpoint);
 		setEndpoints(endpointsCollection);
 	}
 
@@ -173,12 +166,15 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		if (!map.containsKey(Referable.IDSHORT) || !(map.get(Referable.IDSHORT) instanceof String)) {
 			return false;
 		}
+
 		if (!map.containsKey(Identifiable.IDENTIFICATION) || !(map.get(Identifiable.IDENTIFICATION) instanceof Map<?, ?>)) {
 			return false;
 		}
+
 		if (!map.containsKey(ENDPOINTS) || !(map.get(ENDPOINTS) instanceof Collection<?>)) {
 			return false;
 		}
+
 		return true;
 	}
 

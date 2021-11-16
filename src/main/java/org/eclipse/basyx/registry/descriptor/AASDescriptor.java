@@ -105,9 +105,11 @@ public class AASDescriptor extends ModelDescriptor {
 		if (!isValid(map)) {
 			throw new MalformedRequestException("The given map '" + map + "' is not valid.");
 		}
+
 		if (!hasMapSubmodels(map)) {
 			map.put(AssetAdministrationShell.SUBMODELS, new HashSet<>());
 		}
+
 		AASDescriptor facade = new AASDescriptor();
 		facade.setMap(map);
 		return facade;
@@ -208,9 +210,11 @@ public class AASDescriptor extends ModelDescriptor {
 		if (!ModelDescriptor.isValid(map)) {
 			return false;
 		}
+
 		if (hasMapSubmodels(map) && !isInstanceOfCollection(map)) {
 			return false;
 		}
+
 		return true;
 	}
 
