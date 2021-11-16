@@ -21,7 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * @author haque
  *
  */
-public class TestMqttRegistryServiceObserver extends TestMqttRegistrySuit {
+public class TestMqttRegistryServiceObserver extends TestMqttRegistrySuite {
 	private static ObservableRegistryService observedAPI;
 	private static MqttRegistryServiceObserver mqttObserver;
 

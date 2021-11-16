@@ -34,7 +34,7 @@ import org.junit.Test;
  * @author schnicke
  *
  */
-public class AASDescriptorCreation extends ModelDescriptorTestSuite {
+public class TestAASDescriptorCreation extends ModelDescriptorTestSuite {
 
 	private Map<String, Object> map;
 
@@ -50,77 +50,77 @@ public class AASDescriptorCreation extends ModelDescriptorTestSuite {
 	@Test(expected = MalformedRequestException.class)
 	public void validateNoIdShort() {
 		map.remove(Referable.IDSHORT);
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateNullIdShort() {
 		map.put(Referable.IDSHORT, null);
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateWrongIdShort() {
 		map.put(Referable.IDSHORT, 0);
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateNoIdentification() {
 		map.remove(Identifiable.IDENTIFICATION);
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateNullIdentification() {
 		map.put(Identifiable.IDENTIFICATION, null);
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateWrongdentification() {
 		map.put(Identifiable.IDENTIFICATION, "testId");
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateNoEndpoints() {
 		map.remove(ModelDescriptor.ENDPOINTS);
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateNullEndpoints() {
 		map.put(ModelDescriptor.ENDPOINTS, null);
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateWrongEndpoints() {
 		map.put(ModelDescriptor.ENDPOINTS, "testEndpoint");
-		new AASDescriptor(map);
+		AASDescriptor.createAsFacade(map);
 	}
 
 	@Test
 	public void validateNoSubmodels() {
 		map.remove(AssetAdministrationShell.SUBMODELS);
-		assertNotNull(new AASDescriptor(map).getSubmodelDescriptors());
+		assertNotNull(AASDescriptor.createAsFacade(map).getSubmodelDescriptors());
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateNullSubmodels() {
 		map.put(AssetAdministrationShell.SUBMODELS, null);
-		new AASDescriptor(map).getSubmodelDescriptors();
+		AASDescriptor.createAsFacade(map).getSubmodelDescriptors();
 	}
 
 	@Test(expected = MalformedRequestException.class)
 	public void validateWrongSubmodels() {
 		map.put(AssetAdministrationShell.SUBMODELS, "testSubmodel");
-		new AASDescriptor(map).getSubmodelDescriptors();
+		AASDescriptor.createAsFacade(map).getSubmodelDescriptors();
 	}
 
 	@Override
 	public ModelDescriptor retrieveModelDescriptor() {
-		return new AASDescriptor(map);
+		return AASDescriptor.createAsFacade(map);
 	}
 }

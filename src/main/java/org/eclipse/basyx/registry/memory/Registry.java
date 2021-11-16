@@ -38,10 +38,9 @@ public class Registry implements IRegistry {
 		IIdentifier shellIdentifier = shellDescriptor.getIdentifier();
 		if (handler.containsShell(shellIdentifier)) {
 			throw new MalformedRequestException("Can not create a new Shell with an existing identifier.");
-		} else {
-			handler.insertShell(shellDescriptor);
-			logger.debug("Registered {}", shellIdentifier.getId());
 		}
+		handler.insertShell(shellDescriptor);
+		logger.debug("Registered {}", shellIdentifier.getId());
 	}
 
 	@Override
@@ -49,30 +48,27 @@ public class Registry implements IRegistry {
 		IIdentifier submodelIdentifier = submodelDescriptor.getIdentifier();
 		if (handler.containsSubmodel(submodelIdentifier)) {
 			throw new MalformedRequestException("Can not create a new Shell with an existing identifier.");
-		} else {
-			handler.insertSubmodel(submodelDescriptor);
-			logger.debug("Registered {}", submodelIdentifier.getId());
 		}
+		handler.insertSubmodel(submodelDescriptor);
+		logger.debug("Registered {}", submodelIdentifier.getId());
 	}
 
 	@Override
 	public void updateShell(IIdentifier shellIdentifier, AASDescriptor shellDescriptor) throws ProviderException {
-		if (handler.containsShell(shellIdentifier)) {
-			handler.updateShell(shellDescriptor);
-			logger.debug("Updated {}", shellIdentifier.getId());
-		} else {
+		if (!handler.containsShell(shellIdentifier)) {
 			throw new ResourceNotFoundException("Could not update Shell " + shellIdentifier.getId() + " since it does not exist.");
 		}
+		handler.updateShell(shellDescriptor);
+		logger.debug("Updated {}", shellIdentifier.getId());
 	}
 
 	@Override
 	public void updateSubmodel(IIdentifier submodelIdentifier, SubmodelDescriptor submodelDescriptor) throws ProviderException {
-		if (handler.containsSubmodel(submodelIdentifier)) {
-			handler.updateSubmodel(submodelDescriptor);
-			logger.debug("Updated " + submodelIdentifier.getId());
-		} else {
+		if (!handler.containsSubmodel(submodelIdentifier)) {
 			throw new ResourceNotFoundException("Could not update Submodel " + submodelIdentifier.getId() + " since it does not exist.");
 		}
+		handler.updateSubmodel(submodelDescriptor);
+		logger.debug("Updated " + submodelIdentifier.getId());
 	}
 
 	@Override
@@ -123,10 +119,9 @@ public class Registry implements IRegistry {
 		String shellId = shellIdentifier.getId();
 		if (!handler.containsShell(shellIdentifier)) {
 			throw new ResourceNotFoundException("Could not delete key for Shell " + shellId + " since it does not exist.");
-		} else {
-			handler.removeShell(shellIdentifier);
-			logger.debug("Removed " + shellId);
 		}
+		handler.removeShell(shellIdentifier);
+		logger.debug("Removed " + shellId);
 	}
 
 	@Override
@@ -134,10 +129,9 @@ public class Registry implements IRegistry {
 		String submodelId = submodelIdentifier.getId();
 		if (!handler.containsSubmodel(submodelIdentifier)) {
 			throw new ResourceNotFoundException("Could not delete key for Submodel " + submodelId + " since it does not exist.");
-		} else {
-			handler.removeSubmodel(submodelIdentifier);
-			logger.debug("Removed " + submodelId);
 		}
+		handler.removeSubmodel(submodelIdentifier);
+		logger.debug("Removed " + submodelId);
 	}
 
 	@Override

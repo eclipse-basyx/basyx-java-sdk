@@ -22,12 +22,12 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.restapi.AASModelProvider;
 import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
-import org.eclipse.basyx.registry.descriptor.ModelUrn;
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.registry.memory.InMemoryRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -99,20 +99,21 @@ public class TestConnectedAssetAdministrationShellManager {
 
 	@Test
 	public void testCreateSubmodel() throws Exception {
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
-		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
-		String smIdShort = "smName";
+		IIdentifier shellIdentifier = new Identifier(IdentifierType.CUSTOM, "aasId");
+		IIdentifier submodelIdentifier = new Identifier(IdentifierType.CUSTOM, "smId");
+		String shellIdShort = "shellName";
+		String submodelIdShort = "smName";
 
 		// Register AAS at directory
-		AASDescriptor desc = new AASDescriptor(aasId, Arrays.asList(new Endpoint("/aas")));
+		AASDescriptor desc = new AASDescriptor(shellIdShort, shellIdentifier, Arrays.asList(new Endpoint("/aas")));
 		registry.register(desc);
 		IModelProvider provider = new MultiSubmodelProvider(new AASModelProvider(new AssetAdministrationShell()));
 		connectorProvider.addMapping("", provider);
 
 		// Create sub model
 		Submodel submodel = new Submodel();
-		submodel.setIdShort(smIdShort);
-		submodel.setIdentification(smId.getIdType(), smId.getId());
+		submodel.setIdShort(submodelIdShort);
+		submodel.setIdentification(submodelIdentifier.getIdType(), submodelIdentifier.getId());
 
 		// - Add example properties to sub model
 		Property prop1 = new Property(7);
@@ -124,16 +125,16 @@ public class TestConnectedAssetAdministrationShellManager {
 		submodel.addSubmodelElement(prop2);
 
 		// - Retrieve submodel using the SDK connector
-		manager.createSubmodel(aasId, submodel);
-		ISubmodel sm = manager.retrieveSubmodel(aasId, smId);
+		manager.createSubmodel(shellIdentifier, submodel);
+		ISubmodel sm = manager.retrieveSubmodel(shellIdentifier, submodelIdentifier);
 
 		// - check id and properties
 		IProperty prop1Connected = sm.getProperties().get("prop1");
 		IProperty prop2Connected = sm.getProperties().get("prop2");
 
-		assertEquals(smIdShort, sm.getIdShort());
-		assertEquals(smId.getId(), sm.getIdentification().getId());
-		assertEquals(smId.getIdType(), sm.getIdentification().getIdType());
+		assertEquals(submodelIdShort, sm.getIdShort());
+		assertEquals(submodelIdentifier.getId(), sm.getIdentification().getId());
+		assertEquals(submodelIdentifier.getIdType(), sm.getIdentification().getIdType());
 		assertEquals("prop1", prop1Connected.getIdShort());
 		assertEquals(7, prop1Connected.getValue());
 		assertEquals("prop2", prop2Connected.getIdShort());

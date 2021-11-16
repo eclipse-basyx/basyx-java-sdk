@@ -65,17 +65,17 @@ public class TestAASHTTP {
 	public void build() {
 		// Fill directory stub
 		VABInMemoryRegistry directory = new VABInMemoryRegistry();
-		directory.addMapping(StubAASServlet.AASURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas");
-		directory.addMapping(StubAASServlet.SMURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
+		directory.addMapping(StubAASServlet.SHELLURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas");
+		directory.addMapping(StubAASServlet.SUBMODELURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SUBMODELIDSHORT + "/submodel");
 
 		InMemoryRegistry registry = new InMemoryRegistry();
 
 		// Create aas descriptor for the aas registry
-		AASDescriptor aasDescriptor = new AASDescriptor(StubAASServlet.AASURN, Arrays.asList(new Endpoint("http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas")));
+		AASDescriptor aasDescriptor = new AASDescriptor(StubAASServlet.SHELLIDSHORT, StubAASServlet.SHELLURN, Arrays.asList(new Endpoint("http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas")));
 
 		// Create the submodel descriptor
-		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(StubAASServlet.SMIDSHORT, StubAASServlet.SMURN,
-				Arrays.asList(new Endpoint("http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel")));
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(StubAASServlet.SUBMODELIDSHORT, StubAASServlet.SUBMODELURN,
+				Arrays.asList(new Endpoint("http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SUBMODELIDSHORT + "/submodel")));
 
 		// add submodel descriptor to the aas descriptor
 		aasDescriptor.addSubmodelDescriptor(submodelDescriptor);
@@ -95,17 +95,17 @@ public class TestAASHTTP {
 	@Test
 	public void testAAS() throws Exception {
 		// Retrieve AAS
-		IAssetAdministrationShell shell = manager.retrieveAAS(StubAASServlet.AASURN);
+		IAssetAdministrationShell shell = manager.retrieveAAS(StubAASServlet.SHELLURN);
 
 		// Check id
-		assertEquals(StubAASServlet.AASIDSHORT, shell.getIdShort());
+		assertEquals(StubAASServlet.SHELLIDSHORT, shell.getIdShort());
 
 		// Retrieve submodels
 		Map<String, ISubmodel> submodels = shell.getSubmodels();
 
 		// Check content of submodels
 		assertEquals(1, submodels.size());
-		assertTrue(submodels.containsKey(StubAASServlet.SMIDSHORT));
+		assertTrue(submodels.containsKey(StubAASServlet.SUBMODELIDSHORT));
 	}
 
 	/**
@@ -116,10 +116,10 @@ public class TestAASHTTP {
 	@Test
 	public void testSubmodel() throws Exception {
 		// Retrieve Submodel
-		ISubmodel sm = manager.retrieveSubmodel(StubAASServlet.AASURN, StubAASServlet.SMURN);
+		ISubmodel sm = manager.retrieveSubmodel(StubAASServlet.SHELLURN, StubAASServlet.SUBMODELURN);
 
 		// Check id
-		assertEquals(StubAASServlet.SMIDSHORT, sm.getIdShort());
+		assertEquals(StubAASServlet.SUBMODELIDSHORT, sm.getIdShort());
 
 		// TODO: Extend
 		// - retrieve properties and operations

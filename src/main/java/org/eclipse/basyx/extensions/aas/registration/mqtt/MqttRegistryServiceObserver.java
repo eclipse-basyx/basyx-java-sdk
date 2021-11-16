@@ -10,6 +10,7 @@
 package org.eclipse.basyx.extensions.aas.registration.mqtt;
 
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
+import org.eclipse.basyx.extensions.shared.mqtt.MqttRegistryHelper;
 import org.eclipse.basyx.registry.observing.IRegistryServiceObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -93,41 +94,41 @@ public class MqttRegistryServiceObserver extends MqttEventService implements IRe
 
 	@Override
 	public void shellRegistered(String shellIdentifier) {
-		sendMqttMessage(TOPIC_REGISTERAAS, shellIdentifier);
+		sendMqttMessage(MqttRegistryHelper.TOPIC_REGISTERAAS, shellIdentifier);
 	}
 
 	@Override
 	public void shellUpdated(String shellIdentifier) {
-		sendMqttMessage(TOPIC_UPDATEAAS, shellIdentifier);
+		sendMqttMessage(MqttRegistryHelper.TOPIC_UPDATEAAS, shellIdentifier);
 	}
 
 	@Override
 	public void submodelUpdated(String submodelIdentifier) {
-		sendMqttMessage(TOPIC_UPDATESUBMODEL, submodelIdentifier);
+		sendMqttMessage(MqttRegistryHelper.TOPIC_UPDATESUBMODEL, submodelIdentifier);
 	}
 
 	@Override
 	public void submodelRegistered(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatShellSubmodelId(shellIdentifier, submodelIdentifier));
+		sendMqttMessage(MqttRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttRegistryHelper.concatShellSubmodelId(shellIdentifier, submodelIdentifier));
 	}
 
 	@Override
 	public void submodelUpdated(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		sendMqttMessage(TOPIC_UPDATESUBMODEL, concatShellSubmodelId(shellIdentifier, submodelIdentifier));
+		sendMqttMessage(MqttRegistryHelper.TOPIC_UPDATESUBMODEL, MqttRegistryHelper.concatShellSubmodelId(shellIdentifier, submodelIdentifier));
 	}
 
 	@Override
 	public void shellDeleted(String shellId) {
-		sendMqttMessage(TOPIC_DELETEAAS, shellId);
+		sendMqttMessage(MqttRegistryHelper.TOPIC_DELETEAAS, shellId);
 	}
 
 	@Override
 	public void shellSubmodelDeleted(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		sendMqttMessage(TOPIC_DELETESUBMODEL, concatShellSubmodelId(shellIdentifier, submodelIdentifier));
+		sendMqttMessage(MqttRegistryHelper.TOPIC_DELETESUBMODEL, MqttRegistryHelper.concatShellSubmodelId(shellIdentifier, submodelIdentifier));
 	}
 
 	@Override
 	public void submodelDeleted(IIdentifier submodelIdentifier) {
-		sendMqttMessage(TOPIC_DELETEAAS, submodelIdentifier.getId());
+		sendMqttMessage(MqttRegistryHelper.TOPIC_DELETEAAS, submodelIdentifier.getId());
 	}
 }

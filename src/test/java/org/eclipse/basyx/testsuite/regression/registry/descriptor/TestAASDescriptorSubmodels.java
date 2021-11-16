@@ -28,14 +28,14 @@ import org.junit.Test;
  * @author fischer, jung
  *
  */
-public class AASDescriptorSubmodels {
+public class TestAASDescriptorSubmodels {
 
 	private AASDescriptor shellDescriptor;
 	private SubmodelDescriptor submodelDescriptor;
 
 	@Before
 	public void setUp() {
-		shellDescriptor = new AASDescriptor(new Identifier(IdentifierType.CUSTOM, "Test"), Arrays.asList(new Endpoint("http://a.b/c/aas")));
+		shellDescriptor = new AASDescriptor("test", new Identifier(IdentifierType.CUSTOM, "Test"), Arrays.asList(new Endpoint("http://a.b/c/aas")));
 		submodelDescriptor = new SubmodelDescriptor("SM1", new Identifier(IdentifierType.CUSTOM, "SM1"), Arrays.asList(new Endpoint("http://a.b/c/aas/submodels/SM1")));
 		shellDescriptor.addSubmodelDescriptor(submodelDescriptor);
 	}

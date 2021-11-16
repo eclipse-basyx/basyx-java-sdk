@@ -19,9 +19,9 @@ import java.util.List;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.CustomId;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.registry.descriptor.CustomId;
-import org.eclipse.basyx.registry.descriptor.ModelUrn;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -56,11 +56,11 @@ public abstract class AssetAdministrationShellSuite {
 	protected static final AdministrativeInformation EXPECTED_ADMINISTRATIVEINFORMATION = new AdministrativeInformation("1", "2");
 
 	// String constants used in this test case
-	protected static final IIdentifier SMID = new Identifier(IdentifierType.CUSTOM, "smId");
-	protected static final IIdentifier AASID = new Identifier(IdentifierType.CUSTOM, "aasId");
-	protected static final String SMENDPOINT = "http://endpoint";
-	protected static final String SMIDSHORT = "smName";
-	protected static final String AASIDSHORT = "aasName";
+	protected static final IIdentifier SUBMODELIDENTIFIER = new Identifier(IdentifierType.CUSTOM, "smId");
+	protected static final IIdentifier SHELLIDENTIFIER = new Identifier(IdentifierType.CUSTOM, "aasId");
+	protected static final String SUBMODELENDPOINT = "http://endpoint";
+	protected static final String SUBMODELIDSHORT = "smName";
+	protected static final String SHELLIDSHORT = "aasName";
 	protected static final String PROPID = "propId";
 	protected static final int PROPVAL = 11;
 
@@ -85,7 +85,7 @@ public abstract class AssetAdministrationShellSuite {
 		 * implicitly
 		 */
 		// Create an AAS containing a reference to the created Submodel
-		AssetAdministrationShell aas = new AssetAdministrationShell(AASIDSHORT, AASID, new Asset("assetIdShort", new CustomId("assetId"), AssetKind.INSTANCE));
+		AssetAdministrationShell aas = new AssetAdministrationShell(SHELLIDSHORT, SHELLIDENTIFIER, new Asset("assetIdShort", new CustomId("assetId"), AssetKind.INSTANCE));
 		aas.addSubmodel(retrieveBaselineSM());
 		aas.setAssetReference(EXPECTED_ASSETREF);
 		aas.setDerivedFrom(EXPECTED_DERIVEDFROMREF);
@@ -111,7 +111,7 @@ public abstract class AssetAdministrationShellSuite {
 		Property p = new Property(PROPVAL);
 		p.setIdShort(PROPID);
 
-		Submodel sm = new Submodel(SMIDSHORT, SMID);
+		Submodel sm = new Submodel(SUBMODELIDSHORT, SUBMODELIDENTIFIER);
 		sm.addSubmodelElement(p);
 
 		return sm;
@@ -130,7 +130,7 @@ public abstract class AssetAdministrationShellSuite {
 	 */
 	@Test
 	public void testGetId() {
-		assertEquals(AASIDSHORT, retrieveShell().getIdShort());
+		assertEquals(SHELLIDSHORT, retrieveShell().getIdShort());
 	}
 
 	/**
@@ -146,10 +146,10 @@ public abstract class AssetAdministrationShellSuite {
 		assertEquals(1, shell.getSubmodels().size());
 
 		// Check if the contained Submodel id is as expected
-		assertTrue(shell.getSubmodels().containsKey(SMIDSHORT));
+		assertTrue(shell.getSubmodels().containsKey(SUBMODELIDSHORT));
 
 		// Check if the submodel has been retrieved correctly
-		ISubmodel sm = shell.getSubmodels().get(SMIDSHORT);
+		ISubmodel sm = shell.getSubmodels().get(SUBMODELIDSHORT);
 		IProperty prop = sm.getProperties().get(PROPID);
 		assertEquals(PROPVAL, prop.getValue());
 	}
@@ -187,12 +187,12 @@ public abstract class AssetAdministrationShellSuite {
 		
 		// Create the expected reference for assertion
 		List<IKey> expected1Keys = new ArrayList<>();
-		expected1Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID.getId(), AASID.getIdType()));
+		expected1Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, SHELLIDENTIFIER.getId(), SHELLIDENTIFIER.getIdType()));
 		expected1Keys.add(new Key(KeyElements.SUBMODEL, true, "smId", IdentifierType.CUSTOM));
 		Reference expected1 = new Reference(expected1Keys);
 
 		List<IKey> expected2Keys = new ArrayList<>();
-		expected2Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID.getId(), AASID.getIdType()));
+		expected2Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, SHELLIDENTIFIER.getId(), SHELLIDENTIFIER.getIdType()));
 
 		expected2Keys.add(new Key(KeyElements.SUBMODEL, true, testId, IdentifierType.IRI));
 		Reference expected2 = new Reference(expected2Keys);

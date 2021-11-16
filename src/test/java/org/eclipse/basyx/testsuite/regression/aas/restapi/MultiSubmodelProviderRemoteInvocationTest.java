@@ -22,11 +22,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.ModelUrn;
 import org.eclipse.basyx.aas.restapi.AASModelProvider;
 import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
-import org.eclipse.basyx.registry.descriptor.ModelUrn;
 import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.registry.memory.InMemoryRegistry;

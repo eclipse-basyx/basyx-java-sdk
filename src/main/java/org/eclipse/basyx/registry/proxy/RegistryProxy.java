@@ -257,7 +257,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	public AASDescriptor lookupShell(IIdentifier shellIdentifier) throws ProviderException {
 		try {
 			Object result = provider.getValue(RegistryClientAPIHelper.getSingleShellDescriptorPath(shellIdentifier));
-			return new AASDescriptor((Map<String, Object>) result);
+			return AASDescriptor.createAsFacade((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -279,7 +279,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 		try {
 			Object result = provider.getValue(RegistryClientAPIHelper.getAllShellDescriptorsPath());
 			Collection<?> aasDescriptors = (Collection<?>) result;
-			return aasDescriptors.stream().map(x -> new AASDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
+			return aasDescriptors.stream().map(x -> AASDescriptor.createAsFacade((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -301,7 +301,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	public SubmodelDescriptor lookupSubmodel(IIdentifier submodelIdentifier) throws ProviderException {
 		try {
 			Object result = provider.getValue(RegistryClientAPIHelper.getSingleSubmodelDescriptorPath(submodelIdentifier));
-			return new SubmodelDescriptor((Map<String, Object>) result);
+			return SubmodelDescriptor.createAsFacade((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -323,7 +323,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 		try {
 			Object result = provider.getValue(RegistryClientAPIHelper.getAllSubmodelDescriptorsPath());
 			Collection<?> submodelDescriptors = (Collection<?>) result;
-			return submodelDescriptors.stream().map(x -> new SubmodelDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
+			return submodelDescriptors.stream().map(x -> SubmodelDescriptor.createAsFacade((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -346,7 +346,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 		try {
 			Object result = provider.getValue(RegistryClientAPIHelper.getSingleShellDescriptorAllSubmodelDescriptorsPath(shellIdentifier));
 			Collection<?> descriptors = (Collection<?>) result;
-			return descriptors.stream().map(x -> new SubmodelDescriptor((Map<String, Object>) x)).collect(Collectors.toList());
+			return descriptors.stream().map(x -> SubmodelDescriptor.createAsFacade((Map<String, Object>) x)).collect(Collectors.toList());
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;
@@ -370,7 +370,7 @@ public class RegistryProxy extends VABRegistryProxy implements IRegistry {
 	public SubmodelDescriptor lookupSubmodelForShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
 		try {
 			Object result = provider.getValue(RegistryClientAPIHelper.getSingleShellDescriptorSingleSubmodelDescriptorPath(shellIdentifier, submodelIdentifier));
-			return new SubmodelDescriptor((Map<String, Object>) result);
+			return SubmodelDescriptor.createAsFacade((Map<String, Object>) result);
 		} catch (Exception e) {
 			if (e instanceof ProviderException) {
 				throw (ProviderException) e;

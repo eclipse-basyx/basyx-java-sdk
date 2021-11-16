@@ -14,7 +14,9 @@ import java.util.Map;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /*
- * 	SpecificAssetId class
+ * TODO: will be implemented according to "Details of the Asset Administration Shell Part 1 V3".
+ *
+ * SpecificAssetId class stub
  * 
  */
 public class SpecificAssetId extends VABModelMap<Object> {

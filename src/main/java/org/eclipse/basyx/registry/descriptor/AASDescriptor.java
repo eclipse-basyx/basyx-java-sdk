@@ -43,30 +43,6 @@ public class AASDescriptor extends ModelDescriptor {
 	}
 
 	/**
-	 * Create shell descriptor from existing hash map.
-	 *
-	 * @param map
-	 *            The map, the shell descriptor is to be built from
-	 */
-	public AASDescriptor(Map<String, Object> map) {
-		super(map);
-		validate(map);
-
-		putAll(map);
-	}
-
-	/**
-	 * Create a new shell descriptor with minimal information (idShort is assumed to
-	 * be set to an empty string).
-	 *
-	 * @param shellIdentifier
-	 * @param endpoints
-	 */
-	public AASDescriptor(IIdentifier shellIdentifier, Collection<Endpoint> endpoints) {
-		this("", shellIdentifier, endpoints);
-	}
-
-	/**
 	 * Create a new shell descriptor with minimal information.
 	 *
 	 * @param idShort
@@ -120,13 +96,31 @@ public class AASDescriptor extends ModelDescriptor {
 	}
 
 	/**
+	 * Creates a shell descriptor from a given map
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static AASDescriptor createAsFacade(Map<String, Object> map) {
+		if (!isValid(map)) {
+			throw new MalformedRequestException("The given map '" + map + "' is not valid.");
+		}
+		if (!hasMapSubmodels(map)) {
+			map.put(AssetAdministrationShell.SUBMODELS, new HashSet<>());
+		}
+		AASDescriptor facade = new AASDescriptor();
+		facade.setMap(map);
+		return facade;
+	}
+
+	/**
 	 * Add a sub model descriptor to this shell descriptor
 	 *
 	 * @param submodelDescriptor
 	 * @return this AASDescriptor (Enables method chaining)
 	 */
 	public AASDescriptor addSubmodelDescriptor(SubmodelDescriptor submodelDescriptor) {
-		Collection<Map<String, Object>> submodelDescriptors = getSubmodelsDescriptorsAsCollection();
+		Collection<Map<String, Object>> submodelDescriptors = getSubmodelsDescriptorMapAsCollection();
 
 		submodelDescriptors.add(submodelDescriptor);
 		put(AssetAdministrationShell.SUBMODELS, submodelDescriptors);
@@ -142,7 +136,7 @@ public class AASDescriptor extends ModelDescriptor {
 	 */
 	public void removeSubmodelDescriptor(String submodelIdShort) {
 		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptorFromIdShort(submodelIdShort);
-		getSubmodelsDescriptorsAsCollection().remove(submodelDescriptor);
+		getSubmodelsDescriptorMapAsCollection().remove(submodelDescriptor);
 	}
 
 	/**
@@ -153,7 +147,7 @@ public class AASDescriptor extends ModelDescriptor {
 	 */
 	public void removeSubmodelDescriptor(IIdentifier submodelIdentifier) {
 		SubmodelDescriptor submodelDescriptor = getSubmodelDescriptorFromIdentifier(submodelIdentifier);
-		getSubmodelsDescriptorsAsCollection().remove(submodelDescriptor);
+		getSubmodelsDescriptorMapAsCollection().remove(submodelDescriptor);
 	}
 
 	/**
@@ -195,12 +189,12 @@ public class AASDescriptor extends ModelDescriptor {
 	 * @return Collection of submodel descriptors from the current shell
 	 */
 	public Collection<SubmodelDescriptor> getSubmodelDescriptors() {
-		Collection<Map<String, Object>> submodelDescriptors = getSubmodelsDescriptorsAsCollection();
-		return submodelDescriptors.stream().map(SubmodelDescriptor::new).collect(Collectors.toSet());
+		Collection<Map<String, Object>> submodelDescriptorMapCollection = getSubmodelsDescriptorMapAsCollection();
+		return submodelDescriptorMapCollection.stream().map(SubmodelDescriptor::createAsFacade).collect(Collectors.toSet());
 	}
 
 	@SuppressWarnings("unchecked")
-	private Collection<Map<String, Object>> getSubmodelsDescriptorsAsCollection() {
+	private Collection<Map<String, Object>> getSubmodelsDescriptorMapAsCollection() {
 		Object submodelDescriptorMap = get(AssetAdministrationShell.SUBMODELS);
 		return (Collection<Map<String, Object>>) submodelDescriptorMap;
 	}
@@ -210,28 +204,21 @@ public class AASDescriptor extends ModelDescriptor {
 		return MODELTYPE;
 	}
 
-	/**
-	 * Validates the shell descriptor by checking whether idShort, identification
-	 * and endpoints key is present in the given map and checking the type of
-	 * submodel descriptors.
-	 *
-	 * @param map
-	 */
-	@Override
-	public void validate(Map<String, Object> map) {
-		super.validate(map);
-		if (!hasMapSubmodels(map)) {
-			map.put(AssetAdministrationShell.SUBMODELS, new HashSet<>());
-		} else if (hasMapSubmodels(map) && !isInstanceOfCollection(map)) {
-			throw new MalformedRequestException("Passed entry for " + AssetAdministrationShell.SUBMODELS + " is not a list of submodelDescriptors!");
+	protected static boolean isValid(Map<String, Object> map) {
+		if (!ModelDescriptor.isValid(map)) {
+			return false;
 		}
+		if (hasMapSubmodels(map) && !isInstanceOfCollection(map)) {
+			return false;
+		}
+		return true;
 	}
 
-	private boolean isInstanceOfCollection(Map<String, Object> map) {
+	private static boolean isInstanceOfCollection(Map<String, Object> map) {
 		return map.get(AssetAdministrationShell.SUBMODELS) instanceof Collection<?>;
 	}
 
-	private boolean hasMapSubmodels(Map<String, Object> map) {
+	private static boolean hasMapSubmodels(Map<String, Object> map) {
 		return map.containsKey(AssetAdministrationShell.SUBMODELS);
 	}
 

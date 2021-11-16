@@ -18,7 +18,7 @@ import java.util.Arrays;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
+import org.eclipse.basyx.extensions.shared.mqtt.MqttRegistryHelper;
 import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
 import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
@@ -47,7 +47,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
  * @author haque, fischer
  *
  */
-public abstract class TestMqttRegistrySuit {
+public abstract class TestMqttRegistrySuite {
 	protected static final String AASID = "aasid1";
 	protected static final String SUBMODELID = "submodelid1";
 	protected static final String AASENDPOINT = "http://localhost:8080/aasList/" + AASID + "/aas";
@@ -63,7 +63,6 @@ public abstract class TestMqttRegistrySuit {
 	 */
 	@BeforeClass
 	public static void setUpAbstractClass() throws IOException {
-		// Start MQTT broker
 		mqttBroker = new Server();
 		IResourceLoader classpathLoader = new ClasspathResourceLoader();
 		final IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
@@ -122,7 +121,7 @@ public abstract class TestMqttRegistrySuit {
 		proxyAPI.register(aasDescriptor);
 
 		assertEquals(newAASId, listener.lastPayload);
-		assertEquals(MqttEventService.TOPIC_REGISTERAAS, listener.lastTopic);
+		assertEquals(MqttRegistryHelper.TOPIC_REGISTERAAS, listener.lastTopic);
 	}
 
 	@Test
@@ -135,8 +134,8 @@ public abstract class TestMqttRegistrySuit {
 
 		proxyAPI.registerSubmodelForShell(AASIDENTIFIER, submodelDescriptor);
 
-		assertEquals(MqttEventService.concatShellSubmodelId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
-		assertEquals(MqttEventService.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
+		assertEquals(MqttRegistryHelper.concatShellSubmodelId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
+		assertEquals(MqttRegistryHelper.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
 	}
 
 	@Test
@@ -144,14 +143,14 @@ public abstract class TestMqttRegistrySuit {
 		proxyAPI.deleteShell(AASIDENTIFIER);
 
 		assertEquals(AASID, listener.lastPayload);
-		assertEquals(MqttEventService.TOPIC_DELETEAAS, listener.lastTopic);
+		assertEquals(MqttRegistryHelper.TOPIC_DELETEAAS, listener.lastTopic);
 	}
 
 	@Test
 	public void testDeleteSubmodel() {
 		proxyAPI.deleteSubmodelFromShell(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
-		assertEquals(MqttEventService.concatShellSubmodelId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
-		assertEquals(MqttEventService.TOPIC_DELETESUBMODEL, listener.lastTopic);
+		assertEquals(MqttRegistryHelper.concatShellSubmodelId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
+		assertEquals(MqttRegistryHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 }

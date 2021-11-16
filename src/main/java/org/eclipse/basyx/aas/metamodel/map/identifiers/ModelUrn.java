@@ -7,7 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
-package org.eclipse.basyx.registry.descriptor;
+package org.eclipse.basyx.aas.metamodel.map.identifiers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

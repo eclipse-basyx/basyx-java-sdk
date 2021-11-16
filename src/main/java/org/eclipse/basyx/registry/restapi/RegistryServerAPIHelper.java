@@ -16,7 +16,7 @@ import java.net.URLDecoder;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 
 /**
- * API server helper for AAS Registry
+ * API server helper for AAS Registry Path reading
  *
  * @author fischer, fried, jung
  *
@@ -41,32 +41,24 @@ public class RegistryServerAPIHelper {
 		}
 
 		registryPath = new RegistryPath(path);
-		checkIfPathPrefixIsValid();
-		checkIfFirstDescriptorIsValid();
-		checkIfSecondDescriptorIsValid();
+		checkIfPathPrefixIsValid(registryPath);
+		checkIfFirstDescriptorIsValid(registryPath);
+		checkIfSecondDescriptorIsValid(registryPath);
 	}
 
-	private String utf8Decode(String string) {
-		try {
-			return URLDecoder.decode(string, ENCODING);
-		} catch (UnsupportedEncodingException e) {
-			throw new MalformedRequestException("Path has to be encoded as UTF-8 string.");
-		}
-	}
-
-	private void checkIfPathPrefixIsValid() {
+	private void checkIfPathPrefixIsValid(RegistryPath registryPath) {
 		if (!registryPath.getPathPrefix().equals(PREFIX)) {
 			throw new MalformedRequestException("Registry path must start with " + PREFIX);
 		}
 	}
 
-	private void checkIfFirstDescriptorIsValid() {
+	private void checkIfFirstDescriptorIsValid(RegistryPath registryPath) {
 		if (!(registryPath.getFirstDescriptorType().equals(SHELL_DESCRIPTORS) || registryPath.getFirstDescriptorType().equals(SUBMODEL_DESCRIPTORS))) {
 			throw new MalformedRequestException("After " + PREFIX + "the path must continue with " + SHELL_DESCRIPTORS + " or " + SUBMODEL_DESCRIPTORS);
 		}
 	}
 
-	private void checkIfSecondDescriptorIsValid() {
+	private void checkIfSecondDescriptorIsValid(RegistryPath registryPath) {
 		if (!(registryPath.getSecondDescriptorType() == null || registryPath.getSecondDescriptorType().equals(SUBMODEL_DESCRIPTORS))) {
 			throw new MalformedRequestException("Second path element must be (if present): " + SUBMODEL_DESCRIPTORS);
 		}
@@ -91,7 +83,6 @@ public class RegistryServerAPIHelper {
 	private boolean hasSecondDescriptorId() {
 		return registryPath.getSecondDescriptorId() != null;
 	}
-
 
 	public boolean isAllShellDescriptorsPath() {
 		return hasFirstDescriptorForShell() && !hasFirstDescriptorId() && !hasSecondDescriptorForSubmodel() && !hasSecondDescriptorId();
@@ -125,7 +116,7 @@ public class RegistryServerAPIHelper {
 		return registryPath.getSecondDescriptorId();
 	}
 
-	private class RegistryPath {
+	private static class RegistryPath {
 		private String pathPrefix;
 		private String firstDescriptorType;
 		private String firstDescriptorId;
@@ -143,6 +134,14 @@ public class RegistryServerAPIHelper {
 
 			if (splittedPath.length > 5) {
 				throw new MalformedRequestException("Given path '" + path + "' contains too many path elements and is therefore invalid.");
+			}
+		}
+
+		private String utf8Decode(String string) {
+			try {
+				return URLDecoder.decode(string, ENCODING);
+			} catch (UnsupportedEncodingException e) {
+				throw new MalformedRequestException("Path has to be encoded as UTF-8 string.");
 			}
 		}
 
@@ -192,4 +191,3 @@ public class RegistryServerAPIHelper {
 		}
 	}
 }
-

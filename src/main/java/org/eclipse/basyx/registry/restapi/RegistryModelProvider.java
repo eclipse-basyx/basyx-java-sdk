@@ -13,9 +13,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.basyx.aas.metamodel.map.identifiers.ModelUrn;
 import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.registry.descriptor.AASDescriptor;
-import org.eclipse.basyx.registry.descriptor.ModelUrn;
 import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.registry.memory.InMemoryRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -63,7 +63,7 @@ public class RegistryModelProvider implements IModelProvider {
 
 		String type = ModelType.createAsFacade(map).getName();
 
-		if (!expectedModelType.equals(type) && type != null) {
+		if (!expectedModelType.equals(type)) {
 			throw new MalformedRequestException("Given newValue map has not the correct ModelType");
 		}
 
@@ -81,7 +81,7 @@ public class RegistryModelProvider implements IModelProvider {
 	 */
 	private AASDescriptor createShellDescriptorFromMap(Object value) throws MalformedRequestException {
 		Map<String, Object> map = checkModelType(AASDescriptor.MODELTYPE, value);
-		return new AASDescriptor(map);
+		return AASDescriptor.createAsFacade(map);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class RegistryModelProvider implements IModelProvider {
 	 */
 	private SubmodelDescriptor createSubmodelDescriptorFromMap(Object value) throws MalformedRequestException {
 		Map<String, Object> map = checkModelType(SubmodelDescriptor.MODELTYPE, value);
-		return new SubmodelDescriptor(map);
+		return SubmodelDescriptor.createAsFacade(map);
 	}
 
 	@Override

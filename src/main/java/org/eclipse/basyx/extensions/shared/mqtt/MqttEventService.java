@@ -9,7 +9,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.mqtt;
 
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -29,20 +28,9 @@ import org.slf4j.LoggerFactory;
  */
 public class MqttEventService {
 
-	// List of topics
-	public static final String TOPIC_REGISTERAAS = "BaSyxRegistry_registeredAAS";
-	public static final String TOPIC_UPDATEAAS = "BaSyxRegistry_updatedShell";
-	public static final String TOPIC_REGISTERSUBMODEL = "BaSyxRegistry_registeredSubmodel";
-	public static final String TOPIC_UPDATESUBMODEL = "BaSyxRegistry_updatedSubmodel";
-	public static final String TOPIC_DELETEAAS = "BaSyxRegistry_deletedShell";
-	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
-
 	private static Logger logger = LoggerFactory.getLogger(MqttEventService.class);
-
-	// The MQTTClient
 	protected MqttClient mqttClient;
 
-	// QoS for MQTT messages (1, 2 or 3).
 	protected int qos = 1;
 
 	/**
@@ -142,9 +130,5 @@ public class MqttEventService {
 		} catch (MqttException e) {
 			logger.error("Could not send mqtt message", e);
 		}
-	}
-
-	public static String concatShellSubmodelId(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		return "(" + shellIdentifier.getId() + "," + submodelIdentifier.getId() + ")";
 	}
 }

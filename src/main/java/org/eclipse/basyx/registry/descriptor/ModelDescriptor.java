@@ -22,7 +22,6 @@ import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformat
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangString;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
-import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
@@ -37,16 +36,6 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 
 	protected ModelDescriptor() {
 		putAll(new ModelType(getModelType()));
-	}
-
-	/**
-	 * Creates a descriptor from existing hash map
-	 * 
-	 * @param map
-	 */
-	public ModelDescriptor(Map<String, Object> map) {
-		this();
-		this.putAll(map);
 	}
 
 	/**
@@ -180,19 +169,17 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 		return ret;
 	}
 
-	/**
-	 * Validates a model descriptor by checking whether idShort, identification and
-	 * endpoints key is present in the given map
-	 *
-	 * @param map
-	 */
-	protected void validate(Map<String, Object> map) {
-		if (!map.containsKey(Referable.IDSHORT) || !(map.get(Referable.IDSHORT) instanceof String))
-			throw new MalformedRequestException(getModelType() + " is missing idShort entry");
-		if (!map.containsKey(Identifiable.IDENTIFICATION) || !(map.get(Identifiable.IDENTIFICATION) instanceof Map<?, ?>))
-			throw new MalformedRequestException(getModelType() + " is missing identification entry");
-		if (!map.containsKey(ENDPOINTS) || !(map.get(ENDPOINTS) instanceof Collection<?>))
-			throw new MalformedRequestException(getModelType() + " is missing endpoints entry");
+	protected static boolean isValid(Map<String, Object> map) {
+		if (!map.containsKey(Referable.IDSHORT) || !(map.get(Referable.IDSHORT) instanceof String)) {
+			return false;
+		}
+		if (!map.containsKey(Identifiable.IDENTIFICATION) || !(map.get(Identifiable.IDENTIFICATION) instanceof Map<?, ?>)) {
+			return false;
+		}
+		if (!map.containsKey(ENDPOINTS) || !(map.get(ENDPOINTS) instanceof Collection<?>)) {
+			return false;
+		}
+		return true;
 	}
 
 	protected abstract String getModelType();

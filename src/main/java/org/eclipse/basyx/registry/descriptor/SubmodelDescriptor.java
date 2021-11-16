@@ -20,6 +20,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.HasSemantics;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
+import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 
 /**
  * AAS descriptor class
@@ -31,12 +32,7 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 
 	public static final String MODELTYPE = "SubmodelDescriptor";
 
-	/**
-	 * Create descriptor from existing hash map
-	 */
-	public SubmodelDescriptor(Map<String, Object> map) {
-		super(map);
-		validate(map);
+	private SubmodelDescriptor() {
 	}
 
 	/**
@@ -58,6 +54,21 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 		putAll(new ModelType(MODELTYPE));
 	}
 
+	/**
+	 * Creates a SumodelDescriptor from a given map
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static SubmodelDescriptor createAsFacade(Map<String, Object> map) {
+		if (!isValid(map)) {
+			throw new MalformedRequestException("The given map '" + map + "' is not valid.");
+		}
+		SubmodelDescriptor facade = new SubmodelDescriptor();
+		facade.setMap(map);
+		return facade;
+	}
+
 	@Override
 	protected String getModelType() {
 		return MODELTYPE;
@@ -71,5 +82,6 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 	public void setSemanticId(Reference ref) {
 		HasSemantics.createAsFacade(this).setSemanticId(ref);
 	}
+
 
 }

@@ -14,10 +14,11 @@ import java.util.Map;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /*
- * GlobalAssetId class
+ * TODO: will be implemented according to "Details of the Asset Administration Shell Part 1 V3".
+ * 
+ * GlobalAssetId class stub
  * 
  */
-
 public class GlobalAssetId extends VABModelMap<Object> {
 	public GlobalAssetId() {
 

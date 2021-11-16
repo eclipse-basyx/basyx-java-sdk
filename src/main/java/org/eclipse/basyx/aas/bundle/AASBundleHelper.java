@@ -86,7 +86,7 @@ public class AASBundleHelper {
 					if (!isSubmodel(sm)) {
 						throw new RuntimeException("sm Objects in bundles need to be instance of 'Submodel'");
 					}
-					bindSubmodelToPath(provider, "/aas/submodels/" + sm.getIdShort(), sm);
+					createSubmodelInProvider(provider, "/aas/submodels/" + sm.getIdShort(), sm);
 					objectUploaded = true;
 
 				}
@@ -95,16 +95,12 @@ public class AASBundleHelper {
 		return objectUploaded;
 	}
 
-	private static void bindSubmodelToPath(IModelProvider provider, String path, ISubmodel sm) {
+	private static void createSubmodelInProvider(IModelProvider provider, String path, ISubmodel sm) {
 		provider.setValue(path, sm);
 	}
 
 	private static String createSubmodelPath(ISubmodel sm) {
-		StringBuilder path = new StringBuilder("/aas/submodels/");
-		path.append(sm.getIdShort());
-		path.append("/");
-		path.append(SubmodelProvider.SUBMODEL);
-		return path.toString();
+		return "/aas/submodels/" + sm.getIdShort() + "/" + SubmodelProvider.SUBMODEL;
 	}
 
 	private static boolean isSubmodel(ISubmodel sm) {

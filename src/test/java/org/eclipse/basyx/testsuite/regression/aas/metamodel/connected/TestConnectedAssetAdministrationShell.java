@@ -52,20 +52,20 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 		AssetAdministrationShell shell = retrieveBaselineShell();
 		provider.setAssetAdministrationShell(new AASModelProvider(AssetAdministrationShell.createAsFacade(TypeDestroyer.destroyType(shell))));
 
-		Submodel sm = retrieveBaselineSM();
-		sm.setParent(shell.getReference());
-		provider.addSubmodel(new SubmodelProvider(Submodel.createAsFacade(TypeDestroyer.destroyType(sm))));
+		Submodel submodel = retrieveBaselineSM();
+		submodel.setParent(shell.getReference());
+		provider.addSubmodel(new SubmodelProvider(Submodel.createAsFacade(TypeDestroyer.destroyType(submodel))));
 
 		// Create AAS registry
 		IRegistry registry = new InMemoryRegistry();
 		// Create AAS Descriptor
-		AASDescriptor aasDescriptor = new AASDescriptor(AASID, Arrays.asList(new Endpoint("/aas")));
+		AASDescriptor shellDescriptor = new AASDescriptor(SHELLIDSHORT, SHELLIDENTIFIER, Arrays.asList(new Endpoint("/aas")));
 		// Create Submodel Descriptor
-		SubmodelDescriptor smDescriptor2 = new SubmodelDescriptor(SMIDSHORT, SMID, Arrays.asList(new Endpoint("/aas/submodels/" + SMIDSHORT + "/submodel")));
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(SUBMODELIDSHORT, SUBMODELIDENTIFIER, Arrays.asList(new Endpoint("/aas/submodels/" + SUBMODELIDSHORT + "/submodel")));
 		// Add Submodel descriptor to aas descriptor
-		aasDescriptor.addSubmodelDescriptor(smDescriptor2);
+		shellDescriptor.addSubmodelDescriptor(submodelDescriptor);
 
-		registry.register(aasDescriptor);
+		registry.register(shellDescriptor);
 
 		// Create connector provider stub, map address to provider
 		ConnectorProviderStub connectorProvider = new ConnectorProviderStub();
@@ -76,7 +76,7 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 				connectorProvider);
 
 		// Create ConnectedAssetAdministrationShell
-		connectedAAS = manager.retrieveAAS(AASID);
+		connectedAAS = manager.retrieveAAS(SHELLIDENTIFIER);
 	}
 
 	@Override
@@ -86,14 +86,14 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 
 	@Test
 	public void testGetSpecificSubmodel() {
-		ISubmodel sm = retrieveShell().getSubmodel(SMID);
-		assertEquals(SMIDSHORT, sm.getIdShort());
+		ISubmodel submodel = retrieveShell().getSubmodel(SUBMODELIDENTIFIER);
+		assertEquals(SUBMODELIDSHORT, submodel.getIdShort());
 	}
 
 	@Test
 	public void testDeleteSubmodel() {
-		retrieveShell().removeSubmodel(SMID);
-		assertFalse(retrieveShell().getSubmodels().containsKey(SMIDSHORT));
+		retrieveShell().removeSubmodel(SUBMODELIDENTIFIER);
+		assertFalse(retrieveShell().getSubmodels().containsKey(SUBMODELIDSHORT));
 	}
 
 	@Test

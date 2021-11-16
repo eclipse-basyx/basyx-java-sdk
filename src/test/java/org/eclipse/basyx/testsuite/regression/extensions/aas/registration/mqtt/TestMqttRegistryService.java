@@ -20,7 +20,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * @author haque
  *
  */
-public class TestMqttRegistryService extends TestMqttRegistrySuit {
+public class TestMqttRegistryService extends TestMqttRegistrySuite {
 
 	@Override
 	protected IRegistry getAPI() throws MqttException {

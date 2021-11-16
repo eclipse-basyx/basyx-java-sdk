@@ -15,7 +15,8 @@ import java.util.Map;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
- * Endpoint class
+ * Endpoint class representing an AAS endpoint with e.g. an interface and
+ * protocol information
  *
  * @author fischer, fried
  *
@@ -63,17 +64,17 @@ public class Endpoint extends VABModelMap<Object> {
 	/**
 	 * Creates an endpoint object from a map
 	 *
-	 * @param obj
+	 * @param map
 	 *            an endpoint object as raw map
 	 * @return an endpoint object, that behaves like a facade for the given map
 	 */
-	public static Endpoint createAsFacade(Map<String, Object> obj) {
-		if (obj == null) {
+	public static Endpoint createAsFacade(Map<String, Object> map) {
+		if (map == null) {
 			return null;
 		}
 
 		Endpoint facade = new Endpoint();
-		facade.setMap(obj);
+		facade.setMap(map);
 		return facade;
 	}
 
