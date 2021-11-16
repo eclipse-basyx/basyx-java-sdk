@@ -12,15 +12,14 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.subm
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedReferenceElement;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.ReferenceElement;
-import org.eclipse.basyx.submodel.restapi.SubmodelElementProvider;
-import org.eclipse.basyx.testsuite.regression.vab.manager.VABConnectionManagerStub;
-import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
-import org.eclipse.basyx.vab.support.TypeDestroyingProvider;
+import org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement.SubmodelElementTestHelper;
+import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,10 +41,9 @@ public class TestConnectedReferenceElement {
 		
 		refElem = new ReferenceElement(ref);
 		
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(refElem))));
+		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(refElem);
 
-		connectedRefElem = new ConnectedReferenceElement(manager.connectToVABElement(""));
+		connectedRefElem = new ConnectedReferenceElement(elementProxy);
 	}
 	
 	/**
@@ -54,5 +52,20 @@ public class TestConnectedReferenceElement {
 	@Test
 	public void testGetValue() {
 		assertEquals(refElem.getValue(), connectedRefElem.getValue());
+	}
+
+	@Test
+	public void setValueUpdatesValueCorrectly() {
+		triggerCachingOfSubmodelElement();
+
+		IReference expected = new Reference(new Key(KeyElements.ASSET, true, "asset", IdentifierType.CUSTOM));
+
+		connectedRefElem.setValue(expected);
+		
+		assertEquals(expected, connectedRefElem.getValue());
+	}
+
+	private void triggerCachingOfSubmodelElement() {
+		connectedRefElem.getElem();
 	}
 }

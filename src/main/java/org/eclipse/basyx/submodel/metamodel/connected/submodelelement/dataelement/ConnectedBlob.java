@@ -58,7 +58,7 @@ public class ConnectedBlob extends ConnectedDataElement implements IBlob {
 	public void setValue(String value) {
 		if (value instanceof String) {
 			// Assume a Base64 encoded String
-			setValue((Object) value);
+			super.setValue(value);
 		} else {
 			throw new IllegalArgumentException("Given Object is not a String");
 		}
