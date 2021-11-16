@@ -158,7 +158,7 @@ public class AASDescriptor extends ModelDescriptor {
 	 * @return SubmodelDescriptor by identifier of the submodel
 	 */
 	public SubmodelDescriptor getSubmodelDescriptorFromIdentifier(IIdentifier submodelIdentifier) {
-		Optional<SubmodelDescriptor> submodelDescriptor = getSubmodelDescriptors().stream().filter(x -> x.getIdentifier().equals(submodelIdentifier)).findAny();
+		Optional<SubmodelDescriptor> submodelDescriptor = getSubmodelDescriptors().stream().filter(x -> x.getIdentifier().getId().equals(submodelIdentifier.getId())).findAny();
 
 		if (submodelDescriptor.isPresent()) {
 			return submodelDescriptor.get();
