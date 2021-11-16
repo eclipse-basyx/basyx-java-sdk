@@ -40,9 +40,9 @@ public class TestConnectedBlob {
 		
 		blob.setByteArrayValue(value);
 		
-		VABElementProxy manager = SubmodelElementTestHelper.createManager(blob);
+		VABElementProxy elementProxy = SubmodelElementTestHelper.provideElementProxy(blob);
 
-		connectedBlob = new ConnectedBlob(manager);
+		connectedBlob = new ConnectedBlob(elementProxy);
 	}
 	
 	/**

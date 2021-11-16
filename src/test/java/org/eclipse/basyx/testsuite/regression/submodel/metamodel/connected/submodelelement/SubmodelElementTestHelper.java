@@ -29,7 +29,7 @@ public class SubmodelElementTestHelper {
 	 * 
 	 * @return 
 	 */
-	public static VABElementProxy createManager(Map<String, Object> propertyElement) {
+	public static VABElementProxy provideElementProxy(Map<String, Object> propertyElement) {
 		VABConnectionManagerStub manager = new VABConnectionManagerStub(
 				new TypeDestroyingProvider(new SubmodelElementProvider(new VABLambdaProvider(propertyElement))));
 		
