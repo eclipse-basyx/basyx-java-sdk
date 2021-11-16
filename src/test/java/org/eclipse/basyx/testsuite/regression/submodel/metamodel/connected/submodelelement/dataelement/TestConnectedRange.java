@@ -35,7 +35,7 @@ public class TestConnectedRange {
 		range = new Range(ValueType.Integer, new Integer(1), new Integer(10));
 		range.setIdShort("testIdShort");
 		
-		VABElementProxy elementProxy = SubmodelElementTestHelper.provideElementProxy(range);
+		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(range);
 
 		connectedRange = new ConnectedRange(elementProxy);
 	}

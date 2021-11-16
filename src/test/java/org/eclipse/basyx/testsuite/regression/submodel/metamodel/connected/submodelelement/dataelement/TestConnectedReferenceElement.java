@@ -41,7 +41,7 @@ public class TestConnectedReferenceElement {
 		
 		refElem = new ReferenceElement(ref);
 		
-		VABElementProxy elementProxy = SubmodelElementTestHelper.provideElementProxy(refElem);
+		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(refElem);
 
 		connectedRefElem = new ConnectedReferenceElement(elementProxy);
 	}

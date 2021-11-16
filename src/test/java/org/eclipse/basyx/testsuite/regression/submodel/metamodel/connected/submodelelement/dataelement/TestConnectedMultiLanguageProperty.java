@@ -37,7 +37,7 @@ public class TestConnectedMultiLanguageProperty {
 		
 		MLP.setValue(langStrings);
 		
-		VABElementProxy elementProxy = SubmodelElementTestHelper.provideElementProxy(MLP);
+		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(MLP);
 
 		connectedMLP = new ConnectedMultiLanguageProperty(elementProxy);
 	}

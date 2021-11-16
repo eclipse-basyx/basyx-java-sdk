@@ -35,7 +35,7 @@ public class TestConnectedFile {
 		file.setValue("FILE_VALUE");
 		file.setMimeType("mimeType");
 		
-		VABElementProxy elementProxy = SubmodelElementTestHelper.provideElementProxy(file);
+		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(file);
 
 		connectedFile = new ConnectedFile(elementProxy);
 	}
