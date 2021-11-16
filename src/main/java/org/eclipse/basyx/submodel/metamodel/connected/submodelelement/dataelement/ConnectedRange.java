@@ -38,13 +38,13 @@ public class ConnectedRange extends ConnectedDataElement implements IRange {
 
 	@Override
 	public Object getMin() {
-		Object min = getElem().getPath(Range.MIN);
+		Object min = getElemLive().getPath(Range.MIN);
 		return ValueTypeHelper.getJavaObject(min, getValueType());
 	}
 
 	@Override
 	public Object getMax() {
-		Object max = getElem().getPath(Range.MAX);
+		Object max = getElemLive().getPath(Range.MAX);
 		return ValueTypeHelper.getJavaObject(max, getValueType());
 	}
 
@@ -84,7 +84,6 @@ public class ConnectedRange extends ConnectedDataElement implements IRange {
 				ValueTypeHelper.prepareForSerialization(maxRaw)
 			);
 				
-		
 		getProxy().setValue(MultiSubmodelElementProvider.VALUE, prepared);
 	}
 }

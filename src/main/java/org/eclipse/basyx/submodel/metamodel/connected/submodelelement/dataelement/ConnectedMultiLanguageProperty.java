@@ -11,7 +11,6 @@ package org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataeleme
 
 import java.util.Collection;
 import java.util.Map;
-
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IMultiLanguageProperty;
@@ -31,10 +30,10 @@ public class ConnectedMultiLanguageProperty extends ConnectedDataElement impleme
 		super(proxy);
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
+	@Override
 	public LangStrings getValue() {
-		return LangStrings.createAsFacade((Collection<Map<String, Object>>) getElem().getPath(MultiLanguageProperty.VALUE));
+		return LangStrings.createAsFacade((Collection<Map<String, Object>>) super.getValue()) ;
 	}
 
 	@Override
