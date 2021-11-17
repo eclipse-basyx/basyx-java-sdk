@@ -12,7 +12,9 @@ package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.mqtt;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttRegistryService;
 import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.registry.memory.InMemoryRegistry;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
  * Tests events emitting with the MqttAASRegistryService
@@ -26,7 +28,7 @@ public class TestMqttRegistryService extends TestMqttRegistrySuite {
 	protected IRegistry getAPI() throws MqttException {
 		// Create underlying registry service
 		IRegistry registryService = new InMemoryRegistry();
-		return new MqttRegistryService(registryService, "tcp://localhost:1884", "testClient");
+		return new MqttRegistryService(registryService, new MqttClient("tcp://localhost:1884", "testClient", new MemoryPersistence()));
 	}
 
 }

@@ -14,6 +14,7 @@ import org.eclipse.basyx.registry.api.IRegistry;
 import org.eclipse.basyx.registry.memory.InMemoryRegistry;
 import org.eclipse.basyx.registry.observing.ObservableRegistryService;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 /**
  * Tests events emitting with the MqttAASRegistryServiceObserver
@@ -30,7 +31,7 @@ public class TestMqttRegistryServiceObserver extends TestMqttRegistrySuite {
 		IRegistry registryService = new InMemoryRegistry();
 		observedAPI = new ObservableRegistryService(registryService);
 
-		mqttObserver = new MqttRegistryServiceObserver("tcp://localhost:1884", "testClient");
+		mqttObserver = new MqttRegistryServiceObserver("tcp://localhost:1884", "testClient", new MemoryPersistence());
 		observedAPI.addObserver(mqttObserver);
 
 		return observedAPI;
