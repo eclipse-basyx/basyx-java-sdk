@@ -33,12 +33,6 @@ import org.slf4j.LoggerFactory;
 public class MqttAASRegistryService extends MqttEventService implements IAASRegistry {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASRegistryService.class);
 
-	// List of topics
-	public static final String TOPIC_REGISTERAAS = "BaSyxRegistry_registeredAAS";
-	public static final String TOPIC_REGISTERSUBMODEL = "BaSyxRegistry_registeredSubmodel";
-	public static final String TOPIC_DELETEAAS = "BaSyxRegistry_deletedAAS";
-	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
-
 	// The underlying AASRegistryService
 	protected IAASRegistry observedRegistryService;
 	
@@ -90,25 +84,25 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
 		this.observedRegistryService.register(deviceAASDescriptor);
-		sendMqttMessage(TOPIC_REGISTERAAS, deviceAASDescriptor.getIdentifier().getId());	
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERAAS, deviceAASDescriptor.getIdentifier().getId());	
 	}
 
 	@Override
 	public void register(IIdentifier aas, SubmodelDescriptor smDescriptor) throws ProviderException {
 		this.observedRegistryService.register(aas, smDescriptor);
-		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(aas, smDescriptor.getIdentifier()));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttAASRegistryHelper.concatAasSmId(aas, smDescriptor.getIdentifier()));
 	}
 
 	@Override
 	public void delete(IIdentifier aasId) throws ProviderException {
 		this.observedRegistryService.delete(aasId);
-		sendMqttMessage(TOPIC_DELETEAAS, aasId.getId());
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETEAAS, aasId.getId());
 	}
 
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		this.observedRegistryService.delete(aasId, smId);
-		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(aasId, smId));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, MqttAASRegistryHelper.concatAasSmId(aasId, smId));
 	}
 
 	@Override
@@ -129,9 +123,5 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	@Override
 	public SubmodelDescriptor lookupSubmodel(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		return this.observedRegistryService.lookupSubmodel(aasId, smId);
-	}
-	
-	public static String concatAasSmId(IIdentifier aasId, IIdentifier smId) {
-		return "(" + aasId.getId() + "," + smId.getId() + ")";
 	}
 }
