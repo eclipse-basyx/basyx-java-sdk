@@ -25,8 +25,8 @@ public class MqttAASRegistryHelper {
 	
 	/**
 	 * Concatenates Asset Administration Shell Id and SmId.
-	 * @param Asset Administration Shell ID
-	 * @param SmId
+	 * @param aasId
+	 * @param smId
 	 */
 	public static String concatAasSmId(IIdentifier aasId, IIdentifier smId) {
 		return "(" + aasId.getId() + "," + smId.getId() + ")";
