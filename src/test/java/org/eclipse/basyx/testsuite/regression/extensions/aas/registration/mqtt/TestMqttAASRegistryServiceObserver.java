@@ -21,6 +21,7 @@ import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryService;
+import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryHelper;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryServiceObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -113,7 +114,7 @@ public class TestMqttAASRegistryServiceObserver {
 		observedAPI.register(aasDescriptor);
 		
 		assertEquals(newAASId, listener.lastPayload);
-		assertEquals(MqttAASRegistryServiceObserver.TOPIC_REGISTERAAS, listener.lastTopic);
+		assertEquals(MqttAASRegistryHelper.TOPIC_REGISTERAAS, listener.lastTopic);
 	}
 	
 	@Test
@@ -126,8 +127,8 @@ public class TestMqttAASRegistryServiceObserver {
 		
 		observedAPI.register(AASIDENTIFIER, submodelDescriptor);
 		
-		assertEquals(MqttAASRegistryServiceObserver.concatAasSmId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
-		assertEquals(MqttAASRegistryServiceObserver.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
+		assertEquals(MqttAASRegistryHelper.concatAasSmId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
+		assertEquals(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
 	}
 	
 	@Test
@@ -135,14 +136,14 @@ public class TestMqttAASRegistryServiceObserver {
 		observedAPI.delete(AASIDENTIFIER);
 		
 		assertEquals(AASID, listener.lastPayload);
-		assertEquals(MqttAASRegistryServiceObserver.TOPIC_DELETEAAS, listener.lastTopic);
+		assertEquals(MqttAASRegistryHelper.TOPIC_DELETEAAS, listener.lastTopic);
 	}
 	
 	@Test
 	public void testDeleteSubmodel() {
 		observedAPI.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
-		assertEquals(MqttAASRegistryServiceObserver.concatAasSmId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
-		assertEquals(MqttAASRegistryServiceObserver.TOPIC_DELETESUBMODEL, listener.lastTopic);
+		assertEquals(MqttAASRegistryHelper.concatAasSmId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
+		assertEquals(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
+import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryHelper;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryService;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -109,7 +110,7 @@ public class TestMqttAASRegistryService {
 		eventAPI.register(aasDescriptor);
 		
 		assertEquals(newAASId, listener.lastPayload);
-		assertEquals(MqttAASRegistryService.TOPIC_REGISTERAAS, listener.lastTopic);
+		assertEquals(MqttAASRegistryHelper.TOPIC_REGISTERAAS, listener.lastTopic);
 	}
 	
 	@Test
@@ -122,8 +123,8 @@ public class TestMqttAASRegistryService {
 		
 		eventAPI.register(AASIDENTIFIER, submodelDescriptor);
 		
-		assertEquals(MqttAASRegistryService.concatAasSmId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
-		assertEquals(MqttAASRegistryService.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
+		assertEquals(MqttAASRegistryHelper.concatAasSmId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
+		assertEquals(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
 	}
 	
 	@Test
@@ -131,14 +132,14 @@ public class TestMqttAASRegistryService {
 		eventAPI.delete(AASIDENTIFIER);
 		
 		assertEquals(AASID, listener.lastPayload);
-		assertEquals(MqttAASRegistryService.TOPIC_DELETEAAS, listener.lastTopic);
+		assertEquals(MqttAASRegistryHelper.TOPIC_DELETEAAS, listener.lastTopic);
 	}
 	
 	@Test
 	public void testDeleteSubmodel() {
 		eventAPI.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
-		assertEquals(MqttAASRegistryService.concatAasSmId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
-		assertEquals(MqttAASRegistryService.TOPIC_DELETESUBMODEL, listener.lastTopic);
+		assertEquals(MqttAASRegistryHelper.concatAasSmId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
+		assertEquals(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 }
