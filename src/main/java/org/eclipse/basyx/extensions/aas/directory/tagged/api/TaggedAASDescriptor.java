@@ -1,14 +1,15 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.api;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -16,12 +17,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * Extension of {@link AASDescriptor} that allows to add tags to the descriptor
- * 
+ *
  * @author schnicke
  *
  */
@@ -30,15 +32,14 @@ public class TaggedAASDescriptor extends AASDescriptor {
 	public static final String TAGS = "tags";
 
 	/**
-	 * Create a new aas descriptor that retrieves the necessary information from a
+	 * Create a new shell descriptor that retrieves the necessary information from a
 	 * passend AssetAdministrationShell
-	 * 
+	 *
 	 * @param assetAdministrationShell
-	 * @param endpoint
+	 * @param httpEndpoint
 	 */
-	public TaggedAASDescriptor(IAssetAdministrationShell assetAdministrationShell, String endpoint) {
-		super(assetAdministrationShell, endpoint);
-		initialize();
+	public TaggedAASDescriptor(IAssetAdministrationShell assetAdministrationShell, String httpEndpoint) {
+		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), httpEndpoint);
 	}
 
 	protected TaggedAASDescriptor() {
@@ -64,8 +65,8 @@ public class TaggedAASDescriptor extends AASDescriptor {
 	/**
 	 * Create a new descriptor with minimal information
 	 */
-	public TaggedAASDescriptor(String idShort, IIdentifier id, String httpEndpoint) {
-		super(idShort, id, httpEndpoint);
+	public TaggedAASDescriptor(String idShort, IIdentifier shellIdentifier, String httpEndpoint) {
+		super(idShort, shellIdentifier, Arrays.asList(new Endpoint(httpEndpoint)));
 		initialize();
 	}
 
@@ -75,7 +76,7 @@ public class TaggedAASDescriptor extends AASDescriptor {
 
 	/**
 	 * Adds a tag to the AAS descriptor
-	 * 
+	 *
 	 * @param tag
 	 */
 	public void addTag(String tag) {
@@ -84,7 +85,7 @@ public class TaggedAASDescriptor extends AASDescriptor {
 
 	/**
 	 * Adds a list of tags to the AAS descriptor
-	 * 
+	 *
 	 * @param tags
 	 */
 	public void addTags(List<String> tags) {
@@ -93,7 +94,7 @@ public class TaggedAASDescriptor extends AASDescriptor {
 
 	/**
 	 * Retrieves the Tags associated with the AAS descriptor
-	 * 
+	 *
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")

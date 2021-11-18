@@ -48,7 +48,7 @@ public class TestAASAggregatorProxy extends AASAggregatorSuite {
 	@Test
 	public void testFeedThrough() throws Exception {
 		IAASAggregator aggregator = getAggregator();
-		aggregator.createAAS(aas1);
+		aggregator.createShell(aas1);
 
 		// Test feedthrough of GET
 		IAssetAdministrationShell retrievedAAS = aggregator.getAAS(aas1.getIdentification());

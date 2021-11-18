@@ -16,7 +16,7 @@ import java.util.Collections;
 import org.eclipse.basyx.aas.bundle.AASBundleFactory;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.CustomId;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.CustomId;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.junit.Test;
 

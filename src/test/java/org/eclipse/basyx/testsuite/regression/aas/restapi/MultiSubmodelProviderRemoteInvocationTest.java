@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.restapi;
@@ -15,19 +15,21 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.ModelUrn;
 import org.eclipse.basyx.aas.restapi.AASModelProvider;
 import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
+import org.eclipse.basyx.registry.api.IRegistry;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
+import org.eclipse.basyx.registry.memory.InMemoryRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
@@ -44,9 +46,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests the capability remote submodel invocation from registry 
+ * Tests the capability remote submodel invocation from registry
  * in VABMultiSubmodelProvider
- * 
+ *
  * @author haque
  */
 public class MultiSubmodelProviderRemoteInvocationTest {
@@ -64,30 +66,30 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 	private List<BaSyxService> services = new ArrayList<>();
 
 	private MultiSubmodelProvider provider;
-	
+
 	// Creating a new AAS Registry
-	private IAASRegistry registry = new InMemoryRegistry();
+	private IRegistry registry = new InMemoryRegistry();
 
 	@Before
 	public void init() {
-		
-		
+
+
 		// Create descriptors for AAS and submodels
 		String aasEndpoint = "basyx://localhost:8000/aas";
 		String remoteSmEndpoint = "basyx://localhost:8001/submodel";
 		String localSmEndpoint = "basyx://localhost:8000/aas/submodels/" + LOCALSMIDSHORT;
 
-		AASDescriptor aasDesc = new AASDescriptor(AASIDSHORT1, AASID1, aasEndpoint);
-		aasDesc.addSubmodelDescriptor(new SubmodelDescriptor(REMOTESMIDSHORT, REMOTESMID, remoteSmEndpoint));
-		aasDesc.addSubmodelDescriptor(new SubmodelDescriptor(LOCALSMIDSHORT, LOCALSMID, localSmEndpoint));
+		AASDescriptor aasDesc = new AASDescriptor(AASIDSHORT1, AASID1, Arrays.asList(new Endpoint(aasEndpoint)));
+		aasDesc.addSubmodelDescriptor(new SubmodelDescriptor(REMOTESMIDSHORT, REMOTESMID, Arrays.asList(new Endpoint(remoteSmEndpoint))));
+		aasDesc.addSubmodelDescriptor(new SubmodelDescriptor(LOCALSMIDSHORT, LOCALSMID, Arrays.asList(new Endpoint(localSmEndpoint))));
 
 		// Register Asset Administration Shells
 		registry.register(aasDesc);
-		
+
 
 		// Create a VABMultiSubmodelProvider using the registry and a http connector
 		provider = new MultiSubmodelProvider(registry, new BaSyxConnectorFactory());
-		
+
 		// Create and add an AAS to the provider with same id as the AAS in the registry
 		AssetAdministrationShell aas = new AssetAdministrationShell();
 		aas.setIdShort(AASIDSHORT1);
@@ -108,11 +110,11 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 
 		services.forEach(b -> b.start());
 	}
-	
+
 	/**
 	 * Checks if GET is correctly forwarded by checking if the Id of the remote
 	 * submodel can be retrieved
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -120,7 +122,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 		Submodel sm = getRemoteSubmodel();
 		assertEquals(sm.getIdentification().getId(), REMOTESMID.getId());
 	}
-	
+
 	/**
 	 * Checks if a call to "/aas/submodels" correctly includes the remote submodels
 	 */
@@ -133,7 +135,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 		assertTrue(smIdShorts.contains(LOCALSMIDSHORT));
 		assertTrue(smIdShorts.size() == 2);
 	}
-	
+
 	/**
 	 * Tries to register a Submodel, not actually push it to the server and try to request all Submodels
 	 * This will result in an endless loop if not handled correctly
@@ -141,11 +143,11 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 	@Test
 	public void testGetRegisteredButNotExistentSM() {
 		// Create a Descriptor for a Submodel (with a local Endpoint), that is not present on the server
-		SubmodelDescriptor smDescriptor = new SubmodelDescriptor("nonexist", new ModelUrn("nonexisting"), "basyx://localhost:8000/aas/submodels/nonexist");
-		
+		SubmodelDescriptor smDescriptor = new SubmodelDescriptor("nonexist", new ModelUrn("nonexisting"), Arrays.asList(new Endpoint("basyx://localhost:8000/aas/submodels/nonexist")));
+
 		// Register this SubmodelDescriptor
-		registry.register(AASID1, smDescriptor);
-		
+		registry.registerSubmodelForShell(AASID1, smDescriptor);
+
 		// Try to request all Submodels from the server
 		try {
 			provider.getValue("/aas/submodels");
@@ -157,7 +159,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 	/**
 	 * Checks if SET is correctly forwarded by checking if a property value of the
 	 * remote submodel can be changed
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -169,11 +171,11 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 		Submodel sm = getRemoteSubmodel();
 		assertEquals(newVal, sm.getProperties().get(SimpleAASSubmodel.INTPROPIDSHORT).getValue());
 	}
-	
+
 	/**
 	 * Checks if CREATE is correctly forwarded by checking if a new property can be
 	 * created in the remote submodel
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -186,11 +188,11 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 
 		assertTrue(getRemoteSubmodel().getProperties().containsKey(testPropIdShort));
 	}
-	
+
 	/**
 	 * Checks if DELETE is correctly forwarded by checking if a property can be
 	 * deleted in the remote submodel
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -203,7 +205,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 	/**
 	 * Checks if INVOKE is correctly forwarded by checking if an operation can be
 	 * called in the remote submodel
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test

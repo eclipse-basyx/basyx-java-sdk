@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.manager;
@@ -13,6 +13,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+
 import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
@@ -20,13 +22,14 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.restapi.AASModelProvider;
 import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
+import org.eclipse.basyx.registry.api.IRegistry;
+import org.eclipse.basyx.registry.descriptor.AASDescriptor;
+import org.eclipse.basyx.registry.descriptor.parts.Endpoint;
+import org.eclipse.basyx.registry.memory.InMemoryRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -44,15 +47,15 @@ import org.junit.Test;
 
 /**
  * Tests ConnectedAssetAdministrationShellManager class
- * 
+ *
  * @author schnicke
- * 
+ *
  */
 public class TestConnectedAssetAdministrationShellManager {
 	ConnectedAssetAdministrationShellManager manager;
 	ConnectorProviderStub connectorProvider;
-	IAASRegistry registry;
-	
+	IRegistry registry;
+
 	/**
 	 * Create infrastructure
 	 */
@@ -67,7 +70,7 @@ public class TestConnectedAssetAdministrationShellManager {
 
 	/**
 	 * Tests creation of aas
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@Test
@@ -77,13 +80,13 @@ public class TestConnectedAssetAdministrationShellManager {
 		String aasIdShort = "aasName";
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
- 
+
 		// Create an AAS containing a reference to the created Submodel
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 
 		// Check descriptor for correct endpoint
-		String endpoint = registry.lookupAAS(aasId).getFirstEndpoint();
+		String endpoint = registry.lookupShell(aasId).getFirstEndpoint().getProtocolInformation().getEndpointAddress();
 		assertEquals(AASAggregatorProvider.PREFIX + "/" + aasId.getId() + "/aas", VABPathTools.stripSlashes(endpoint));
 
 		// Retrieve it
@@ -96,20 +99,21 @@ public class TestConnectedAssetAdministrationShellManager {
 
 	@Test
 	public void testCreateSubmodel() throws Exception {
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
-		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
-		String smIdShort = "smName";
+		IIdentifier shellIdentifier = new Identifier(IdentifierType.CUSTOM, "aasId");
+		IIdentifier submodelIdentifier = new Identifier(IdentifierType.CUSTOM, "smId");
+		String shellIdShort = "shellName";
+		String submodelIdShort = "smName";
 
 		// Register AAS at directory
-		AASDescriptor desc = new AASDescriptor(aasId, "/aas");
+		AASDescriptor desc = new AASDescriptor(shellIdShort, shellIdentifier, Arrays.asList(new Endpoint("/aas")));
 		registry.register(desc);
 		IModelProvider provider = new MultiSubmodelProvider(new AASModelProvider(new AssetAdministrationShell()));
 		connectorProvider.addMapping("", provider);
 
 		// Create sub model
 		Submodel submodel = new Submodel();
-		submodel.setIdShort(smIdShort);
-		submodel.setIdentification(smId.getIdType(), smId.getId());
+		submodel.setIdShort(submodelIdShort);
+		submodel.setIdentification(submodelIdentifier.getIdType(), submodelIdentifier.getId());
 
 		// - Add example properties to sub model
 		Property prop1 = new Property(7);
@@ -121,16 +125,16 @@ public class TestConnectedAssetAdministrationShellManager {
 		submodel.addSubmodelElement(prop2);
 
 		// - Retrieve submodel using the SDK connector
-		manager.createSubmodel(aasId, submodel);
-		ISubmodel sm = manager.retrieveSubmodel(aasId, smId);
+		manager.createSubmodel(shellIdentifier, submodel);
+		ISubmodel sm = manager.retrieveSubmodel(shellIdentifier, submodelIdentifier);
 
 		// - check id and properties
 		IProperty prop1Connected = sm.getProperties().get("prop1");
 		IProperty prop2Connected = sm.getProperties().get("prop2");
 
-		assertEquals(smIdShort, sm.getIdShort());
-		assertEquals(smId.getId(), sm.getIdentification().getId());
-		assertEquals(smId.getIdType(), sm.getIdentification().getIdType());
+		assertEquals(submodelIdShort, sm.getIdShort());
+		assertEquals(submodelIdentifier.getId(), sm.getIdentification().getId());
+		assertEquals(submodelIdentifier.getIdType(), sm.getIdentification().getIdType());
 		assertEquals("prop1", prop1Connected.getIdShort());
 		assertEquals(7, prop1Connected.getValue());
 		assertEquals("prop2", prop2Connected.getIdShort());
@@ -144,12 +148,12 @@ public class TestConnectedAssetAdministrationShellManager {
 
 		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
 		String smIdShort = "smName";
-		
+
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
 
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 
 		Submodel sm = new Submodel(smIdShort, smId);
 		manager.createSubmodel(aasId, sm);
@@ -173,7 +177,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		prepareConnectorProvider(provider);
 
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
-		manager.createAAS(aas, "");
+		manager.createShell(aas, "");
 		manager.deleteAAS(aas.getIdentification());
 		try {
 			manager.retrieveAAS(aas.getIdentification());
@@ -190,9 +194,9 @@ public class TestConnectedAssetAdministrationShellManager {
 	public void testRetrieveNonexistentAAS() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
-		
+
 		IIdentifier nonexistentAASId = new Identifier(IdentifierType.CUSTOM, "nonexistentAAS");
-		
+
 		// Try to retrieve a nonexistent AAS
 		try {
 			manager.retrieveAAS(nonexistentAASId);
@@ -200,7 +204,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		} catch (ResourceNotFoundException e) {
 		}
 	}
-	
+
 	/**
 	 * Tries to retrieve a nonexistent Submodel from a nonexistent AAS
 	 */
@@ -208,10 +212,10 @@ public class TestConnectedAssetAdministrationShellManager {
 	public void testRetrieveNonexistentSMFromNonexistentSM() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
-		
+
 		IIdentifier nonexistentAASId = new Identifier(IdentifierType.CUSTOM, "nonexistentAAS");
 		IIdentifier nonexistentSMId = new Identifier(IdentifierType.CUSTOM, "nonexistentSM");
-		
+
 		// Try to retrieve a nonexistent Submodel from a nonexistent AAS
 		try {
 			manager.retrieveSubmodel(nonexistentAASId, nonexistentSMId);
@@ -219,7 +223,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		} catch (ResourceNotFoundException e) {
 		}
 	}
-	
+
 	/**
 	 * Tries to retrieve a nonexistent Submodel from an existing AAS
 	 */
@@ -227,10 +231,10 @@ public class TestConnectedAssetAdministrationShellManager {
 	public void testRetrieveNonexistentSMFromExistentAAS() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
-		
+
 		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
 		IIdentifier nonexistentSMId = new Identifier(IdentifierType.CUSTOM, "nonexistentSM");
-		
+
 		// Try to retrieve a nonexistent Submodel from an existing AAS
 		try {
 			manager.retrieveSubmodel(aasId, nonexistentSMId);
@@ -238,7 +242,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		} catch (ResourceNotFoundException e) {
 		}
 	}
-	
+
 	/**
 	 * @param provider
 	 */

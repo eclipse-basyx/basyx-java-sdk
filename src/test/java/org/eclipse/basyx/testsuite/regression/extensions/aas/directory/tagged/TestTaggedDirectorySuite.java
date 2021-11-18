@@ -17,11 +17,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.ModelUrn;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.testsuite.regression.aas.registration.TestRegistryProviderSuite;
+import org.eclipse.basyx.testsuite.regression.registry.TestRegistryProviderSuite;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.junit.After;
 import org.junit.Test;
@@ -89,17 +89,17 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	@After
 	public void tearDown() {
 		try {
-			proxy.delete(taggedAAS1);
+			proxy.deleteShell(taggedAAS1);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
 		try {
-			proxy.delete(taggedAAS2);
+			proxy.deleteShell(taggedAAS2);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}
 		try {
-			proxy.delete(taggedAAS3);
+			proxy.deleteShell(taggedAAS3);
 		} catch (ResourceNotFoundException e) {
 			// Does not matter
 		}

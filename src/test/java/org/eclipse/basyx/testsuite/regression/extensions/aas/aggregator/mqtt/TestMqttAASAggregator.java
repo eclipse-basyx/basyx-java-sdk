@@ -10,6 +10,7 @@
 package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.mqtt;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,7 +19,6 @@ import java.io.IOException;
 import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
-import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
@@ -76,7 +76,7 @@ public class TestMqttAASAggregator {
 	@Before
 	public void setUp() {
 		shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid1"), AssetKind.INSTANCE));
-		eventAPI.createAAS(shell);
+		eventAPI.createShell(shell);
 		
 		listener = new MqttTestListener();
 		mqttBroker.addInterceptHandler(listener);
@@ -92,7 +92,7 @@ public class TestMqttAASAggregator {
 		String aasId2 = "aas2";
 		Identifier identifier2 = new Identifier(IdentifierType.IRDI, aasId2);
 		AssetAdministrationShell shell2 = new AssetAdministrationShell(aasId2, identifier2, new Asset("assetid2", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
-		eventAPI.createAAS(shell2);
+		eventAPI.createShell(shell2);
 
 		assertEquals(aasId2, listener.lastPayload);
 		assertEquals(MqttAASAggregator.TOPIC_CREATEAAS, listener.lastTopic);
