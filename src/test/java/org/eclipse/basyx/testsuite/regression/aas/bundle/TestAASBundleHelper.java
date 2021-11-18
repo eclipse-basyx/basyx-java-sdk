@@ -152,7 +152,7 @@ public class TestAASBundleHelper {
 	}
 	
 	private void pushAAS(AssetAdministrationShell aas) {
-		aggregator.createShell(aas);
+		aggregator.createAAS(aas);
 	}
 	
 	private void pushSubmodel(Submodel sm, IIdentifier aasIdentifier) {

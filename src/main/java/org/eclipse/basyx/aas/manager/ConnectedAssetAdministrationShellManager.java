@@ -178,7 +178,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		IModelProvider provider = connectorFactory.getConnector(endpoint);
 		AASAggregatorProxy proxy = new AASAggregatorProxy(provider);
 
-		proxy.createShell(shell);
+		proxy.createAAS(shell);
 
 		registerShell(shell, endpoint);
 	}

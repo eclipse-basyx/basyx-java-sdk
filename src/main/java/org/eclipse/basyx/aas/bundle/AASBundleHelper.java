@@ -70,7 +70,7 @@ public class AASBundleHelper {
 				if (!isShell(aas)) {
 					throw new RuntimeException("aas Objects in bundles need to be instance of 'AssetAdministrationShell'");
 				}
-				aggregator.createShell((AssetAdministrationShell) aas);
+				aggregator.createAAS((AssetAdministrationShell) aas);
 				objectUploaded = true;
 			}
 
