@@ -76,7 +76,7 @@ public abstract class AASAggregatorSuite {
 		IAASAggregator aggregator = getAggregator();
 		
 		//create a new AAS
-		aggregator.createShell(aas1);
+		aggregator.createAAS(aas1);
 		
 		//get and check the created AAS
 		IAssetAdministrationShell retrieved = aggregator.getAAS(aas1.getIdentification());
@@ -88,8 +88,8 @@ public abstract class AASAggregatorSuite {
 		IAASAggregator aggregator = getAggregator();
 		
 		// Create two AASs
-		aggregator.createShell(aas1);
-		aggregator.createShell(aas2);
+		aggregator.createAAS(aas1);
+		aggregator.createAAS(aas2);
 		
 		// get the collection of all AASs
 		Collection<IAssetAdministrationShell> coll = aggregator.getAASList();
@@ -112,7 +112,7 @@ public abstract class AASAggregatorSuite {
 		IAASAggregator aggregator = getAggregator();
 		
 		// Create a new AAS
-		aggregator.createShell(aas1);
+		aggregator.createAAS(aas1);
 		
 		// Get and check the unchanged AAS
 		checkAAS1(aggregator.getAAS(new ModelUrn(aas1Id)));
@@ -133,8 +133,8 @@ public abstract class AASAggregatorSuite {
 		IAASAggregator aggregator = getAggregator();
 		
 		// Create two new AASs
-		aggregator.createShell(aas1);
-		aggregator.createShell(aas2);
+		aggregator.createAAS(aas1);
+		aggregator.createAAS(aas2);
 		
 		// Get AAS collection and check, that both are present
 		Collection<IAssetAdministrationShell> coll = aggregator.getAASList();
