@@ -122,7 +122,7 @@ public class AASAggregator implements IAASAggregator {
 	}
 
 	@Override
-	public void createShell(AssetAdministrationShell aas) {
+	public void createAAS(AssetAdministrationShell aas) {
 		aasProviderMap.put(aas.getIdentification().getId(), createMultiSubmodelProvider(aas));
 	}
 

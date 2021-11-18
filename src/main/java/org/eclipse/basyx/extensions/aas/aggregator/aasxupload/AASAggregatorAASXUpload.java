@@ -70,8 +70,8 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 	}
 
 	@Override
-	public void createShell(AssetAdministrationShell aas) {
-		aggregator.createShell(aas);
+	public void createAAS(AssetAdministrationShell aas) {
+		aggregator.createAAS(aas);
 	}
 
 	@Override
