@@ -26,11 +26,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MqttAASAggregatorObserver extends MqttEventService implements IAASAggregatorObserver {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregatorObserver.class);
-
-	// List of topics
-	public static final String TOPIC_CREATEAAS = "BaSyxAggregator_createdAAS";
-	public static final String TOPIC_DELETEAAS = "BaSyxAggregator_deletedAAS";
-	public static final String TOPIC_UPDATEAAS = "BaSyxAggregator_updatedAAS";
 	
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Aggregator Observer
@@ -72,16 +67,16 @@ public class MqttAASAggregatorObserver extends MqttEventService implements IAASA
 
 	@Override
 	public void aasCreated(String aasId) {
-		sendMqttMessage(TOPIC_CREATEAAS, aasId);
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_CREATEAAS, aasId);
 	}
 
 	@Override
 	public void aasUpdated(String aasId) {
-		sendMqttMessage(TOPIC_UPDATEAAS, aasId);
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_UPDATEAAS, aasId);
 	}
 
 	@Override
 	public void aasDeleted(String aasId) {
-		sendMqttMessage(TOPIC_DELETEAAS, aasId);
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_DELETEAAS, aasId);
 	}
 }

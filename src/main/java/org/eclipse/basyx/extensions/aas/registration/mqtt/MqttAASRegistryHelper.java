@@ -24,7 +24,7 @@ public class MqttAASRegistryHelper {
 	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
 	
 	/**
-	 * Concatenates Asset Administration Shell ID and SmId.
+	 * Concatenates Asset Administration Shell Id and SmId.
 	 * @param Asset Administration Shell ID
 	 * @param SmId
 	 */

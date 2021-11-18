@@ -36,12 +36,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmodelAPIObserver {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelAPIObserver.class);
-
-	// List of topics
-	public static final String TOPIC_CREATESUBMODEL = "BaSyxSubmodel_createdSubmodel";
-	public static final String TOPIC_ADDELEMENT = "BaSyxSubmodel_addedSubmodelElement";
-	public static final String TOPIC_DELETEELEMENT = "BaSyxSubmodel_removedSubmodelElement";
-	public static final String TOPIC_UPDATEELEMENT = "BaSyxSubmodel_updatedSubmodelElement";
 	
 	// The underlying SubmodelAPI
 	protected ObservableSubmodelAPI observedAPI;
@@ -69,7 +63,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		logger.info("Create new MQTT submodel for endpoint " + brokerEndpoint);
 		this.observedAPI = observedAPI;
 		observedAPI.addObserver(this);
-		sendMqttMessage(TOPIC_CREATESUBMODEL, observedAPI.getSubmodel().getIdentification().getId());
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, observedAPI.getSubmodel().getIdentification().getId());
 	}
 
 	/**
@@ -92,7 +86,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		logger.info("Create new MQTT submodel for endpoint " + serverEndpoint);
 		this.observedAPI = observedAPI;
 		observedAPI.addObserver(this);
-		sendMqttMessage(TOPIC_CREATESUBMODEL, observedAPI.getSubmodel().getIdentification().getId());
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, observedAPI.getSubmodel().getIdentification().getId());
 	}
 
 	/**
@@ -106,7 +100,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		super(client);
 		this.observedAPI = observedAPI;
 		observedAPI.addObserver(this);
-		sendMqttMessage(TOPIC_CREATESUBMODEL, observedAPI.getSubmodel().getIdentification().getId());
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, observedAPI.getSubmodel().getIdentification().getId());
 	}
 
 	/**
@@ -149,21 +143,21 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	@Override
 	public void elementAdded(String idShortPath, Object newValue) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(TOPIC_ADDELEMENT, getCombinedMessage(getAASId(), getSubmodelId(), idShortPath));
+			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, getCombinedMessage(getAASId(), getSubmodelId(), idShortPath));
 		}
 	}
 
 	@Override
 	public void elementDeleted(String idShortPath) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(TOPIC_DELETEELEMENT, getCombinedMessage(getAASId(), getSubmodelId(), idShortPath));
+			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_DELETEELEMENT, getCombinedMessage(getAASId(), getSubmodelId(), idShortPath));
 		}
 	}
 
 	@Override
 	public void elementUpdated(String idShortPath, Object newValue) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(TOPIC_UPDATEELEMENT, getCombinedMessage(getAASId(), getSubmodelId(), idShortPath));
+			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_UPDATEELEMENT, getCombinedMessage(getAASId(), getSubmodelId(), idShortPath));
 		}
 	}	
 	

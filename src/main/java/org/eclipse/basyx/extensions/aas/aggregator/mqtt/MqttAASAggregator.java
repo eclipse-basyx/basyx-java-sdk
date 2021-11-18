@@ -35,9 +35,7 @@ public class MqttAASAggregator extends MqttEventService implements IAASAggregato
 	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregator.class);
 
 	// List of topics
-	public static final String TOPIC_CREATEAAS = "BaSyxAggregator_createdAAS";
-	public static final String TOPIC_DELETEAAS = "BaSyxAggregator_deletedAAS";
-	public static final String TOPIC_UPDATEAAS = "BaSyxAggregator_updatedAAS";
+	
 
 	// The underlying AASAggregator
 	protected IAASAggregator observedAASAggregator;
@@ -104,20 +102,20 @@ public class MqttAASAggregator extends MqttEventService implements IAASAggregato
 	@Override
 	public void createAAS(AssetAdministrationShell aas) {
 		this.observedAASAggregator.createAAS(aas);
-		sendMqttMessage(TOPIC_CREATEAAS, aas.getIdentification().getId());
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_CREATEAAS, aas.getIdentification().getId());
 		
 	}
 
 	@Override
 	public void updateAAS(AssetAdministrationShell aas) throws ResourceNotFoundException {
 		this.observedAASAggregator.updateAAS(aas);
-		sendMqttMessage(TOPIC_UPDATEAAS, aas.getIdentification().getId());
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_UPDATEAAS, aas.getIdentification().getId());
 		
 	}
 
 	@Override
 	public void deleteAAS(IIdentifier aasId) {
 		this.observedAASAggregator.deleteAAS(aasId);
-		sendMqttMessage(TOPIC_DELETEAAS, aasId.getId());
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_DELETEAAS, aasId.getId());
 	}
 }
