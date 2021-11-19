@@ -26,6 +26,6 @@ Additionally, you can also find videos explaining the BaSyx middleware on youtub
 
 ## Contributing
 
-If you would like to contribute, the overall process is described in the [Eclipse wiki](https://wiki.eclipse.org/BaSyx_/_Developer_/_Contributing).
+If you would like to contribute, please notice the [contribution guidelines](CONTRIBUTING.md). The overall process is described in the [Eclipse wiki](https://wiki.eclipse.org/BaSyx_/_Developer_/_Contributing).
 
 This GitHub project is migrated from the Eclipse infrastructure. For the archived history, see the [previous repository](https://git.eclipse.org/c/basyx/basyx.git/).
