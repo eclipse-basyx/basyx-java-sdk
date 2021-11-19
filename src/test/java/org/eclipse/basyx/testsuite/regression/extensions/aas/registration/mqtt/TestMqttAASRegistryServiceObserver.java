@@ -127,7 +127,7 @@ public class TestMqttAASRegistryServiceObserver {
 		
 		observedAPI.register(AASIDENTIFIER, submodelDescriptor);
 		
-		assertEquals(MqttAASRegistryHelper.concatAasSmId(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
+		assertEquals(MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
 		assertEquals(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
 	}
 	
@@ -143,7 +143,7 @@ public class TestMqttAASRegistryServiceObserver {
 	public void testDeleteSubmodel() {
 		observedAPI.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
-		assertEquals(MqttAASRegistryHelper.concatAasSmId(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
+		assertEquals(MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
 		assertEquals(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 }
