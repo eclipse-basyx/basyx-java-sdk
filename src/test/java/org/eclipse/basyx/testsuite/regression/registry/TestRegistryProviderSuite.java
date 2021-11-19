@@ -78,7 +78,7 @@ public abstract class TestRegistryProviderSuite {
 	@Before
 	public void setUp() {
 		SubmodelDescriptor submodelDescriptorForShell = new SubmodelDescriptor(submodelIdShortForShell, submodelIdentifierForShell, Arrays.asList(submodelEndpointForShell));
-		SubmodelDescriptor submodelDescriptorStandalone1 = new SubmodelDescriptor(submodelIdShortStandalone, submodelIdentifierStandalone, Arrays.asList(submodelEndpointStandalone));
+		SubmodelDescriptor submodelDescriptorStandalone = new SubmodelDescriptor(submodelIdShortStandalone, submodelIdentifierStandalone, Arrays.asList(submodelEndpointStandalone));
 
 		AASDescriptor shellDescriptor1 = new AASDescriptor(shellIdShort1, shellIdentifier1, globalAssetId, Arrays.asList(shellEndpoint1));
 		shellDescriptor1.addSubmodelDescriptor(submodelDescriptorForShell);
@@ -86,7 +86,7 @@ public abstract class TestRegistryProviderSuite {
 
 		proxy.register(shellDescriptor1);
 		proxy.register(shellDescriptor2);
-		proxy.register(submodelDescriptorStandalone1);
+		proxy.register(submodelDescriptorStandalone);
 	}
 
 	/**
@@ -389,7 +389,6 @@ public abstract class TestRegistryProviderSuite {
 		proxy.registerSubmodelForShell(shellIdentifier1, submodelDescriptor);
 
 		AASDescriptor shellDescriptor = proxy.lookupShell(shellIdentifier1);
-		System.out.println(shellDescriptor.getSubmodelDescriptors().size());
 		assertEquals(submodelDescriptor, shellDescriptor.getSubmodelDescriptorFromIdShort(submodelIdShort));
 
 		SubmodelDescriptor submodelDescriptorNew = new SubmodelDescriptor(submodelIdShort, submodelIdentifier, Arrays.asList(new Endpoint("http://testendpoint/newElement/")));
