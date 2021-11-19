@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
+import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**
  * API server helper for AAS Registry Path reading
@@ -47,14 +48,14 @@ public class RegistryServerAPIHelper {
 	}
 
 	private void checkIfPathPrefixIsValid(RegistryPath registryPath) {
-		if (!registryPath.getPathPrefix().equals(PREFIX)) {
+		if (registryPath.getPathPrefix() == null || !registryPath.getPathPrefix().equals(PREFIX)) {
 			throw new MalformedRequestException("Registry path must start with " + PREFIX);
 		}
 	}
 
 	private void checkIfFirstDescriptorIsValid(RegistryPath registryPath) {
-		if (!(registryPath.getFirstDescriptorType().equals(SHELL_DESCRIPTORS) || registryPath.getFirstDescriptorType().equals(SUBMODEL_DESCRIPTORS))) {
-			throw new MalformedRequestException("After " + PREFIX + "the path must continue with " + SHELL_DESCRIPTORS + " or " + SUBMODEL_DESCRIPTORS);
+		if (registryPath.getFirstDescriptorType() == null || !(registryPath.getFirstDescriptorType().equals(SHELL_DESCRIPTORS) || registryPath.getFirstDescriptorType().equals(SUBMODEL_DESCRIPTORS))) {
+			throw new MalformedRequestException("After " + PREFIX + " the path must continue with " + SHELL_DESCRIPTORS + " or " + SUBMODEL_DESCRIPTORS);
 		}
 	}
 
@@ -188,6 +189,11 @@ public class RegistryServerAPIHelper {
 		 */
 		public String getSecondDescriptorId() {
 			return secondDescriptorId;
+		}
+
+		@Override
+		public String toString() {
+			return VABPathTools.concatenatePaths(getPathPrefix(), getFirstDescriptorType(), getFirstDescriptorId(), getSecondDescriptorType(), getSecondDescriptorId());
 		}
 	}
 }
