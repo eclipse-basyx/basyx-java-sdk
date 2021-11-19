@@ -34,9 +34,6 @@ import org.slf4j.LoggerFactory;
 public class MqttAASAggregator extends MqttEventService implements IAASAggregator {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregator.class);
 
-	// List of topics
-	
-
 	// The underlying AASAggregator
 	protected IAASAggregator observedAASAggregator;
 	

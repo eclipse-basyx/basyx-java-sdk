@@ -10,7 +10,7 @@
 package org.eclipse.basyx.extensions.submodel.mqtt;
 
 /**
- * A helper class for MqttSubmodelAPI. 
+ * A helper class containing string constants of topics used by the SubmodelAPI. 
  * 
  * @author danish
  *

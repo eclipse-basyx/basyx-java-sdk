@@ -12,7 +12,7 @@ package org.eclipse.basyx.extensions.aas.registration.mqtt;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
- * A helper class for MqttAASRegistry. 
+ * A helper class containing method and string constants of topics used by the AASRegistry.
  * 
  * @author danish
  *
@@ -24,11 +24,11 @@ public class MqttAASRegistryHelper {
 	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
 	
 	/**
-	 * Concatenates Asset Administration Shell Id and SmId.
+	 * This function is for creating a message payload representing a descriptor change of a submodel of a specific AAS.
 	 * @param aasId
 	 * @param smId
 	 */
-	public static String concatAasSmId(IIdentifier aasId, IIdentifier smId) {
+	public static String createSubmodelDescriptorOfAASChangedPayload(IIdentifier aasId, IIdentifier smId) {
 		return "(" + aasId.getId() + "," + smId.getId() + ")";
 	}
 }
