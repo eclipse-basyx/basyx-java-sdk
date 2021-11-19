@@ -10,6 +10,7 @@
 package org.eclipse.basyx.registry.memory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.basyx.registry.api.IRegistry;
@@ -41,6 +42,9 @@ public class Registry implements IRegistry {
 			throw new MalformedRequestException("Can not create a new Shell with an existing identifier.");
 		}
 
+		Collection<SubmodelDescriptor> submodelDescriptors = shellDescriptor.getSubmodelDescriptors();
+		submodelDescriptors.forEach(submodelDescriptor -> register(submodelDescriptor));
+
 		handler.insertShell(shellDescriptor);
 		logger.debug("Registered {}", shellIdentifier.getId());
 	}
@@ -58,12 +62,19 @@ public class Registry implements IRegistry {
 	}
 
 	@Override
-	public void updateShell(IIdentifier shellIdentifier, AASDescriptor shellDescriptor) throws ProviderException {
+	public void updateShell(IIdentifier shellIdentifier, AASDescriptor newShellDescriptor) throws ProviderException {
 		if (!handler.containsShell(shellIdentifier)) {
 			throw new ResourceNotFoundException("Could not update Shell " + shellIdentifier.getId() + " since it does not exist.");
 		}
 
-		handler.updateShell(shellDescriptor);
+		AASDescriptor oldShellDescriptor = handler.getShell(shellIdentifier);
+		Collection<SubmodelDescriptor> oldSubmodelDescriptors = oldShellDescriptor.getSubmodelDescriptors();
+		oldSubmodelDescriptors.forEach(submodelDescriptor -> deleteSubmodel(submodelDescriptor.getIdentifier()));
+
+		Collection<SubmodelDescriptor> newSubmodelDescriptors = newShellDescriptor.getSubmodelDescriptors();
+		newSubmodelDescriptors.forEach(submodelDescriptor -> register(submodelDescriptor));
+
+		handler.updateShell(newShellDescriptor);
 		logger.debug("Updated {}", shellIdentifier.getId());
 	}
 
@@ -83,13 +94,15 @@ public class Registry implements IRegistry {
 			throw new MalformedRequestException("Can not register a submodelDescriptor with an already existing identifier.");
 		}
 
-		AASDescriptor descriptor = handler.getShell(shellIdentifier);
-		if (descriptor == null) {
+		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not add submodel descriptor for Shell " + shellIdentifier.getId() + " since it does not exist.");
 		}
 
-		descriptor.addSubmodelDescriptor(submodelDescriptor);
-		handler.updateShell(descriptor);
+		shellDescriptor.addSubmodelDescriptor(submodelDescriptor);
+		register(submodelDescriptor);
+		handler.updateShell(shellDescriptor);
+
 		logger.debug("Registered submodel " + submodelDescriptor.getIdShort() + " for Shell " + shellIdentifier.getId());
 	}
 
@@ -116,6 +129,7 @@ public class Registry implements IRegistry {
 		}
 
 		shellDescriptor.addSubmodelDescriptor(submodelDescriptor);
+		updateSubmodel(submodelDescriptor.getIdentifier(), submodelDescriptor);
 		handler.updateShell(shellDescriptor);
 		logger.debug("Updated submodel " + submodelDescriptor.getIdShort() + " for Shell " + shellIdentifier.getId());
 	}
@@ -127,6 +141,10 @@ public class Registry implements IRegistry {
 		if (!handler.containsShell(shellIdentifier)) {
 			throw new ResourceNotFoundException("Could not delete key for Shell " + shellId + " since it does not exist.");
 		}
+
+		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+		Collection<SubmodelDescriptor> submodelDescriptors = shellDescriptor.getSubmodelDescriptors();
+		submodelDescriptors.forEach(submodelDescriptor -> deleteSubmodel(submodelDescriptor.getIdentifier()));
 
 		handler.removeShell(shellIdentifier);
 		logger.debug("Removed " + shellId);

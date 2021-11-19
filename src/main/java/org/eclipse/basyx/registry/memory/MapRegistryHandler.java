@@ -58,37 +58,31 @@ public class MapRegistryHandler implements IRegistryHandler {
 	@Override
 	public void insertShell(AASDescriptor shellDescriptor) {
 		String id = shellDescriptor.getIdentifier().getId();
-		checkShellIdentifierInUseBySubmodel(shellDescriptor.getIdentifier());
+		checkIdentifierInUseByShell(shellDescriptor.getIdentifier());
+		checkIdentifierInUseBySubmodel(shellDescriptor.getIdentifier());
 		shellDescriptorMap.put(id, shellDescriptor);
-	}
-
-	private void checkShellIdentifierInUseBySubmodel(IIdentifier shellIdentifier) {
-		if (containsSubmodel(shellIdentifier)) {
-			throw new MalformedRequestException("ShellIdentifier ' " + shellIdentifier + "' already exists as SubmodelIdentifier but must be globally unique.");
-		}
 	}
 
 	@Override
 	public void insertSubmodel(SubmodelDescriptor submodelDescriptor) {
 		String id = submodelDescriptor.getIdentifier().getId();
-		checkSubmodelIdentifierInUseByShell(submodelDescriptor.getIdentifier());
+		checkIdentifierInUseByShell(submodelDescriptor.getIdentifier());
+		checkIdentifierInUseBySubmodel(submodelDescriptor.getIdentifier());
 		submodelDescriptorMap.put(id, submodelDescriptor);
 	}
 
-	private void checkSubmodelIdentifierInUseByShell(IIdentifier submodelIdentifier) {
-		if (containsShell(submodelIdentifier)) {
-			throw new MalformedRequestException("SubmodelIdentifier ' " + submodelIdentifier + "' already exists as SehllIdentifier but must be globally unique.");
-		}
+	@Override
+	public void updateShell(AASDescriptor shellDescriptor) {
+		String id = shellDescriptor.getIdentifier().getId();
+		checkIdentifierInUseBySubmodel(shellDescriptor.getIdentifier());
+		shellDescriptorMap.put(id, shellDescriptor);
 	}
 
 	@Override
-	public void updateShell(AASDescriptor modelDescriptor) {
-		insertShell(modelDescriptor); // has no semantic difference for hashmaps
-	}
-
-	@Override
-	public void updateSubmodel(SubmodelDescriptor modelDescriptor) {
-		insertSubmodel(modelDescriptor); // has no semantic difference for hashmaps
+	public void updateSubmodel(SubmodelDescriptor submodelDescriptor) {
+		String id = submodelDescriptor.getIdentifier().getId();
+		checkIdentifierInUseByShell(submodelDescriptor.getIdentifier());
+		submodelDescriptorMap.put(id, submodelDescriptor);
 	}
 
 	@Override
@@ -109,5 +103,17 @@ public class MapRegistryHandler implements IRegistryHandler {
 	@Override
 	public List<SubmodelDescriptor> getAllSubmodels() {
 		return new ArrayList<>(new HashSet<>(submodelDescriptorMap.values()));
+	}
+
+	private void checkIdentifierInUseBySubmodel(IIdentifier identifier) {
+		if (containsSubmodel(identifier)) {
+			throw new MalformedRequestException("Identifier ' " + identifier + "' already exists as SubmodelIdentifier but must be globally unique.");
+		}
+	}
+
+	private void checkIdentifierInUseByShell(IIdentifier identifier) {
+		if (containsShell(identifier)) {
+			throw new MalformedRequestException("Identifier ' " + identifier + "' already exists as ShellIdentifier but must be globally unique.");
+		}
 	}
 }
