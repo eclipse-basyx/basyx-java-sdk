@@ -33,7 +33,6 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
  *
  */
 public class AASDescriptor extends ModelDescriptor {
-	// TODO: Builder Pattern
 	public static final String MODELTYPE = "AssetAdministrationShellDescriptor";
 	public static final String GLOBAL_ASSET_ID = "globalAssetId";
 	public static final String SPECIFIC_ASSET_IDS = "specificAssetId";
@@ -97,7 +96,7 @@ public class AASDescriptor extends ModelDescriptor {
 
 	/**
 	 * Creates a shell descriptor from a given map
-	 * 
+	 *
 	 * @param map
 	 * @return
 	 */
@@ -122,6 +121,10 @@ public class AASDescriptor extends ModelDescriptor {
 	 * @return this AASDescriptor (Enables method chaining)
 	 */
 	public AASDescriptor addSubmodelDescriptor(SubmodelDescriptor submodelDescriptor) {
+		if (getSubmodelDescriptors().stream().anyMatch(x -> x.getIdShort().equals(submodelDescriptor.getIdShort()))) {
+			throw new MalformedRequestException("IdShort of submodel has to be unique in namespace.");
+		}
+
 		Collection<Map<String, Object>> submodelDescriptors = getSubmodelsDescriptorMapAsCollection();
 
 		submodelDescriptors.add(submodelDescriptor);
