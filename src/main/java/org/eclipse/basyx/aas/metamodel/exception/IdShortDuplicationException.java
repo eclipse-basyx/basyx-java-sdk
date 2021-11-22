@@ -11,20 +11,18 @@ package org.eclipse.basyx.aas.metamodel.exception;
 
 import java.util.Map;
 
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
-
 /**
  * This class is used to throw exception when
- * metamodel's createAsFacade from map does not work
- * due to absence of mandatory fields
+ * a Submodel element has same IdShort for multiple properties.
  * 
- * @author haque
+ * @author danish
  *
  */
-public class MetamodelConstructionException extends ProviderException {
+public class IdShortDuplicationException extends MetamodelConstructionException {
 	private static final long serialVersionUID = 1L;
-	
-	public MetamodelConstructionException(Class<?> clazz , Map<String, Object> map) {
-		super("Could not construct meta model element " + clazz.getName() + ". Passed argument was " + map.toString());
+
+	public IdShortDuplicationException(Class<?> clazz, Map<String, Object> map) {
+		super(clazz, map);
 	}
+
 }

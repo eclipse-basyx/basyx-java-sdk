@@ -15,6 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.eclipse.basyx.aas.metamodel.exception.IdShortDuplicationException;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -138,7 +140,6 @@ public class SubmodelElementMapCollectionConverter {
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> convertCollectionToIDMap(Object smElements) {
 		Map<String, Object> smElementsMap = new LinkedHashMap<>();
-		
 		if(smElements == null) {
 			// if null was given, return an empty Map
 			return smElementsMap;
@@ -151,9 +152,18 @@ public class SubmodelElementMapCollectionConverter {
 			for (Object o: smElementsSet) {
 				Map<String, Object> smElement = (Map<String, Object>) o;
 				String id = (String) smElement.get(Referable.IDSHORT);
+				
+				if(smElementsMap.containsKey(id)) {
+					throw new IdShortDuplicationException(SubmodelElementMapCollectionConverter.class, (Map<String, Object>) smElementsMap);
+				}
+				
 				smElementsMap.put(id, smElement);
 			}
 		} else if(smElements instanceof Map<?, ?>){
+			if(isDuplicateIdShortPresentInSubmodel(smElements)) {
+				throw new IdShortDuplicationException(SubmodelElementMapCollectionConverter.class, (Map<String, Object>) smElementsMap);
+			}
+			
 			smElementsMap = (Map<String, Object>) smElements;
 		} else {
 			throw new RuntimeException("Elements must be given as Map or Collection");
@@ -166,6 +176,30 @@ public class SubmodelElementMapCollectionConverter {
 		return smElementsMap;
 	}
 	
+	/**
+	 * Checks if the provided Submodel Element contains same IdShort for more than one properties <br>
+	 * 
+	 * @param Submodel Elements
+	 * @return True if there is duplicate IdShort present, otherwise False.
+	 */
+	@SuppressWarnings("unchecked")
+	private static boolean isDuplicateIdShortPresentInSubmodel(Object submodelElements) {
+		Map<String, Object> helperMap = new LinkedHashMap<>();
+		
+		Map<String, Object> submodelElementsMap = (Map<String, Object>) submodelElements;
+			
+		for(String key : submodelElementsMap.keySet()){
+			Map<String, Object> submodelElement = (Map<String, Object>) submodelElementsMap.get(key);
+			
+	        if (helperMap.containsKey(submodelElement.get(Referable.IDSHORT))) {
+				return true;
+			}
+	        
+	        helperMap.put(key, submodelElementsMap.get(key));
+		}
+		
+		return  false;
+	}
 	
 	/**
 	 * Converts a given {@literal Map<IdShort, SMElement>} to a smElement Collection. 

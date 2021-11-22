@@ -11,7 +11,6 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelel
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.eclipse.basyx.aas.metamodel.exception.IdShortDuplicationException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -213,6 +213,11 @@ public class TestSubmodelElementCollection {
 	}
 	
 	@Test
+	public void testSubmodel() {
+		
+	}
+	
+	@Test
 	public void testGetValues() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 		collection.setIdShort("smColl");
@@ -263,4 +268,28 @@ public class TestSubmodelElementCollection {
 		operation.put(Referable.IDSHORT, OPERATION_ID);
 		return operation;
 	}
+	
+	@Test(expected = IdShortDuplicationException.class)
+	public void checkForExceptionWithDuplicateIdShortInSubmodelElementCollection() {
+		Map<String, Object> faultySubmodelElementCollection = createSubmodelElementCollectionWithDuplicateIdShortProperties();
+
+		SubmodelElementCollection.createAsFacade(faultySubmodelElementCollection);
+	}
+
+	private Map<String, Object> createSubmodelElementCollectionWithDuplicateIdShortProperties() {
+		Property property1 = new Property("testProp", 5);
+		Property property2 = new Property("testProp", 7);
+		
+		Collection<Map<String, Object>> collection = new ArrayList<>();
+		
+		collection.add(property1);
+		collection.add(property2);
+		
+		SubmodelElementCollection submodelElementCollection = new SubmodelElementCollection(Referable.IDSHORT);
+		
+		submodelElementCollection.setValue(collection);
+		
+		return submodelElementCollection;
+	}
+	
 }
