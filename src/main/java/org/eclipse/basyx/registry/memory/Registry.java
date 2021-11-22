@@ -67,7 +67,7 @@ public class Registry implements IRegistry {
 			throw new ResourceNotFoundException("Could not update Shell " + shellIdentifier.getId() + " since it does not exist.");
 		}
 
-		AASDescriptor oldShellDescriptor = handler.getShell(shellIdentifier);
+		AASDescriptor oldShellDescriptor = lookupShell(shellIdentifier);
 		Collection<SubmodelDescriptor> oldSubmodelDescriptors = oldShellDescriptor.getSubmodelDescriptors();
 		oldSubmodelDescriptors.forEach(submodelDescriptor -> deleteSubmodel(submodelDescriptor.getIdentifier()));
 
@@ -94,7 +94,7 @@ public class Registry implements IRegistry {
 			throw new MalformedRequestException("Can not register a submodelDescriptor with an already existing identifier.");
 		}
 
-		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+		AASDescriptor shellDescriptor = lookupShell(shellIdentifier);
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not add submodel descriptor for Shell " + shellIdentifier.getId() + " since it does not exist.");
 		}
@@ -118,16 +118,17 @@ public class Registry implements IRegistry {
 	@Override
 	public void updateSubmodelForShell(IIdentifier shellIdentifier, SubmodelDescriptor submodelDescriptor) {
 		try {
-			deleteSubmodelFromShell(shellIdentifier, submodelDescriptor.getIdentifier());
+			lookupSubmodelForShell(shellIdentifier, submodelDescriptor.getIdentifier());
 		} catch (ResourceNotFoundException e) {
 			throw new ResourceNotFoundException("Can not update non existing submodelDescriptor.");
 		}
 
-		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+		AASDescriptor shellDescriptor = lookupShell(shellIdentifier);
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not update submodel descriptor for Shell " + shellIdentifier.getId() + " since it does not exist.");
 		}
 
+		shellDescriptor.removeSubmodelDescriptor(submodelDescriptor.getIdentifier());
 		shellDescriptor.addSubmodelDescriptor(submodelDescriptor);
 		updateSubmodel(submodelDescriptor.getIdentifier(), submodelDescriptor);
 		handler.updateShell(shellDescriptor);
@@ -142,7 +143,7 @@ public class Registry implements IRegistry {
 			throw new ResourceNotFoundException("Could not delete key for Shell " + shellId + " since it does not exist.");
 		}
 
-		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+		AASDescriptor shellDescriptor = lookupShell(shellIdentifier);
 		Collection<SubmodelDescriptor> submodelDescriptors = shellDescriptor.getSubmodelDescriptors();
 		submodelDescriptors.forEach(submodelDescriptor -> deleteSubmodel(submodelDescriptor.getIdentifier()));
 
@@ -185,7 +186,7 @@ public class Registry implements IRegistry {
 
 	@Override
 	public void deleteSubmodelFromShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) {
-		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+		AASDescriptor shellDescriptor = lookupShell(shellIdentifier);
 
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not delete submodel descriptor for Shell " + shellIdentifier.getId() + " since the Shell does not exist");
@@ -195,6 +196,7 @@ public class Registry implements IRegistry {
 			throw new ResourceNotFoundException("Could not delete submodel descriptor for Shell " + shellIdentifier.getId() + " since the Submodel does not exist");
 		}
 
+		deleteSubmodel(submodelIdentifier);
 		shellDescriptor.removeSubmodelDescriptor(submodelIdentifier);
 		handler.updateShell(shellDescriptor);
 		logger.debug("Deleted submodel " + submodelIdentifier.getId() + " from Shell " + shellIdentifier.getId());
@@ -202,18 +204,18 @@ public class Registry implements IRegistry {
 
 	@Override
 	public List<SubmodelDescriptor> lookupAllSubmodelsForShell(IIdentifier shellIdentifier) throws ProviderException {
-		AASDescriptor desc = handler.getShell(shellIdentifier);
+		AASDescriptor shellDescriptor = lookupShell(shellIdentifier);
 
-		if (desc == null) {
+		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not look up submodels for Shell " + shellIdentifier + " since it does not exist");
 		}
 
-		return new ArrayList<>(desc.getSubmodelDescriptors());
+		return new ArrayList<>(shellDescriptor.getSubmodelDescriptors());
 	}
 
 	@Override
 	public SubmodelDescriptor lookupSubmodelForShell(IIdentifier shellIdentifier, IIdentifier submodelIdentifier) throws ProviderException {
-		AASDescriptor shellDescriptor = handler.getShell(shellIdentifier);
+		AASDescriptor shellDescriptor = lookupShell(shellIdentifier);
 
 		if (shellDescriptor == null) {
 			throw new ResourceNotFoundException("Could not look up descriptor for Submodel " + submodelIdentifier + " of Shell " + shellIdentifier + " since the Shell does not exist");
