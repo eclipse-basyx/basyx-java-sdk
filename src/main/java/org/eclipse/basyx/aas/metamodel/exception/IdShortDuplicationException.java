@@ -12,8 +12,8 @@ package org.eclipse.basyx.aas.metamodel.exception;
 import java.util.Map;
 
 /**
- * This class is used to throw exception when
- * a Submodel element has same IdShort for multiple properties.
+ * This class is used to throw exception when there are two
+ * Submodel elements that has same IdShort.
  * 
  * @author danish
  *

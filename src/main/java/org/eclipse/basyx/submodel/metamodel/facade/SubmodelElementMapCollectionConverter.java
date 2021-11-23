@@ -177,7 +177,7 @@ public class SubmodelElementMapCollectionConverter {
 	}
 	
 	/**
-	 * Checks if the provided Submodel Element contains same IdShort for more than one properties <br>
+	 * Checks if there are two elements in the provided Submodel Elements with the same IdShort <br>
 	 * 
 	 * @param Submodel Elements
 	 * @return True if there is duplicate IdShort present, otherwise False.
