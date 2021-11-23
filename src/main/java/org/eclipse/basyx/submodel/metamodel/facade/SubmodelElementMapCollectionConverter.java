@@ -154,14 +154,14 @@ public class SubmodelElementMapCollectionConverter {
 				String id = (String) smElement.get(Referable.IDSHORT);
 				
 				if(smElementsMap.containsKey(id)) {
-					throw new IdShortDuplicationException(SubmodelElementMapCollectionConverter.class, (Map<String, Object>) smElementsMap);
+					throw new IdShortDuplicationException((Map<String, Object>) smElementsMap);
 				}
 				
 				smElementsMap.put(id, smElement);
 			}
 		} else if(smElements instanceof Map<?, ?>){
-			if(isDuplicateIdShortPresentInSubmodel(smElements)) {
-				throw new IdShortDuplicationException(SubmodelElementMapCollectionConverter.class, (Map<String, Object>) smElementsMap);
+			if(isDuplicateIdShortPresentInSubmodelElements((Map<String, Object>) smElements)) {
+				throw new IdShortDuplicationException((Map<String, Object>) smElementsMap);
 			}
 			
 			smElementsMap = (Map<String, Object>) smElements;
@@ -183,19 +183,17 @@ public class SubmodelElementMapCollectionConverter {
 	 * @return True if there is duplicate IdShort present, otherwise False.
 	 */
 	@SuppressWarnings("unchecked")
-	private static boolean isDuplicateIdShortPresentInSubmodel(Object submodelElements) {
+	private static boolean isDuplicateIdShortPresentInSubmodelElements(Map<String, Object> submodelElements) {
 		Map<String, Object> helperMap = new LinkedHashMap<>();
-		
-		Map<String, Object> submodelElementsMap = (Map<String, Object>) submodelElements;
 			
-		for(String key : submodelElementsMap.keySet()){
-			Map<String, Object> submodelElement = (Map<String, Object>) submodelElementsMap.get(key);
+		for(String key : submodelElements.keySet()){
+			Map<String, Object> submodelElement = (Map<String, Object>) submodelElements.get(key);
 			
 	        if (helperMap.containsKey(submodelElement.get(Referable.IDSHORT))) {
 				return true;
 			}
 	        
-	        helperMap.put(key, submodelElementsMap.get(key));
+	        helperMap.put(key, submodelElements.get(key));
 		}
 		
 		return  false;

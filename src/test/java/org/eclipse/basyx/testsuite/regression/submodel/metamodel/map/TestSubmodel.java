@@ -11,8 +11,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -96,15 +95,16 @@ public class TestSubmodel extends TestSubmodelSuite {
 	}
 
 	private Map<String, Object> createSubmodelWithDuplicateIdShortProperties() {
-		Property property1 = new Property("testProp", 5);
-		Property property2 = new Property("testProp", 7);
+		String duplicateIdShort = "testProp";
 		
-		Collection<Map<String, Object>> collection = new ArrayList<>();
+		Property property1 = new Property(duplicateIdShort, 5);
+		Property property2 = new Property(duplicateIdShort, 7);
 		
-		collection.add(property1);
-		collection.add(property2);
+		Collection<Map<String, Object>> collection = Arrays.asList(property1, property2);
 		
-		Submodel submodel = new Submodel();
+		String idShort = "submodelIdShort";
+		
+		Submodel submodel = new Submodel(idShort, new Identifier(IdentifierType.IRI, idShort));
 		
 		submodel.put(Submodel.SUBMODELELEMENT, collection);
 		

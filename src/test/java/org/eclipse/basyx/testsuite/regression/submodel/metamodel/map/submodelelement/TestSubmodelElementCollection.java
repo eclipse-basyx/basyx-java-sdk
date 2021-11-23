@@ -152,7 +152,6 @@ public class TestSubmodelElementCollection {
 		assertEquals(elementsMap, elementCollection.getSubmodelElements());
 	} 
 
-
 	@Test
 	public void testConstructor1() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
@@ -210,11 +209,6 @@ public class TestSubmodelElementCollection {
 	public void testDeleteSubmodelElementNotExist() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 		collection.deleteSubmodelElement("Id_Which_Does_Not_Exist");
-	}
-	
-	@Test
-	public void testSubmodel() {
-		
 	}
 	
 	@Test
@@ -277,19 +271,19 @@ public class TestSubmodelElementCollection {
 	}
 
 	private Map<String, Object> createSubmodelElementCollectionWithDuplicateIdShortProperties() {
-		Property property1 = new Property("testProp", 5);
-		Property property2 = new Property("testProp", 7);
+		String duplicateIdShort = "testProp";
 		
-		Collection<Map<String, Object>> collection = new ArrayList<>();
+		Property property1 = new Property(duplicateIdShort, 5);
+		Property property2 = new Property(duplicateIdShort, 7);
 		
-		collection.add(property1);
-		collection.add(property2);
+		Collection<Map<String, Object>> collection = Arrays.asList(property1, property2);
 		
-		SubmodelElementCollection submodelElementCollection = new SubmodelElementCollection(Referable.IDSHORT);
+		String idShort = "submodelElementCollectionIdShort";
+		
+		SubmodelElementCollection submodelElementCollection = new SubmodelElementCollection(idShort);
 		
 		submodelElementCollection.setValue(collection);
 		
 		return submodelElementCollection;
 	}
-	
 }

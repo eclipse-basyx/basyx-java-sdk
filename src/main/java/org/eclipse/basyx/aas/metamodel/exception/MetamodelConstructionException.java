@@ -27,4 +27,8 @@ public class MetamodelConstructionException extends ProviderException {
 	public MetamodelConstructionException(Class<?> clazz , Map<String, Object> map) {
 		super("Could not construct meta model element " + clazz.getName() + ". Passed argument was " + map.toString());
 	}
+	
+	public MetamodelConstructionException(String exceptionMessage) { 
+		super(exceptionMessage);
+	}
 }

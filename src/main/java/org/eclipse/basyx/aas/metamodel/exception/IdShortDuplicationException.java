@@ -12,7 +12,7 @@ package org.eclipse.basyx.aas.metamodel.exception;
 import java.util.Map;
 
 /**
- * This class is used to throw exception when there are two
+ * This class represents the exception when there are two
  * Submodel elements that has same IdShort.
  * 
  * @author danish
@@ -23,6 +23,10 @@ public class IdShortDuplicationException extends MetamodelConstructionException 
 
 	public IdShortDuplicationException(Class<?> clazz, Map<String, Object> map) {
 		super(clazz, map);
+	}
+	
+	public IdShortDuplicationException(Map<String, Object> map) {
+		super("Could not construct meta model element due to IdShort duplication. Passed argument was " + map.toString());
 	}
 
 }

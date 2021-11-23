@@ -108,8 +108,6 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 		}
 		
 		if (!isValid(obj)) {
-			System.out.println("Exception : obj = " + obj);
-			System.out.println("Exception : obj.get = " + obj.get(Referable.IDSHORT));
 			throw new MetamodelConstructionException(SubmodelElementCollection.class, obj);
 		}
 		
