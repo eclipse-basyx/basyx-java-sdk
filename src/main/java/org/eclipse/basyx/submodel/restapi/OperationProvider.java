@@ -24,7 +24,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operat
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.submodel.restapi.operation.AsyncOperationHandler;
 import org.eclipse.basyx.submodel.restapi.operation.CallbackResponse;
-import org.eclipse.basyx.submodel.restapi.operation.DelegatedInvocationHelper;
+import org.eclipse.basyx.submodel.restapi.operation.DelegatedInvocationManager;
 import org.eclipse.basyx.submodel.restapi.operation.ExecutionState;
 import org.eclipse.basyx.submodel.restapi.operation.InvocationRequest;
 import org.eclipse.basyx.submodel.restapi.operation.InvocationResponse;
@@ -32,6 +32,7 @@ import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 
 /**
  * Handles operations according to AAS meta model.
@@ -45,9 +46,15 @@ public class OperationProvider implements IModelProvider {
 	public String operationId;
 
 	private IModelProvider modelProvider;
-
+	private DelegatedInvocationManager invocationHelper;
+	
 	public OperationProvider(IModelProvider modelProvider) {
+		this(modelProvider, new DelegatedInvocationManager(new HTTPConnectorFactory()));
+	}
+
+	public OperationProvider(IModelProvider modelProvider, DelegatedInvocationManager invocationHelper) {
 		this.modelProvider = modelProvider;
+		this.invocationHelper = invocationHelper;
 		operationId = getIdShort(modelProvider.getValue(""));
 	}
 
@@ -103,8 +110,8 @@ public class OperationProvider implements IModelProvider {
 		}
 		Operation op = Operation.createAsFacade((Map<String, Object>) childElement);
 		
-		if (DelegatedInvocationHelper.isDelegatingOperation(op)) {
-			return DelegatedInvocationHelper.invokeDelegatedOperation(op, parameters);
+		if (DelegatedInvocationManager.isDelegatingOperation(op)) {
+			return invocationHelper.invokeDelegatedOperation(op, parameters);
 		} else {
 			InvocationRequest request = getInvocationRequest(parameters, op);
 			
