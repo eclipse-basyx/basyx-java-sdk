@@ -12,6 +12,7 @@ package org.eclipse.basyx.extensions.aas.directory.tagged.api;
 import java.util.Set;
 
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * A tagged directory is a registry that allows to register AAS and associate
@@ -38,5 +39,13 @@ public interface IAASTaggedDirectory extends IAASRegistry {
 	 * @return
 	 */
 	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags);
+
+	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor);
+
+	public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(String submodelTag);
+
+	public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(Set<String> submodelTags);
+
+	public Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(Set<String> aasTags, Set<String> submodelTags);
 
 }

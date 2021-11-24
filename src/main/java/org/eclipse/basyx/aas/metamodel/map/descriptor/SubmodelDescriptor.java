@@ -40,6 +40,10 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 		validate(map);
 	}
 	
+	protected SubmodelDescriptor() {
+	  super();
+	}
+	
 	/**
 	 * Create a new aas descriptor with minimal information based on an existing
 	 * submodel.
