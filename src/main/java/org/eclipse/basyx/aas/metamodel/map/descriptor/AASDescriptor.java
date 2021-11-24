@@ -10,6 +10,7 @@
 package org.eclipse.basyx.aas.metamodel.map.descriptor;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
