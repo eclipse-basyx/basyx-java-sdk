@@ -12,11 +12,11 @@ package org.eclipse.basyx.aas.factory.aasx;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.AasEnv;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.parts.IConceptDescription;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
@@ -42,8 +42,8 @@ public class AASXPackageExplorerConformantHelper {
 	 * @return
 	 */
 	public static AasEnv adapt(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList,
-			Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList) {
-
+		Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList) {
+		
 		Collection<IAssetAdministrationShell> convertedAASs = aasList.stream()
 				.map(AASXPackageExplorerConformantHelper::removeFirstKeyFromSubmodelReferences)
 				.collect(Collectors.toList());
@@ -64,12 +64,23 @@ public class AASXPackageExplorerConformantHelper {
 	}
 
 	private static IAssetAdministrationShell removeFirstKeyFromSubmodelReferences(IAssetAdministrationShell shell) {
-		Collection<IReference> convertedReferences = shell.getSubmodelReferences().stream()
+		IAssetAdministrationShell copyOfProvidedShell = createCopyOfProvidedShell(shell.getIdShort(), shell.getIdentification().getId());
+		
+		Collection<IReference> convertedReferences = copyOfProvidedShell.getSubmodelReferences().stream()
 				.map(AASXPackageExplorerConformantHelper::removeFirstKeyElement).collect(Collectors.toList());
 
-		((AssetAdministrationShell) shell).setSubmodelReferences(convertedReferences);
+		((AssetAdministrationShell) copyOfProvidedShell).setSubmodelReferences(convertedReferences);
 
-		return shell;
+		return copyOfProvidedShell;
+	}
+
+	private static IAssetAdministrationShell createCopyOfProvidedShell(String idShort, String identification) {
+		AssetAdministrationShell newShell = new AssetAdministrationShell();
+		
+		newShell.setIdShort(idShort);
+		newShell.setIdentification(new ModelUrn(identification));
+		
+		return newShell;
 	}
 
 	private static IReference removeFirstKeyElement(IReference reference) {
