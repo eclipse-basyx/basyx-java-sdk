@@ -28,7 +28,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operat
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.submodel.restapi.OperationProvider;
 import org.eclipse.basyx.submodel.restapi.operation.CallbackResponse;
-import org.eclipse.basyx.submodel.restapi.operation.DelegatedInvocationHelper;
+import org.eclipse.basyx.submodel.restapi.operation.DelegatedInvocationManager;
 import org.eclipse.basyx.submodel.restapi.operation.InvocationRequest;
 import org.eclipse.basyx.submodel.restapi.operation.InvocationResponse;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
@@ -256,7 +256,7 @@ public class OperationProviderTest {
 		Operation delegatedOperation = createOperation("delegatedOperation", null, null, null);
 		
 		// Create a delegated qualifier and add to the operation
-		Qualifier qualifier = new Qualifier(DelegatedInvocationHelper.DELEGATION_TYPE, API_INVOKE_URL, "string", null);
+		Qualifier qualifier = DelegatedInvocationManager.createDelegationQualifier(API_INVOKE_URL);
 		delegatedOperation.setQualifiers(Arrays.asList(qualifier));
 		
 		OperationProvider delegatedOpProvider = new OperationProvider(new VABLambdaProvider(delegatedOperation));
