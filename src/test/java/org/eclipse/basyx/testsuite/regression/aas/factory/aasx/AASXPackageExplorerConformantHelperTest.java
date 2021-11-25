@@ -10,7 +10,6 @@
 package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -122,7 +121,7 @@ public class AASXPackageExplorerConformantHelperTest {
         Collection<IAsset> listOfAssets = new ArrayList<IAsset>();
         Collection<IConceptDescription> listOfConceptDescription = new ArrayList<IConceptDescription>();
         
-        int noOfFilesToGenerate = 7;
+        int noOfFilesToGenerate = 8;
         
         String filePath = "src\\test\\resources\\TestPackage.aasx";
         
