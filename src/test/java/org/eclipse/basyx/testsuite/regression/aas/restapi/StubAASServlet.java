@@ -10,7 +10,7 @@
 package org.eclipse.basyx.testsuite.regression.aas.restapi;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
+import org.eclipse.basyx.aas.metamodel.map.identifiers.ModelUrn;
 import org.eclipse.basyx.aas.restapi.AASModelProvider;
 import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -22,26 +22,29 @@ public class StubAASServlet extends VABHTTPInterface<MultiSubmodelProvider> {
 	private static final long serialVersionUID = 8859337501045845823L;
 
 	// Used short ids
-	public static final String AASIDSHORT = "StubAAS";
-	public static final String SMIDSHORT = "StubSM";
+	/**
+	 * 
+	 */
+	public static final String SHELLIDSHORT = "StubAAS";
+	public static final String SUBMODELIDSHORT = "StubSM";
 
 	// Used URNs
-	public static final ModelUrn AASURN = new ModelUrn("urn:fhg:es.iese:aas:1:1:myAAS#001");
-	public static final ModelUrn SMURN = new ModelUrn("urn:fhg:es.iese:aas:1:1:mySM#001");
+	public static final ModelUrn SHELLURN = new ModelUrn("urn:fhg:es.iese:aas:1:1:myAAS#001");
+	public static final ModelUrn SUBMODELURN = new ModelUrn("urn:fhg:es.iese:aas:1:1:mySM#001");
 
 	public StubAASServlet() {
 		super(new MultiSubmodelProvider());
 
 		Submodel sm = new Submodel();
-		sm.setIdentification(SMURN.getIdType(), SMURN.getId());
-		sm.setIdShort(SMIDSHORT);
+		sm.setIdentification(SUBMODELURN.getIdType(), SUBMODELURN.getId());
+		sm.setIdShort(SUBMODELIDSHORT);
 		AssetAdministrationShell aas = new AssetAdministrationShell();
 		aas.addSubmodel(sm);
-		aas.setIdShort(AASIDSHORT);
-		aas.setIdentification(AASURN);
+		aas.setIdShort(SHELLIDSHORT);
+		aas.setIdentification(SHELLURN);
 
 		getModelProvider().setAssetAdministrationShell(new AASModelProvider(aas));
-		getModelProvider().addSubmodel(new SubmodelProvider(new SimpleAASSubmodel(SMIDSHORT)));
+		getModelProvider().addSubmodel(new SubmodelProvider(new SimpleAASSubmodel(SUBMODELIDSHORT)));
 	}
 
 }

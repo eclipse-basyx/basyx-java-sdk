@@ -11,7 +11,7 @@
 
 package org.eclipse.basyx.aas.aggregator.observing;
 
-import org.eclipse.basyx.aas.observer.IObserver;
+import org.eclipse.basyx.core.observer.IObserver;
 
 /**
  * Interface for an observer of {@link ObservableAASAggregator}

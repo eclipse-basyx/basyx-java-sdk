@@ -139,12 +139,12 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		// expect references to be set according to the descriptors
 		Collection<IReference> smReferences = shell.getSubmodelReferences();
 		List<IKey> expected1Keys = new ArrayList<>();
-		expected1Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID.getId(), AASID.getIdType()));
+		expected1Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, SHELLIDENTIFIER.getId(), SHELLIDENTIFIER.getIdType()));
 		expected1Keys.add(new Key(KeyElements.SUBMODEL, true, "smId1", IdentifierType.CUSTOM));
 		Reference expected1 = new Reference(expected1Keys);
 
 		List<IKey> expected2Keys = new ArrayList<>();
-		expected2Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID.getId(), AASID.getIdType()));
+		expected2Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, SHELLIDENTIFIER.getId(), SHELLIDENTIFIER.getIdType()));
 		expected2Keys.add(new Key(KeyElements.SUBMODEL, true, "smId1", IdentifierType.CUSTOM));
 		Reference expected2 = new Reference(expected2Keys);
 		assertTrue(smReferences.contains(expected1));
