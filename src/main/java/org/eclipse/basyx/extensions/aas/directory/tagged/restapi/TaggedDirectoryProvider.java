@@ -65,11 +65,7 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
-		try {
-			path = URLDecoder.decode(path, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new MalformedRequestException("Encoding failed. This should never happen");
-		}
+	    path = VABPathTools.decodePathElement(path);
 		path = VABPathTools.stripSlashes(path);
 		if (path.startsWith(PREFIX)) {
 			if (path.contains("/submodels/")) {
