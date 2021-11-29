@@ -27,6 +27,7 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.restapi.TaggedDirectory
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
+import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 
@@ -50,20 +51,12 @@ public class TaggedDirectoryProxy extends AASRegistryProxy implements IAASTagged
 
 	@Override
 	public void register(TaggedAASDescriptor descriptor) {
-		try {
-			taggedProvider.createValue(URLEncoder.encode(descriptor.getIdentifier().getId(), "UTF-8"), descriptor);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Encoding failed. This should never happen");
-		}
+		taggedProvider.createValue(VABPathTools.encodePathElement(descriptor.getIdentifier().getId()), descriptor);
 	}
 
 	@Override
 	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor smDescriptor) {
-		try {
-			taggedProvider.createValue(URLEncoder.encode(aas.getId() + "/submodels/" + smDescriptor.getIdentifier().getId(), "UTF-8"), smDescriptor);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Encoding failed. This should never happen");
-		}
+		taggedProvider.createValue(VABPathTools.encodePathElement(aas.getId() + "/submodels/" + smDescriptor.getIdentifier().getId()), smDescriptor);
 	}
 
 	@Override
