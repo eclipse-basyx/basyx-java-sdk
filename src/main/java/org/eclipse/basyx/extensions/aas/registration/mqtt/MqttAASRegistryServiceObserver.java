@@ -28,12 +28,6 @@ import org.slf4j.LoggerFactory;
 public class MqttAASRegistryServiceObserver extends MqttEventService implements IAASRegistryServiceObserver {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASRegistryServiceObserver.class);
 
-	// List of topics
-	public static final String TOPIC_REGISTERAAS = "BaSyxRegistry_registeredAAS";
-	public static final String TOPIC_REGISTERSUBMODEL = "BaSyxRegistry_registeredSubmodel";
-	public static final String TOPIC_DELETEAAS = "BaSyxRegistry_deletedAAS";
-	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
-
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
 	 *  
@@ -89,25 +83,21 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 
 	@Override
 	public void aasRegistered(String aasId) {
-		sendMqttMessage(TOPIC_REGISTERAAS, aasId);
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERAAS, aasId);
 	}
 
 	@Override
 	public void submodelRegistered(IIdentifier aasId, IIdentifier smId) {
-		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(aasId, smId));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
 	}
 
 	@Override
 	public void aasDeleted(String aasId) {
-		sendMqttMessage(TOPIC_DELETEAAS, aasId);
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETEAAS, aasId);
 	}
 
 	@Override
 	public void submodelDeleted(IIdentifier aasId, IIdentifier smId) {
-		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(aasId, smId));
-	}
-	
-	public static String concatAasSmId(IIdentifier aasId, IIdentifier smId) {
-		return "(" + aasId.getId() + "," + smId.getId() + ")";
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
 	}
 }

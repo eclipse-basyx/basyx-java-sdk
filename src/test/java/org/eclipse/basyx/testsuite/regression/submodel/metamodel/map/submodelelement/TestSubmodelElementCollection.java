@@ -11,7 +11,6 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelel
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.eclipse.basyx.aas.metamodel.exception.IdShortDuplicationException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -152,7 +152,6 @@ public class TestSubmodelElementCollection {
 		assertEquals(elementsMap, elementCollection.getSubmodelElements());
 	} 
 
-
 	@Test
 	public void testConstructor1() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
@@ -262,5 +261,29 @@ public class TestSubmodelElementCollection {
 		Operation operation = new Operation(variable, variable, variable, null);
 		operation.put(Referable.IDSHORT, OPERATION_ID);
 		return operation;
+	}
+	
+	@Test(expected = IdShortDuplicationException.class)
+	public void checkForExceptionWithDuplicateIdShortInSubmodelElementCollection() {
+		Map<String, Object> faultySubmodelElementCollection = createSubmodelElementCollectionWithDuplicateIdShortProperties();
+
+		SubmodelElementCollection.createAsFacade(faultySubmodelElementCollection);
+	}
+
+	private Map<String, Object> createSubmodelElementCollectionWithDuplicateIdShortProperties() {
+		String duplicateIdShort = "testProp";
+		
+		Property property1 = new Property(duplicateIdShort, 5);
+		Property property2 = new Property(duplicateIdShort, 7);
+		
+		Collection<Map<String, Object>> collection = Arrays.asList(property1, property2);
+		
+		String idShort = "submodelElementCollectionIdShort";
+		
+		SubmodelElementCollection submodelElementCollection = new SubmodelElementCollection(idShort);
+		
+		submodelElementCollection.setValue(collection);
+		
+		return submodelElementCollection;
 	}
 }
