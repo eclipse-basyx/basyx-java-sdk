@@ -11,12 +11,14 @@ package org.eclipse.basyx.vab.protocol.http.connector;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -31,6 +33,7 @@ import org.eclipse.basyx.vab.protocol.http.server.ExceptionToHTTPCodeMapper;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 import com.google.gson.Gson;
 
@@ -48,6 +51,8 @@ public class HTTPConnector implements IBaSyxConnector {
 	
 	private String address;
 	private String mediaType;
+	@Nullable
+	private final IAuthorizationSupplier authorizationSupplier;
 	protected Client client;
 
 	/**
@@ -66,9 +71,18 @@ public class HTTPConnector implements IBaSyxConnector {
 		this(address, MediaType.APPLICATION_JSON + ";charset=UTF-8");
 	}
 
+	public HTTPConnector(String address, final IAuthorizationSupplier authorizationSupplier) {
+		this(address, MediaType.APPLICATION_JSON + ";charset=UTF-8", authorizationSupplier);
+	}
+
 	public HTTPConnector(String address, String mediaType) {
+		this(address, mediaType, null);
+	}
+
+	public HTTPConnector(final String address, final String mediaType, @Nullable final IAuthorizationSupplier authorizationSupplier) {
 		this.address = address;
 		this.mediaType = mediaType;
+		this.authorizationSupplier = authorizationSupplier;
 		
 		// Create client
 		client = ClientBuilder.newClient();
@@ -140,8 +154,14 @@ public class HTTPConnector implements IBaSyxConnector {
 		// Build request, set JSON encoding
 		Builder request = resource.request();
 		request.accept(mediaType);
+		getAuthorization().ifPresent(authorization -> request.header(HttpHeaders.AUTHORIZATION, authorization));
+
 		// Return JSON request
 		return request;
+	}
+
+	private Optional<String> getAuthorization(){
+		return Optional.ofNullable(authorizationSupplier).flatMap(IAuthorizationSupplier::getAuthorization);
 	}
 
 	/**
@@ -212,7 +232,9 @@ public class HTTPConnector implements IBaSyxConnector {
 		// Create and invoke HTTP PATCH request
 		Response rsp = null;
 		try {
-			rsp = this.client.target(VABPathTools.concatenatePaths(address, servicePath)).request().build("PATCH", Entity.text(newValue)).property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
+			final Builder request = this.client.target(VABPathTools.concatenatePaths(address, servicePath)).request();
+			getAuthorization().ifPresent(authorization -> request.header(HttpHeaders.AUTHORIZATION, authorization));
+			rsp = request.build("PATCH", Entity.text(newValue)).property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
 		} finally {
 			if (!isRequestSuccess(rsp)) {
 				throw this.handleProcessingException(HttpMethod.PATCH, rsp);
