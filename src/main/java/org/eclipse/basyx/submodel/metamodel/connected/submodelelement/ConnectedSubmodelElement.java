@@ -110,4 +110,9 @@ public abstract class ConnectedSubmodelElement extends ConnectedElement implemen
 	public SubmodelElement getLocalCopy() {
 		return SubmodelElement.createAsFacade(getElem()).getLocalCopy();
 	}
+
+	@Override
+	public Object getValue() {
+		return getProxy().getValue(MultiSubmodelElementProvider.VALUE);
+	}
 }
