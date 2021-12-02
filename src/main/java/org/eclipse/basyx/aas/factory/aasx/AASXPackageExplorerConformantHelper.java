@@ -31,8 +31,6 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
  *
  */
 public class AASXPackageExplorerConformantHelper {
-	
-	static int counter = 0;
 	/**
 	 * Converts meta model elements so that the AASXPackageExplorer can load their
 	 * serialized AASX. This method modifies the passed parameter Asset Administration Shell List.
