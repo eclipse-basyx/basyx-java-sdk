@@ -10,7 +10,7 @@
 package org.eclipse.basyx.extensions.aas.directory.tagged.restapi;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -28,7 +28,7 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 	public static final String API_ACCESS = "?tags=";
 
 	public TaggedDirectoryProvider() {
-		this(new MapTaggedDirectory(new HashMap<>(), new HashMap<>()));
+		this(new MapTaggedDirectory(new LinkedHashMap<>(), new LinkedHashMap<>()));
 	}
 
 	public TaggedDirectoryProvider(MapTaggedDirectory directory) {

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
@@ -47,7 +47,7 @@ public class TestVABHTTPS extends TestProvider {
 	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory("https"),
 			new HTTPSConnectorProvider());
 
-	private RecordingProvider recorder = new RecordingProvider(new VABMapProvider(new HashMap<>()));
+	private RecordingProvider recorder = new RecordingProvider(new VABMapProvider(new LinkedHashMap<>()));
 
 	/**
 	 * Makes sure Tomcat Server is started after before each test case

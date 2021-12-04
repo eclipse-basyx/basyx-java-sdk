@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -108,8 +108,8 @@ public class TestJson {
 	public void testMap() {
 		String str = "{\"a\": { \"x\" : 123}, \"b\": \"123\"}";
 
-		Map<String, Object> expected = new HashMap<>();
-		Map<String, Object> a = new HashMap<>();
+		Map<String, Object> expected = new LinkedHashMap<>();
+		Map<String, Object> a = new LinkedHashMap<>();
 		a.put("x", 123);
 		expected.put("a", a);
 		expected.put("b", "123");
@@ -135,10 +135,10 @@ public class TestJson {
 	public void testMapWithCollection() {
 		String str = "{\"a\": [1,2,3]}";
 
-		Map<String, Object> listMap = new HashMap<>();
+		Map<String, Object> listMap = new LinkedHashMap<>();
 		listMap.put("a", Arrays.asList(1, 2, 3));
 		
-		Map<String, Object> setMap = new HashMap<>();
+		Map<String, Object> setMap = new LinkedHashMap<>();
 		setMap.put("a", Sets.newHashSet(1, 2, 3));
 		
 		Map<String, Object> deserialized = (Map<String, Object>) tools.deserialize(str);
@@ -211,7 +211,7 @@ public class TestJson {
 	 */
 	@Test
 	public void testEmptyListInMap() {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new LinkedHashMap<>();
 		map.put("a", new ArrayList<>());
 		assertEquals(map, tools.deserialize(tools.serialize(map)));
 	}
@@ -263,7 +263,7 @@ public class TestJson {
 	 */
 	@Test
 	public void testEmptySetInMap() {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new LinkedHashMap<>();
 		map.put("test", new ArrayList<>());
 		String result = tools.serialize(map);
 		assertEquals("{\"test\":[]}", result);
@@ -327,8 +327,8 @@ public class TestJson {
 	@Test
 	public void testSerializeWithRemoveFlagsOn() throws IOException {
 		GSONTools toolWithRemoveFlagOn = new GSONTools(new DefaultTypeFactory(), true, true);
-		Map<String, Object> expected = new HashMap<>();
-		Map<String, Object> a = new HashMap<>();
+		Map<String, Object> expected = new LinkedHashMap<>();
+		Map<String, Object> a = new LinkedHashMap<>();
 		a.put("x", 123);
 		expected.put("a", a);
 		expected.put("b", "123");

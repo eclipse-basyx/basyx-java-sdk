@@ -11,7 +11,7 @@ package org.eclipse.basyx.testsuite.regression.vab.modelprovider.lambda;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -38,11 +38,11 @@ public class TestLambdaProvider extends TestProvider {
 	private static double doubleElement = 3.14d;
 	private static Collection<Object> collectionElement = new ArrayList<>();
 	private static Map<String, Object> rootAccessor;
-	private static HashMap<String, Object> rootElement = new SimpleVABElement();
+	private static LinkedHashMap<String, Object> rootElement = new SimpleVABElement();
 	@SuppressWarnings("unchecked")
-	private static HashMap<String, Object> structureElement = (HashMap<String, Object>) rootElement.get("structure");
+	private static LinkedHashMap<String, Object> structureElement = (LinkedHashMap<String, Object>) rootElement.get("structure");
 	@SuppressWarnings("unchecked")
-	private static HashMap<String, Object> mapElement = (HashMap<String, Object>) structureElement.get("map");
+	private static LinkedHashMap<String, Object> mapElement = (LinkedHashMap<String, Object>) structureElement.get("map");
 
 	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(),
 			new ConnectorFactory() {
@@ -61,7 +61,7 @@ public class TestLambdaProvider extends TestProvider {
 	@SuppressWarnings("unchecked")
 	private static IModelProvider buildProvider() {
 		// Create primitive lambda elements
-		HashMap<String, Object> primitives = (HashMap<String, Object>) rootElement.get("primitives");
+		LinkedHashMap<String, Object> primitives = (LinkedHashMap<String, Object>) rootElement.get("primitives");
 		// Has no hidden setter (==null), so value should be completely replaced when set
 		primitives.put("integer", VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
 			return 123;
@@ -74,7 +74,7 @@ public class TestLambdaProvider extends TestProvider {
 		}));
 
 		// Create collection lambda element
-		HashMap<String, Object> collections = (HashMap<String, Object>) rootElement.get("structure");
+		LinkedHashMap<String, Object> collections = (LinkedHashMap<String, Object>) rootElement.get("structure");
 		Map<String, Object> collectionAccessor = VABLambdaProviderHelper.createCollection((Supplier<Object>) () -> {
 			return collectionElement;
 		}, (Consumer<Collection<Object>>) (collection) -> {
@@ -91,7 +91,7 @@ public class TestLambdaProvider extends TestProvider {
 		rootAccessor = VABLambdaProviderHelper.createMap((Supplier<?>) () -> {
 			return rootElement;
 		}, (Consumer<Map<String, Object>>) (map) -> {
-			rootElement = (HashMap<String, Object>) map;
+			rootElement = (LinkedHashMap<String, Object>) map;
 		}, (BiConsumer<String, Object>) (key, value) -> {
 			rootElement.put(key, value);
 		}, (Consumer<Object>) (o) -> {
@@ -103,7 +103,7 @@ public class TestLambdaProvider extends TestProvider {
 		Map<String, Object> structureAccessor = VABLambdaProviderHelper.createMap((Supplier<?>) () -> {
 			return structureElement;
 		}, (Consumer<Map<String, Object>>) (map) -> {
-			structureElement = (HashMap<String, Object>) map;
+			structureElement = (LinkedHashMap<String, Object>) map;
 		}, (BiConsumer<String, Object>) (key, value) -> {
 			structureElement.put(key, value);
 		}, (Consumer<Object>) (o) -> {
@@ -116,7 +116,7 @@ public class TestLambdaProvider extends TestProvider {
 		Map<String, Object> mapAccessor = VABLambdaProviderHelper.createMap((Supplier<?>) () -> {
 			return mapElement;
 		}, (Consumer<Map<String, Object>>) (map) -> {
-			mapElement = (HashMap<String, Object>) map;
+			mapElement = (LinkedHashMap<String, Object>) map;
 		}, (BiConsumer<String, Object>) (key, value) -> {
 			mapElement.put(key, value);
 		}, (Consumer<Object>) (o) -> {

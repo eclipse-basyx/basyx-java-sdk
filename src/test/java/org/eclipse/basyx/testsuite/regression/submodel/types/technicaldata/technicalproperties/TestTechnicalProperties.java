@@ -14,7 +14,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.tech
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public class TestTechnicalProperties {
 	public static SubmodelElement arbitrary1 = new Property("arbitraryId1", ValueType.String);
 	public static SubmodelElement arbitrary2 = new Property("arbitraryId2", ValueType.String);
 	
-	private Map<String, Object> technicalMap = new HashMap<String, Object>();
+	private Map<String, Object> technicalMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void init() {

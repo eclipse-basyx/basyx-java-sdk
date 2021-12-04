@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.modelprovider.lambda;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -33,7 +33,7 @@ public class VABLambdaProviderHelper {
 	 * @return
 	 */
 	public static Map<String, Object> createSimple(Supplier<Object> get, Consumer<Object> set) {
-		Map<String, Object> value = new HashMap<>();
+		Map<String, Object> value = new LinkedHashMap<>();
 		value.put(VABLambdaHandler.VALUE_GET_SUFFIX, get);
 		value.put(VABLambdaHandler.VALUE_SET_SUFFIX, set);
 		return value;
@@ -56,7 +56,7 @@ public class VABLambdaProviderHelper {
 	 */
 	public static Map<String, Object> createMap(Supplier<?> get, Consumer<?> set, BiConsumer<String, Object> insert,
 			Consumer<Object> removeObject, Consumer<String> removeKey) {
-		Map<String, Object> value = new HashMap<>();
+		Map<String, Object> value = new LinkedHashMap<>();
 		value.put(VABLambdaHandler.VALUE_GET_SUFFIX, get);
 		value.put(VABLambdaHandler.VALUE_SET_SUFFIX, set);
 		value.put(VABLambdaHandler.VALUE_REMOVEOBJ_SUFFIX, removeObject);
@@ -82,7 +82,7 @@ public class VABLambdaProviderHelper {
 	 */
 	public static Map<String, Object> createCollection(Supplier<?> get, Consumer<?> set, Consumer<Object> insert,
 			Consumer<Object> removeObject, Consumer<String> removeKey) {
-		Map<String, Object> value = new HashMap<>();
+		Map<String, Object> value = new LinkedHashMap<>();
 		value.put(VABLambdaHandler.VALUE_GET_SUFFIX, get);
 		value.put(VABLambdaHandler.VALUE_SET_SUFFIX, set);
 		value.put(VABLambdaHandler.VALUE_REMOVEOBJ_SUFFIX, removeObject);

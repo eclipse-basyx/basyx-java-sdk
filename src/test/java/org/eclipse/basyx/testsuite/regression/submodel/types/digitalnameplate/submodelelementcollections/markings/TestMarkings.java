@@ -20,7 +20,7 @@ import org.eclipse.basyx.submodel.types.digitalnameplate.submodelelementcollecti
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.metamodel.exception.MetamodelConstructionException;
@@ -43,7 +43,7 @@ public class TestMarkings {
 	public static List<Marking> markings;
 	public static Marking marking;
 
-	private Map<String, Object> markingsMap = new HashMap<String, Object>();
+	private Map<String, Object> markingsMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void initMarkings() {

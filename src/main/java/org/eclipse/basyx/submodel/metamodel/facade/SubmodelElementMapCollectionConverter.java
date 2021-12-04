@@ -10,7 +10,7 @@
 package org.eclipse.basyx.submodel.metamodel.facade;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +72,7 @@ public class SubmodelElementMapCollectionConverter {
 		Map<String, ISubmodelElement> smElements = submodel.getSubmodelElements();
 		
 		// Put the Entries of the SM in a new Map
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		ret.putAll(submodel);
 		
 		// Feed all contained smElements through smElementToMap to deal with smElemCollections
@@ -122,7 +122,7 @@ public class SubmodelElementMapCollectionConverter {
 		}
 		
 		// Put the Entries of the SM in a new Map
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		ret.putAll(smElement);
 		
 		ret.put(Property.VALUE, convertIDMapToCollection(smElement.get(Property.VALUE)));

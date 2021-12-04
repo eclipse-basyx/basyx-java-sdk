@@ -11,7 +11,7 @@ package org.eclipse.basyx.vab.coder.json.serialization;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -29,7 +29,7 @@ public class DefaultTypeFactory implements GSONToolsFactory {
 	 */
 	@Override
 	public Map<String, Object> createMap() {
-		return new HashMap<>();
+		return new LinkedHashMap<>();
 	}
 
 

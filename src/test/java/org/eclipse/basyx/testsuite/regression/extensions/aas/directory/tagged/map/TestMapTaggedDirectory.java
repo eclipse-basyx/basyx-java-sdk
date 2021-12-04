@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.extensions.aas.directory.tagged.map;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
@@ -26,7 +26,7 @@ public class TestMapTaggedDirectory extends TestTaggedDirectorySuite {
 
 	@Override
 	protected IAASTaggedDirectory getDirectory() {
-		return new MapTaggedDirectory(new HashMap<>(), new HashMap<>());
+		return new MapTaggedDirectory(new LinkedHashMap<>(), new LinkedHashMap<>());
 	}
 
 	@Override

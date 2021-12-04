@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.vab.gateway.ConnectorProviderMapper;
@@ -46,7 +46,7 @@ public class TestGateway {
 
 	@Before
 	public void build() { // Create VAB element
-		Map<String, Object> vabElem = new HashMap<String, Object>();
+		Map<String, Object> vabElem = new LinkedHashMap<String, Object>();
 		vabElem.put("propertyA", 10);
 
 		// Provide it using VABMapProvider and a tcp server on port 6998

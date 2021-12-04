@@ -12,7 +12,7 @@ package org.eclipse.basyx.aas.factory.json;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -67,7 +67,7 @@ public class MetamodelToJSONConverter {
 		
 		List<Object> smMapList = submodelsToMapList(submodelList);
 		
-		Map<String, Object> root = new HashMap<>();
+		Map<String, Object> root = new LinkedHashMap<>();
 		
 		root.put(ASSET_ADMINISTRATION_SHELLS, aasList == null ? new ArrayList<AssetAdministrationShell>() : aasList);
 		root.put(SUBMODELS, smMapList);

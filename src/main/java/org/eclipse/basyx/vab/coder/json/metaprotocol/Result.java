@@ -11,7 +11,7 @@ package org.eclipse.basyx.vab.coder.json.metaprotocol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ import org.eclipse.basyx.vab.protocol.http.server.ExceptionToHTTPCodeMapper;
  *
  */
 @SuppressWarnings("serial")
-public class Result extends HashMap<String, Object> {
+public class Result extends LinkedHashMap<String, Object> {
 
 	public static final String SUCCESS = "success";
 	public static final String ISEXCEPTION = "isException";

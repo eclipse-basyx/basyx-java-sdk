@@ -48,27 +48,28 @@ public abstract class TestAASAggregatorAASXUploadSuite extends AASAggregatorSuit
 		
 		Iterator<IAssetAdministrationShell> iterator = shells.iterator();
 		IAssetAdministrationShell shell1 = iterator.next();
-		assertEquals("www.admin-shell.io/aas-sample/1/1", shell1.getIdentification().getId());
-		assertEquals("test_asset_aas", shell1.getIdShort());
+		
+		assertEquals("smart.festo.com/demo/aas/1/1/454576463545648365874", shell1.getIdentification().getId());
+		assertEquals("Festo_3S7PM0CP4BD", shell1.getIdShort());
 		
 		Iterator<IReference> smIteratorShell1 = shell1.getSubmodelReferences().iterator();
 		IReference shell1Sm1 = smIteratorShell1.next();
-		assertEquals("de.iese.com/ids/sm/0000_000_000_001", shell1Sm1.getKeys().get(0).getValue());
+		assertEquals("www.company.com/ids/sm/4343_5072_7091_3242", shell1Sm1.getKeys().get(0).getValue());
+		IReference shell1Sm2 = smIteratorShell1.next();
+		assertEquals("www.company.com/ids/sm/2543_5072_7091_2660", shell1Sm2.getKeys().get(0).getValue());
+		IReference shell1Sm3 = smIteratorShell1.next();
+		assertEquals("smart.festo.com/demo/sm/instance/1/1/13B7CCD9BF7A3F24", shell1Sm3.getKeys().get(0).getValue());
+		IReference shell1Sm4 = smIteratorShell1.next();
+		assertEquals("www.company.com/ids/sm/6053_5072_7091_5102", shell1Sm4.getKeys().get(0).getValue());
+		IReference shell1Sm5 = smIteratorShell1.next();
+		assertEquals("www.company.com/ids/sm/6563_5072_7091_4267", shell1Sm5.getKeys().get(0).getValue());
 		
 		IAssetAdministrationShell shell2 = iterator.next();
-		assertEquals("smart.festo.com/demo/aas/1/1/454576463545648365874", shell2.getIdentification().getId());
-		assertEquals("Festo_3S7PM0CP4BD", shell2.getIdShort());
+		assertEquals("www.admin-shell.io/aas-sample/1/1", shell2.getIdentification().getId());
+		assertEquals("test_asset_aas", shell2.getIdShort());
 		
 		Iterator<IReference> smIteratorShell2 = shell2.getSubmodelReferences().iterator();
 		IReference shell2Sm1 = smIteratorShell2.next();
-		assertEquals("www.company.com/ids/sm/4343_5072_7091_3242", shell2Sm1.getKeys().get(0).getValue());
-		IReference shell2Sm2 = smIteratorShell2.next();
-		assertEquals("www.company.com/ids/sm/2543_5072_7091_2660", shell2Sm2.getKeys().get(0).getValue());
-		IReference shell2Sm3 = smIteratorShell2.next();
-		assertEquals("smart.festo.com/demo/sm/instance/1/1/13B7CCD9BF7A3F24", shell2Sm3.getKeys().get(0).getValue());
-		IReference shell2Sm4 = smIteratorShell2.next();
-		assertEquals("www.company.com/ids/sm/6053_5072_7091_5102", shell2Sm4.getKeys().get(0).getValue());
-		IReference shell2Sm5 = smIteratorShell2.next();
-		assertEquals("www.company.com/ids/sm/6563_5072_7091_4267", shell2Sm5.getKeys().get(0).getValue());
+		assertEquals("de.iese.com/ids/sm/0000_000_000_001", shell2Sm1.getKeys().get(0).getValue());
 	}
 }

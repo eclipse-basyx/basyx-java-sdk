@@ -12,7 +12,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.digitalnameplate.s
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class TestFax {
 	public static MultiLanguageProperty faxNumber = new MultiLanguageProperty(Fax.FAXNUMBERID);
 	public static Property typeOfFax = new Property(Fax.TYPEOFFAXID, ValueType.String);
 
-	private Map<String, Object> faxMap = new HashMap<String, Object>();
+	private Map<String, Object> faxMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void buildFax() {

@@ -12,7 +12,7 @@ package org.eclipse.basyx.testsuite.regression.vab.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.vab.model.VABModelMap;
@@ -37,14 +37,14 @@ public class VABModelMapTest {
 		map.putPath("a/b/d", 13);
 		
 		// Build expected output
-		Map<String, Object> b = new HashMap<>();
+		Map<String, Object> b = new LinkedHashMap<>();
 		b.put("c", 12);
 		b.put("d", 13);
 
-		Map<String, Object> a = new HashMap<>();
+		Map<String, Object> a = new LinkedHashMap<>();
 		a.put("b", b);
 		
-		Map<String, Object> root = new HashMap<>();
+		Map<String, Object> root = new LinkedHashMap<>();
 		root.put("a", a);
 
 		// Assert correct behaviour of getPath
@@ -59,7 +59,7 @@ public class VABModelMapTest {
 		expected.put("a", "b");
 		expected.put("x", "y");
 
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new LinkedHashMap<>();
 		map.put("a", "b");
 		map.put("x", "y");
 

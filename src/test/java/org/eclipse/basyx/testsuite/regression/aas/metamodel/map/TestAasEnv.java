@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
@@ -70,32 +70,32 @@ public class TestAasEnv {
 	
 	@Test
 	public void testCreateAsFacade() {
-		Map<String, Object> asset = new HashMap<>();
+		Map<String, Object> asset = new LinkedHashMap<>();
 		asset.put(ModelType.MODELTYPE, Asset.MODELTYPE);
 		asset.put(Referable.IDSHORT, "TestAsset");
 		asset.put(Asset.KIND, AssetKind.INSTANCE);
 		asset.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRI, "testAssetIdShort"));
 		
-		Map<String, Object> assetAdministrationShell = new HashMap<>();
+		Map<String, Object> assetAdministrationShell = new LinkedHashMap<>();
 		assetAdministrationShell.put(ModelType.MODELTYPE, AssetAdministrationShell.MODELTYPE);
 		assetAdministrationShell.put(Referable.IDSHORT, "TestAssetAdministrationShell");
 		assetAdministrationShell.put(AssetAdministrationShell.ASSET, asset);
 		assetAdministrationShell.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRI, "testAASIdShort"));
 		
 		
-		Map<String, Object> submodel = new HashMap<>();
+		Map<String, Object> submodel = new LinkedHashMap<>();
 		submodel.put(ModelType.MODELTYPE, Submodel.MODELTYPE);
 		submodel.put(Referable.IDSHORT, "TestSubmodel");
 		submodel.put(Submodel.SUBMODELELEMENT, new ArrayList<Object>());
 		submodel.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRI, "testSubmodelIdShort"));
 		
-		Map<String, Object> conceptDescription = new HashMap<>();
+		Map<String, Object> conceptDescription = new LinkedHashMap<>();
 		conceptDescription.put(ModelType.MODELTYPE, ConceptDescription.MODELTYPE);
 		conceptDescription.put(Referable.IDSHORT, "TestConceptDescription");
 		conceptDescription.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRI, "testConceptDesIdShort"));
 		
 		
-		Map<String, Object> aasEnvAsMap = new HashMap<>();
+		Map<String, Object> aasEnvAsMap = new LinkedHashMap<>();
 		aasEnvAsMap.put(AasEnv.ASSETS, Arrays.asList(asset));
 		aasEnvAsMap.put(AasEnv.ASSETADMINISTRATIONSHELLS, Arrays.asList(assetAdministrationShell));
 		aasEnvAsMap.put(AasEnv.SUBMODELS, Arrays.asList(submodel));

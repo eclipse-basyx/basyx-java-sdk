@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.api;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
@@ -22,7 +22,7 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
  */
 public abstract class ConnectorFactory implements IConnectorFactory {
 
-	private Map<String, IModelProvider> providerMap = new HashMap<>();
+	private Map<String, IModelProvider> providerMap = new LinkedHashMap<>();
 
 	@Override
 	public IModelProvider getConnector(String addr) {

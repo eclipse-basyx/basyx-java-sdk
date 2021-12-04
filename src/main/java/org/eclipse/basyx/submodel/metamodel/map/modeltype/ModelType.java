@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.modeltype;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.vab.model.VABModelMap;
@@ -27,7 +27,7 @@ public class ModelType extends VABModelMap<Object> {
 	public static final String NAME = "name";
 
 	public ModelType(String type) {
-		Map<String, Object> map = new HashMap<>();
+		Map<String, Object> map = new LinkedHashMap<>();
 		map.put(NAME, type);
 		put(MODELTYPE, map);
 	}

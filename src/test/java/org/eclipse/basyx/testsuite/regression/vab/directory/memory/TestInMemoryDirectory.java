@@ -11,7 +11,7 @@ package org.eclipse.basyx.testsuite.regression.vab.directory.memory;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.testsuite.regression.vab.directory.proxy.TestDirectory;
@@ -45,7 +45,7 @@ public class TestInMemoryDirectory extends TestDirectory {
 		String value3 = "value3";
 		String key4 = "key4";
 		String value4 = "value4";
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put(key3, value3);
 		map.put(key4, value4);
 		registry.addMappings(map);
@@ -59,7 +59,7 @@ public class TestInMemoryDirectory extends TestDirectory {
 	}
 
 	private Map<String, String> getAddedValues() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("key1", "value1");
 		map.put("key2", "value2");
 		return map;

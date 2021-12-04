@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.registration.memory;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * An implementation of the IAASRegistryService interface.
@@ -24,6 +24,6 @@ public class InMemoryRegistry extends AASRegistry {
 	 * Default constructor based on HashMaps
 	 */
 	public InMemoryRegistry() {
-		super(new MapRegistryHandler(new HashMap<>()));
+		super(new MapRegistryHandler(new LinkedHashMap<>()));
 	}
 }

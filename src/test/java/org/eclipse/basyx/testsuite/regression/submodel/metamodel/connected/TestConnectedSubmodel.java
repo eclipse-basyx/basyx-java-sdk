@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -130,7 +130,7 @@ public class TestConnectedSubmodel extends TestSubmodelSuite {
 	 * Generates test IOperations
 	 */
 	private Map<String, IOperation> getTestOperations() {
-		Map<String, IOperation> ret = new HashMap<>();
+		Map<String, IOperation> ret = new LinkedHashMap<>();
 
 		Operation operation = new Operation();
 		operation.setIdShort(OPERATION_ID);

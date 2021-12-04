@@ -10,7 +10,7 @@
 package org.eclipse.basyx.vab.model;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,7 +39,7 @@ public class VABModelMap<V extends Object> implements Map<String, V> {
 	 * Default constructor
 	 */
 	public VABModelMap() {
-		map = new HashMap<>();
+		map = new LinkedHashMap<>();
 	}
 
 	public void setMap(Map<String, V> map) {

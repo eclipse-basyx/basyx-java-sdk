@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -146,7 +146,7 @@ public class TestSubmodelElementCollection {
 		Formula formula = new Formula(Collections.singleton(reference));
 		Qualifiable qualifiable = new Qualifiable(formula);
 		ISubmodelElement element = new Property("testId1", new Referable(idShort, "Category", new LangStrings("DE", "Test")), REFERENCE, qualifiable);
-		Map<String, ISubmodelElement> elementsMap = new HashMap<String, ISubmodelElement>();
+		Map<String, ISubmodelElement> elementsMap = new LinkedHashMap<String, ISubmodelElement>();
 		elementsMap.put(idShort, element);
 		elementCollection.setElements(elementsMap);
 		assertEquals(elementsMap, elementCollection.getSubmodelElements());
@@ -156,9 +156,9 @@ public class TestSubmodelElementCollection {
 	public void testConstructor1() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 
-		Map<String, IDataElement> dataElements = new HashMap<String, IDataElement>();
-		Map<String, IOperation> operations = new HashMap<String, IOperation>();
-		Map<String, ISubmodelElement> submodels = new HashMap<String, ISubmodelElement>();
+		Map<String, IDataElement> dataElements = new LinkedHashMap<String, IDataElement>();
+		Map<String, IOperation> operations = new LinkedHashMap<String, IOperation>();
+		Map<String, ISubmodelElement> submodels = new LinkedHashMap<String, ISubmodelElement>();
 		dataElements.put(PROPERTY_ID, getProperty());
 		operations.put(OPERATION_ID, getOperation());
 		submodels.putAll(operations);
@@ -178,7 +178,7 @@ public class TestSubmodelElementCollection {
 		property.put(Referable.IDSHORT, newIdShort);
 		collection.addSubmodelElement(property);
 		assertEquals(new Reference(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, smCollIdShort, KeyType.IDSHORT)), property.getParent());
-		Map<String, ISubmodelElement> submodelElements = new HashMap<String, ISubmodelElement>();
+		Map<String, ISubmodelElement> submodelElements = new LinkedHashMap<String, ISubmodelElement>();
 		submodelElements.put(PROPERTY_ID, getProperty());
 		submodelElements.put(OPERATION_ID, getOperation());
 		submodelElements.put(newIdShort, property);

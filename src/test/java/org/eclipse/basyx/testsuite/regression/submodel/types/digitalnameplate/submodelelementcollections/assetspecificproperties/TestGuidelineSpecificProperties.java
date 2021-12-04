@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public class TestGuidelineSpecificProperties {
 	public static Property conformityDeclaration = new Property(GuidelineSpecificProperties.GUIDELINEFORCONFORMITYDECLARATIONID, ValueType.String);
 	public static Property arbitrary = new Property("arbitraryId", ValueType.String);
 	
-	private Map<String, Object> guidelineMap = new HashMap<String, Object>();
+	private Map<String, Object> guidelineMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void buildGuidelineSpecificProperties() {
