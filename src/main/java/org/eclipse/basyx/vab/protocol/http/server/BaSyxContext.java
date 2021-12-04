@@ -9,9 +9,10 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.server;
 
+import org.springframework.lang.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+import java.util.Optional;
 import javax.servlet.http.HttpServlet;
 
 
@@ -74,6 +75,9 @@ public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
 
 
 	public Object AASHTTPServerResource;
+
+	@Nullable
+	private JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration ;
 	
 	/**
 	 * Constructor with default port
@@ -232,6 +236,14 @@ public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
 	 */
 	public void setCertificatePath(String certificatePath) {
 		this.certificatePath = certificatePath;
+	}
+
+	public Optional<JwtBearerTokenAuthenticationConfiguration> getJwtBearerTokenAuthenticationConfiguration() {
+		return Optional.ofNullable(jwtBearerTokenAuthenticationConfiguration);
+	}
+
+	public void setJwtBearerTokenAuthenticationConfiguration(@Nullable final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
+		this.jwtBearerTokenAuthenticationConfiguration = jwtBearerTokenAuthenticationConfiguration;
 	}
 }
 

@@ -70,3 +70,6 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+
+.idea
+*.iml

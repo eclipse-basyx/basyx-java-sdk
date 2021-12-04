@@ -10,11 +10,15 @@
 package org.eclipse.basyx.vab.protocol.http.server;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.catalina.Context;
@@ -24,8 +28,32 @@ import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.LifecycleState;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.tomcat.util.descriptor.web.FilterDef;
+import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimNames;
+import org.springframework.security.oauth2.jwt.JwtClaimValidator;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter;
+import org.springframework.security.web.DefaultSecurityFilterChain;
+import org.springframework.security.web.FilterChainProxy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
+import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 
 /**
  * Starter Class for Apache Tomcat HTTP server that adds the provided servlets and respective mappings on startup.
@@ -35,9 +63,9 @@ import org.slf4j.LoggerFactory;
  */
 public class BaSyxHTTPServer {
 	
-	private static Logger logger = LoggerFactory.getLogger(BaSyxHTTPServer.class);
+	private static final Logger logger = LoggerFactory.getLogger(BaSyxHTTPServer.class);
 	
-	private Tomcat tomcat;
+	private final Tomcat tomcat;
 
 	static {
 		// Enable coding of forward slash in tomcat
@@ -80,7 +108,9 @@ public class BaSyxHTTPServer {
 		// - Base path for resource files
 		File docBase = new File(context.docBasePath); // System.getProperty("java.io.tmpdir"));
 		// - Create context for servlets
-		Context rootCtx = tomcat.addContext(context.contextPath, docBase.getAbsolutePath());
+		final Context rootCtx = tomcat.addContext(context.contextPath, docBase.getAbsolutePath());
+
+		context.getJwtBearerTokenAuthenticationConfiguration().ifPresent(jwtBearerTokenAuthenticationConfiguration -> addSecurityFiltersToContext(rootCtx, jwtBearerTokenAuthenticationConfiguration));
 
 		// Iterate all servlets in context
 		Iterator<Entry<String, HttpServlet>> it = context.entrySet().iterator();
@@ -97,7 +127,99 @@ public class BaSyxHTTPServer {
 			rootCtx.addServletMappingDecoded(mapping, Integer.toString(servlet.hashCode()));
 		}
 	}
-	
+
+	private void addSecurityFiltersToContext(final Context context, final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
+		final FilterChainProxy filterChainProxy = createFilterChainProxy(jwtBearerTokenAuthenticationConfiguration);
+		addFilterChainProxyFilterToContext(context, filterChainProxy);
+	}
+
+	private void addFilterChainProxyFilterToContext(final Context context, final FilterChainProxy filterChainProxy) {
+		final FilterDef filterChainProxyFilterDefinition = createFilterChainProxyFilterDefinition(filterChainProxy);
+		context.addFilterDef(filterChainProxyFilterDefinition);
+
+		final FilterMap filterChainProxyFilterMapping = createFilterChainProxyFilterMap();
+		context.addFilterMap(filterChainProxyFilterMapping);
+	}
+
+	private FilterMap createFilterChainProxyFilterMap() {
+		final FilterMap filterChainProxyFilterMapping = new FilterMap();
+		filterChainProxyFilterMapping.setFilterName(FilterChainProxy.class.getSimpleName());
+		filterChainProxyFilterMapping.addURLPattern("/*");
+		return filterChainProxyFilterMapping;
+	}
+
+	private FilterDef createFilterChainProxyFilterDefinition(final FilterChainProxy filterChainProxy) {
+		final FilterDef filterChainProxyFilterDefinition = new FilterDef();
+		filterChainProxyFilterDefinition.setFilterName(FilterChainProxy.class.getSimpleName());
+		filterChainProxyFilterDefinition.setFilterClass(FilterChainProxy.class.getName());
+		filterChainProxyFilterDefinition.setFilter(filterChainProxy);
+		return filterChainProxyFilterDefinition;
+	}
+
+	private FilterChainProxy createFilterChainProxy(final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
+		final FilterChainProxy filterChainProxy = new FilterChainProxy(createSecurityFilterChain(jwtBearerTokenAuthenticationConfiguration));
+		filterChainProxy.setFirewall(createHttpFirewall());
+		return filterChainProxy;
+	}
+
+	private HttpFirewall createHttpFirewall() {
+		final StrictHttpFirewall httpFirewall = new StrictHttpFirewall();
+
+		// '/' is valid character in an Internationalized Resource Identifier (IRI)
+		httpFirewall.setAllowUrlEncodedSlash(true);
+
+		return httpFirewall;
+	}
+
+	private SecurityFilterChain createSecurityFilterChain(final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
+		final List<Filter> sortedListOfFilters = new ArrayList<>();
+
+		sortedListOfFilters.add(createBearerTokenAuthenticationFilter(jwtBearerTokenAuthenticationConfiguration));
+		sortedListOfFilters.add(createExceptionTranslationFilter());
+
+		return new DefaultSecurityFilterChain(AnyRequestMatcher.INSTANCE, sortedListOfFilters);
+	}
+
+	private ExceptionTranslationFilter createExceptionTranslationFilter() {
+		final BearerTokenAuthenticationEntryPoint authenticationEntryPoint = new BearerTokenAuthenticationEntryPoint();
+		return new ExceptionTranslationFilter(authenticationEntryPoint);
+	}
+
+	private BearerTokenAuthenticationFilter createBearerTokenAuthenticationFilter(final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
+		final JwtDecoder jwtDecoder = createJwtDecoder(
+				jwtBearerTokenAuthenticationConfiguration.getIssuerUri(),
+				jwtBearerTokenAuthenticationConfiguration.getJwkSetUri(),
+				jwtBearerTokenAuthenticationConfiguration.getRequiredAud().orElse(null)
+		);
+		final JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
+		final AuthenticationManager authenticationManager = new ProviderManager(jwtAuthenticationProvider);
+		return new BearerTokenAuthenticationFilter(authenticationManager);
+	}
+
+	private JwtDecoder createJwtDecoder(final String issuerUri, final String jwkSetUri, @Nullable final String requiredAud) {
+		final NimbusJwtDecoder nimbusJwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri)
+				.jwsAlgorithm(SignatureAlgorithm.from("RS256"))
+				.build();
+		nimbusJwtDecoder.setJwtValidator(createOAuth2TokenValidator(issuerUri, requiredAud));
+
+		return nimbusJwtDecoder;
+	}
+
+	private OAuth2TokenValidator<Jwt> createOAuth2TokenValidator(final String issuerUri, @Nullable final String requiredAud) {
+		List<OAuth2TokenValidator<Jwt>> validators = new ArrayList<>();
+		validators.add(JwtValidators.createDefaultWithIssuer(issuerUri));
+
+		if (requiredAud != null) {
+			validators.add(createJwtClaimValidatorForRequiredAudience(requiredAud));
+		}
+
+		return new DelegatingOAuth2TokenValidator<>(validators);
+	}
+
+	private JwtClaimValidator<Collection<String>> createJwtClaimValidatorForRequiredAudience(final String requiredAud) {
+		return new JwtClaimValidator<>(JwtClaimNames.AUD, aud -> null != aud && aud.contains(requiredAud));
+	}
+
 	/**
 	 * SSL Configuration for SSL connector
 	 * @param context
