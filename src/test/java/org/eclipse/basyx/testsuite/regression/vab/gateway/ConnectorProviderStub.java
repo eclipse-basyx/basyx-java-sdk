@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.vab.gateway;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
@@ -23,7 +23,7 @@ import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
  *
  */
 public class ConnectorProviderStub implements IConnectorFactory {
-	private Map<String, IModelProvider> providerMap = new HashMap<>();
+	private Map<String, IModelProvider> providerMap = new LinkedHashMap<>();
 
 	public void addMapping(String addr, IModelProvider provider) {
 		providerMap.put(addr, provider);

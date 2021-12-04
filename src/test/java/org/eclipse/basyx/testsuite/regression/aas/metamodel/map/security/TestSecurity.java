@@ -11,7 +11,7 @@ package org.eclipse.basyx.testsuite.regression.aas.metamodel.map.security;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.metamodel.map.policypoints.AccessControlPolicyPoints;
@@ -42,7 +42,7 @@ public class TestSecurity {
 	@Test
 	public void testGetRequiredCertificateExtension() {
 		Reference reference = new Reference(new Key(KeyElements.ASSET, false, "testValue", IdentifierType.IRI));
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		map.put(Security.REQUIREDCERTIFICATEEXTENSION, reference);
 		Security security = Security.createAsFacade(map);
 		assertEquals(reference, security.getRequiredCertificateExtension());

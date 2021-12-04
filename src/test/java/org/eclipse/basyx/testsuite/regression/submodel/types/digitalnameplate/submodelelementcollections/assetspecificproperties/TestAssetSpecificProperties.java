@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class TestAssetSpecificProperties {
 	public static final String IDSHORT = "AssetSpecificProperties";
 	public static GuidelineSpecificProperties guidelineSpecificProperties = new GuidelineSpecificProperties(TestGuidelineSpecificProperties.IDSHORT, TestGuidelineSpecificProperties.conformityDeclaration, Collections.singletonList(TestGuidelineSpecificProperties.arbitrary));
 	
-	private Map<String, Object> assetMap = new HashMap<String, Object>();
+	private Map<String, Object> assetMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void buildAssetSpecificProperties() {

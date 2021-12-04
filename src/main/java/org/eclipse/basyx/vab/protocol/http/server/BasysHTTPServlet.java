@@ -11,7 +11,7 @@ package org.eclipse.basyx.vab.protocol.http.server;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -39,7 +39,7 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 	/**
 	 * Parameter map
 	 */
-	protected Map<String, String> servletParameter = new HashMap<>();
+	protected Map<String, String> servletParameter = new LinkedHashMap<>();
 
 	/**
 	 * GSON instance

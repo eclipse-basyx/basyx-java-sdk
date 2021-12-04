@@ -10,7 +10,7 @@
 package org.eclipse.basyx.aas.restapi;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;

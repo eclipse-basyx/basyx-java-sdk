@@ -14,7 +14,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.furt
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ import org.junit.Test;
 public class TestFurtherInformation {
 	public static MultiLanguageProperty statement = new MultiLanguageProperty(FurtherInformation.TEXTSTATEMENTPREFIX + "01");
 	public static Property validDate = new Property(FurtherInformation.VALIDDATEID, ValueType.DateTime);
-	private Map<String, Object> furtherInfoMap = new HashMap<String, Object>();
+	private Map<String, Object> furtherInfoMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void init() {

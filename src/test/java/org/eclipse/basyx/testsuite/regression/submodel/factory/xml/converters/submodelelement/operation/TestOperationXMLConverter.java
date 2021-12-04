@@ -14,7 +14,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.factory.xml.converters.s
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.factory.xml.converters.qualifier.ReferableXMLConverter;
@@ -33,7 +33,7 @@ public class TestOperationXMLConverter {
 	@Test
 	public void testParseOperationWithoutVariables() {
 		String idShort = "operation_ID";
-		Map<String, Object> operationMap = new HashMap<String, Object>();
+		Map<String, Object> operationMap = new LinkedHashMap<String, Object>();
 		operationMap.put(ReferableXMLConverter.ID_SHORT, "operation_ID");
 		Operation parsedOperation = OperationXMLConverter.parseOperation(operationMap);
 		assertEquals(idShort, parsedOperation.getIdShort());

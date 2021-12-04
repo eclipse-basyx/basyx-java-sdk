@@ -12,7 +12,7 @@ package org.eclipse.basyx.submodel.metamodel.map.submodelelement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.metamodel.exception.MetamodelConstructionException;
@@ -54,7 +54,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 		putAll(new ModelType(MODELTYPE));
 
 		// Put attributes
-		put(Property.VALUE, new HashMap<>());
+		put(Property.VALUE, new LinkedHashMap<>());
 		put(ORDERED, true);
 		put(ALLOWDUPLICATES, true);
 	}
@@ -218,7 +218,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, IProperty> getProperties() {
-		Map<String, IProperty> ret = new HashMap<>();
+		Map<String, IProperty> ret = new LinkedHashMap<>();
 		Map<String, ISubmodelElement> smElems = (Map<String, ISubmodelElement>) get(Property.VALUE);
 		
 		for(ISubmodelElement smElement: smElems.values()) {
@@ -233,7 +233,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, IOperation> getOperations() {
-		Map<String, IOperation> ret = new HashMap<>();
+		Map<String, IOperation> ret = new LinkedHashMap<>();
 		Map<String, ISubmodelElement> smElems = (Map<String, ISubmodelElement>) get(Property.VALUE);
 		
 		for(ISubmodelElement smElement: smElems.values()) {

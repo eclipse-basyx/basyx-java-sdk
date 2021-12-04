@@ -110,7 +110,7 @@ public class JSONProvider<ModelProvider extends IModelProvider> {
 	
 	
 	/**
-	 * Serialize IResult (HashMap)
+	 * Serialize IResult (LinkedHashMap)
 	 * @param string
 	 * @return
 	 */

@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.coder.json.metaprotocol;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -18,7 +18,7 @@ import java.util.Map;
  *
  */
 @SuppressWarnings("serial")
-public class Message extends HashMap<String, Object> {
+public class Message extends LinkedHashMap<String, Object> {
 	
 	public static final String MESSAGETYPE = "messageType";
 	public static final String CODE = "code";

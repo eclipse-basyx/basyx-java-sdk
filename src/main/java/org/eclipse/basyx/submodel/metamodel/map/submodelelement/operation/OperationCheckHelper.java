@@ -11,7 +11,7 @@
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperationVariable;
@@ -110,7 +110,7 @@ public class OperationCheckHelper {
 	}
 
 	private static Map<String, SubmodelElement> createParameterMap(SubmodelElement[] params) {
-		Map<String, SubmodelElement> parameterMap = new HashMap<>();
+		Map<String, SubmodelElement> parameterMap = new LinkedHashMap<>();
 		for (SubmodelElement param : params) {
 			String parameterKey = getKeyForParameter(param);
 			parameterMap.put(parameterKey, param);

@@ -17,7 +17,7 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -694,7 +694,7 @@ public class SubmodelProviderTest {
 	}
 	
 	protected Map<String, Object> wrapParameter(String name, Object value) {
-		Map<String, Object> param = new HashMap<>();
+		Map<String, Object> param = new LinkedHashMap<>();
 		param.put(Identifiable.IDSHORT, name);
 		param.put(Property.VALUE, value);
 		param.put(Property.VALUETYPE, ValueTypeHelper.getType(value).toString());

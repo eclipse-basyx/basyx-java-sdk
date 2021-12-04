@@ -12,7 +12,7 @@ package org.eclipse.basyx.submodel.metamodel.connected.submodelelement;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
@@ -70,7 +70,7 @@ public class ConnectedSubmodelElementFactory {
 		Collection<Map<String, Object>> mapElemList = (Collection<Map<String, Object>>) rootProxy
 				.getValue(collectionPath);
 		// Get the type and idShort for each element and create the corresponding connected variant
-		Map<String, ISubmodelElement> ret = new HashMap<>();
+		Map<String, ISubmodelElement> ret = new LinkedHashMap<>();
 		for (Map<String, Object> node : mapElemList) {
 			String idShort = Referable.createAsFacade(node, KeyElements.SUBMODELELEMENT).getIdShort();
 			ISubmodelElement element = getConnectedSubmodelElement(rootProxy, elementPath, idShort, node);
@@ -161,7 +161,7 @@ public class ConnectedSubmodelElementFactory {
 				.getValue(collectionPath);
 
 		// Get the type and idShort for each operation and create the corresponding connected variant
-		Map<String, IOperation> ret = new HashMap<>();
+		Map<String, IOperation> ret = new LinkedHashMap<>();
 		for (Map<String, Object> node : mapElemList) {
 			String idShort = Referable.createAsFacade(node, KeyElements.OPERATION).getIdShort();
 			String subPath = VABPathTools.concatenatePaths(elementPath, idShort);
@@ -189,7 +189,7 @@ public class ConnectedSubmodelElementFactory {
 				.getValue(collectionPath);
 
 		// Get the type and idShort for each operation and create the corresponding connected variant
-		Map<String, IDataElement> ret = new HashMap<>();
+		Map<String, IDataElement> ret = new LinkedHashMap<>();
 		for (Map<String, Object> node : mapElemList) {
 			String idShort = Referable.createAsFacade(node, KeyElements.DATAELEMENT).getIdShort();
 			String subPath = VABPathTools.concatenatePaths(elementPath, idShort);
@@ -227,7 +227,7 @@ public class ConnectedSubmodelElementFactory {
 
 		// Get the type and idShort for each operation and create the corresponding
 		// connected variant
-		Map<String, IProperty> ret = new HashMap<>();
+		Map<String, IProperty> ret = new LinkedHashMap<>();
 		for (Map<String, Object> node : mapElemList) {
 			String idShort = Referable.createAsFacade(node, KeyElements.DATAELEMENT).getIdShort();
 			String subPath = VABPathTools.concatenatePaths(elementPath, idShort);

@@ -21,7 +21,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -251,7 +251,7 @@ public abstract class TestSubmodelSuite {
 	 * Generates test IDataElements
 	 */
 	private Map<String, IProperty> getTestDataProperty() {
-		Map<String, IProperty> ret = new HashMap<>();
+		Map<String, IProperty> ret = new LinkedHashMap<>();
 
 		Property property = new Property();
 		property.setIdShort(PROPERTY_ID);
@@ -290,7 +290,7 @@ public abstract class TestSubmodelSuite {
 	 * Generates test ISubmodelElements
 	 */
 	private Map<String, ISubmodelElement> getTestSubmodelElements() {
-		Map<String, ISubmodelElement> ret = new HashMap<>();
+		Map<String, ISubmodelElement> ret = new LinkedHashMap<>();
 
 		SubmodelElementCollection smECollection = new SubmodelElementCollection();
 		smECollection.setIdShort(SUBMODEL_ELEM_COLLECTION_ID);

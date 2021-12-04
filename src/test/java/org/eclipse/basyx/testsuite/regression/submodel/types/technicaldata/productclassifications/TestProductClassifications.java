@@ -14,7 +14,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.prod
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +38,7 @@ import org.junit.Test;
 public class TestProductClassifications {
 	public static ProductClassificationItem productClassificationItem = new ProductClassificationItem(ProductClassifications.PRODUCTCLASSIFICATIONITEMPREFIX + "01", TestProductClassificationItem.classificationSystem, TestProductClassificationItem.productClass);
 	
-	private Map<String, Object> classificationMap = new HashMap<String, Object>();
+	private Map<String, Object> classificationMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void init() {

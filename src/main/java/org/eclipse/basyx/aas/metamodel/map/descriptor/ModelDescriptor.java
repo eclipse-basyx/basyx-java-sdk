@@ -12,7 +12,7 @@ package org.eclipse.basyx.aas.metamodel.map.descriptor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -171,7 +171,7 @@ public abstract class ModelDescriptor extends VABModelMap<Object> {
 	 * @return
 	 */
 	private Map<String, Object> convertEndpointToMap(String endpoint, String type) {
-		HashMap<String, Object> endpointWrapper = new HashMap<>();
+		LinkedHashMap<String, Object> endpointWrapper = new LinkedHashMap<>();
 		endpointWrapper.put(AssetAdministrationShell.TYPE, type);
 		endpointWrapper.put(AssetAdministrationShell.ADDRESS, endpoint);
 		return endpointWrapper;
