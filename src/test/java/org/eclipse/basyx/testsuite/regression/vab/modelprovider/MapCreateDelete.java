@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
@@ -51,7 +51,7 @@ public class MapCreateDelete {
 		assertEquals("34", toTest);
 		
 		// Create map element
-		HashMap<String, Object> newMap = new HashMap<>();
+		LinkedHashMap<String, Object> newMap = new LinkedHashMap<>();
 		newMap.put("entryA", 3);
 		newMap.put("entryB", 4);
 		connVABElement.createValue("mapInRoot", newMap);

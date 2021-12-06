@@ -10,7 +10,7 @@
 package org.eclipse.basyx.aas.aggregator;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -39,7 +39,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
  */
 public class AASAggregator implements IAASAggregator {
 
-	protected Map<String, MultiSubmodelProvider> aasProviderMap = new HashMap<>();
+	protected Map<String, MultiSubmodelProvider> aasProviderMap = new LinkedHashMap<>();
 
 	protected IAASRegistry registry;
 

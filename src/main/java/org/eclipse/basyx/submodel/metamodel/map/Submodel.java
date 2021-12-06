@@ -11,7 +11,7 @@ package org.eclipse.basyx.submodel.metamodel.map;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +79,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		putAll(new ModelType(MODELTYPE));
 		setModelingKind(ModelingKind.INSTANCE);
 
-		put(SUBMODELELEMENT, new HashMap<String, ISubmodelElement>());
+		put(SUBMODELELEMENT, new LinkedHashMap<String, ISubmodelElement>());
 
 	}
 	
@@ -109,7 +109,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		putAll(hasKind);
 
 		// Attributes
-		put(SUBMODELELEMENT, new HashMap<String, ISubmodelElement>());
+		put(SUBMODELELEMENT, new LinkedHashMap<String, ISubmodelElement>());
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	@Override
 	public Map<String, IProperty> getProperties() {
-		Map<String, IProperty> properties = new HashMap<>();
+		Map<String, IProperty> properties = new LinkedHashMap<>();
 		getSubmodelElements().values().forEach(e -> {
 			if (e instanceof IProperty) {
 				properties.put(e.getIdShort(), (IProperty) e);
@@ -299,7 +299,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	@Override
 	public Map<String, IOperation> getOperations() {
-		Map<String, IOperation> operations = new HashMap<>();
+		Map<String, IOperation> operations = new LinkedHashMap<>();
 		getSubmodelElements().values().forEach(e -> {
 			if (e instanceof IOperation) {
 				operations.put(e.getIdShort(), (IOperation) e);

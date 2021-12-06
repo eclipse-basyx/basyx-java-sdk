@@ -10,7 +10,7 @@
 package org.eclipse.basyx.aas.restapi;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -97,7 +97,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	/**
 	 * Store submodel providers
 	 */
-	protected Map<String, SubmodelProvider> submodel_providers = new HashMap<>();
+	protected Map<String, SubmodelProvider> submodel_providers = new LinkedHashMap<>();
 	
 	/**
 	 * Store AAS Registry

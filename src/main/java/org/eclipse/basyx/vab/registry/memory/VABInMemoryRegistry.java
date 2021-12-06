@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.registry.memory;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
@@ -29,7 +29,7 @@ public class VABInMemoryRegistry implements IVABRegistryService {
 	/**
 	 * Map that stores key/value mappings
 	 */
-	protected Map<String, Object> keyToValue = new HashMap<>();
+	protected Map<String, Object> keyToValue = new LinkedHashMap<>();
 	
 	
 		

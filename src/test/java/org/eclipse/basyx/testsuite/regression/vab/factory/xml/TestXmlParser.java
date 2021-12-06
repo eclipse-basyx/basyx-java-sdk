@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
 
 public class TestXmlParser {
 
-	private Map<String, Object> rootObj = new HashMap<>();
+	private Map<String, Object> rootObj = new LinkedHashMap<>();
 
 	private static final String TAGS = "tags";
 	private static final String ATTR_1 = "attr_1";
@@ -92,10 +92,10 @@ public class TestXmlParser {
 	 */
 	public void testContainsAllKeys() throws ParserConfigurationException, SAXException, IOException {
 
-		Map<String, Object> tags = new HashMap<>();
-		Map<String, Object> nestedTags = new HashMap<>();
-		Map<String, Object> deeplyNestedTagParent = new HashMap<>();
-		Map<String, Object> deeplyNestedTagsChild = new HashMap<>();
+		Map<String, Object> tags = new LinkedHashMap<>();
+		Map<String, Object> nestedTags = new LinkedHashMap<>();
+		Map<String, Object> deeplyNestedTagParent = new LinkedHashMap<>();
+		Map<String, Object> deeplyNestedTagsChild = new LinkedHashMap<>();
 		List<Map<String, String>> deeplyNestedTagsLeaf = new ArrayList<>();
 
 		assertTrue(rootObj.containsKey(TAGS));
@@ -159,8 +159,8 @@ public class TestXmlParser {
 	 */
 	public void testNestedElements() throws ParserConfigurationException, SAXException, IOException {
 
-		Map<String, Object> tags = new HashMap<>();
-		Map<String, Object> nestedTags = new HashMap<>();
+		Map<String, Object> tags = new LinkedHashMap<>();
+		Map<String, Object> nestedTags = new LinkedHashMap<>();
 		List<String> nestedTag = new ArrayList<>();
 
 		assertNotEquals(null, rootObj.get(TAGS));
@@ -189,9 +189,9 @@ public class TestXmlParser {
 	 */
 	public void testDeeplyNestedElements() throws ParserConfigurationException, SAXException, IOException {
 
-		Map<String, Object> tags = new HashMap<>();
-		Map<String, Object> deeplyNestedTagParent = new HashMap<>();
-		Map<String, Object> deeplyNestedTagsChild = new HashMap<>();
+		Map<String, Object> tags = new LinkedHashMap<>();
+		Map<String, Object> deeplyNestedTagParent = new LinkedHashMap<>();
+		Map<String, Object> deeplyNestedTagsChild = new LinkedHashMap<>();
 		List<Map<String, String>> deeplyNestedTagsLeaf = new ArrayList<>();
 
 		assertNotEquals(null, rootObj.get(TAGS));
@@ -208,12 +208,12 @@ public class TestXmlParser {
 		assertNotEquals(null, deeplyNestedTagsLeaf.get(1).get(TEXT));
 		assertNotEquals(null, deeplyNestedTagsLeaf.get(1).get(ATTRDN));
 		// Check the objects are created of desired types
-		assertTrue(rootObj instanceof HashMap);
-		assertTrue(rootObj.get(TAGS) instanceof HashMap);
+		assertTrue(rootObj instanceof LinkedHashMap);
+		assertTrue(rootObj.get(TAGS) instanceof LinkedHashMap);
 		assertTrue(deeplyNestedTagsChild.get(DEEPLY_NESTED_LEAF) instanceof ArrayList);
-		assertTrue(deeplyNestedTagParent.get(DEEPLY_NESTED_TAGS_CHILD) instanceof HashMap);
-		assertTrue(tags.get(DEEPLY_NESTED_PARENT) instanceof HashMap);
-		assertTrue(tags instanceof HashMap);
+		assertTrue(deeplyNestedTagParent.get(DEEPLY_NESTED_TAGS_CHILD) instanceof LinkedHashMap);
+		assertTrue(tags.get(DEEPLY_NESTED_PARENT) instanceof LinkedHashMap);
+		assertTrue(tags instanceof LinkedHashMap);
 		// Check the texts
 		assertEquals(DN_TEXT_1, deeplyNestedTagsLeaf.get(0).get(TEXT));
 		assertEquals(ATTR_1_VAL, deeplyNestedTagsLeaf.get(0).get(ATTRDN));
@@ -234,7 +234,7 @@ public class TestXmlParser {
 	 */
 	public void testTextMulitpleTextNodeInParent() throws ParserConfigurationException, SAXException, IOException {
 
-		Map<String, Object> tags = new HashMap<>();
+		Map<String, Object> tags = new LinkedHashMap<>();
 		List<String> someTag = new ArrayList<>();
 
 		tags = (Map<String, Object>) rootObj.get(TAGS);

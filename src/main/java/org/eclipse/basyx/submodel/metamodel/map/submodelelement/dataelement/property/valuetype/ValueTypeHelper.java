@@ -12,7 +12,7 @@ package org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.pro
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Period;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -32,7 +32,7 @@ import javax.xml.namespace.QName;
  *
  */
 public class ValueTypeHelper {
-	private static Map<String, ValueType> typeMap = new HashMap<>();
+	private static Map<String, ValueType> typeMap = new LinkedHashMap<>();
 
 	// insert all types into a Map to allow getting a PropertyValueType based on a
 	// String

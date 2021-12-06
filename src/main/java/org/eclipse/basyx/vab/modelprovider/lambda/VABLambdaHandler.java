@@ -11,7 +11,7 @@ package org.eclipse.basyx.vab.modelprovider.lambda;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -126,7 +126,7 @@ public class VABLambdaHandler extends VABMapHandler {
 	}
 
 	private Object resolveMap(Map<String, Object> map) {
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		for (String s : map.keySet()) {
 			ret.put(s, resolveAll(map.get(s)));
 		}

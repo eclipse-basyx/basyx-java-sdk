@@ -10,7 +10,7 @@
 package org.eclipse.basyx.submodel.metamodel.facade;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.IElementContainer;
@@ -52,7 +52,7 @@ public class ElementContainerValuesHelper {
 
 
 	private static Map<String, Object> handleValueCollection(Collection<ISubmodelElement> collection) {
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		for(ISubmodelElement element: collection) {
 			try {
 				ret.put(element.getIdShort(), handleValue(element.getValue()));

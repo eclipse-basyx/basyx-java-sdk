@@ -9,7 +9,7 @@
 ******************************************************************************/
 package org.eclipse.basyx.aas.factory.xml;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +66,7 @@ public class AASXPackageExplorerCompatibilityHandler {
 		// This Map contains directly the aas:value key and one variable
 		// e.g. <aas:inputVariable><aas:value> was used instead of
 		// <aas:inputVariable><aas:value><aas:operationVariable>
-		Map<String, Object> correctMap = new HashMap<>();
+		Map<String, Object> correctMap = new LinkedHashMap<>();
 		correctMap.put(OperationXMLConverter.OPERATION_VARIABLE, map);
 		return correctMap;
 	}
@@ -86,7 +86,7 @@ public class AASXPackageExplorerCompatibilityHandler {
 		// Multiple <aas:inputVariable> was used instead of
 		// <aas:inputVariable> and multiple <aas:operationVariable> within that
 		// Wrap List in Map with aas:operationVariable as key
-		Map<String, Object> correctMap = new HashMap<>();
+		Map<String, Object> correctMap = new LinkedHashMap<>();
 		correctMap.put(OperationXMLConverter.OPERATION_VARIABLE, xmlObject);
 		return correctMap;
 	}

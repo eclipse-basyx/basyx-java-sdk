@@ -10,7 +10,7 @@
 package org.eclipse.basyx.submodel.restapi.vab;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -67,7 +67,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 		Map<String, Object> map = (Map<String, Object>) modelProvider.getValue(SubmodelAPIHelper.getSubmodelPath());
 
 		// Only return a copy of the Submodel
-		Map<String, Object> smCopy = new HashMap<>();
+		Map<String, Object> smCopy = new LinkedHashMap<>();
 		smCopy.putAll(map);
 		return Submodel.createAsFacade(smCopy);
 	}

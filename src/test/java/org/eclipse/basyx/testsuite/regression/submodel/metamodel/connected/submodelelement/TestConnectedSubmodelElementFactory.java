@@ -12,7 +12,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.subm
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -86,7 +86,7 @@ public class TestConnectedSubmodelElementFactory {
 		submodelElements.putAll(operations);
 		
 		
-		Map<String, Object> values = new HashMap<>();
+		Map<String, Object> values = new LinkedHashMap<>();
 		
 		values.put(Submodel.SUBMODELELEMENT, submodelElements);
 		
@@ -99,7 +99,7 @@ public class TestConnectedSubmodelElementFactory {
 	 * @return A Map ID->IDataElement
 	 */
 	private Map<String, Object> buildDataElements() {
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		
 		Property property = new Property();
 		property.setIdShort(PROPERTY_ID);
@@ -133,7 +133,7 @@ public class TestConnectedSubmodelElementFactory {
 	 * @return A Map ID->IOperation
 	 */
 	private Map<String, Object> buildOperations() {
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 
 		Operation operation = new Operation();
 		operation.setIdShort(OPERATION_ID);
@@ -147,7 +147,7 @@ public class TestConnectedSubmodelElementFactory {
 	 * @return A Map ID->IOperation
 	 */
 	private Map<String, Object> buildSubmodelElements() {
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		
 		BasicEvent basicEvent = new BasicEvent();
 		basicEvent.setIdShort(BASICEVENT_ID);

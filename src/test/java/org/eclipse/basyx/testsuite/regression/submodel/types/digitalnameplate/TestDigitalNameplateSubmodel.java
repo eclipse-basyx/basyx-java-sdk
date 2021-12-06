@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +63,7 @@ public class TestDigitalNameplateSubmodel {
 	public static Markings markings;
 	public static AssetSpecificProperties assetSpecificProperties = new AssetSpecificProperties(Collections.singletonList(TestAssetSpecificProperties.guidelineSpecificProperties));
 	public static Identifier identifier = new Identifier(IdentifierType.IRI, "https://admin-shell.io/zvei/nameplate/1/0/Nameplate");
-	private Map<String, Object> submodelMap = new HashMap<String, Object>();
+	private Map<String, Object> submodelMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void buildFax() {
