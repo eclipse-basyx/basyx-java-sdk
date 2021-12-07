@@ -68,18 +68,22 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 		path = VABPathTools.stripSlashes(path);
 		if (path.startsWith(PREFIX)) {
 			if (path.contains("/submodels/")) {
-				String aasIdWithSlashes = path.replace(PREFIX, "").replace(path.substring(path.indexOf("/submodels/")), "");
-				String aasIdWithoutSlashes = VABPathTools.stripSlashes(aasIdWithSlashes);
-
-				Identifier id = new Identifier();
-				id.setId(aasIdWithoutSlashes);
-				directory.registerSubmodel(id, TaggedSubmodelDescriptor.createAsFacade((Map<String, Object>) newEntity));
+				registerSubmodel(path, newEntity);
 			} else {
 				directory.register(TaggedAASDescriptor.createAsFacade((Map<String, Object>) newEntity));
 			}
 		} else {
 			super.createValue(path, newEntity);
 		}
+	}
+	
+	private void registerSubmodel(String path, Object newEntity) {
+	    String aasIdWithSlashes = path.replace(PREFIX, "").replace(path.substring(path.indexOf("/submodels/")), "");
+        String aasIdWithoutSlashes = VABPathTools.stripSlashes(aasIdWithSlashes);
+
+        Identifier id = new Identifier();
+        id.setId(aasIdWithoutSlashes);
+        directory.registerSubmodel(id, TaggedSubmodelDescriptor.createAsFacade((Map<String, Object>) newEntity));
 	}
 
 	private Set<String> extractTags(String path, String tagType) {
