@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class AASRegistry implements IAASRegistry {
 	private static Logger logger = LoggerFactory.getLogger(AASRegistry.class);
 	protected IRegistryHandler handler;
-
+	
 	public AASRegistry(IRegistryHandler handler) {
 		this.handler = handler;
 	}
@@ -47,7 +47,8 @@ public class AASRegistry implements IAASRegistry {
 	public void delete(IIdentifier aasIdentifier) {
 		String aasId = aasIdentifier.getId();
 		if (!handler.contains(aasIdentifier)) {
-			throw new ResourceNotFoundException("Could not delete key for AAS " + aasId + " since it does not exist");
+			throw new ResourceNotFoundException(
+					"Could not delete key for AAS " + aasId + " since it does not exist");
 		} else {
 			handler.remove(aasIdentifier);
 			logger.debug("Removed " + aasId);
@@ -58,7 +59,8 @@ public class AASRegistry implements IAASRegistry {
 	public AASDescriptor lookupAAS(IIdentifier aasIdentifier) {
 		String aasId = aasIdentifier.getId();
 		if (!handler.contains(aasIdentifier)) {
-			throw new ResourceNotFoundException("Could not look up descriptor for AAS " + aasId + " since it does not exist");
+			throw new ResourceNotFoundException(
+					"Could not look up descriptor for AAS " + aasId + " since it does not exist");
 		}
 		return handler.get(aasIdentifier);
 	}
@@ -78,10 +80,11 @@ public class AASRegistry implements IAASRegistry {
 		}
 
 		AASDescriptor descriptor = handler.get(aas);
-		if (descriptor == null) {
-			throw new ResourceNotFoundException("Could not add submodel descriptor for AAS " + aas.getId() + " since the AAS does not exist");
+		if(descriptor == null) {
+			throw new ResourceNotFoundException(
+					"Could not add submodel descriptor for AAS " + aas.getId() + " since the AAS does not exist");
 		}
-
+		
 		descriptor.addSubmodelDescriptor(smDescriptor);
 		handler.update(descriptor);
 		logger.debug("Registered submodel " + smDescriptor.getIdShort() + " for AAS " + aas.getId());
@@ -92,10 +95,12 @@ public class AASRegistry implements IAASRegistry {
 		String smIdString = smId.getId();
 		AASDescriptor desc = handler.get(aasId);
 		if (desc == null) {
-			throw new ResourceNotFoundException("Could not delete submodel descriptor for AAS " + aasId.getId() + " since the AAS does not exist");
+			throw new ResourceNotFoundException(
+					"Could not delete submodel descriptor for AAS " + aasId.getId() + " since the AAS does not exist");
 		}
 		if (desc.getSubmodelDescriptorFromIdentifierId(smIdString) == null) {
-			throw new ResourceNotFoundException("Could not delete submodel descriptor for AAS " + aasId.getId() + " since the SM does not exist");
+			throw new ResourceNotFoundException(
+					"Could not delete submodel descriptor for AAS " + aasId.getId() + " since the SM does not exist");
 		}
 
 		desc.removeSubmodelDescriptor(smId);
