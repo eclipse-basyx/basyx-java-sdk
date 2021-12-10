@@ -201,7 +201,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	public void addSubmodel(SubmodelProvider modelContentProvider) {
 		Submodel sm = Submodel.createAsFacade((Map<String, Object>) modelContentProvider.getValue("/submodel"));
 		aas_provider.createValue("/submodels", sm);
-		smAggregator.createSubmodel(sm);
+		smAggregator.createSubmodel(modelContentProvider.getAPI());
 	}
 
 	@SuppressWarnings("unchecked")
