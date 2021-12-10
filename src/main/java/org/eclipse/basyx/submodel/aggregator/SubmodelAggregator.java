@@ -43,13 +43,8 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 
 	@Override
 	public ISubmodel getSubmodel(IIdentifier identifier) throws ResourceNotFoundException {
-		ISubmodelAPI api = getSubmodelApiByIdentifier(identifier);
+		ISubmodelAPI api = getSubmodelAPIById(identifier);
 		return api.getSubmodel();
-	}
-
-	private ISubmodelAPI getSubmodelApiByIdentifier(IIdentifier identifier) throws ResourceNotFoundException {
-		String idShort = getIdShort(identifier);
-		return smApiMap.get(idShort);
 	}
 
 	private String getIdShort(IIdentifier identifier) {
@@ -70,8 +65,13 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 
 	@Override
 	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
-		ISubmodelAPI submodelApi = smApiFactory.getSubmodelAPI(submodel);
-		smApiMap.put(submodel.getIdShort(), submodelApi);
+		ISubmodelAPI submodelAPI = smApiFactory.getSubmodelAPI(submodel);
+		createSubmodel(submodelAPI);
+	}
+	
+	@Override
+	public void createSubmodel(ISubmodelAPI submodelAPI) {
+		smApiMap.put(submodelAPI.getSubmodel().getIdShort(), submodelAPI);
 	}
 
 	@Override
