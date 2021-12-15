@@ -21,7 +21,7 @@ import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelEleme
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 
 /**
- * AnnotatedRelationshipElement as defined in DAAS document <br/>
+ * AnnotatedRelationshipElement as defined in DAAS document <br>
  * An annotated relationship element is a relationship element that can be annotated with additional data elements.
  * 
  * @author schnicke, conradi

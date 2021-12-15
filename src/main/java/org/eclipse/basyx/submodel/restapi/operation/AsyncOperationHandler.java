@@ -114,7 +114,7 @@ public class AsyncOperationHandler {
 	/**
 	 * Gets the result of an invocation
 	 * 
-	 * @param operationIdShort the id of the requested Operation
+	 * @param operationId the id of the requested Operation
 	 * @param requestId the id of the request
 	 * @return the result of the Operation or a Message that it is not yet finished
 	 */

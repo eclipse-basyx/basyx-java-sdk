@@ -92,9 +92,6 @@ public class XMLToMetamodelConverter {
 	 * Parses the Submodels form the XML
 	 * 
 	 * @return the Submodels parsed form the XML
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ISubmodel> parseSubmodels() {
@@ -107,9 +104,6 @@ public class XMLToMetamodelConverter {
 	 * Parses the ConceptDescriptions form the XML
 	 * 
 	 * @return the ConceptDescriptions parsed form the XML
-	 * @throws ParserConfigurationException
-	 * @throws SAXException
-	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
 	public List<IConceptDescription> parseConceptDescriptions() {

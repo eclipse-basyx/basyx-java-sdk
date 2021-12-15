@@ -24,9 +24,9 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 public class ReferenceHelper {
 	/**
 	 * Helper method used e.g. by facades to transform a set of maps to a set of
-	 * IReference -> Assumes the given object is a Collection<Map<String, Object>>
+	 * {@literal IReference -> Assumes the given object is a Collection<Map<String, Object>>}
 	 * 
-	 * @param set
+	 * @param obj
 	 * @return
 	 */
 	public static Collection<IReference> transform(Object obj) {

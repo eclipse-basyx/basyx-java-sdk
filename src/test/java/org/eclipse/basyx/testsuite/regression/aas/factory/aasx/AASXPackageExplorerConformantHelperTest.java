@@ -10,12 +10,13 @@
 package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 
 import static org.junit.Assert.assertEquals;
-
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import org.eclipse.basyx.aas.factory.aasx.AASXPackageExplorerConformantHelper;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
@@ -90,5 +91,23 @@ public class AASXPackageExplorerConformantHelperTest {
 	private Key createDummyAASKey(IAssetAdministrationShell aas) {
 		IIdentifier identifier = aas.getIdentification();
 		return new Key(KeyElements.ASSETADMINISTRATIONSHELL, false, identifier.getId(), identifier.getIdType());
+	}
+	
+	@Test
+	public void checkForCrashWhenAdaptIsCalledMultipleTimes() throws IOException, TransformerException, ParserConfigurationException {
+		AssetAdministrationShell assetAdministrationShell = createDummyAAS("testAssetAdministrationShell");
+        
+		Reference submodelReference1 =  createSubmodelReference(assetAdministrationShell, createDummySubmodelKey());
+		Reference submodelReference2 = createSubmodelReference(assetAdministrationShell, createDummySubmodelKey());
+
+		assetAdministrationShell.addSubmodelReference(submodelReference1);
+		assetAdministrationShell.addSubmodelReference(submodelReference2);
+
+		Collection<IAssetAdministrationShell> listOfAssetAdministrationShell = Arrays.asList(assetAdministrationShell);
+        
+        AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(),
+    				Collections.emptyList(), Collections.emptyList());
+        AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(),
+				Collections.emptyList(), Collections.emptyList());
 	}
 }

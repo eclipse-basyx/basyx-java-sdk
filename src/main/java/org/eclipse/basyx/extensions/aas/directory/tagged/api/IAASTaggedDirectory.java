@@ -34,7 +34,7 @@ public interface IAASTaggedDirectory extends IAASRegistry {
 	/**
 	 * Looks up all AAS that are tagged with all <i>tags</i>
 	 * 
-	 * @param tag
+	 * @param tags
 	 * @return
 	 */
 	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags);

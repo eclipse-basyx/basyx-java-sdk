@@ -199,7 +199,7 @@ public class TechnicalProperties extends SubmodelElementCollection {
 	 * Sets subordinate subdivision possibility for properties.
 	 * 
 	 * Note: Each Sub Section SMC may contain arbitray sets of SubmodelElements, SemanticIdNotAvailable, SubSection.
-	 * @param mainSections
+	 * @param subSections
 	 */
 	public void setSubSections(List<SubmodelElementCollection> subSections) {
 		if (subSections != null && subSections.size() > 0) {

@@ -25,8 +25,8 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyType;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
- * Reference as described by DAAS document <br/>
- * <br/>
+ * Reference as described by DAAS document <br>
+ * <br>
  * Reference to either a model element of the same or another AAS or to an
  * external entity. A reference is an ordered list of keys, each key referencing
  * an element. The complete list of keys may for example be concatenated to a
@@ -51,7 +51,6 @@ public class Reference extends VABModelMap<Object> implements IReference {
 	 * 
 	 * @param identifiable
 	 * @param keyElement
-	 * @param local
 	 */
 	public Reference(IIdentifiable identifiable, KeyElements keyElement, boolean local) {
 		this(identifiable.getIdentification(), keyElement, local);
@@ -61,7 +60,7 @@ public class Reference extends VABModelMap<Object> implements IReference {
 	 * Constructs a reference based on an {@link IIdentifier} and additional
 	 * information (see {@link Key#Key(KeyElements, boolean, String, KeyType)}).
 	 * 
-	 * @param identifiable
+	 * @param identifier
 	 * @param keyElement
 	 * @param local
 	 */
@@ -71,7 +70,7 @@ public class Reference extends VABModelMap<Object> implements IReference {
 
 	/**
 	 * 
-	 * @param key Unique reference in its name space.
+	 * @param keys Unique reference in its name space.
 	 */
 	public Reference(List<IKey> keys) {
 		setKeys(keys);
@@ -89,7 +88,7 @@ public class Reference extends VABModelMap<Object> implements IReference {
 	/**
 	 * Creates a Reference object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Reference object as raw map
 	 * @return a Reference object, that behaves like a facade for the given map
 	 */
@@ -130,7 +129,7 @@ public class Reference extends VABModelMap<Object> implements IReference {
 	 * Creates a Reference object from a map
 	 * without checking mandatory attributes present
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Reference object as raw map
 	 * @return a Reference object, that behaves like a facade for the given map
 	 */
@@ -156,7 +155,7 @@ public class Reference extends VABModelMap<Object> implements IReference {
 			return false;
 		}
 		
-		return ((Collection<Key>) map.get(KEY)).stream().allMatch(Key::isKey);
+		return ((Collection<?>) map.get(KEY)).stream().allMatch(Key::isKey);
 	}
 
 	@SuppressWarnings("unchecked")

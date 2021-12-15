@@ -67,7 +67,7 @@ public class Qualifier extends Constraint implements IQualifier {
 	/**
 	 * Creates a Qualifier object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Qualifier object as raw map
 	 * @return a Qualifier object, that behaves like a facade for the given map
 	 */

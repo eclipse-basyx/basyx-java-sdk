@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This Class is a List, which holds LangString Objects <br/>
+ * This Class is a List, which holds LangString Objects <br>
  * It is used to hold a text in multiple languages
  * 
  * @author conradi, haque
@@ -58,7 +58,7 @@ public class LangStrings extends HashSet<LangString> {
 	/**
 	 * Creates a LangStrings object from a collection of map
 	 * 
-	 * @param obj a LangStrings object as raw collection of map
+	 * @param maps a LangStrings object as raw collection of map
 	 * @return a LangStrings object, that behaves like a facade for
 	 *         the given map
 	 */
@@ -89,7 +89,7 @@ public class LangStrings extends HashSet<LangString> {
 	/**
 	 * 
 	 * @param language
-	 * @return The String for the specified language or <br/>
+	 * @return The String for the specified language or <br>
 	 * an empty String if no matching LangString is found
 	 */
 	public String get(String language) {

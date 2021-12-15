@@ -29,7 +29,7 @@ public interface IBlob extends IDataElement {
 	/**
 	 * Sets a Base64 encoded value of the BLOB instance of a blob data element.
 	 * 
-	 * @param bytes
+	 * @param value
 	 */
 	public void setValue(String value);
 
@@ -43,7 +43,7 @@ public interface IBlob extends IDataElement {
 	/**
 	 * Sets the value of the Blob instance of a blob data element.
 	 * 
-	 * @param bytes
+	 * @param value
 	 */
 	public void setByteArrayValue(byte[] value);
 
@@ -63,9 +63,9 @@ public interface IBlob extends IDataElement {
 
 	/**
 	 * Gets the mime type of the content of the BLOB. The mime type states which
-	 * file extension the file has. <br />
+	 * file extension the file has. <br>
 	 * Valid values are e.g. “application/json”, “application/xls”, ”image/jpg”.
-	 * <br />
+	 * <br>
 	 * The allowed values are defined as in RFC2046.
 	 * 
 	 * @return

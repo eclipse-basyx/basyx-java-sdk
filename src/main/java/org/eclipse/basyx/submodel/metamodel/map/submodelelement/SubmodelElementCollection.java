@@ -33,7 +33,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 
 /**
- * SubmodelElementCollection as defined by DAAS document <br/>
+ * SubmodelElementCollection as defined by DAAS document <br>
  * A submodel element collection is a set or list of submodel elements
  * 
  * @author schnicke

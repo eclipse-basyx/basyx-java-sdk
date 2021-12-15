@@ -14,8 +14,8 @@ import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnumHe
 
 /**
  * KeyElements, ReferableElements, IdentifiableElements as defined in DAAS
- * document <br/>
- * <br />
+ * document <br>
+ * <br>
  * Since there's no enum inheritance in Java, all enums are merged into a single
  * class
  * 

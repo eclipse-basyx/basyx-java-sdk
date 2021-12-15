@@ -50,8 +50,8 @@ import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
  * A submodel defines a specific aspect of the asset represented by the AAS.
- * <br />
- * <br />
+ * <br>
+ * <br>
  * A submodel is used to structure the digital representation and technical
  * functionality of an Administration Shell into distinguishable parts. Each
  * submodel refers to a well-defined domain or subject matter. Submodels can

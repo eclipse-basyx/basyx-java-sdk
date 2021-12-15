@@ -60,7 +60,7 @@ public class AASAggregatorProvider implements IModelProvider {
 	}
 
 	/**
-	 * Makes sure, that given Object is an AAS by checking its ModelType<br />
+	 * Makes sure, that given Object is an AAS by checking its ModelType<br>
 	 * Creates a new AAS with the content of the given Map
 	 * 
 	 * @param value

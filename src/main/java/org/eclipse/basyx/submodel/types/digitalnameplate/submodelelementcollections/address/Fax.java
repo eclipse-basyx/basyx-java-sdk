@@ -29,7 +29,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.types.digitalnameplate.enums.FaxType;
 
 /**
- * Fax as defined in the AAS Digital Nameplate Template document <br/>
+ * Fax as defined in the AAS Digital Nameplate Template document <br>
  * It is a submodel element collection which contains a fax number including type
  * 
  * @author haque

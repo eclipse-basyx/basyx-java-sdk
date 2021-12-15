@@ -32,7 +32,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.types.helper.SubmodelElementRetrievalHelper;
 
 /**
- * Address as defined in the AAS Digital Nameplate Template document <br/>
+ * Address as defined in the AAS Digital Nameplate Template document <br>
  * It is a submodel element collection which contains
  * The standardized SMC Address contains information 
  * about address of a partner within the value chain.
@@ -512,7 +512,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets Phone number including type
-	 * @param phone
+	 * @param phones
 	 */
 	public void setPhone(List<Phone> phones) {
 		if (phones != null && phones.size() > 0) {
@@ -539,7 +539,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets fax number including type
-	 * @param fax
+	 * @param faxes
 	 */
 	public void setFax(List<Fax> faxes) {
 		if (faxes != null && faxes.size() > 0) {
@@ -566,7 +566,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets E-mail address and encryption method
-	 * @param email
+	 * @param emails
 	 */
 	public void setEmail(List<Email> emails) {
 		if (emails != null && emails.size() > 0) {

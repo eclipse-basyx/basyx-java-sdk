@@ -63,11 +63,6 @@ public class ConnectedProperty extends ConnectedDataElement implements IProperty
 			return value;
 		}
 	}
-	
-	@Override
-	public void setValue(Object value) {
-		getProxy().setValue(Property.VALUE, ValueTypeHelper.prepareForSerialization(value));
-	}
 
 	@Override
 	public Property getLocalCopy() {

@@ -27,8 +27,8 @@ public interface IRange extends IDataElement {
 	ValueType getValueType();
 
 	/**
-	 * Returns the minimum value of the range. <br />
-	 * <br />
+	 * Returns the minimum value of the range. <br>
+	 * <br>
 	 * If the min value is missing then the value is assumed to be negative
 	 * infinite.
 	 * 
@@ -37,8 +37,8 @@ public interface IRange extends IDataElement {
 	Object getMin();
 
 	/**
-	 * The maximum value of the range. <br />
-	 * <br />
+	 * The maximum value of the range. <br>
+	 * <br>
 	 * If the max value is missing then the value is assumed to be positive
 	 * infinite.
 	 */

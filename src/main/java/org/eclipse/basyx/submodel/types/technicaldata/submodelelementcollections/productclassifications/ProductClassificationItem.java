@@ -172,7 +172,7 @@ public class ProductClassificationItem extends SubmodelElementCollection {
 	 * Sets common version identifier of the used classification system, in order to distinguish different version of the property dictionary.
 	 * 
 	 * Note: Casing is to be ignored.
-	 * @param system
+	 * @param version
 	 */
 	public void setClassificationSystemVersion(String version) {
 		Property versionProp = new Property(CLASSIFICATIONSYSTEMVERSIONID, ValueType.String);

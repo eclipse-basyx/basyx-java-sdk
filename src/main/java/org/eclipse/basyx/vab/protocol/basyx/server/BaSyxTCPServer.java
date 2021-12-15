@@ -146,8 +146,6 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 	
 	/**
 	 * End server
-	 * 
-	 * @throws IOException
 	 */
 	protected void shutdown() {
 		// End thread

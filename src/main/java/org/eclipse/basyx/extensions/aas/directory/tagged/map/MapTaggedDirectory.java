@@ -23,7 +23,7 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
- * Map implementation of a tagged directory. It extends {@link MapRegistry} by
+ * Map implementation of a tagged directory. It extends {@link AASRegistry} by
  * additionally managing a map of tags
  * 
  * @author schnicke

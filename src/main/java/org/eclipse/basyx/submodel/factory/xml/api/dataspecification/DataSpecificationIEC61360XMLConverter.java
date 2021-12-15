@@ -63,7 +63,7 @@ public class DataSpecificationIEC61360XMLConverter {
 	/**
 	 * Parses the DataSpecificationIEC61360 object from XML
 	 * 
-	 * @param xmlDataSpecificationContentObject the XML map containing the &lt;aas:dataSpecificationIEC61360&gt; tag
+	 * @param contentObj the XML map containing the &lt;aas:dataSpecificationIEC61360&gt; tag
 	 * @return the parsed DataSpecificationIEC61360 object
 	 */
 	@SuppressWarnings("unchecked")

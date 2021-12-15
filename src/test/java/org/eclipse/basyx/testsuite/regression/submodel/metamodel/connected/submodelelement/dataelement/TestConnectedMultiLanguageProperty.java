@@ -10,18 +10,11 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement.dataelement;
 
 import static org.junit.Assert.assertEquals;
-
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
-import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedMultiLanguageProperty;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
-import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
-import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.MultiLanguageProperty;
-import org.eclipse.basyx.submodel.restapi.SubmodelElementProvider;
-import org.eclipse.basyx.testsuite.regression.vab.manager.VABConnectionManagerStub;
-import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
-import org.eclipse.basyx.vab.support.TypeDestroyingProvider;
+import org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement.SubmodelElementTestHelper;
+import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,17 +31,15 @@ public class TestConnectedMultiLanguageProperty {
 	
 	@Before
 	public void build() {
-		
-		Reference ref = new Reference(new Key(KeyElements.BLOB, true, "", IdentifierType.CUSTOM));
 		LangStrings langStrings = new LangStrings("de", "TestBeschreibung");
 		
-		MLP = new MultiLanguageProperty(ref, langStrings);
+		MLP = new MultiLanguageProperty("idShort");
 		
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(MLP))));
+		MLP.setValue(langStrings);
+		
+		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(MLP);
 
-		// Retrieve the ConnectedContainerProperty
-		connectedMLP = new ConnectedMultiLanguageProperty(manager.connectToVABElement(""));
+		connectedMLP = new ConnectedMultiLanguageProperty(elementProxy);
 	}
 	
 	/**
@@ -65,5 +56,20 @@ public class TestConnectedMultiLanguageProperty {
 	@Test
 	public void testGetValueId() {
 		assertEquals(MLP.getValueId(), connectedMLP.getValueId());
+	}
+	
+	@Test
+	public void setValueUpdatesValueCorrectly() {
+		triggerCachingOfSubmodelElement();
+		
+		LangStrings expected = new LangStrings("en", "English Language");	
+
+		connectedMLP.setValue(expected);
+		
+		assertEquals(expected, connectedMLP.getValue());
+	}
+
+	private void triggerCachingOfSubmodelElement() {
+		connectedMLP.getElem();
 	}
 }

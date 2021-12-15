@@ -18,7 +18,7 @@ import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 
 /**
- * A blob property as defined in DAAS document <br/>
+ * A blob property as defined in DAAS document <br>
  * 
  * @author pschorn, schnicke
  *
@@ -45,7 +45,7 @@ public class File extends DataElement implements IFile{
 	}
 	
 	/**
-	 * Creates a file data element. It has to have a mimeType <br/>
+	 * Creates a file data element. It has to have a mimeType <br>
 	 * An absolute path is used in the case that the file exists independently of
 	 * the AAS. A relative path, relative to the package root should be used if the
 	 * file is part of the serialized package of the AAS.

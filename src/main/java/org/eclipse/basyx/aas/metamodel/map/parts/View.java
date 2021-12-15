@@ -29,7 +29,7 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.ReferenceHelper;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
- * View as defined by DAAS document. <br/>
+ * View as defined by DAAS document. <br>
  * A view is a collection of referable elements w.r.t. to a specific viewpoint
  * of one or more stakeholders.
  * 
@@ -76,7 +76,7 @@ public class View extends VABModelMap<Object> implements IView {
 	/**
 	 * Creates a View object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a View object as raw map
 	 * @return a View object, that behaves like a facade for the given map
 	 */

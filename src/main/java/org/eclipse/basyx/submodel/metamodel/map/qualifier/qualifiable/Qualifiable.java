@@ -58,7 +58,7 @@ public class Qualifiable extends VABModelMap<Object> implements IQualifiable {
 	/**
 	 * Creates a Qualifiable object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a Qualifiable object as raw map
 	 * @return a Qualifiable object, that behaves like a facade for the given map
 	 */

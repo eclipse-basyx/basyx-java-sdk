@@ -47,7 +47,7 @@ public class HasDataSpecificationXMLConverter {
 	 * Populates a given IHasDataSpecification object with the data form the given XML
 	 * 
 	 * @param xmlObject the XML map containing the &lt;aas:embeddedDataSpecification&gt; tag
-	 * @param hasDataSpecificationMap the IHasDataSpecification object to be populated -treated as Map here-
+	 * @param hasDataSpecification the IHasDataSpecification object to be populated -treated as Map here-
 	 */
 	public static void populateHasDataSpecification(Map<String, Object> xmlObject,
 			HasDataSpecification hasDataSpecification) {

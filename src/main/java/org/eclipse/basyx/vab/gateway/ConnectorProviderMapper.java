@@ -17,7 +17,7 @@ import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 
 /**
  * Maps an incoming address to an IConnectorProvider based on the protocol used
- * in the path<br/>
+ * in the path<br>
  * E.g. basyx://* can be mapped to the BasyxNative connector, http://* can be
  * mapped to the HTTP/REST connector
  * 

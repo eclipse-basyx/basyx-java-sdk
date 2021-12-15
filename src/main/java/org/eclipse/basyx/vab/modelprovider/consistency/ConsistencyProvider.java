@@ -76,7 +76,7 @@ public class ConsistencyProvider<T extends IModelProvider> implements IModelProv
 	 * 
 	 * @param path
 	 * @param newValue
-	 * @throws Exception
+	 * @throws ProviderException
 	 */
 	@Override
 	public void setValue(String path, Object newValue) throws ProviderException {
@@ -105,7 +105,7 @@ public class ConsistencyProvider<T extends IModelProvider> implements IModelProv
 	 * 
 	 * @param path
 	 * @param newEntity
-	 * @throws Exception
+	 * @throws ProviderException
 	 */
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
@@ -119,7 +119,7 @@ public class ConsistencyProvider<T extends IModelProvider> implements IModelProv
 	 * Delete entity, check if submodel is frozen
 	 * 
 	 * @param path
-	 * @throws Exception
+	 * @throws ProviderException
 	 */
 	@Override
 	public void deleteValue(String path) throws ProviderException {
@@ -136,7 +136,7 @@ public class ConsistencyProvider<T extends IModelProvider> implements IModelProv
 	 * 
 	 * @param path
 	 * @param obj
-	 * @throws Exception
+	 * @throws ProviderException
 	 */
 	@Override
 	public void deleteValue(String path, Object obj) throws ProviderException {
@@ -160,7 +160,7 @@ public class ConsistencyProvider<T extends IModelProvider> implements IModelProv
 	 * @param path
 	 * @param parameter
 	 * @return
-	 * @throws Exception
+	 * @throws ProviderException
 	 */
 	@Override
 	public Object invokeOperation(String path, Object... parameter) throws ProviderException {

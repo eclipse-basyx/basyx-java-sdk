@@ -48,7 +48,7 @@ public class SubmodelFacadeCustomSemantics extends Submodel {
 
 	/**
 	 * Sub model constructor for sub models that conform to a globally defined
-	 * semantics with Custom semantics <br/>
+	 * semantics with Custom semantics <br>
 	 * 
 	 * Create an instance sub model with all meta properties empty / set to default
 	 * values
@@ -93,7 +93,7 @@ public class SubmodelFacadeCustomSemantics extends Submodel {
 
 	/**
 	 * Sub model constructor for sub models that conform to a globally defined
-	 * semantics with Custom semantics <br/>
+	 * semantics with Custom semantics <br>
 	 * 
 	 * Create an instance sub model with all meta properties empty / set to default
 	 * values

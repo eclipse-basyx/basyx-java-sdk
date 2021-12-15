@@ -41,7 +41,6 @@ public interface IAssetAdministrationShellManager {
 	 * Creates an AAS on a remote server
 	 * 
 	 * @param aas
-	 * @param aasId
 	 * @param endpoint
 	 */
 	void createAAS(AssetAdministrationShell aas, String endpoint);

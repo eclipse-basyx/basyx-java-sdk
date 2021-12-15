@@ -51,7 +51,6 @@ public class OpcUaConnector implements IModelProvider {
      * @param servicePath
      *            requested node path
      * @return the requested value
-     * @throws Exception
      */
     @Override
     public String getValue(String servicePath) {

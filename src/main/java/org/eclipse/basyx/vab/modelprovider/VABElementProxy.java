@@ -69,9 +69,9 @@ public class VABElementProxy implements IModelProvider {
 	}
 
 	/**
-	 * Update VAB element value <br />
-	 * <br />
-	 * If the element does not exist it will be created<br />
+	 * Update VAB element value <br>
+	 * <br>
+	 * If the element does not exist it will be created<br>
 	 */
 	@Override
 	public void setValue(String elementPath, Object newValue) throws ProviderException {

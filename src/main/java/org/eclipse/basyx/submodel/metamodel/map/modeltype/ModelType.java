@@ -16,7 +16,7 @@ import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
  * Describes the type of the used model and is used to add a model type to
- * existing AAS meta model entries. <br />
+ * existing AAS meta model entries. <br>
  * Needed for C# compatibility
  * 
  * @author schnicke
@@ -38,7 +38,7 @@ public class ModelType extends VABModelMap<Object> {
 	/**
 	 * Creates a DataSpecificationIEC61360 object from a map
 	 * 
-	 * @param obj
+	 * @param map
 	 *            a DataSpecificationIEC61360 object as raw map
 	 * @return a DataSpecificationIEC61360 object, that behaves like a facade for
 	 *         the given map

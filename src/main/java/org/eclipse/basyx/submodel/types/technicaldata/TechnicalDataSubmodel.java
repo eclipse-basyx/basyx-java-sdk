@@ -67,11 +67,10 @@ public class TechnicalDataSubmodel extends Submodel {
 	 * Constructor with mandatory attributes
 	 * @param idShort
 	 * @param identifier
-	 * @param manufacturerName
-	 * @param manufacturerProductDesignation
-	 * @param address
-	 * @param manufacturerProductFamily
-	 * @param yearsOfConstruction
+	 * @param generalInformation
+	 * @param productClassifications
+	 * @param properties
+	 * @param furtherInformation
 	 */
 	public TechnicalDataSubmodel(
 			String idShort,

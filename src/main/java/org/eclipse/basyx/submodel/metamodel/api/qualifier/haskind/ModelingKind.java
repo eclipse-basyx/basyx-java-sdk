@@ -13,7 +13,7 @@ import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnum;
 import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnumHelper;
 
 /**
- * ModelingKind enum as defined by DAAS document<br />
+ * ModelingKind enum as defined by DAAS document<br>
  * Enumeration for denoting whether an element is a template or an instance.
  * 
  * @author schnicke

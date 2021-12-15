@@ -45,7 +45,7 @@ public class MqttAASAggregator extends MqttEventService implements IAASAggregato
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param observedRegistryService the underlying AAS Aggregator 
+	 * @param observedAASAggregator the underlying AAS Aggregator 
 	 * @param serverEndpoint endpoint of mqtt broker
 	 * @param clientId unique client identifier
 	 * @throws MqttException
@@ -59,7 +59,7 @@ public class MqttAASAggregator extends MqttEventService implements IAASAggregato
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param observedRegistryService the underlying AAS Aggregator 
+	 * @param observedAASAggregator the underlying AAS Aggregator 
 	 * @param serverEndpoint endpoint of mqtt broker
 	 * @param clientId unique client identifier
 	 * @param user username for authentication with broker
@@ -76,7 +76,7 @@ public class MqttAASAggregator extends MqttEventService implements IAASAggregato
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param observedRegistryService the underlying AAS Aggregator 
+	 * @param observedAASAggregator the underlying AAS Aggregator 
 	 * @param client already configured client
 	 * @throws MqttException
 	 */
