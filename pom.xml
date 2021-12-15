@@ -5,8 +5,33 @@
 
 	<groupId>org.eclipse.basyx</groupId>
 	<artifactId>basyx.sdk</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2</version>
 	<name>BaSyx SDK</name>
+	<description>BaSyx Software Development Kit</description>
+	<url>https://www.eclipse.org/basyx/</url>
+	
+	<licenses>
+		<license>
+			<name>Eclipse Public License 2.0</name>
+			<url>https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt</url>
+		</license>
+	</licenses>
+	
+	<developers>
+        <developer>
+            <organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
+            <id>fschnicke</id>
+			<name>Frank Schnicke</name>
+			<email>frank.schnicke@iese.fraunhofer.de</email>
+        </developer>
+    </developers>
+	
+	<scm>
+		<connection>scm:https://github.com/eclipse-basyx/basyx-java-sdk.git</connection>
+		<developerConnection>scm:https://github.com/eclipse-basyx/basyx-java-sdk.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/eclipse-basyx/basyx-java-sdk</url>
+	</scm>
 
 	<packaging>jar</packaging>
 
@@ -114,6 +139,7 @@
 				</executions>
 			</plugin>
 			
+			<!-- Generate javadoc -->
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -124,7 +150,7 @@
                 <executions>
 	                <execution>
 	                	<goals>
-	                    	<goal>javadoc</goal>
+	                    	<goal>jar</goal>
 	                    </goals>
 	                    <id>generate-javadoc</id>
 	                    <phase>package</phase>
@@ -242,5 +268,46 @@
 		</dependency>
 		
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>MavenCentral</id>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>ossrh</id>
+					<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+				</snapshotRepository>
+				<repository>
+					<id>ossrh</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+			<build>
+				<plugins>
+					<!-- Signing the artifacts -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+						  <execution>
+							<id>sign-artifacts</id>
+							<phase>verify</phase>
+							<goals>
+							  <goal>sign</goal>
+							</goals>
+							<configuration>
+							  <gpgArguments>
+								<arg>--pinentry-mode</arg>
+								<arg>loopback</arg>
+							  </gpgArguments>
+							</configuration>
+						  </execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
 
