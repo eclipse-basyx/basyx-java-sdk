@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +42,7 @@ public class TestMarking {
 	public static File markingFile = new File("/to/the/image.jpg", "image/jpg");
 	public static Property additText = new Property(Marking.MARKINGADDITIONALTEXTPREFIX + "01", ValueType.String);
 	
-	private Map<String, Object> markingMap = new HashMap<String, Object>();
+	private Map<String, Object> markingMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void buildFax() {

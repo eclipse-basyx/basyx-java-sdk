@@ -17,7 +17,7 @@ import org.eclipse.basyx.vab.modelprovider.generic.VABModelProvider;
 
 
 /**
- * A simple VAB model provider based on a HashMap.
+ * A simple VAB model provider based on a LinkedHashMap.
  * 
  * This provider demonstrates the inclusion of new data sources to the VAB
  * 

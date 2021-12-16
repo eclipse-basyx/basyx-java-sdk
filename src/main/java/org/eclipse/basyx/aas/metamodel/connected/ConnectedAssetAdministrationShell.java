@@ -10,7 +10,7 @@
 package org.eclipse.basyx.aas.metamodel.connected;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -142,7 +142,7 @@ public class ConnectedAssetAdministrationShell extends ConnectedElement implemen
 	public Map<String, ISubmodel> getSubmodels() {
 		Collection<Map<String, Object>> submodelCollection = (Collection<Map<String, Object>>) getProxy().getValue(AssetAdministrationShell.SUBMODELS);
 
-		Map<String, ISubmodel> ret = new HashMap<>();
+		Map<String, ISubmodel> ret = new LinkedHashMap<>();
 
 		for (Map<String, Object> m : submodelCollection) {
 			Submodel sm = Submodel.createAsFacade(m);

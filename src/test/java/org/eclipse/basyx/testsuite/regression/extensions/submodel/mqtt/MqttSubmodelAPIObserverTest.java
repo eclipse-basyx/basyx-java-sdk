@@ -14,6 +14,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 
+import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelper;
 import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
@@ -100,7 +101,7 @@ public class MqttSubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(prop);
 
 		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, elemIdShort), listener.lastPayload);
-		assertEquals(MqttSubmodelAPIObserver.TOPIC_ADDELEMENT, listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, listener.lastTopic);
 	}
 
 	@Test
@@ -115,7 +116,7 @@ public class MqttSubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(idShortPath, prop);
 
 		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
-		assertEquals(MqttSubmodelAPIObserver.TOPIC_ADDELEMENT, listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, listener.lastTopic);
 	}
 
 	@Test
@@ -127,7 +128,7 @@ public class MqttSubmodelAPIObserverTest {
 		observableAPI.deleteSubmodelElement(idShortPath);
 
 		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
-		assertEquals(MqttSubmodelAPIObserver.TOPIC_DELETEELEMENT, listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelper.TOPIC_DELETEELEMENT, listener.lastTopic);
 	}
 
 	@Test
@@ -140,6 +141,6 @@ public class MqttSubmodelAPIObserverTest {
 
 		assertFalse((boolean) observableAPI.getSubmodelElementValue(idShortPath));
 		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
-		assertEquals(MqttSubmodelAPIObserver.TOPIC_UPDATEELEMENT, listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelper.TOPIC_UPDATEELEMENT, listener.lastTopic);
 	}
 }

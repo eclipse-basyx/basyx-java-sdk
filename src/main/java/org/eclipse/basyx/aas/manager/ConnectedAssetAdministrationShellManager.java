@@ -4,7 +4,7 @@
 package org.eclipse.basyx.aas.manager;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.aggregator.AASAggregatorAPIHelper;
@@ -84,7 +84,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	public Map<String, ISubmodel> retrieveSubmodels(IIdentifier aasId) {
 		AASDescriptor aasDesc = aasDirectory.lookupAAS(aasId);
 		Collection<SubmodelDescriptor> smDescriptors = aasDesc.getSubmodelDescriptors();
-		Map<String, ISubmodel> submodels = new HashMap<>();
+		Map<String, ISubmodel> submodels = new LinkedHashMap<>();
 		for (SubmodelDescriptor smDesc : smDescriptors) {
 			String smEndpoint = smDesc.getFirstEndpoint();
 			String smIdShort = smDesc.getIdShort();

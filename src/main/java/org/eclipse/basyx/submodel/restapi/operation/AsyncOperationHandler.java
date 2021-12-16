@@ -11,7 +11,7 @@ package org.eclipse.basyx.submodel.restapi.operation;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -30,8 +30,8 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
  *
  */
 public class AsyncOperationHandler {
-	private static Map<String, InvocationResponse> responses = new HashMap<>();
-	private static Map<String, String> responseOperationMap = new HashMap<>();
+	private static Map<String, InvocationResponse> responses = new LinkedHashMap<>();
+	private static Map<String, String> responseOperationMap = new LinkedHashMap<>();
 	private static ScheduledThreadPoolExecutor delayer = new ScheduledThreadPoolExecutor(0);
 
 	/**

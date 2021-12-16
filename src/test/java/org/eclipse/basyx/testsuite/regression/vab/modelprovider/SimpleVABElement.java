@@ -11,7 +11,7 @@ package org.eclipse.basyx.testsuite.regression.vab.modelprovider;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -26,7 +26,7 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  * @author kuhn, espen
  *
  */
-public class SimpleVABElement extends HashMap<String, Object> {
+public class SimpleVABElement extends LinkedHashMap<String, Object> {
 	public static final String EXCEPTION_MESSAGE = "Exception description";
 
 	private static final long serialVersionUID = 3942399852711325850L;
@@ -60,7 +60,7 @@ public class SimpleVABElement extends HashMap<String, Object> {
 		Map<String, Object> structure = createStructureTypes();
 		put("structure", structure);
 
-		Map<String, Object> special = new HashMap<>();
+		Map<String, Object> special = new LinkedHashMap<>();
 		special.putAll(createCaseSensitiveEntries());
 
 		Map<String, Object> nestedA = createNestedMap();
@@ -72,30 +72,30 @@ public class SimpleVABElement extends HashMap<String, Object> {
 	}
 
 	private Map<String, Object> createNestedMap() {
-		Map<String, Object> nestedA = new HashMap<>();
-		Map<String, Object> nestedB = new HashMap<>();
+		Map<String, Object> nestedA = new LinkedHashMap<>();
+		Map<String, Object> nestedB = new LinkedHashMap<>();
 		nestedA.put("nested", nestedB);
 		nestedB.put("value", 100);
 		return nestedA;
 	}
 
 	private Map<String, Object> createCaseSensitiveEntries() {
-		Map<String, Object> caseSensitive = new HashMap<>();
+		Map<String, Object> caseSensitive = new LinkedHashMap<>();
 		caseSensitive.put("casesensitivity", true);
 		caseSensitive.put("caseSensitivity", false);
 		return caseSensitive;
 	}
 
 	private Map<String, Object> createStructureTypes() {
-		Map<String, Object> structure = new HashMap<>();
-		structure.put("map", new HashMap<String, Object>());
+		Map<String, Object> structure = new LinkedHashMap<>();
+		structure.put("map", new LinkedHashMap<String, Object>());
 		structure.put("set", new HashSet<Object>());
 		structure.put("list", new ArrayList<Object>());
 		return structure;
 	}
 
 	private Map<String, Object> createFunctions() {
-		Map<String, Object> functions = new HashMap<>();
+		Map<String, Object> functions = new LinkedHashMap<>();
 		functions.put("supplier", (Supplier<Object>) () -> {
 			return true;
 		});
@@ -133,7 +133,7 @@ public class SimpleVABElement extends HashMap<String, Object> {
 	}
 
 	private Map<String, Object> createPrimitiveTypes() {
-		Map<String, Object> primitives = new HashMap<>();
+		Map<String, Object> primitives = new LinkedHashMap<>();
 		primitives.put("integer", 123);
 		primitives.put("double", 3.14d);
 		primitives.put("string", "TestValue");

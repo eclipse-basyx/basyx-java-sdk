@@ -14,7 +14,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +54,7 @@ public class TestTechnicalDataSubmodel {
 	public static FurtherInformation furtherInformation = new FurtherInformation(new Property(FurtherInformation.VALIDDATEID, ValueType.DateTime));
 	
 	public static Identifier identifier = new Identifier(IdentifierType.IRI, "http://admin-shell.io/ZVEI/TechnicalData/Submodel/1/1");
-	private Map<String, Object> submodelMap = new HashMap<String, Object>();
+	private Map<String, Object> submodelMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void buildFax() {

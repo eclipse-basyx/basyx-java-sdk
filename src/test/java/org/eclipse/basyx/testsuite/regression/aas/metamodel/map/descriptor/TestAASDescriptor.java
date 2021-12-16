@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -41,10 +41,10 @@ public class TestAASDescriptor extends ModelDescriptorTestSuite {
 	
 	@Before
 	public void initialize() {
-		map = new HashMap<String, Object>();
+		map = new LinkedHashMap<String, Object>();
 		map.put(Referable.IDSHORT, "123");
 		map.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRDI, "123"));
-		map.put(ModelDescriptor.ENDPOINTS, Arrays.asList(new HashMap<String, String>()));
+		map.put(ModelDescriptor.ENDPOINTS, Arrays.asList(new LinkedHashMap<String, String>()));
 		map.put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
 	}
 

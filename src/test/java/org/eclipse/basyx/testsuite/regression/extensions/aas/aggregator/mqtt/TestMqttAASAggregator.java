@@ -20,6 +20,7 @@ import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregator;
+import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorHelper;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
@@ -95,7 +96,7 @@ public class TestMqttAASAggregator {
 		eventAPI.createAAS(shell2);
 
 		assertEquals(aasId2, listener.lastPayload);
-		assertEquals(MqttAASAggregator.TOPIC_CREATEAAS, listener.lastTopic);
+		assertEquals(MqttAASAggregatorHelper.TOPIC_CREATEAAS, listener.lastTopic);
 	}
 	
 	@Test
@@ -104,7 +105,7 @@ public class TestMqttAASAggregator {
 		eventAPI.updateAAS(shell);
 		
 		assertEquals(AASID, listener.lastPayload);
-		assertEquals(MqttAASAggregator.TOPIC_UPDATEAAS, listener.lastTopic);
+		assertEquals(MqttAASAggregatorHelper.TOPIC_UPDATEAAS, listener.lastTopic);
 	}
 	
 	@Test
@@ -112,6 +113,6 @@ public class TestMqttAASAggregator {
 		eventAPI.deleteAAS(AASIDENTIFIER);
 
 		assertEquals(AASID, listener.lastPayload);
-		assertEquals(MqttAASAggregator.TOPIC_DELETEAAS, listener.lastTopic);
+		assertEquals(MqttAASAggregatorHelper.TOPIC_DELETEAAS, listener.lastTopic);
 	}
 }

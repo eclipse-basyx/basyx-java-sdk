@@ -30,11 +30,6 @@ public class ConnectedDataElement extends ConnectedSubmodelElement implements ID
 	protected KeyElements getKeyElement() {
 		return KeyElements.DATAELEMENT;
 	}
-	
-	@Override
-	public Object getValue() {
-		throw new UnsupportedOperationException("getValue is only possible in specific Element");
-	}
 
 	@Override
 	public DataElement getLocalCopy() {

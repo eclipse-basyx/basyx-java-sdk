@@ -14,7 +14,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.gene
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class TestGeneralInformation {
 	public static Property orderCode = new Property(GeneralInformation.MANUFACTURERORDERCODEID, ValueType.String);
 	public static File image = new File("image/jpg");
 	
-	private Map<String, Object> InfoMap = new HashMap<String, Object>();
+	private Map<String, Object> InfoMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void init() {

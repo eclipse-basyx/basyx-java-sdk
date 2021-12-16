@@ -13,7 +13,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.prod
 
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +41,7 @@ public class TestProductClassificationItem {
 	public static Property version = new Property(ProductClassificationItem.CLASSIFICATIONSYSTEMVERSIONID, ValueType.String);
 	public static Property productClass = new Property(ProductClassificationItem.PRODUCTCLASSID, ValueType.String);
 	
-	private Map<String, Object> classificationMap = new HashMap<String, Object>();
+	private Map<String, Object> classificationMap = new LinkedHashMap<String, Object>();
 	
 	@Before
 	public void init() {

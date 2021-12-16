@@ -53,7 +53,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	 * @param url
 	 * @return
 	 */
-	private static String harmonizeURL(String url) {
+	protected static String harmonizeURL(String url) {
 		if (url.endsWith(AASRegistryModelProvider.PREFIX)) {
 			url = url.substring(0, url.length() - AASRegistryModelProvider.PREFIX.length());
 		}

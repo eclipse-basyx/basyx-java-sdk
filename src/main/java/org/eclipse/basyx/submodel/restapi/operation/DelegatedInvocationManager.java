@@ -17,15 +17,25 @@ import java.util.Map;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IConstraint;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifier;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
-import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
+import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 
 /**
  * A helper class for operation invocation delegation
  * @author haque
  *
  */
-public class DelegatedInvocationHelper {
+public class DelegatedInvocationManager {
 	public static final String DELEGATION_TYPE = "invocationDelegation";
+	
+	private IConnectorFactory connectorFactory;
+	
+	/**
+	 * Constructs the DelegatedInvocationHelper using the passed connectorFactory for call delegation
+	 * @param connectorFactory IConnectorFactory to be used for delegation
+	 */
+	public DelegatedInvocationManager(IConnectorFactory connectorFactory) {
+		this.connectorFactory = connectorFactory;
+	}
 	
 	/**
 	 * Checks whether the given operation is delegated invocation
@@ -42,11 +52,20 @@ public class DelegatedInvocationHelper {
 	 * @param parameters
 	 * @return
 	 */
-	public static Object invokeDelegatedOperation(Operation operation, Object... parameters) {
+	public Object invokeDelegatedOperation(Operation operation, Object... parameters) {
 		String delegatedUrl = getDelegatedURL(operation);	
-		return new HTTPConnectorFactory()
+		return connectorFactory
 				.getConnector(delegatedUrl)
 				.invokeOperation("", parameters);
+	}
+	
+	/**
+	 * Creates the Qualifier used to tag an Operation as delegating operation
+	 * @param delegationURL the URL the Operation delegates to
+	 * @return the delegation Qualifier
+	 */
+	public static Qualifier createDelegationQualifier(String delegationURL) {
+		return new Qualifier(DelegatedInvocationManager.DELEGATION_TYPE, delegationURL, "string", null);
 	}
 	
 	/**

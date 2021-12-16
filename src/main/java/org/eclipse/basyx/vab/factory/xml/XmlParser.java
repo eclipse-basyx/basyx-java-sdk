@@ -12,7 +12,7 @@ package org.eclipse.basyx.vab.factory.xml;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class XmlParser {
 	private static final String TEXT = "#text";
 
 	/**
-	 * Parses the XML string content and returns the nested HashMap
+	 * Parses the XML string content and returns the nested LinkedHashMap
 	 * 
 	 * @param xmlContent - String content of the xml file
 	 * @throws ParserConfigurationException
@@ -75,7 +75,7 @@ public class XmlParser {
 	public static Map<String, Object> buildXmlMap(String xmlContent)
 			throws ParserConfigurationException, SAXException, IOException {
 
-		Map<String, Object> retMap = new HashMap<>();
+		Map<String, Object> retMap = new LinkedHashMap<>();
 		// Getting rid of the white spaces between the tags in order to avoid creation
 		// of
 		// unwanted nodes with no content. Applying the regex has no implications
@@ -109,7 +109,7 @@ public class XmlParser {
 	 */
 	private static Object traverseDomTree(Node parentNode) {
 
-		Map<String, Object> retMap = new HashMap<>();
+		Map<String, Object> retMap = new LinkedHashMap<>();
 		Object leafNode = null;
 		NodeList childNodes = parentNode.getChildNodes();
 
@@ -168,7 +168,7 @@ public class XmlParser {
 		// Get all attributes of the node
 		NamedNodeMap nodeAttrs = node.getAttributes();
 		// Create a special key for text of the element
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		ret.put(TEXT, node.getTextContent());
 		// Collect all attributes of the Text node and append
 		// to the text map contents.
@@ -190,7 +190,7 @@ public class XmlParser {
 	 */
 	private static Map<String, Object> makeAttrMapForEleNode(Map<String, Object> eleMap, Node node) {
 
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		ret = eleMap;
 		// Collect all attributes of the Element node and append to
 		// nested map contents.

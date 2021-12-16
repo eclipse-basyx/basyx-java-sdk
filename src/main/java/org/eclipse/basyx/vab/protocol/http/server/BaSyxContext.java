@@ -9,9 +9,10 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.server;
 
-import java.util.HashMap;
+import org.springframework.lang.Nullable;
+import java.util.LinkedHashMap;
 import java.util.Map;
-
+import java.util.Optional;
 import javax.servlet.http.HttpServlet;
 
 
@@ -22,7 +23,7 @@ import javax.servlet.http.HttpServlet;
  * @author kuhn, haque
  *
  */
-public class BaSyxContext extends HashMap<String, HttpServlet> {
+public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
 
 	
 	/**
@@ -70,10 +71,13 @@ public class BaSyxContext extends HashMap<String, HttpServlet> {
 	/**
 	 * Servlet parameter
 	 */
-	protected Map<String, Map<String, String>> servletParameter = new HashMap<>();
+	protected Map<String, Map<String, String>> servletParameter = new LinkedHashMap<>();
 
 
 	public Object AASHTTPServerResource;
+
+	@Nullable
+	private JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration ;
 	
 	/**
 	 * Constructor with default port
@@ -166,7 +170,7 @@ public class BaSyxContext extends HashMap<String, HttpServlet> {
 		if (servletParameter.containsKey(key)) return servletParameter.get(key);
 		
 		// Return empty map
-		return new HashMap<String, String>();
+		return new LinkedHashMap<String, String>();
 	}
 	
 	
@@ -232,6 +236,14 @@ public class BaSyxContext extends HashMap<String, HttpServlet> {
 	 */
 	public void setCertificatePath(String certificatePath) {
 		this.certificatePath = certificatePath;
+	}
+
+	public Optional<JwtBearerTokenAuthenticationConfiguration> getJwtBearerTokenAuthenticationConfiguration() {
+		return Optional.ofNullable(jwtBearerTokenAuthenticationConfiguration);
+	}
+
+	public void setJwtBearerTokenAuthenticationConfiguration(@Nullable final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
+		this.jwtBearerTokenAuthenticationConfiguration = jwtBearerTokenAuthenticationConfiguration;
 	}
 }
 

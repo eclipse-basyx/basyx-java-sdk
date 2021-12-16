@@ -33,13 +33,7 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
  *
  */
 public class MqttSubmodelAPI implements ISubmodelAPI {
-
-	// List of topics
-	public static final String TOPIC_CREATESUBMODEL = "BaSyxSubmodel_createdSubmodel";
-	public static final String TOPIC_ADDELEMENT = "BaSyxSubmodel_addedSubmodelElement";
-	public static final String TOPIC_DELETEELEMENT = "BaSyxSubmodel_removedSubmodelElement";
-	public static final String TOPIC_UPDATEELEMENT = "BaSyxSubmodel_updatedSubmodelElement";
-
+	
 	// The underlying SubmodelAPI
 	protected ObservableSubmodelAPI observedAPI;
 	

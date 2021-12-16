@@ -12,8 +12,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -38,7 +38,7 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 	public static final String SUBMODEL_API_ACCESS = "submodelTags=";
 
 	public TaggedDirectoryProvider() {
-		this(new MapTaggedDirectory(new HashMap<>(), new HashMap<>()));
+		this(new MapTaggedDirectory(new LinkedHashMap<>(), new LinkedHashMap<>()));
 	}
 
 	public TaggedDirectoryProvider(MapTaggedDirectory directory) {

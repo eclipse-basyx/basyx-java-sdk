@@ -15,6 +15,7 @@ import static org.junit.Assert.assertFalse;
 import java.io.IOException;
 
 import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPI;
+import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelper;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -97,7 +98,7 @@ public class TestMqttSubmodelAPIEvents {
 		eventAPI.addSubmodelElement(prop);
 
 		assertEquals(MqttSubmodelAPI.getCombinedMessage(AASID, SUBMODELID, elemIdShort), listener.lastPayload);
-		assertEquals(MqttSubmodelAPI.TOPIC_ADDELEMENT, listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, listener.lastTopic);
 	}
 
 	@Test
@@ -112,7 +113,7 @@ public class TestMqttSubmodelAPIEvents {
 		eventAPI.addSubmodelElement(idShortPath, prop);
 
 		assertEquals(MqttSubmodelAPI.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
-		assertEquals(MqttSubmodelAPI.TOPIC_ADDELEMENT, listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, listener.lastTopic);
 	}
 
 	@Test
@@ -124,7 +125,7 @@ public class TestMqttSubmodelAPIEvents {
 		eventAPI.deleteSubmodelElement(idShortPath);
 
 		assertEquals(MqttSubmodelAPI.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
-		assertEquals(MqttSubmodelAPI.TOPIC_DELETEELEMENT, listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelper.TOPIC_DELETEELEMENT, listener.lastTopic);
 	}
 
 	@Test
@@ -137,6 +138,6 @@ public class TestMqttSubmodelAPIEvents {
 
 		assertFalse((boolean) eventAPI.getSubmodelElementValue(idShortPath));
 		assertEquals(MqttSubmodelAPI.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
-		assertEquals(MqttSubmodelAPI.TOPIC_UPDATEELEMENT, listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelper.TOPIC_UPDATEELEMENT, listener.lastTopic);
 	}
 }

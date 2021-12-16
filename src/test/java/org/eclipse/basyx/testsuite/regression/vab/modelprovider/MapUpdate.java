@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.function.Function;
 
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
@@ -109,7 +109,7 @@ public class MapUpdate {
 	
 		// Push whole map via null-Path - should throw exception
 		// - create object
-		HashMap<String, Object> newMap = new HashMap<>();
+		LinkedHashMap<String, Object> newMap = new LinkedHashMap<>();
 		newMap.put("testKey", "testValue");
 		// - push
 		try {
@@ -119,7 +119,7 @@ public class MapUpdate {
 	
 		// Push whole map via ""-Path
 		// - create object
-		HashMap<String, Object> newMap2 = new HashMap<>();
+		LinkedHashMap<String, Object> newMap2 = new LinkedHashMap<>();
 		newMap2.put("testKey2", "testValue2");
 		// - push
 		connVABElement.setValue("", newMap2);

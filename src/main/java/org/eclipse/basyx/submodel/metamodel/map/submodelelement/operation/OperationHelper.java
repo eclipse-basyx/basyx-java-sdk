@@ -10,7 +10,7 @@
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
@@ -79,7 +79,7 @@ public class OperationHelper {
 	}
 
 	public static Map<String, SubmodelElement> convertSubmodelElementArrayToMap(SubmodelElement[] elems) {
-		Map<String, SubmodelElement> seMap = new HashMap<>();
+		Map<String, SubmodelElement> seMap = new LinkedHashMap<>();
 		for (SubmodelElement se : elems) {
 			seMap.put(se.getIdShort(), se);
 		}

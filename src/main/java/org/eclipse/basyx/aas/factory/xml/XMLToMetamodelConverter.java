@@ -11,7 +11,7 @@ package org.eclipse.basyx.aas.factory.xml;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class XMLToMetamodelConverter {
 	 */
 	@SuppressWarnings("unchecked")
 	public XMLToMetamodelConverter(String xmlContent) throws ParserConfigurationException, SAXException, IOException {
-		Map<String, Object> root = new HashMap<>();
+		Map<String, Object> root = new LinkedHashMap<>();
 		root.putAll((Map<? extends String, ? extends Object>) XmlParser.buildXmlMap(xmlContent)
 				.get(MetamodelToXMLConverter.AASENV));
 

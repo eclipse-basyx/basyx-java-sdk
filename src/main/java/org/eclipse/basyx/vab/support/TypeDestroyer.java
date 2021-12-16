@@ -10,7 +10,7 @@
 package org.eclipse.basyx.vab.support;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +28,7 @@ public class TypeDestroyer {
 	
 	/**
 	 * Removes type information of all objects within the map, i.e. every subclass
-	 * of HashMap is reduced to HashMap
+	 * of LinkedHashMap is reduced to LinkedHashMap
 	 * 
 	 * @param map
 	 * @return
@@ -68,7 +68,7 @@ public class TypeDestroyer {
 	}
 
 	private static Map<String, Object> handleMap(Map<String, Object> map) {
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		for (Entry<String, Object> entry : map.entrySet()) {
 			ret.put(entry.getKey(), handle(entry.getValue()));
 		}

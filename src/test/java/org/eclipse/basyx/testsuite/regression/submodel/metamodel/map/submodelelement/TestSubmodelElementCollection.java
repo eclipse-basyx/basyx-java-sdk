@@ -11,15 +11,15 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelel
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.eclipse.basyx.aas.metamodel.exception.IdShortDuplicationException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -146,20 +146,19 @@ public class TestSubmodelElementCollection {
 		Formula formula = new Formula(Collections.singleton(reference));
 		Qualifiable qualifiable = new Qualifiable(formula);
 		ISubmodelElement element = new Property("testId1", new Referable(idShort, "Category", new LangStrings("DE", "Test")), REFERENCE, qualifiable);
-		Map<String, ISubmodelElement> elementsMap = new HashMap<String, ISubmodelElement>();
+		Map<String, ISubmodelElement> elementsMap = new LinkedHashMap<String, ISubmodelElement>();
 		elementsMap.put(idShort, element);
 		elementCollection.setElements(elementsMap);
 		assertEquals(elementsMap, elementCollection.getSubmodelElements());
 	} 
 
-
 	@Test
 	public void testConstructor1() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 
-		Map<String, IDataElement> dataElements = new HashMap<String, IDataElement>();
-		Map<String, IOperation> operations = new HashMap<String, IOperation>();
-		Map<String, ISubmodelElement> submodels = new HashMap<String, ISubmodelElement>();
+		Map<String, IDataElement> dataElements = new LinkedHashMap<String, IDataElement>();
+		Map<String, IOperation> operations = new LinkedHashMap<String, IOperation>();
+		Map<String, ISubmodelElement> submodels = new LinkedHashMap<String, ISubmodelElement>();
 		dataElements.put(PROPERTY_ID, getProperty());
 		operations.put(OPERATION_ID, getOperation());
 		submodels.putAll(operations);
@@ -179,7 +178,7 @@ public class TestSubmodelElementCollection {
 		property.put(Referable.IDSHORT, newIdShort);
 		collection.addSubmodelElement(property);
 		assertEquals(new Reference(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, smCollIdShort, KeyType.IDSHORT)), property.getParent());
-		Map<String, ISubmodelElement> submodelElements = new HashMap<String, ISubmodelElement>();
+		Map<String, ISubmodelElement> submodelElements = new LinkedHashMap<String, ISubmodelElement>();
 		submodelElements.put(PROPERTY_ID, getProperty());
 		submodelElements.put(OPERATION_ID, getOperation());
 		submodelElements.put(newIdShort, property);
@@ -262,5 +261,29 @@ public class TestSubmodelElementCollection {
 		Operation operation = new Operation(variable, variable, variable, null);
 		operation.put(Referable.IDSHORT, OPERATION_ID);
 		return operation;
+	}
+	
+	@Test(expected = IdShortDuplicationException.class)
+	public void checkForExceptionWithDuplicateIdShortInSubmodelElementCollection() {
+		Map<String, Object> faultySubmodelElementCollection = createSubmodelElementCollectionWithDuplicateIdShortProperties();
+
+		SubmodelElementCollection.createAsFacade(faultySubmodelElementCollection);
+	}
+
+	private Map<String, Object> createSubmodelElementCollectionWithDuplicateIdShortProperties() {
+		String duplicateIdShort = "testProp";
+		
+		Property property1 = new Property(duplicateIdShort, 5);
+		Property property2 = new Property(duplicateIdShort, 7);
+		
+		Collection<Map<String, Object>> collection = Arrays.asList(property1, property2);
+		
+		String idShort = "submodelElementCollectionIdShort";
+		
+		SubmodelElementCollection submodelElementCollection = new SubmodelElementCollection(idShort);
+		
+		submodelElementCollection.setValue(collection);
+		
+		return submodelElementCollection;
 	}
 }

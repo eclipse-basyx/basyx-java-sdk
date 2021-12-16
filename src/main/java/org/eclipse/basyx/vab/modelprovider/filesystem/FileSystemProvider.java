@@ -14,7 +14,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -156,9 +156,9 @@ public class FileSystemProvider implements IModelProvider {
 	/**
 	 * Reads the folder in the relative path specified
 	 */
-	private HashMap<String, Object> readDirectory(String path) throws ProviderException {
+	private LinkedHashMap<String, Object> readDirectory(String path) throws ProviderException {
 		String fullPath = rootDir + "/" + path;
-		HashMap<String, Object> returnData = new HashMap<String, Object>();
+		LinkedHashMap<String, Object> returnData = new LinkedHashMap<String, Object>();
 		HashSet<String> collections = readMetaFile(path);
 
 		List<File> directoryFiles;
