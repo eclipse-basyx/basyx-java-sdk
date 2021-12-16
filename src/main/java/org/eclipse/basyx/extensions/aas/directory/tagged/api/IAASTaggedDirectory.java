@@ -40,12 +40,21 @@ public interface IAASTaggedDirectory extends IAASRegistry {
 	 */
 	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags);
 
-	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor);
+	public default void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor) {
+		throw new UnsupportedOperationException("The method registerSubmodel has not been implemented!");
+	}
 
-	public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(String submodelTag);
+	public default Set<TaggedSubmodelDescriptor> lookupSubmodelTag(String submodelTag) {
+		throw new UnsupportedOperationException("The method lookupSubmodelTag has not been implemented!");
+	}
 
-	public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(Set<String> submodelTags);
+	public default Set<TaggedSubmodelDescriptor> lookupSubmodelTags(Set<String> submodelTags) {
+		throw new UnsupportedOperationException("The method lookupSubmodelTags has not been implemented!");
+	}
 
-	public Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(Set<String> aasTags, Set<String> submodelTags);
+	public default Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(Set<String> aasTags,
+			Set<String> submodelTags) {
+		throw new UnsupportedOperationException("The method lookupBothAasAndSubmodelTags has not been implemented!");
+	}
 
 }
