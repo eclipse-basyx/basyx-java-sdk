@@ -23,7 +23,7 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 /**
  *
  * Implementation of {@link ISubmodelAggregator} that calls back registered
- * {@link ISubmodelAggregatorObserver} when changes on AAS occur
+ * {@link ISubmodelAggregatorObserver} when changes on Submodel occur
  *
  * @author fischer, jungjan
  *
