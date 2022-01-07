@@ -91,7 +91,8 @@ public class AASAggregator implements IAASAggregator {
 	 * submodels
 	 *
 	 * @param registry
-	 * @param client
+	 * @param serverEndpoint
+	 * @param clientId
 	 * @throws MqttException
 	 */
 	public AASAggregator(IAASRegistry registry, String serverEndpoint, String clientId) throws MqttException {
