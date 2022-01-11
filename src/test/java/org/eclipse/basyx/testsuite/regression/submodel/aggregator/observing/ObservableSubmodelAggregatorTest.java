@@ -28,13 +28,15 @@ import org.junit.Test;
 /**
  * Tests events emitting with the SubmodelAggregator
  * 
- * @author fischer, jungjan
+ * @author fischer, jungjan, fried
  *
  */
 public class ObservableSubmodelAggregatorTest {
 	protected Submodel submodel;
+
 	private static final String SUBMODEL_IDSHORT = "submodelIdShort";
-	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_IDSHORT);
+	private static final String SUBMODEL_ID = "submodelId";
+	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
 
 	private ObservableSubmodelAggregator observerdSubmodelAggregator;
 	private MockObserver observer;
@@ -71,21 +73,21 @@ public class ObservableSubmodelAggregatorTest {
 		observerdSubmodelAggregator.updateSubmodel(submodel);
 
 		assertTrue(observer.updatedNotified);
-		assertEquals(SUBMODEL_IDSHORT, observer.submodelId);
+		assertEquals(SUBMODEL_ID, observer.submodelId);
 	}
 
 	@Test
 	public void testDeleteSubmodelByIdentifier() {
 		observerdSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 		assertTrue(observer.deletedNotified);
-		assertEquals(SUBMODEL_IDSHORT, observer.submodelId);
+		assertEquals(SUBMODEL_ID, observer.submodelId);
 	}
 
 	@Test
 	public void testDeleteSubmodelByIdShort() {
 		observerdSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 		assertTrue(observer.deletedNotified);
-		assertEquals(SUBMODEL_IDSHORT, observer.submodelId);
+		assertEquals(SUBMODEL_ID, observer.submodelId);
 	}
 
 	@Test
@@ -104,7 +106,7 @@ public class ObservableSubmodelAggregatorTest {
 		public String submodelId = "";
 
 		@Override
-		public void submodelCreated(String submodelId) {
+		public void submodelCreated(String aasId, String submodelId) {
 			createdNotified = true;
 			deletedNotified = false;
 			updatedNotified = false;
@@ -112,7 +114,7 @@ public class ObservableSubmodelAggregatorTest {
 		}
 
 		@Override
-		public void submodelUpdated(String submodelId) {
+		public void submodelUpdated(String aasId, String submodelId) {
 			createdNotified = false;
 			deletedNotified = false;
 			updatedNotified = true;
@@ -120,7 +122,7 @@ public class ObservableSubmodelAggregatorTest {
 		}
 
 		@Override
-		public void submodelDeleted(String submodelId) {
+		public void submodelDeleted(String aasId, String submodelId) {
 			createdNotified = false;
 			deletedNotified = true;
 			updatedNotified = false;

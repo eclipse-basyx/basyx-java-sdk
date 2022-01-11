@@ -37,7 +37,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 /**
  * Tests events emitting with the MqttSubmodelAggregator
  *
- * @author fischer, jungjan
+ * @author fischer, jungjan, fried
  *
  */
 public class TestMqttSubmodelAggregator {
@@ -94,7 +94,7 @@ public class TestMqttSubmodelAggregator {
 		Submodel newSubmodel = new Submodel(newSubmodelIdShort, newSubmodelIdentifier);
 		mqttSubmodelAggregator.createSubmodel(newSubmodel);
 
-		assertEquals(newSubmodelId, listener.lastPayload);
+		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, newSubmodelId), listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_CREATESUBMODEL, listener.lastTopic);
 	}
 
@@ -103,7 +103,7 @@ public class TestMqttSubmodelAggregator {
 		submodel.setCategory("newCategory");
 		mqttSubmodelAggregator.updateSubmodel(submodel);
 
-		assertEquals(SUBMODEL_ID, listener.lastPayload);
+		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_ID), listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_UPDATESUBMODEL, listener.lastTopic);
 	}
 
@@ -111,7 +111,7 @@ public class TestMqttSubmodelAggregator {
 	public void testDeleteSubmodelByIdentifier() {
 		mqttSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 
-		assertEquals(SUBMODEL_ID, listener.lastPayload);
+		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_ID), listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 
@@ -119,7 +119,7 @@ public class TestMqttSubmodelAggregator {
 	public void testDeleteSubmodelByIdShort() {
 		mqttSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 
-		assertEquals(SUBMODEL_ID, listener.lastPayload);
+		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_ID), listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 }

@@ -20,4 +20,8 @@ public class MqttSubmodelAggregatorHelper {
 	public static final String TOPIC_CREATESUBMODEL = "BaSyxAggregator_createdSubmodel";
 	public static final String TOPIC_DELETESUBMODEL = "BaSyxAggregator_deletedSubmodel";
 	public static final String TOPIC_UPDATESUBMODEL = "BaSyxAggregator_updatedSubmodel";
+
+	public static String getCombinedMessage(String shellId, String submodelId) {
+		return "(" + shellId + "," + submodelId + ")";
+	}
 }

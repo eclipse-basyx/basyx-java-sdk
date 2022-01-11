@@ -67,7 +67,7 @@ public class TestMqttSubmodelAggregatorObserver {
 		observedSubmodelAggregator = new ObservableSubmodelAggregator(submodelAggregator);
 
 		// Create mqtt as an observer
-		mqttSubmodelAggregatorObserver = new MqttSubmodelAggregatorObserver("tcp://localhost:1884", "testClient");
+		mqttSubmodelAggregatorObserver = new MqttSubmodelAggregatorObserver(observedSubmodelAggregator, "tcp://localhost:1884", "testClient");
 		observedSubmodelAggregator.addObserver(mqttSubmodelAggregatorObserver);
 	}
 
@@ -80,7 +80,6 @@ public class TestMqttSubmodelAggregatorObserver {
 	public void setUp() {
 		submodel = new Submodel(SUBMODEL_IDSHORT, SUBMODEL_IDENTIFIER);
 		observedSubmodelAggregator.createSubmodel(submodel);
-
 		listener = new MqttTestListener();
 		mqttBroker.addInterceptHandler(listener);
 	}
@@ -93,11 +92,12 @@ public class TestMqttSubmodelAggregatorObserver {
 	@Test
 	public void testCreateSubmodel() {
 		String newSubmodelIdShort = "newSubmodelIdShort";
-		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRDI, newSubmodelIdShort);
+		String newSubmodelId = "newSubmodelId";
+		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRDI, newSubmodelId);
 		Submodel newSubmodel = new Submodel(newSubmodelIdShort, newSubmodelIdentifier);
 		observedSubmodelAggregator.createSubmodel(newSubmodel);
 
-		assertEquals(newSubmodelIdShort, listener.lastPayload);
+		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, newSubmodelId), listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_CREATESUBMODEL, listener.lastTopic);
 	}
 
@@ -106,7 +106,7 @@ public class TestMqttSubmodelAggregatorObserver {
 		submodel.setCategory("newCategory");
 		observedSubmodelAggregator.updateSubmodel(submodel);
 
-		assertEquals(SUBMODEL_IDSHORT, listener.lastPayload);
+		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_IDSHORT), listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_UPDATESUBMODEL, listener.lastTopic);
 	}
 
@@ -114,7 +114,7 @@ public class TestMqttSubmodelAggregatorObserver {
 	public void testDeleteSubmodelByIdentifier() {
 		observedSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 
-		assertEquals(SUBMODEL_IDSHORT, listener.lastPayload);
+		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_IDSHORT), listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 
@@ -122,7 +122,7 @@ public class TestMqttSubmodelAggregatorObserver {
 	public void testDeleteSubmodelByIdShort() {
 		observedSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 
-		assertEquals(SUBMODEL_IDSHORT, listener.lastPayload);
+		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_IDSHORT), listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 }

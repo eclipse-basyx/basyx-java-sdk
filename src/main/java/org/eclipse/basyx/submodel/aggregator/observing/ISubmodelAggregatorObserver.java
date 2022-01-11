@@ -15,7 +15,7 @@ import org.eclipse.basyx.submodel.observer.IObserver;
 /**
  * Interface for an observer of {@link ObservableSubmodelAggregator}
  *
- * @author fischer, jungjan
+ * @author fischer, jungjan, fried
  *
  */
 public interface ISubmodelAggregatorObserver extends IObserver {
@@ -26,7 +26,7 @@ public interface ISubmodelAggregatorObserver extends IObserver {
 	 * @param submodelId
 	 *            id of the created submodel
 	 */
-	public void submodelCreated(String submodelId);
+	public void submodelCreated(String shellId, String submodelId);
 
 	/**
 	 * Is called when an submodel is updated
@@ -34,7 +34,7 @@ public interface ISubmodelAggregatorObserver extends IObserver {
 	 * @param submodelId
 	 *            id of the updated submodel
 	 */
-	public void submodelUpdated(String submodelId);
+	public void submodelUpdated(String shellId, String submodelId);
 
 	/**
 	 * Is called when an submodel is deleted
@@ -42,5 +42,5 @@ public interface ISubmodelAggregatorObserver extends IObserver {
 	 * @param submodelId
 	 *            id of the deleted submodel
 	 */
-	public void submodelDeleted(String submodelId);
+	public void submodelDeleted(String shellId, String submodelId);
 }
