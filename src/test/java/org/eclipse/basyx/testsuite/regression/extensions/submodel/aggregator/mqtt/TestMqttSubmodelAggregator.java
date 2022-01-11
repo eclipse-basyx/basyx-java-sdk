@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.extensions.submodel.aggregator.mqtt;
@@ -36,14 +36,15 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 
 /**
  * Tests events emitting with the MqttSubmodelAggregator
- * 
+ *
  * @author fischer, jungjan
  *
  */
 public class TestMqttSubmodelAggregator {
 	protected Submodel submodel;
 	private static final String SUBMODEL_IDSHORT = "submodelIdShort";
-	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_IDSHORT);
+	private static final String SUBMODEL_ID = "submodelId";
+	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
 
 	private static Server mqttBroker;
 	private static MqttSubmodelAggregator mqttSubmodelAggregator;
@@ -88,11 +89,12 @@ public class TestMqttSubmodelAggregator {
 	@Test
 	public void testCreateSubmodel() {
 		String newSubmodelIdShort = "newSubmodelIdShort";
-		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRDI, newSubmodelIdShort);
+		String newSubmodelId = "newSubmodelId";
+		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRDI, newSubmodelId);
 		Submodel newSubmodel = new Submodel(newSubmodelIdShort, newSubmodelIdentifier);
 		mqttSubmodelAggregator.createSubmodel(newSubmodel);
 
-		assertEquals(newSubmodelIdShort, listener.lastPayload);
+		assertEquals(newSubmodelId, listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_CREATESUBMODEL, listener.lastTopic);
 	}
 
@@ -101,7 +103,7 @@ public class TestMqttSubmodelAggregator {
 		submodel.setCategory("newCategory");
 		mqttSubmodelAggregator.updateSubmodel(submodel);
 
-		assertEquals(SUBMODEL_IDSHORT, listener.lastPayload);
+		assertEquals(SUBMODEL_ID, listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_UPDATESUBMODEL, listener.lastTopic);
 	}
 
@@ -109,7 +111,7 @@ public class TestMqttSubmodelAggregator {
 	public void testDeleteSubmodelByIdentifier() {
 		mqttSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 
-		assertEquals(SUBMODEL_IDSHORT, listener.lastPayload);
+		assertEquals(SUBMODEL_ID, listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 
@@ -117,7 +119,7 @@ public class TestMqttSubmodelAggregator {
 	public void testDeleteSubmodelByIdShort() {
 		mqttSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 
-		assertEquals(SUBMODEL_IDSHORT, listener.lastPayload);
+		assertEquals(SUBMODEL_ID, listener.lastPayload);
 		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
 	}
 }

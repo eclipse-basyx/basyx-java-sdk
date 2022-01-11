@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * Implementation variant for the SubmodelAggregator that triggers MQTT events
  * for different operations on the aggregator. Has to be based on a backend
  * implementation of the ISubmodelAggregator to forward its method calls.
- * 
+ *
  * @author fischer, jungjan
  *
  */
@@ -38,7 +38,7 @@ public class MqttSubmodelAggregator extends MqttEventService implements ISubmode
 
 	/**
 	 * Constructor for adding this MQTT extension on top of an SubmodelAggregator
-	 * 
+	 *
 	 * @param observedSubmodelAggregator
 	 *            the underlying Submodel Aggregator
 	 * @param serverEndpoint
@@ -55,7 +55,7 @@ public class MqttSubmodelAggregator extends MqttEventService implements ISubmode
 
 	/**
 	 * Constructor for adding this MQTT extension on top of an SubmodelAggregator
-	 * 
+	 *
 	 * @param observedSubmodelAggregator
 	 *            the underlying Submodel Aggregator
 	 * @param serverEndpoint
@@ -76,7 +76,7 @@ public class MqttSubmodelAggregator extends MqttEventService implements ISubmode
 
 	/**
 	 * Constructor for adding this MQTT extension on top of an SubmodelAggregator
-	 * 
+	 *
 	 * @param observedSubmodelAggregator
 	 *            the underlying Submodel Aggregator
 	 * @param client
@@ -134,8 +134,10 @@ public class MqttSubmodelAggregator extends MqttEventService implements ISubmode
 
 	@Override
 	public void deleteSubmodelByIdShort(String submodelIdShort) {
-		observedSubmodelAggregator.deleteSubmodelByIdShort(submodelIdShort);
-		sendMqttMessage(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, submodelIdShort);
-	}
+		ISubmodel submodelToDelete = observedSubmodelAggregator.getSubmodelbyIdShort(submodelIdShort);
+		String submodelId = submodelToDelete.getIdentification().getId();
 
+		observedSubmodelAggregator.deleteSubmodelByIdShort(submodelIdShort);
+		sendMqttMessage(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, submodelId);
+	}
 }
