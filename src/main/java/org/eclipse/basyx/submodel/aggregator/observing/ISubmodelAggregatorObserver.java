@@ -10,7 +10,7 @@
 
 package org.eclipse.basyx.submodel.aggregator.observing;
 
-import org.eclipse.basyx.aas.observer.IObserver;
+import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
  * Interface for an observer of {@link ObservableSubmodelAggregator}

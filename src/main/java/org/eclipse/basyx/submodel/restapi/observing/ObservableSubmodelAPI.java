@@ -11,10 +11,10 @@ package org.eclipse.basyx.submodel.restapi.observing;
 
 import java.util.Collection;
 
-import org.eclipse.basyx.aas.observer.Observable;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
+import org.eclipse.basyx.submodel.observer.Observable;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 /**

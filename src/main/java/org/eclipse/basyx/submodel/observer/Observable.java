@@ -9,7 +9,7 @@
 * SPDX-License-Identifier: EPL-2.0
 ******************************************************************************/
 
-package org.eclipse.basyx.aas.observer;
+package org.eclipse.basyx.submodel.observer;
 
 import java.util.ArrayList;
 import java.util.Collection;

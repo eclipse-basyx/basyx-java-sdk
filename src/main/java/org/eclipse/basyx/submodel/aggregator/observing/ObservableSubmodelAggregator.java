@@ -12,11 +12,11 @@ package org.eclipse.basyx.submodel.aggregator.observing;
 
 import java.util.Collection;
 
-import org.eclipse.basyx.aas.observer.Observable;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.observer.Observable;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
