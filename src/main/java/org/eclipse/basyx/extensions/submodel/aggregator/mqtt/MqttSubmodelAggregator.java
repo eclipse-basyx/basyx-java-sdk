@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 public class MqttSubmodelAggregator extends MqttEventService implements ISubmodelAggregator {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelAggregator.class);
 
-	// The underlying SubmodelAggregator
 	protected ISubmodelAggregator observedSubmodelAggregator;
 
 	/**
