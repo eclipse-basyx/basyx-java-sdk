@@ -369,13 +369,13 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 		Set<String> submodelTags = new HashSet<>(Arrays.asList(INTEGRATOR, KEY, COMPONENT));
 
 		Set<TaggedSubmodelDescriptor> taggedSmDescriptors = directory.lookupBothAasAndSubmodelTags(allTags, submodelTags);
-		assertEquals(4, taggedSmDescriptors.size());
+		assertEquals(2, taggedSmDescriptors.size());
 
 		Set<String> aasTagsWithWildcard = new HashSet<>(Arrays.asList(INTERNAL, MACHINE, "*"));
 
 		Set<TaggedSubmodelDescriptor> taggedSmDescriptors1 = directory.lookupBothAasAndSubmodelTags(aasTagsWithWildcard, submodelTags);
 
-		assertEquals(4, taggedSmDescriptors1.size());
+		assertEquals(2, taggedSmDescriptors1.size());
 
 		Set<String> aasTags = new HashSet<>(Arrays.asList(INTERNAL, INTEGRATOR, MACHINE));
 

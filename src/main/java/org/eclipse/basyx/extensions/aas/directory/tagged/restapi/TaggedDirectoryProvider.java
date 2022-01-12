@@ -8,16 +8,11 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.restapi;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
@@ -26,7 +21,6 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.map.MapTaggedDirectory;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
-import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
@@ -66,7 +60,7 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
-	    path = VABPathTools.decodePathElement(path);
+		path = VABPathTools.decodePathElement(path);
 		path = VABPathTools.stripSlashes(path);
 		if (path.startsWith(PREFIX)) {
 			if (path.contains("/submodels/")) {
@@ -78,14 +72,15 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 			super.createValue(path, newEntity);
 		}
 	}
-	
-	private void registerSubmodel(String path, Object newEntity) {
-	    String aasIdWithSlashes = path.replace(PREFIX, "").replace(path.substring(path.indexOf("/submodels/")), "");
-        String aasIdWithoutSlashes = VABPathTools.stripSlashes(aasIdWithSlashes);
 
-        Identifier id = new Identifier();
-        id.setId(aasIdWithoutSlashes);
-        directory.registerSubmodel(id, TaggedSubmodelDescriptor.createAsFacade((Map<String, Object>) newEntity));
+	@SuppressWarnings("unchecked")
+	private void registerSubmodel(String path, Object newEntity) {
+		String aasIdWithSlashes = path.replace(PREFIX, "").replace(path.substring(path.indexOf("/submodels/")), "");
+		String aasIdWithoutSlashes = VABPathTools.stripSlashes(aasIdWithSlashes);
+
+		Identifier id = new Identifier();
+		id.setId(aasIdWithoutSlashes);
+		directory.registerSubmodel(id, TaggedSubmodelDescriptor.createAsFacade((Map<String, Object>) newEntity));
 	}
 
 	private Set<String> extractTags(String path, String tagType) {

@@ -8,12 +8,11 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.map;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +36,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  */
 public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirectory {
 	private Map<String, Set<TaggedAASDescriptor>> tagMap;
-	private Map<String, Set<TaggedSubmodelDescriptor>> submodelTagMap = new HashMap<>();
+	private Map<String, Set<TaggedSubmodelDescriptor>> submodelTagMap = new LinkedHashMap<>();
 
 	private static final String WILDCARD = "*";
 
@@ -75,7 +74,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	}
 
 	private synchronized void addSubmodelTag(String submodelTag, TaggedSubmodelDescriptor descriptor) {
-		submodelTagMap.computeIfAbsent(submodelTag, key -> new HashSet<TaggedSubmodelDescriptor>()).add(descriptor);
+		submodelTagMap.computeIfAbsent(submodelTag, key -> new LinkedHashSet<TaggedSubmodelDescriptor>()).add(descriptor);
 	}
 
 	public void deleteSubmodelTag(IIdentifier aasIdentifier, IIdentifier smIdentifier) {
@@ -91,7 +90,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 		if (aasTags.isEmpty() || submodelTags.isEmpty() || (aasTags.contains(WILDCARD) && submodelTags.contains(WILDCARD))) {
 			return Collections.emptySet();
 		} else if (aasTags.contains(WILDCARD)) {
-			return lookupSubmodelDescriptorsFromAllTaggedAasDescriptors();
+			return lookupSubmodelTags(submodelTags);
 		} else if (submodelTags.contains(WILDCARD)) {
 			return lookupAllSubmodelDescriptorsForAasTags(aasTags);
 		} else {
@@ -100,7 +99,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	}
 
 	private Set<TaggedSubmodelDescriptor> lookupCombinedTags(Set<String> aasTags, Set<String> submodelTags) {
-		Set<TaggedSubmodelDescriptor> result = new HashSet<>();
+		Set<TaggedSubmodelDescriptor> result = new LinkedHashSet<>();
 		Set<TaggedAASDescriptor> aasDescriptors = lookupTags(aasTags);
 		Set<TaggedSubmodelDescriptor> smDescriptors = lookupSubmodelTags(submodelTags);
 
@@ -116,7 +115,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	}
 
 	private Set<TaggedSubmodelDescriptor> lookupSubmodelDescriptorsFromAllTaggedAasDescriptors() {
-		Set<TaggedSubmodelDescriptor> result = new HashSet<>();
+		Set<TaggedSubmodelDescriptor> result = new LinkedHashSet<>();
 
 		List<AASDescriptor> aasDescriptors = lookupAll();
 
@@ -132,7 +131,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	}
 
 	private Set<TaggedSubmodelDescriptor> lookupAllSubmodelDescriptorsForAasTags(Set<String> aasTags) {
-		Set<TaggedSubmodelDescriptor> result = new HashSet<>();
+		Set<TaggedSubmodelDescriptor> result = new LinkedHashSet<>();
 
 		Set<TaggedAASDescriptor> desc = lookupTags(aasTags);
 
@@ -148,23 +147,23 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	@Override
 	public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(String submodelTag) {
 		if (submodelTagMap.containsKey(submodelTag)) {
-			return new HashSet<>(submodelTagMap.get(submodelTag));
+			return new LinkedHashSet<>(submodelTagMap.get(submodelTag));
 		} else {
-			return new HashSet<>();
+			return new LinkedHashSet<>();
 		}
 	}
 
 	@Override
 	public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(Set<String> submodelTags) {
-		Set<TaggedSubmodelDescriptor> result = new HashSet<>();
+		Set<TaggedSubmodelDescriptor> result = new LinkedHashSet<>();
 		result.addAll(getMatchingSubmodelDescriptors(submodelTags));
 
 		return result;
 	}
 
 	private Set<TaggedSubmodelDescriptor> getMatchingSubmodelDescriptors(Set<String> submodelTags) {
-		Set<TaggedSubmodelDescriptor> result = new HashSet<>();
-		Set<TaggedSubmodelDescriptor> smDescriptors = new HashSet<>();
+		Set<TaggedSubmodelDescriptor> result = new LinkedHashSet<>();
+		Set<TaggedSubmodelDescriptor> smDescriptors = new LinkedHashSet<>();
 
 		for (String s : submodelTags) {
 			smDescriptors.addAll(lookupSubmodelTag(s));
@@ -182,15 +181,15 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 	@Override
 	public Set<TaggedAASDescriptor> lookupTag(String tag) {
 		if (tagMap.containsKey(tag)) {
-			return new HashSet<>(tagMap.get(tag));
+			return new LinkedHashSet<>(tagMap.get(tag));
 		} else {
-			return new HashSet<>();
+			return new LinkedHashSet<>();
 		}
 	}
 
 	@Override
 	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags) {
-		Set<TaggedAASDescriptor> result = new HashSet<>();
+		Set<TaggedAASDescriptor> result = new LinkedHashSet<>();
 		Set<Set<TaggedAASDescriptor>> descriptors = tags.stream().map(t -> lookupTag(t)).collect(Collectors.toSet());
 
 		if (descriptors.size() > 0) {
@@ -223,7 +222,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 
 	private synchronized void addTag(String tag, TaggedAASDescriptor descriptor) {
 		if (!tagMap.containsKey(tag)) {
-			tagMap.put(tag, new HashSet<>());
+			tagMap.put(tag, new LinkedHashSet<>());
 		}
 
 		tagMap.get(tag).add(descriptor);
