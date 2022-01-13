@@ -13,8 +13,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.AASAggregatorAPIHelper;
+import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
@@ -59,7 +59,7 @@ public class AASAggregatorProxy implements IAASAggregator {
 	 * @param url
 	 * @return
 	 */
-	private static String harmonizeURL(String url) {
+	protected static String harmonizeURL(String url) {
 		return VABPathTools.stripFromPath(url, AASAggregatorProvider.PREFIX);
 	}
 
