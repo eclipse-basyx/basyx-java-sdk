@@ -11,12 +11,10 @@ package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.authori
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorScopes;
@@ -27,8 +25,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -36,9 +36,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Tests authorization with the AuthorizedAASAggregator
- * 
+ *
  * @author jungjan, fried, fischer
  */
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestAuthorizedAASAggregator {
 
 	@Mock
@@ -145,7 +146,6 @@ public class TestAuthorizedAASAggregator {
 
 		final IIdentifier shellId = new ModelUrn("urn:test1");
 
-
 		testSubject.getAAS(shellId);
 	}
 
@@ -153,8 +153,9 @@ public class TestAuthorizedAASAggregator {
 	public void givenPrincipalHasReadAuthority_whenGetAASList_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
 
-		final List<AASDescriptor> expectedAASDescriptorList = Collections.singletonList(new AASDescriptor("test", new ModelUrn("urn:test"), "http://test.example/aas"));
-		// Mockito.when(registryMock.lookupAll()).thenReturn(expectedAASDescriptorList);
+		final IIdentifier shellId = new ModelUrn("urn:test1");
+		final Collection<IAssetAdministrationShell> expectedAASDescriptorList = Collections.singletonList(new AssetAdministrationShell("test", shellId, new Asset()));
+		Mockito.when(aggregatorMock.getAASList()).thenReturn(expectedAASDescriptorList);
 
 		final Collection<IAssetAdministrationShell> shellList = testSubject.getAASList();
 
