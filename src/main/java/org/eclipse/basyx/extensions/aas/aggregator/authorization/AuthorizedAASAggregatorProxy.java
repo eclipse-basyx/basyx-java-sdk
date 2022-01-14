@@ -17,7 +17,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
 /**
  * Local proxy class that hides HTTP calls to BaSys aggregator with enabled
  * authorization.
- * 
+ *
  * @author jungjan, fischer, fried
  */
 public class AuthorizedAASAggregatorProxy extends AASAggregatorProxy {
@@ -31,8 +31,8 @@ public class AuthorizedAASAggregatorProxy extends AASAggregatorProxy {
 	 *            Supplier for values to be placed in the HTTP Authorization request
 	 *            header
 	 */
-	public AuthorizedAASAggregatorProxy(String aasAggregatorURL, IAuthorizationSupplier authorizationSupplier) {
-		super(new JSONConnector(new HTTPConnector(harmonizeURL(aasAggregatorURL), authorizationSupplier)));
+	public AuthorizedAASAggregatorProxy(String aasAggregatorUrl, IAuthorizationSupplier authorizationSupplier) {
+		super(new JSONConnector(new HTTPConnector(harmonizeURL(aasAggregatorUrl), authorizationSupplier)));
 	}
 
 }
