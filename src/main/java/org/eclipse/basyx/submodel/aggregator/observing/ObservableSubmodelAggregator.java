@@ -71,6 +71,12 @@ public class ObservableSubmodelAggregator extends Observable<ISubmodelAggregator
 	}
 
 	@Override
+	public void createSubmodel(ISubmodelAPI submodelAPI) {
+		submodelAggregator.createSubmodel(submodelAPI);
+		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodelAPI.getSubmodel()), submodelAPI.getSubmodel().getIdentification().getId()));
+	}
+
+	@Override
 	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
 		submodelAggregator.updateSubmodel(submodel);
 		observers.stream().forEach(observer -> observer.submodelUpdated(getParentAASId(submodel), submodel.getIdentification().getId()));

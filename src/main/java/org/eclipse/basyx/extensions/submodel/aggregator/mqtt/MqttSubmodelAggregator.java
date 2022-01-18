@@ -136,4 +136,9 @@ public class MqttSubmodelAggregator implements ISubmodelAggregator {
 	public void deleteSubmodelByIdShort(String submodelIdShort) {
 		observedSubmodelAggregator.deleteSubmodelByIdShort(submodelIdShort);
 	}
+
+	@Override
+	public void createSubmodel(ISubmodelAPI submodelAPI) {
+		observedSubmodelAggregator.createSubmodel(submodelAPI);
+	}
 }
