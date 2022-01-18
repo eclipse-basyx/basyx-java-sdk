@@ -55,7 +55,7 @@ public interface ISubmodelAggregator {
 	 * 
 	 * @param identifier
 	 *            the ID of the Submodel
-	 * @return the requested Submodel api
+	 * @return the requested Submodel API
 	 */
 	public ISubmodelAPI getSubmodelAPIById(IIdentifier identifier) throws ResourceNotFoundException;
 
@@ -64,7 +64,7 @@ public interface ISubmodelAggregator {
 	 * 
 	 * @param idShort
 	 *            the idShort of the Submodel
-	 * @return the requested Submodel api
+	 * @return the requested Submodel API
 	 */
 	public ISubmodelAPI getSubmodelAPIByIdShort(String idShort) throws ResourceNotFoundException;
 
@@ -75,7 +75,15 @@ public interface ISubmodelAggregator {
 	 *            the Submodel to be created
 	 */
 	public void createSubmodel(Submodel submodel);
-
+	
+	/**
+	 * Creates a new Submodel using an API
+	 * 
+	 * @param submodelAPI
+	 *            the Submodel API to be added
+	 */
+	public void createSubmodel(ISubmodelAPI submodelAPI);
+	
 	/**
 	 * Updates a specific Submodel
 	 * 

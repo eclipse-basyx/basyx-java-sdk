@@ -265,6 +265,10 @@ public class SubmodelProvider implements IModelProvider {
 		}
 	}
 
+	public ISubmodelAPI getAPI() {
+		return this.submodelAPI;
+	}
+	
 	protected void setAPI(ISubmodelAPI api) {
 		this.submodelAPI = api;
 	}

@@ -5,6 +5,7 @@ package org.eclipse.basyx.testsuite.regression.aas.restapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
@@ -21,6 +22,8 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.restapi.MultiSubmodelElementProvider;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
@@ -29,6 +32,7 @@ import org.eclipse.basyx.testsuite.regression.vab.manager.VABConnectionManagerSt
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
+import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,11 +45,9 @@ import org.junit.Test;
 public class MultiSubmodelProviderTest {
 	private VABElementProxy proxy;
 
-	// Used short ids
 	private static final String AASIDSHORT = "StubAAS";
-
-	// Used URNs
 	private static final ModelUrn AASURN = new ModelUrn("urn:fhg:es.iese:aas:1:1:myAAS#001");
+	private String dynamicPropertyStringValue = "Test";
 
 	@Before
 	public void build() {
@@ -56,11 +58,22 @@ public class MultiSubmodelProviderTest {
 		// set dummy aas
 		AssetAdministrationShell aas = new AssetAdministrationShell(AASIDSHORT, AASURN, new Asset("assetIdShort", new Identifier(IdentifierType.CUSTOM, "assetId"), AssetKind.INSTANCE));
 		provider.setAssetAdministrationShell(new AASModelProvider(aas));
-		provider.addSubmodel(new SubmodelProvider(new SimpleAASSubmodel()));
+		Submodel dynamicSubmodel = createDynamicSubmodel();
+		provider.addSubmodel(new SubmodelProvider(dynamicSubmodel));
 		stub.addProvider(urn, "", provider);
 		proxy = stub.connectToVABElement(urn);
 	}
 	
+	private Submodel createDynamicSubmodel() {
+		Submodel sm = new SimpleAASSubmodel();
+		Property stringProp = (Property) sm.getSubmodelElements().get("stringProperty");
+		stringProp.set(VABLambdaProviderHelper.createSimple(() -> {
+			dynamicPropertyStringValue += dynamicPropertyStringValue;
+			return dynamicPropertyStringValue;
+		}, null), ValueType.String);
+		return sm;
+	}
+
 	@Test
 	public void invokeExceptionTest() {
 		// Invoke operationEx1
@@ -103,6 +116,13 @@ public class MultiSubmodelProviderTest {
 		assertEquals(AASIDSHORT, aas.getIdShort());
 
 		getTestRunner("SimpleAASSubmodel");
+	}
+	
+	@Test
+	public void getDynamicProperty() {
+		Object dynamicValue = proxy.getValue("/aas/submodels/SimpleAASSubmodel/submodel/submodelElements/stringProperty/value");
+		Object dynamicValue2 = proxy.getValue("/aas/submodels/SimpleAASSubmodel/submodel/submodelElements/stringProperty/value");
+		assertNotEquals(dynamicValue, dynamicValue2);
 	}
 	
 	@Test
