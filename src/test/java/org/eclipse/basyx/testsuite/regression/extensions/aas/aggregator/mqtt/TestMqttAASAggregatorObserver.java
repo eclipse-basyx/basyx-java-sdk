@@ -1,15 +1,13 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.mqtt;
-
-import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,6 +17,7 @@ import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.observing.ObservableAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
+import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorHelper;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorObserver;
@@ -40,7 +39,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 
 /**
  * Tests events emitting with the MqttAASAggregatorObserver
- * 
+ *
  * @author haque
  *
  */
@@ -48,7 +47,7 @@ public class TestMqttAASAggregatorObserver {
 	protected AssetAdministrationShell shell;
 	private static final String AASID = "aasid1";
 	private static final Identifier AASIDENTIFIER = new Identifier(IdentifierType.IRI, AASID);
-	
+
 	private static Server mqttBroker;
 	private static ObservableAASAggregator observedAPI;
 	private static MqttAASAggregatorObserver mqttObserver;
@@ -68,7 +67,7 @@ public class TestMqttAASAggregatorObserver {
 		// Create underlying aas aggregator
 		IAASAggregator aggregator = new AASAggregator();
 		observedAPI = new ObservableAASAggregator(aggregator);
-		
+
 		// Create mqtt as an observer
 		mqttObserver = new MqttAASAggregatorObserver("tcp://localhost:1884", "testClient");
 		observedAPI.addObserver(mqttObserver);
@@ -78,21 +77,21 @@ public class TestMqttAASAggregatorObserver {
 	public static void tearDownClass() {
 		mqttBroker.stopServer();
 	}
-	
+
 	@Before
 	public void setUp() {
 		shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid1"), AssetKind.INSTANCE));
 		observedAPI.createAAS(shell);
-		
+
 		listener = new MqttTestListener();
 		mqttBroker.addInterceptHandler(listener);
 	}
-	
+
 	@After
 	public void tearDown() {
 		mqttBroker.removeInterceptHandler(listener);
 	}
-	
+
 	@Test
 	public void testCreateAAS() {
 		String aasId2 = "aas2";
@@ -103,16 +102,16 @@ public class TestMqttAASAggregatorObserver {
 		assertEquals(aasId2, listener.lastPayload);
 		assertEquals(MqttAASAggregatorHelper.TOPIC_CREATEAAS, listener.lastTopic);
 	}
-	
+
 	@Test
 	public void testUpdateAAS() {
 		shell.setCategory("newCategory");
 		observedAPI.updateAAS(shell);
-		
+
 		assertEquals(AASID, listener.lastPayload);
 		assertEquals(MqttAASAggregatorHelper.TOPIC_UPDATEAAS, listener.lastTopic);
 	}
-	
+
 	@Test
 	public void testDeleteAAS() {
 		observedAPI.deleteAAS(AASIDENTIFIER);

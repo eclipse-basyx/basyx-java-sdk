@@ -11,8 +11,8 @@
 
 package org.eclipse.basyx.aas.registration.observing;
 
-import org.eclipse.basyx.aas.observer.IObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
  * Interface for an observer of {@link ObservableAASRegistryService}

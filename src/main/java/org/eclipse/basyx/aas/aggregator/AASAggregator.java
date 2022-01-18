@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.aas.aggregator;
@@ -23,6 +23,9 @@ import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
+import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregator;
+import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
+import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
@@ -30,10 +33,11 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
  * An implementation of the IAASAggregator interface using maps internally
- * 
+ *
  * @author conradi, schnicke
  *
  */
@@ -46,50 +50,66 @@ public class AASAggregator implements IAASAggregator {
 	/**
 	 * Store AAS API Provider. By default, uses the VAB API Provider
 	 */
-	protected IAASAPIFactory aasApiProvider;
+	protected IAASAPIFactory aasApiFactory;
 
 	/**
-	 * Store Submodel API Provider. By default, uses the VAB Submodel Provider
+	 * Store SubmodelAggregator. By default, uses standard SubmodelAggregator
 	 */
-	protected ISubmodelAPIFactory smApiProvider;
+	protected ISubmodelAggregator submodelAggregator;
 
 	/**
 	 * Constructs default AAS Aggregator
 	 */
 	public AASAggregator() {
-		this.aasApiProvider = new VABAASAPIFactory();
-		this.smApiProvider = new VABSubmodelAPIFactory();
+		this.aasApiFactory = new VABAASAPIFactory();
+		this.submodelAggregator = createDefaultSubmodelAggregator();
 	}
 
 	/**
 	 * Constructs an AAS aggregator with custom API providers
 	 */
-	public AASAggregator(IAASAPIFactory aasApiProvider, ISubmodelAPIFactory smApiProvider) {
-		this.aasApiProvider = aasApiProvider;
-		this.smApiProvider = smApiProvider;
+	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAPIFactory submodelApiFactory) {
+		this.aasApiFactory = aasApiFactory;
+		this.submodelAggregator = new SubmodelAggregator(submodelApiFactory);
 	}
 
 	/**
 	 * Constructs AAS Aggregator using the passed registry. This registry is used to
 	 * resolve requests for remote submodels
-	 * 
+	 *
 	 * @param registry
 	 */
 	public AASAggregator(IAASRegistry registry) {
 		this.registry = registry;
-		this.aasApiProvider = new VABAASAPIFactory();
-		this.smApiProvider = new VABSubmodelAPIFactory();
+		this.aasApiFactory = new VABAASAPIFactory();
+		this.submodelAggregator = createDefaultSubmodelAggregator();
+	}
+
+	/**
+	 * Constructs AAS Aggregator using the passed registry and an MQTT
+	 * SubmodelAggregator. This registry is used to resolve requests for remote
+	 * submodels
+	 *
+	 * @param registry
+	 * @param serverEndpoint
+	 * @param clientId
+	 * @throws MqttException
+	 */
+	public AASAggregator(IAASRegistry registry, String serverEndpoint, String clientId) throws MqttException {
+		this.registry = registry;
+		this.aasApiFactory = new VABAASAPIFactory();
+		this.submodelAggregator = new MqttSubmodelAggregator(createDefaultSubmodelAggregator(), serverEndpoint, clientId);
 	}
 
 	/**
 	 * Constructs AAS Aggregator using the passed registry. This registry is used to
-	 * resolve requests for remote submodels. Additionally takes custom API providers;
+	 * resolve requests for remote submodels. Additionally takes custom API
+	 * providers;
 	 */
-	public AASAggregator(IAASAPIFactory aasApiProvider, ISubmodelAPIFactory smApiProvider,
-			IAASRegistry registry) {
+	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAPIFactory submodelApiFactory, IAASRegistry registry) {
 		this.registry = registry;
-		this.aasApiProvider = aasApiProvider;
-		this.smApiProvider = smApiProvider;
+		this.aasApiFactory = aasApiFactory;
+		this.submodelAggregator = new SubmodelAggregator(submodelApiFactory);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -133,11 +153,9 @@ public class AASAggregator implements IAASAggregator {
 
 	private MultiSubmodelProvider createMultiSubmodelProvider(AssetAdministrationShell aas) {
 		IConnectorFactory connProvider = new HTTPConnectorFactory();
-		IAASAPI aasApi = aasApiProvider.getAASApi(aas);
+		IAASAPI aasApi = aasApiFactory.getAASApi(aas);
 		AASModelProvider contentProvider = new AASModelProvider(aasApi);
-		MultiSubmodelProvider multiAASProvider = new MultiSubmodelProvider(contentProvider, registry,
-				connProvider, smApiProvider, aasApiProvider);
-		return multiAASProvider;
+		return new MultiSubmodelProvider(contentProvider, registry, connProvider, aasApiFactory, submodelAggregator);
 	}
 
 	@Override
@@ -154,5 +172,9 @@ public class AASAggregator implements IAASAggregator {
 		}
 
 		return provider;
+	}
+
+	private SubmodelAggregator createDefaultSubmodelAggregator() {
+		return new SubmodelAggregator(new VABSubmodelAPIFactory());
 	}
 }
