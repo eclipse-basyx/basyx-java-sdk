@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * Implementation variant for the AASAggregator that triggers MQTT events for
  * different operations on the aggregator. Has to be based on a backend
  * implementation of the IAASAggregator to forward its method calls.
- * 
+ *
  * @author haque, jungjan, fischer
  *
  */
@@ -40,7 +40,7 @@ public class MqttAASAggregator implements IAASAggregator {
 
 	/**
 	 * Constructor for adding MQTT extension on top of a AASAggregator
-	 * 
+	 *
 	 * @param observedAASAggregator
 	 * @param serverEndpoint
 	 * @param clientId
@@ -52,7 +52,7 @@ public class MqttAASAggregator implements IAASAggregator {
 
 	/**
 	 * Constructor for adding MQTT extension on top of a AASAggregator
-	 * 
+	 *
 	 * @param aasAggregatorToBeObserved
 	 * @param serverEndpoint
 	 * @param clientId
@@ -60,12 +60,13 @@ public class MqttAASAggregator implements IAASAggregator {
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
 		observedAASAggregator = new ObservableAASAggregator(aasAggregatorToBeObserved);
-		observer = new MqttAASAggregatorObserver(observedAASAggregator, serverEndpoint, clientId, persistence);
+		observer = new MqttAASAggregatorObserver(serverEndpoint, clientId, persistence);
+		observedAASAggregator.addObserver(observer);
 	}
 
 	/**
 	 * Constructor for adding MQTT extension on top of a AASAggregator
-	 * 
+	 *
 	 * @param aasAggregatorToBeObserved
 	 * @param serverEndpoint
 	 * @param clientId
@@ -78,7 +79,7 @@ public class MqttAASAggregator implements IAASAggregator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param aasAggregatorToBeObserved
 	 * @param serverEndpoint
 	 * @param clientId
@@ -89,7 +90,8 @@ public class MqttAASAggregator implements IAASAggregator {
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
 		observedAASAggregator = new ObservableAASAggregator(aasAggregatorToBeObserved);
-		observer = new MqttAASAggregatorObserver(observedAASAggregator, serverEndpoint, clientId, user, pw, persistence);
+		observer = new MqttAASAggregatorObserver(serverEndpoint, clientId, user, pw, persistence);
+		observedAASAggregator.addObserver(observer);
 	}
 
 	@Override

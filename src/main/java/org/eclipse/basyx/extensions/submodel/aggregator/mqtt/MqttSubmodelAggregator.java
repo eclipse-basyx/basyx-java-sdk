@@ -40,7 +40,7 @@ public class MqttSubmodelAggregator implements ISubmodelAggregator {
 
 	/**
 	 * Constructor for adding MQTT extension on top of a SubmodelAggregator
-	 * 
+	 *
 	 * @param observedSubmodelAggregator
 	 * @param serverEndpoint
 	 * @param clientId
@@ -52,7 +52,7 @@ public class MqttSubmodelAggregator implements ISubmodelAggregator {
 
 	/**
 	 * Constructor for adding MQTT extension on top of a SubmodelAggregator
-	 * 
+	 *
 	 * @param submodelAggregatorToBeObserved
 	 * @param serverEndpoint
 	 * @param clientId
@@ -60,12 +60,13 @@ public class MqttSubmodelAggregator implements ISubmodelAggregator {
 	 */
 	public MqttSubmodelAggregator(ISubmodelAggregator submodelAggregatorToBeObserved, String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
 		observedSubmodelAggregator = new ObservableSubmodelAggregator(submodelAggregatorToBeObserved);
-		observer = new MqttSubmodelAggregatorObserver(observedSubmodelAggregator, serverEndpoint, clientId, persistence);
+		observer = new MqttSubmodelAggregatorObserver(serverEndpoint, clientId, persistence);
+		observedSubmodelAggregator.addObserver(observer);
 	}
 
 	/**
 	 * Constructor for adding MQTT extension on top of a SubmodelAggregator
-	 * 
+	 *
 	 * @param submodelAggregatorToBeObserved
 	 * @param serverEndpoint
 	 * @param clientId
@@ -78,7 +79,7 @@ public class MqttSubmodelAggregator implements ISubmodelAggregator {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param submodelAggregatorToBeObserved
 	 * @param serverEndpoint
 	 * @param clientId
@@ -89,7 +90,8 @@ public class MqttSubmodelAggregator implements ISubmodelAggregator {
 	 */
 	public MqttSubmodelAggregator(ISubmodelAggregator submodelAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
 		observedSubmodelAggregator = new ObservableSubmodelAggregator(submodelAggregatorToBeObserved);
-		observer = new MqttSubmodelAggregatorObserver(observedSubmodelAggregator, serverEndpoint, clientId, user, pw, persistence);
+		observer = new MqttSubmodelAggregatorObserver(serverEndpoint, clientId, user, pw, persistence);
+		observedSubmodelAggregator.addObserver(observer);
 	}
 
 	@Override

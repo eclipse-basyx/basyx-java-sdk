@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.extensions.submodel.aggregator.mqtt;
@@ -37,7 +37,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 
 /**
  * Tests events emitting with the MqttSubmodelAggregatorObserver
- * 
+ *
  * @author fischer, jungjan
  *
  */
@@ -67,7 +67,7 @@ public class TestMqttSubmodelAggregatorObserver {
 		observedSubmodelAggregator = new ObservableSubmodelAggregator(submodelAggregator);
 
 		// Create mqtt as an observer
-		mqttSubmodelAggregatorObserver = new MqttSubmodelAggregatorObserver(observedSubmodelAggregator, "tcp://localhost:1884", "testClient");
+		mqttSubmodelAggregatorObserver = new MqttSubmodelAggregatorObserver("tcp://localhost:1884", "testClient");
 		observedSubmodelAggregator.addObserver(mqttSubmodelAggregatorObserver);
 	}
 

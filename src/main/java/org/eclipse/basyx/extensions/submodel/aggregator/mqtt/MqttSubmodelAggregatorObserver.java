@@ -1,17 +1,16 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
 
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.aggregator.observing.ISubmodelAggregatorObserver;
-import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregator;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -21,37 +20,30 @@ import org.slf4j.LoggerFactory;
 /**
  * Observer for the SubmodelAggregator that triggers MQTT events for different
  * operations on the aggregator.
- * 
+ *
  * @author fischer, jungjan, fried
  *
  */
 public class MqttSubmodelAggregatorObserver extends MqttEventService implements ISubmodelAggregatorObserver {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelAggregatorObserver.class);
-	protected ObservableSubmodelAggregator observedSubmodelAggregator;
 
 	/**
 	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
-	 * 
-	 * @param observedSubmodelAggregator
-	 *            the underlying submodel aggregator
+	 *
 	 * @param serverEndpoint
 	 *            endpoint of mqtt broker
 	 * @param clientId
 	 *            unique client identifier
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAggregatorObserver(ObservableSubmodelAggregator observedSubmodelAggregator, String serverEndpoint, String clientId) throws MqttException {
+	public MqttSubmodelAggregatorObserver(String serverEndpoint, String clientId) throws MqttException {
 		super(serverEndpoint, clientId);
 		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + serverEndpoint);
-		this.observedSubmodelAggregator = observedSubmodelAggregator;
-		observedSubmodelAggregator.addObserver(this);
 	}
 
 	/**
 	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
 	 *
-	 * @param observedSubmodelAggregator
-	 *            the underlying submodel aggregator
 	 * @param serverEndpoint
 	 *            endpoint of mqtt broker
 	 * @param clientId
@@ -62,34 +54,26 @@ public class MqttSubmodelAggregatorObserver extends MqttEventService implements 
 	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAggregatorObserver(ObservableSubmodelAggregator observedSubmodelAggregator, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
+	public MqttSubmodelAggregatorObserver(String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		super(serverEndpoint, clientId, user, pw);
 		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + serverEndpoint);
-		this.observedSubmodelAggregator = observedSubmodelAggregator;
-		observedSubmodelAggregator.addObserver(this);
 	}
 
 	/**
 	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
-	 * 
-	 * @param observedSubmodelAggregator
-	 *            the underlying submodel aggregator
+	 *
 	 * @param client
 	 *            already configured client
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAggregatorObserver(ObservableSubmodelAggregator observedSubmodelAggregator, MqttClient client) throws MqttException {
+	public MqttSubmodelAggregatorObserver(MqttClient client) throws MqttException {
 		super(client);
 		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + client.getServerURI());
-		this.observedSubmodelAggregator = observedSubmodelAggregator;
-		observedSubmodelAggregator.addObserver(this);
 	}
 
 	/**
 	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
-	 * 
-	 * @param observedSubmodelAggregator
-	 *            the underlying submodel aggregator
+	 *
 	 * @param serverEndpoint
 	 *            endpoint of mqtt broker
 	 * @param clientId
@@ -98,18 +82,14 @@ public class MqttSubmodelAggregatorObserver extends MqttEventService implements 
 	 *            custom persistence strategy
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAggregatorObserver(ObservableSubmodelAggregator observedSubmodelAggregator, String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
+	public MqttSubmodelAggregatorObserver(String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
 		super(serverEndpoint, clientId, persistence);
 		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + serverEndpoint);
-		this.observedSubmodelAggregator = observedSubmodelAggregator;
-		observedSubmodelAggregator.addObserver(this);
 	}
 
 	/**
 	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
-	 * 
-	 * @param observedSubmodelAggregator
-	 *            the underlying submodel aggregator
+	 *
 	 * @param serverEndpoint
 	 *            endpoint of MQTT broker
 	 * @param clientId
@@ -122,11 +102,9 @@ public class MqttSubmodelAggregatorObserver extends MqttEventService implements 
 	 *            custom persistence strategy
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAggregatorObserver(ObservableSubmodelAggregator observedSubmodelAggregator, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
+	public MqttSubmodelAggregatorObserver(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
 		super(serverEndpoint, clientId, user, pw, persistence);
 		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + serverEndpoint);
-		this.observedSubmodelAggregator = observedSubmodelAggregator;
-		observedSubmodelAggregator.addObserver(this);
 	}
 
 	@Override
