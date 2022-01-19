@@ -39,11 +39,11 @@ public class MqttAASAggregator implements IAASAggregator {
 	private MqttAASAggregatorObserver observer;
 
 	/**
-	 * Constructor for adding MQTT extension on top of a AASAggregator
-	 *
-	 * @param observedAASAggregator
-	 * @param serverEndpoint
-	 * @param clientId
+	 * Constructor for adding this MQTT extension on top of an AASAggregator
+	 * 
+	 * @param observedAASAggregator the underlying AAS Aggregator 
+	 * @param serverEndpoint endpoint of mqtt broker
+	 * @param clientId unique client identifier
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator observedAASAggregator, String serverEndpoint, String clientId) throws MqttException {
@@ -51,11 +51,13 @@ public class MqttAASAggregator implements IAASAggregator {
 	}
 
 	/**
-	 * Constructor for adding MQTT extension on top of a AASAggregator
-	 *
-	 * @param aasAggregatorToBeObserved
-	 * @param serverEndpoint
-	 * @param clientId
+	 * Constructor for adding this MQTT extension on top of an AASAggregator
+	 * 
+	 * @param observedAASAggregator the underlying AAS Aggregator 
+	 * @param serverEndpoint endpoint of mqtt broker
+	 * @param clientId unique client identifier
+	 * @param user username for authentication with broker
+	 * @param pw password for authentication with broker
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
@@ -65,13 +67,10 @@ public class MqttAASAggregator implements IAASAggregator {
 	}
 
 	/**
-	 * Constructor for adding MQTT extension on top of a AASAggregator
-	 *
-	 * @param aasAggregatorToBeObserved
-	 * @param serverEndpoint
-	 * @param clientId
-	 * @param user
-	 * @param pw
+	 * Constructor for adding this MQTT extension on top of an AASAggregator
+	 * 
+	 * @param observedAASAggregator the underlying AAS Aggregator 
+	 * @param client already configured client
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
