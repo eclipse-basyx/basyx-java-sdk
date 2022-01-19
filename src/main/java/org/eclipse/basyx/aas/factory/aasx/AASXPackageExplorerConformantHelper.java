@@ -12,6 +12,7 @@ package org.eclipse.basyx.aas.factory.aasx;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.AasEnv;
@@ -32,7 +33,6 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
  */
 public class AASXPackageExplorerConformantHelper {
 	
-	static int counter = 0;
 	/**
 	 * Converts meta model elements so that the AASXPackageExplorer can load their
 	 * serialized AASX. This method modifies the passed parameter Asset Administration Shell List.
