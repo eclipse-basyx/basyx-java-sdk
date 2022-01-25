@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.bundle;
 
+import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -21,17 +22,26 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
  */
 public class AASBundleDescriptorFactory {
 	/**
-	 * Creates the AASDescriptor for the given bundle and hostPath
+	 * Creates the AASDescriptor for the given bundle and aasAggregatorPath
+	 * aasAggregatorPath is normalized before the descriptor is created
 	 * 
 	 * @param bundle
-	 * @param hostBasePath
+	 * @param aasAggregatorPath
 	 * @return
 	 */
-	public static AASDescriptor createAASDescriptor(AASBundle bundle, String hostBasePath) {
-		// Normalize hostBasePath to ensure consistent usage of /
-		String nHostBasePath = VABPathTools.stripSlashes(hostBasePath);
+	public static AASDescriptor createAASDescriptor(AASBundle bundle, String aasAggregatorPath) {
+		String nHostBasePath = normalizeAggregatorPrefix(aasAggregatorPath);
+		return createAASDescriptorUnchecked(bundle, nHostBasePath);
+	}
 
-		// Create AASDescriptor
+	private static String normalizeAggregatorPrefix(String aasAggregatorPath) {
+		String nHostBasePath = VABPathTools.stripSlashes(aasAggregatorPath);
+		if (AASAggregatorProvider.PREFIX.equals(VABPathTools.getLastElement(nHostBasePath)))
+			return nHostBasePath;
+		return VABPathTools.append(nHostBasePath, AASAggregatorProvider.PREFIX);
+	}
+
+	private static AASDescriptor createAASDescriptorUnchecked(AASBundle bundle, String nHostBasePath) {
 		String endpointId = bundle.getAAS().getIdentification().getId();
 		endpointId = VABPathTools.encodePathElement(endpointId);
 		String aasBase = VABPathTools.concatenatePaths(nHostBasePath, endpointId, "aas");
