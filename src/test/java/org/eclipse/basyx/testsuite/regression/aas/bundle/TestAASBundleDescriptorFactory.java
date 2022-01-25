@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 
+import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleDescriptorFactory;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
@@ -46,7 +47,7 @@ public class TestAASBundleDescriptorFactory {
 		String basePath = "http://localhost:4040/test";		
 		AASDescriptor desc = AASBundleDescriptorFactory.createAASDescriptor(bundle, basePath);
 		
-		String aasPath = VABPathTools.concatenatePaths(basePath, aasId, "aas");
+		String aasPath = VABPathTools.concatenatePaths(basePath, AASAggregatorProvider.PREFIX, aasId, "aas");
 		String smPath = VABPathTools.concatenatePaths(aasPath, "submodels", sm.getIdShort(), "submodel");
 		assertEquals(aasPath, desc.getFirstEndpoint());
 		assertEquals(smPath, desc.getSubmodelDescriptorFromIdShort(smId).getFirstEndpoint());

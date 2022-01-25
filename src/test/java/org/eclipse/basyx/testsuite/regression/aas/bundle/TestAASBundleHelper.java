@@ -27,8 +27,10 @@ import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleHelper;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
+import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -37,6 +39,7 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
+import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +68,32 @@ public class TestAASBundleHelper {
 		aggregator = new AASAggregatorProxy(new VABElementProxy("", provider));
 		bundles = new ArrayList<>();		
 	}
+	
+	/**
+	 * This test tests whether the endpoint of a submodel contains the prefix
+	 * "/shells". It register an aas-bundle in the registry, then retrieves a
+	 * SubmodelDescriptor from the registered AasDescriptor. Finally, it checks
+	 * whether the endpoint in the SubmodelDescriptor is correct.
+	 */
+	@Test
+	public void testAASBundleRegister() {
+		AASBundle bundle = getTestBundle();
+		bundles.add(bundle);
+		InMemoryRegistry registry = new InMemoryRegistry();
+		String serverPath = "http://localhost:4001/aasServer/";
+		AASBundleHelper.register(registry, bundles, serverPath);
+		
+		Identifier smIdentifier = new Identifier(IdentifierType.CUSTOM, SM_ID);
+		Identifier aasIdentifier = new Identifier(IdentifierType.CUSTOM, AAS_ID);
+		SubmodelDescriptor smDescriptor = registry.lookupSubmodel(aasIdentifier, smIdentifier);
+		String actualEndpoint = smDescriptor.getFirstEndpoint();
+		
+		String expectedEndpoint = VABPathTools.concatenatePaths(serverPath, AASAggregatorProvider.PREFIX, AAS_ID, MultiSubmodelProvider.SUBMODELS_PREFIX, SM_ID, SubmodelProvider.SUBMODEL);
+		assertEquals(expectedEndpoint, actualEndpoint);
+	}
+	
+	
+	
 	
 	/**
 	 * This test loads an AAS and its two Submodels into the Aggregator,
