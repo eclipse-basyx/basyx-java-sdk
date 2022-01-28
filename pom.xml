@@ -9,23 +9,23 @@
 	<name>BaSyx SDK</name>
 	<description>BaSyx Software Development Kit</description>
 	<url>https://www.eclipse.org/basyx/</url>
-	
+
 	<licenses>
 		<license>
 			<name>Eclipse Public License 2.0</name>
 			<url>https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt</url>
 		</license>
 	</licenses>
-	
+
 	<developers>
-        <developer>
-            <organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
-            <id>fschnicke</id>
+		<developer>
+			<organization>Fraunhofer-Gesellschaft zur Foerderung der angewandten Forschung e.V.</organization>
+			<id>fschnicke</id>
 			<name>Frank Schnicke</name>
 			<email>frank.schnicke@iese.fraunhofer.de</email>
-        </developer>
-    </developers>
-	
+		</developer>
+	</developers>
+
 	<scm>
 		<connection>scm:https://github.com/eclipse-basyx/basyx-java-sdk.git</connection>
 		<developerConnection>scm:https://github.com/eclipse-basyx/basyx-java-sdk.git</developerConnection>
@@ -48,13 +48,13 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring-security-version>5.5.3</spring-security-version>
 	</properties>
-	
+
 	<repositories>
-		<!--  Additional repository for MQTT Client releases (Paho Java Client) -->
-	    <repository>
-	        <id>Eclipse Paho Repo</id>
-	        <url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
-	    </repository>
+		<!-- Additional repository for MQTT Client releases (Paho Java Client) -->
+		<repository>
+			<id>Eclipse Paho Repo</id>
+			<url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
+		</repository>
 	</repositories>
 
 	<build>
@@ -87,7 +87,8 @@
 				</executions>
 			</plugin>
 
-			<!-- Generate separate jar for tests and exclude logback.xml from generated jars -->
+			<!-- Generate separate jar for tests and exclude logback.xml from generated 
+				jars -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -142,23 +143,23 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<!-- Generate javadoc -->
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-      				<source>8</source>
-    			</configuration>
-                <executions>
-	                <execution>
-	                	<goals>
-	                    	<goal>jar</goal>
-	                    </goals>
-	                    <id>generate-javadoc</id>
-	                    <phase>package</phase>
-	                </execution>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<source>8</source>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<id>generate-javadoc</id>
+						<phase>package</phase>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
@@ -187,12 +188,12 @@
 			<artifactId>moquette-broker</artifactId>
 			<version>0.15</version>
 			<scope>test</scope>
-		    <exclusions>
-				<exclusion> 
+			<exclusions>
+				<exclusion>
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-log4j12</artifactId>
 				</exclusion>
-		    </exclusions>
+			</exclusions>
 		</dependency>
 
 		<!-- Eclipse Milo (for OPC-UA client) -->
@@ -230,7 +231,7 @@
 			<version>2.30</version>
 		</dependency>
 
-		<!-- Jersey InjectionManager (for Jersey client)  -->
+		<!-- Jersey InjectionManager (for Jersey client) -->
 		<dependency>
 			<groupId>org.glassfish.jersey.inject</groupId>
 			<artifactId>jersey-hk2</artifactId>
@@ -253,32 +254,32 @@
 
 		<!-- Logger -->
 		<dependency>
-    		<groupId>ch.qos.logback</groupId>
-    		<artifactId>logback-classic</artifactId>
-    		<version>1.2.3</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
 		</dependency>
-		
+
 		<!-- Used by Logback to compile filter expressions from logback.xml -->
 		<dependency>
-    		<groupId>org.codehaus.janino</groupId>
-    		<artifactId>janino</artifactId>
-    		<version>2.7.5</version>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>2.7.5</version>
 		</dependency>
-		
+
 		<!-- Paho Java Client for MQTT -->
 		<dependency>
 			<groupId>org.eclipse.paho</groupId>
 			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
 			<version>1.2.5</version>
 		</dependency>
-		
+
 		<!-- JSON Serialization -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.8.5</version>
 		</dependency>
-		
+
 		<!-- Handles resources & files -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -288,23 +289,23 @@
 
 		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
 		<dependency>
-		    <groupId>commons-fileupload</groupId>
-		    <artifactId>commons-fileupload</artifactId>
-		    <version>1.4</version>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.4</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
 		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpmime</artifactId>
-		    <version>4.5.13</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.5.13</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpclient</artifactId>
-		    <version>4.5.13</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.13</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
@@ -322,6 +323,25 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-oauth2-jose</artifactId>
 		</dependency>
+
+		<!-- EclipseLink -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>3.0.2-RC2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.jpa</artifactId>
+			<version>3.0.2-RC2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.3.1</version>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>
@@ -336,7 +356,7 @@
 		</dependencies>
 	</dependencyManagement>
 
-	
+
 	<profiles>
 		<profile>
 			<id>MavenCentral</id>
@@ -358,19 +378,19 @@
 						<artifactId>maven-gpg-plugin</artifactId>
 						<version>1.6</version>
 						<executions>
-						  <execution>
-							<id>sign-artifacts</id>
-							<phase>verify</phase>
-							<goals>
-							  <goal>sign</goal>
-							</goals>
-							<configuration>
-							  <gpgArguments>
-								<arg>--pinentry-mode</arg>
-								<arg>loopback</arg>
-							  </gpgArguments>
-							</configuration>
-						  </execution>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+								<configuration>
+									<gpgArguments>
+										<arg>--pinentry-mode</arg>
+										<arg>loopback</arg>
+									</gpgArguments>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 				</plugins>
