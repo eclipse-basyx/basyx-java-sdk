@@ -3,13 +3,15 @@
 	xmlns="http://java.sun.com/xml/ns/persistence"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-	<persistence-unit name="basyx_sdk"
-		transaction-type="RESOURCE_LOCAL">
 
+	<persistence-unit name="storageElement_sql"
+		transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-		<class>org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelElement
+		<class>org.eclipse.basyx.extensions.submodel.storage.elements.SQLStorageSubmodelElement
 		</class>
 		<properties>
+			<property name="eclipselink.target-database"
+				value="PostgreSQL" />
 			<property name="jakarta.persistence.jdbc.driver"
 				value="org.postgresql.Driver" />
 			<property name="jakarta.persistence.jdbc.url"
@@ -26,6 +28,27 @@
 				value="dropDDL_ddlGeneration.jdbc" />
 			<property name="eclipselink.ddl-generation.output-mode"
 				value="both" />
+		</properties>
+	</persistence-unit>
+
+	<persistence-unit name="storageElement_nosql"
+		transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>org.eclipse.basyx.extensions.submodel.storage.elements.NoSQLStorageSubmodelElement
+		</class>
+		<properties>
+			<property name="eclipselink.target-database"
+				value="org.eclipse.persistence.nosql.adapters.mongo.MongoPlatform" />
+			<property name="eclipselink.nosql.connection-spec"
+				value="org.eclipse.persistence.nosql.adapters.mongo.MongoConnectionSpec" />
+			<property name="eclipselink.nosql.property.mongo.port"
+				value="27017" />
+			<property name="eclipselink.nosql.property.mongo.host"
+				value="localhost" />
+			<property name="eclipselink.nosql.property.mongo.db"
+				value="admin" />
+			<property name="eclipselink.nosql.property.mongo.user"
+				value="admin" />
 		</properties>
 	</persistence-unit>
 </persistence>

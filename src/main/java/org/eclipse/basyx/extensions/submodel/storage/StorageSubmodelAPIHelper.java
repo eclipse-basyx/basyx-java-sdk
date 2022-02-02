@@ -14,12 +14,14 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
+import org.eclipse.basyx.extensions.submodel.storage.elements.SQLStorageSubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 
 public class StorageSubmodelAPIHelper {
 	public static Object getSubmodelElementCreation(ISubmodel submodel, String idShortPath, ISubmodelElement elem) {
-		StorageSubmodelElement element = getShared(submodel, idShortPath);
+		IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
 		element.setOperation(StorageSubmodelElementOperations.CREATE);
 		element.setSerializedElementValue(elem.getValue().toString());
@@ -28,7 +30,7 @@ public class StorageSubmodelAPIHelper {
 	}
 
 	public static Object getSubmodelElementUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
-		StorageSubmodelElement element = getShared(submodel, idShortPath);
+		IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
 		element.setOperation(StorageSubmodelElementOperations.UPDATE);
 		element.setSerializedElementValue(newValue.toString());
@@ -37,15 +39,17 @@ public class StorageSubmodelAPIHelper {
 	}
 
 	public static Object getSubmodelElementDeletion(ISubmodel submodel, String idShortPath) {
-		StorageSubmodelElement element = getShared(submodel, idShortPath);
+		IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
 		element.setOperation(StorageSubmodelElementOperations.DELETE);
 
 		return element;
 	}
 
-	private static StorageSubmodelElement getShared(ISubmodel submodel, String idShortPath) {
-		StorageSubmodelElement element = new StorageSubmodelElement();
+	private static IStorageSubmodelElement getShared(ISubmodel submodel, String idShortPath) {
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>HIER<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		// TODO: create element with factory
+		IStorageSubmodelElement element = new SQLStorageSubmodelElement();
 
 		element.setSubmodelId(submodel.getIdentification().getId());
 		element.setIdShort(idShortPath);

@@ -12,12 +12,14 @@ package org.eclipse.basyx.testsuite.regression.extensions.submodel.storage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPIHelper.StorageSubmodelElementOperations;
-import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelElement;
+import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -29,13 +31,13 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
 import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import jakarta.persistence.Query;
 
 public class TestStorageSubmodelAPI {
 	private static final String AASID = "testaasid";
@@ -51,9 +53,15 @@ public class TestStorageSubmodelAPI {
 		sm.setParent(parentRef);
 
 		VABSubmodelAPI vabAPI = new VABSubmodelAPI(new VABMapProvider(sm));
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("basyx_sdk");
+
+		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>HIER<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("storageElement_sql");
 		entityManager = emf.createEntityManager();
 		storageAPI = new StorageSubmodelAPI(vabAPI, entityManager);
+
+		// TODO: use factory for StorageSubmodelAPI as well to use different
+		// StorageSubmodelElements (NoSQL/SQL)
+		// entityManager.getProperties().get("eclipselink.target-database");
 	}
 
 	@Test
@@ -63,7 +71,7 @@ public class TestStorageSubmodelAPI {
 		prop.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(prop);
 
-		StorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(storedElement.getSerializedElementValue(), prop.getValue().toString());
 	}
@@ -75,14 +83,14 @@ public class TestStorageSubmodelAPI {
 		coll.setIdShort("testColl");
 		storageAPI.addSubmodelElement(coll);
 
-		StorageSubmodelElement storedColl = getSingleStorageElementWithIdShort(coll.getIdShort());
+		IStorageSubmodelElement storedColl = getSingleStorageElementWithIdShort(coll.getIdShort());
 		assertEquals(storedColl.getSerializedElementValue(), coll.getValue().toString());
 
 		Property prop = new Property(true);
 		prop.setIdShort("testAddProp");
 		storageAPI.addSubmodelElement(idShortPath, prop);
 
-		StorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(idShortPath);
+		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(idShortPath);
 
 		assertEquals(storedElement.getSerializedElementValue(), prop.getValue().toString());
 	}
@@ -95,7 +103,7 @@ public class TestStorageSubmodelAPI {
 		storageAPI.addSubmodelElement(prop);
 		storageAPI.deleteSubmodelElement(idShortPath);
 
-		StorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(idShortPath);
+		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(idShortPath);
 
 		assertEquals(storedElement.getOperation(), StorageSubmodelElementOperations.DELETE);
 	}
@@ -108,16 +116,37 @@ public class TestStorageSubmodelAPI {
 		storageAPI.addSubmodelElement(prop);
 		storageAPI.updateSubmodelElement(idShortPath, false);
 
-		StorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(idShortPath);
+		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(idShortPath);
 		assertFalse(Boolean.parseBoolean(storedElement.getSerializedElementValue()));
 	}
 
-	private StorageSubmodelElement getSingleStorageElementWithIdShort(String idShort) {
-		Query query = entityManager.createQuery("Select s FROM StorageSubmodelElement s WHERE s.idShort = :id AND s.submodelId = :submodelId ORDER BY s.timestamp DESC");
-		query.setParameter("id", idShort);
-		query.setParameter("submodelId", SUBMODELID);
-		query.setMaxResults(1);
-		StorageSubmodelElement storedElement = (StorageSubmodelElement) query.getSingleResult();
+	@Test
+	public void testHistoricSubmodelElement() {
+		String idShortPath = "testHistoryProp";
+		Property prop = new Property(true);
+		prop.setIdShort(idShortPath);
+		storageAPI.addSubmodelElement(prop);
+		storageAPI.updateSubmodelElement(idShortPath, false);
+
+		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODELID, idShortPath);
+		assertTrue(elements.size() == 2);
+		assertFalse(Boolean.parseBoolean(elements.get(0).getSerializedElementValue()));
+		assertTrue(Boolean.parseBoolean(elements.get(1).getSerializedElementValue()));
+	}
+
+	private IStorageSubmodelElement getSingleStorageElementWithIdShort(String idShort) {
+		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODELID, idShort);
+
+		IStorageSubmodelElement storedElement = elements.get(0);
 		return storedElement;
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		// clear database table again
+		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODELID);
+		entityManager.getTransaction().begin();
+		elements.forEach((n) -> entityManager.remove(n));
+		entityManager.getTransaction().commit();
 	}
 }

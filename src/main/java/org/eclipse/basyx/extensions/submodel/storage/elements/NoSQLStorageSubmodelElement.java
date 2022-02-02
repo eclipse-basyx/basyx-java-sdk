@@ -8,65 +8,75 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package org.eclipse.basyx.extensions.submodel.storage;
+package org.eclipse.basyx.extensions.submodel.storage.elements;
 
 import java.sql.Timestamp;
 
+import org.eclipse.persistence.nosql.annotations.DataFormatType;
+import org.eclipse.persistence.nosql.annotations.NoSql;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-@Entity
-public class StorageSubmodelElement {
+@Entity(name = "StorageSubmodelElement")
+@NoSql(dataFormat = DataFormatType.MAPPED)
+public class NoSQLStorageSubmodelElement implements IStorageSubmodelElement {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private long id;
+	@GeneratedValue
+	private String id;
 	private String submodelId;
 	private Timestamp timestamp;
 	private String idShort;
 	private String operation;
 	private String serializedElementValue;
 
-	protected StorageSubmodelElement() {
-	}
-
+	@Override
 	public String getSubmodelId() {
 		return submodelId;
 	}
 
+	@Override
 	public void setSubmodelId(String submodelId) {
 		this.submodelId = submodelId;
 	}
 
+	@Override
 	public Timestamp getTimestamp() {
 		return timestamp;
 	}
 
+	@Override
 	public void setTimestamp(Timestamp timestamp2) {
 		this.timestamp = timestamp2;
 	}
 
+	@Override
 	public String getOperation() {
 		return operation;
 	}
 
+	@Override
 	public void setOperation(String operation) {
 		this.operation = operation;
 	}
 
+	@Override
 	public String getIdShort() {
 		return idShort;
 	}
 
+	@Override
 	public void setIdShort(String idShort) {
 		this.idShort = idShort;
 	}
 
+	@Override
 	public String getSerializedElementValue() {
 		return serializedElementValue;
 	}
 
+	@Override
 	public void setSerializedElementValue(String serializedElementValue) {
 		this.serializedElementValue = serializedElementValue;
 	}

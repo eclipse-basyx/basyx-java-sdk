@@ -10,14 +10,18 @@
 
 package org.eclipse.basyx.extensions.submodel.storage;
 
+import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 
+import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 public class StorageSubmodelAPI implements ISubmodelAPI {
 
@@ -36,17 +40,13 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void addSubmodelElement(ISubmodelElement elem) {
-		entityManager.getTransaction().begin();
-		entityManager.persist(StorageSubmodelAPIHelper.getSubmodelElementCreation(getSubmodel(), elem.getIdShort(), elem));
-		entityManager.getTransaction().commit();
+		persistElementAction(StorageSubmodelAPIHelper.getSubmodelElementCreation(getSubmodel(), elem.getIdShort(), elem));
 		submodelAPI.addSubmodelElement(elem);
 	}
 
 	@Override
 	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
-		entityManager.getTransaction().begin();
-		entityManager.persist(StorageSubmodelAPIHelper.getSubmodelElementCreation(getSubmodel(), idShortPath, elem));
-		entityManager.getTransaction().commit();
+		persistElementAction(StorageSubmodelAPIHelper.getSubmodelElementCreation(getSubmodel(), idShortPath, elem));
 		submodelAPI.addSubmodelElement(idShortPath, elem);
 	}
 
@@ -57,9 +57,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void deleteSubmodelElement(String idShortPath) {
-		entityManager.getTransaction().begin();
-		entityManager.persist(StorageSubmodelAPIHelper.getSubmodelElementDeletion(getSubmodel(), idShortPath));
-		entityManager.getTransaction().commit();
+		persistElementAction(StorageSubmodelAPIHelper.getSubmodelElementDeletion(getSubmodel(), idShortPath));
 		submodelAPI.deleteSubmodelElement(idShortPath);
 	}
 
@@ -75,10 +73,14 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
-		entityManager.getTransaction().begin();
-		entityManager.persist(StorageSubmodelAPIHelper.getSubmodelElementUpdate(getSubmodel(), idShortPath, newValue));
-		entityManager.getTransaction().commit();
+		persistElementAction(StorageSubmodelAPIHelper.getSubmodelElementUpdate(getSubmodel(), idShortPath, newValue));
 		submodelAPI.updateSubmodelElement(idShortPath, newValue);
+	}
+
+	private void persistElementAction(Object action) {
+		entityManager.getTransaction().begin();
+		entityManager.persist(action);
+		entityManager.getTransaction().commit();
 	}
 
 	@Override
@@ -99,5 +101,56 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	@Override
 	public Object getOperationResult(String idShort, String requestId) {
 		return submodelAPI.getOperationResult(idShort, requestId);
+	}
+
+	// TODO: Builder pattern for JPQL Queries
+
+	/**
+	 * Selects all historic StorageSumbodelElements for the given filters.
+	 *
+	 * @param idShort
+	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
+	 *         their descending timestamp
+	 */
+	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId) {
+		Query query = entityManager.createQuery("SELECT s from StorageSubmodelElement s WHERE s.submodelId = :submodelId ORDER BY s.timestamp DESC, s.id DESC");
+		query.setParameter("submodelId", submodelId);
+		List<IStorageSubmodelElement> results = query.getResultList();
+		return results;
+	}
+
+	/**
+	 * Selects all historic StorageSumbodelElements for the given filters.
+	 *
+	 * @param idShort
+	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
+	 *         their descending timestamp
+	 */
+	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort) {
+		Query query = entityManager.createQuery("SELECT s from StorageSubmodelElement s WHERE s.submodelId = :submodelId AND s.idShort = :id ORDER BY s.timestamp DESC, s.id DESC");
+		query.setParameter("submodelId", submodelId);
+		query.setParameter("id", idShort);
+		List<IStorageSubmodelElement> results = query.getResultList();
+		return results;
+	}
+
+	/**
+	 * Selects all historic StorageSumbodelElements for the given filters.
+	 *
+	 * @param idShort
+	 * @param begin
+	 * @param end
+	 * @return a list of @StorageSubmodelElement with the given idShort with changes
+	 *         between the begin and end timestamp ordered by their descending
+	 *         timestamp
+	 */
+	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort, Timestamp begin, Timestamp end) {
+		Query query = entityManager.createQuery("SELECT s from StorageSubmodelElement s WHERE s.submodelId = :submodelId AND s.timestamp BETWEEN :begin AND :end AND s.idShort = :id ORDER BY s.timestamp DESC, s.id DESC");
+		query.setParameter("submodelId", submodelId);
+		query.setParameter("id", idShort);
+		query.setParameter("begin", begin);
+		query.setParameter("end", end);
+		List<IStorageSubmodelElement> results = query.getResultList();
+		return results;
 	}
 }

@@ -338,9 +338,23 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.nosql</artifactId>
+			<version>3.0.2-RC2</version>
+		</dependency>
+
+		<!-- Use PostgreSQL Java Drivers for db connections -->
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>42.3.1</version>
+		</dependency>
+
+		<!-- Use MongoDB Java Drivers for db connections -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>3.12.10</version>
 		</dependency>
 	</dependencies>
 
