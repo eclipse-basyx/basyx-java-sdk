@@ -11,8 +11,8 @@ package org.eclipse.basyx.extensions.aas.registration.authorization;
 
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
-import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
+import org.eclipse.basyx.vab.protocol.https.HTTPSConnector;
 
 /**
  * Local proxy class that hides HTTP calls to BaSys registry with enabled authorization.
@@ -28,7 +28,7 @@ public class AuthorizedAASRegistryProxy extends AASRegistryProxy {
 	 * @param authorizationSupplier Supplier for values to be placed in the HTTP Authorization request header
 	 */
 	public AuthorizedAASRegistryProxy(final String registryUrl, final IAuthorizationSupplier authorizationSupplier) {
-		super(new JSONConnector(new HTTPConnector(harmonizeURL(registryUrl), authorizationSupplier)));
+		super(new JSONConnector(new HTTPSConnector(harmonizeURL(registryUrl), authorizationSupplier)));
 	}
 
 }

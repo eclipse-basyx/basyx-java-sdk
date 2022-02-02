@@ -13,6 +13,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
+import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,11 @@ public class HTTPSConnector extends HTTPConnector {
 		setHttpsClient();
 	}
 	
+	public HTTPSConnector(String address, IAuthorizationSupplier authorizationSupplier) {
+		super(address, authorizationSupplier);
+		setHttpsClient();
+	}
+
 	/**
 	 * Configures the client so that it can run with HTTPS protocol
 	 */
