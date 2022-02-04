@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,8 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -27,7 +29,7 @@ import org.w3c.dom.Element;
  * Parses &lt;aas:property&gt; and builds the Property object from it <br>
  * Builds &lt;aas:property&gt; from a given Property object
  * 
- * @author conradi
+ * @author conradi, jungjan
  *
  */
 public class PropertyXMLConverter extends SubmodelElementXMLConverter {
@@ -51,12 +53,15 @@ public class PropertyXMLConverter extends SubmodelElementXMLConverter {
 		populateSubmodelElement(xmlObject, property);
 		
 		String valueType = XMLHelper.getString(xmlObject.get(SubmodelElementXMLConverter.VALUE_TYPE));
-		String value = XMLHelper.getString(xmlObject.get(SubmodelElementXMLConverter.VALUE));
+		String xmlStringValue = XMLHelper.getString(xmlObject.get(SubmodelElementXMLConverter.VALUE));
+
+		ValueType propertyType = XMLHelper.convertAASXValueTypeToLocal(valueType);
+		Object propertyValue = ValueTypeHelper.getJavaObject(xmlStringValue, propertyType);
 		
 		Map<String, Object> xmlValueId = (Map<String, Object>) xmlObject.get(VALUE_ID);
 		Reference valueId = ReferenceXMLConverter.parseReference(xmlValueId);
 		
-		property.set(value, XMLHelper.convertAASXValueTypeToLocal(valueType));
+		property.set(propertyValue, propertyType);
 		
 		if(valueId != null) {
 			property.setValueId(valueId);

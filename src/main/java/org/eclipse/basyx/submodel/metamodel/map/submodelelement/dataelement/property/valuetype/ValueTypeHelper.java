@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -139,7 +139,7 @@ public class ValueTypeHelper {
 					target = new Short((String)value);
 				}
 				break;
-			case Int32: case UInt16:
+			case Int32: case UInt16: case Integer:
 				if(((String)value).isEmpty()){
 					target = new Integer("NaN");
 				}else {
