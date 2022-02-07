@@ -19,7 +19,6 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IPro
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -56,7 +55,7 @@ public class PropertyXMLConverter extends SubmodelElementXMLConverter {
 		String xmlStringValue = XMLHelper.getString(xmlObject.get(SubmodelElementXMLConverter.VALUE));
 
 		ValueType propertyType = XMLHelper.convertAASXValueTypeToLocal(valueType);
-		Object propertyValue = ValueTypeHelper.getJavaObject(xmlStringValue, propertyType);
+		Object propertyValue = XMLHelper.convertAASXValueToLocal(xmlStringValue, propertyType);
 		
 		Map<String, Object> xmlValueId = (Map<String, Object>) xmlObject.get(VALUE_ID);
 		Reference valueId = ReferenceXMLConverter.parseReference(xmlValueId);

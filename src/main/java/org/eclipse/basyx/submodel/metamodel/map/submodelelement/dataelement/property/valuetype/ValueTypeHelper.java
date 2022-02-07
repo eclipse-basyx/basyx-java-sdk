@@ -139,7 +139,7 @@ public class ValueTypeHelper {
 					target = new Short((String)value);
 				}
 				break;
-			case Int32: case UInt16: case Integer:
+			case Int32: case UInt16:
 				if(((String)value).isEmpty()){
 					target = new Integer("NaN");
 				}else {
