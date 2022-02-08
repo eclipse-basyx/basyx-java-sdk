@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0

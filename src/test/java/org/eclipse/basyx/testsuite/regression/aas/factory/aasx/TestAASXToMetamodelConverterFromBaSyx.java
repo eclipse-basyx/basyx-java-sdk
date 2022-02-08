@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -40,10 +41,13 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.parts.IConceptDescription;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +56,7 @@ import org.xml.sax.SAXException;
 /**
  * J-Unit tests AASX-Files created by the BaSyx middleware itself.
  * 
- * @author zhangzai, conradi, fischer
+ * @author zhangzai, conradi, fischer, jungjan
  *
  */
 public class TestAASXToMetamodelConverterFromBaSyx {
@@ -65,6 +69,15 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String SUBMODEL_IDSHORT = "submodelIdShort";
 	private static final String SUBMODEL_IDENTIFICATION = "submodelIdentification";
 	private static final String SUBMODEL_COLLECTION_IDSHORT = "submodelCollectionIdShort";
+
+	private static final String BOOLEAN_PROPERTY_IDSHORT = "bool";
+	private static final String INTEGER_PROPERTY_IDSHORT = "int";
+	private static final String DOUBLE_PROPERTY_IDSHORT = "decimal";
+	private static final String STRING_PROPERTY_IDSHORT = "string";
+	private static final Boolean EXPECTED_BOOLEAN_VALUE = true;
+	private static final int EXPECTED_INTEGER_VALUE = 42;
+	private static final double EXPECTED_DOUBLE_VALUE = 3.14159265359;
+	private static final String EXPECTED_STRING_VALUE = "test";
 
 	private static final String IMAGE_PATH = "/icon.png";
 	private static final String IMAGE_MIMETYPE = "image/png";
@@ -125,6 +138,34 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		assertEquals(SUBMODEL_IDSHORT, parsedSubmodel.getIdShort());
 		assertEquals(SUBMODEL_IDENTIFICATION, parsedSubmodel.getIdentification().getId());
 		assertEquals(submodelElementsSize, parsedSubmodel.getSubmodelElements().size());
+	}
+
+	/**
+	 * Check if the values and value types of Property submodelElements a parsed
+	 * *.aasx file are returned correctly
+	 * 
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
+	 * @throws IOException
+	 * @throws InvalidFormatException
+	 */
+	@Test
+	public void submodelElementPropertyValues() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException {
+		Set<AASBundle> bundles = packageManager.retrieveAASBundles();
+		AASBundle bundle = bundles.stream().findFirst().get();
+
+		ISubmodel parsedSubmodel = bundle.getSubmodels().stream().findFirst().get();
+		Map<String, ISubmodelElement> submodelElements = parsedSubmodel.getSubmodelElements();
+
+		ISubmodelElement boolProperty = submodelElements.get(BOOLEAN_PROPERTY_IDSHORT);
+		ISubmodelElement intProperty = submodelElements.get(INTEGER_PROPERTY_IDSHORT);
+		ISubmodelElement doubleProperty = submodelElements.get(DOUBLE_PROPERTY_IDSHORT);
+		ISubmodelElement stringProperty = submodelElements.get(STRING_PROPERTY_IDSHORT);
+
+		assertEquals(EXPECTED_BOOLEAN_VALUE, boolProperty.getValue());
+		assertEquals(EXPECTED_INTEGER_VALUE, intProperty.getValue());
+		assertEquals(EXPECTED_DOUBLE_VALUE, doubleProperty.getValue());
+		assertEquals(EXPECTED_STRING_VALUE, stringProperty.getValue());
 	}
 
 	/**
@@ -334,6 +375,10 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		collection.addSubmodelElement(createBaSyxFile(IMAGE_PATH, IMAGE_MIMETYPE, IMAGE_IDSHORT));
 
 		sm.addSubmodelElement(collection);
+		sm.addSubmodelElement(createBooleanProperty());
+		sm.addSubmodelElement(createIntegerProperty());
+		sm.addSubmodelElement(createDoubleProperty());
+		sm.addSubmodelElement(createStringProperty());
 		sm.addSubmodelElement(createBaSyxFile(PDF_PATH, PDF_MIMETYPE, PDF_IDSHORT));
 		aas.addSubmodel(sm);
 
@@ -353,11 +398,47 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		// size for the test comparison
 		fileList.add(createInMemoryFile(IMAGE_PATH));
 		fileList.add(createInMemoryFile(PDF_PATH));
-		submodelElementsSize = 2;
+		submodelElementsSize = 6;
 
 		try (FileOutputStream out = new FileOutputStream(filePath)) {
 			MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
 		}
+	}
+
+	private ISubmodelElement createBooleanProperty() {
+		Property booleanProperty = new Property();
+		booleanProperty.setIdShort(BOOLEAN_PROPERTY_IDSHORT);
+		booleanProperty.setCategory("CONSTANT");
+		booleanProperty.setValueType(ValueType.Boolean);
+		booleanProperty.setValue(EXPECTED_BOOLEAN_VALUE);
+		return booleanProperty;
+	}
+
+	private ISubmodelElement createIntegerProperty() {
+		Property intProperty = new Property();
+		intProperty.setIdShort(INTEGER_PROPERTY_IDSHORT);
+		intProperty.setCategory("CONSTANT");
+		intProperty.setValueType(ValueType.Integer);
+		intProperty.setValue(EXPECTED_INTEGER_VALUE);
+		return intProperty;
+	}
+
+	private ISubmodelElement createDoubleProperty() {
+		Property doubleProperty = new Property();
+		doubleProperty.setIdShort(DOUBLE_PROPERTY_IDSHORT);
+		doubleProperty.setCategory("CONSTANT");
+		doubleProperty.setValueType(ValueType.Double);
+		doubleProperty.setValue(EXPECTED_DOUBLE_VALUE);
+		return doubleProperty;
+	}
+
+	private ISubmodelElement createStringProperty() {
+		Property stringProperty = new Property();
+		stringProperty.setIdShort(STRING_PROPERTY_IDSHORT);
+		stringProperty.setCategory("CONSTANT");
+		stringProperty.setValueType(ValueType.String);
+		stringProperty.setValue(EXPECTED_STRING_VALUE);
+		return stringProperty;
 	}
 
 	/**
