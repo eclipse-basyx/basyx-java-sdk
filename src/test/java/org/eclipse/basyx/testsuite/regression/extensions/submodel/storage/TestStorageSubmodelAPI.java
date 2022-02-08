@@ -14,11 +14,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPI;
-import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPIHelper.StorageSubmodelElementOperations;
+import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPI.StorageSubmodelElementOperations;
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
@@ -30,38 +29,45 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementC
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
 import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
+@RunWith(Parameterized.class)
 public class TestStorageSubmodelAPI {
-	private static final String AASID = "testaasid";
-	private static final String SUBMODELID = "testsubmodelid";
+	private final String AASID = "testaasid";
+	private final String SUBMODELID = "testsubmodelid";
 
-	private static StorageSubmodelAPI storageAPI;
-	private static EntityManager entityManager;
+	private StorageSubmodelAPI storageAPI;
+	private EntityManager entityManager;
+	private String storageOption;
 
-	@BeforeClass
-	public static void setUpClass() throws MqttException, IOException {
+	@Parameterized.Parameters
+	public static String[] storageOptions() {
+		return new String[] { "storageElement_sql", "storageElement_nosql" };
+	}
+
+	public TestStorageSubmodelAPI(String storageOption) {
+		this.storageOption = storageOption;
+	}
+
+	@Before
+	public void setUp() {
 		Submodel sm = new Submodel(SUBMODELID, new Identifier(IdentifierType.CUSTOM, SUBMODELID));
 		Reference parentRef = new Reference(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID, IdentifierType.IRDI));
 		sm.setParent(parentRef);
 
 		VABSubmodelAPI vabAPI = new VABSubmodelAPI(new VABMapProvider(sm));
 
-		// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>HIER<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("storageElement_sql");
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory(storageOption);
 		entityManager = emf.createEntityManager();
 		storageAPI = new StorageSubmodelAPI(vabAPI, entityManager);
-
-		// TODO: use factory for StorageSubmodelAPI as well to use different
-		// StorageSubmodelElements (NoSQL/SQL)
-		// entityManager.getProperties().get("eclipselink.target-database");
 	}
 
 	@Test
@@ -141,8 +147,8 @@ public class TestStorageSubmodelAPI {
 		return storedElement;
 	}
 
-	@AfterClass
-	public static void tearDownClass() {
+	@After
+	public void tearDown() {
 		// clear database table again
 		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODELID);
 		entityManager.getTransaction().begin();

@@ -13,12 +13,14 @@ package org.eclipse.basyx.extensions.submodel.storage;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.eclipse.persistence.jpa.JpaEntityManager;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -40,13 +42,13 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void addSubmodelElement(ISubmodelElement elem) {
-		persistElementAction(StorageSubmodelAPIHelper.getSubmodelElementCreation(getSubmodel(), elem.getIdShort(), elem));
+		persistElementAction(getSubmodelElementCreation(getSubmodel(), elem.getIdShort(), elem));
 		submodelAPI.addSubmodelElement(elem);
 	}
 
 	@Override
 	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
-		persistElementAction(StorageSubmodelAPIHelper.getSubmodelElementCreation(getSubmodel(), idShortPath, elem));
+		persistElementAction(getSubmodelElementCreation(getSubmodel(), idShortPath, elem));
 		submodelAPI.addSubmodelElement(idShortPath, elem);
 	}
 
@@ -57,7 +59,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void deleteSubmodelElement(String idShortPath) {
-		persistElementAction(StorageSubmodelAPIHelper.getSubmodelElementDeletion(getSubmodel(), idShortPath));
+		persistElementAction(getSubmodelElementDeletion(getSubmodel(), idShortPath));
 		submodelAPI.deleteSubmodelElement(idShortPath);
 	}
 
@@ -73,11 +75,11 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
-		persistElementAction(StorageSubmodelAPIHelper.getSubmodelElementUpdate(getSubmodel(), idShortPath, newValue));
+		persistElementAction(getSubmodelElementUpdate(getSubmodel(), idShortPath, newValue));
 		submodelAPI.updateSubmodelElement(idShortPath, newValue);
 	}
 
-	private void persistElementAction(Object action) {
+	private void persistElementAction(IStorageSubmodelElement action) {
 		entityManager.getTransaction().begin();
 		entityManager.persist(action);
 		entityManager.getTransaction().commit();
@@ -101,6 +103,50 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	@Override
 	public Object getOperationResult(String idShort, String requestId) {
 		return submodelAPI.getOperationResult(idShort, requestId);
+	}
+
+	public IStorageSubmodelElement getSubmodelElementCreation(ISubmodel submodel, String idShortPath, ISubmodelElement elem) {
+		IStorageSubmodelElement element = getShared(submodel, idShortPath);
+
+		element.setOperation(StorageSubmodelElementOperations.CREATE);
+		element.setSerializedElementValue(elem.getValue().toString());
+
+		return element;
+	}
+
+	public IStorageSubmodelElement getSubmodelElementUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
+		IStorageSubmodelElement element = getShared(submodel, idShortPath);
+
+		element.setOperation(StorageSubmodelElementOperations.UPDATE);
+		element.setSerializedElementValue(newValue.toString());
+
+		return element;
+	}
+
+	public IStorageSubmodelElement getSubmodelElementDeletion(ISubmodel submodel, String idShortPath) {
+		IStorageSubmodelElement element = getShared(submodel, idShortPath);
+
+		element.setOperation(StorageSubmodelElementOperations.DELETE);
+
+		return element;
+	}
+
+	private IStorageSubmodelElement getShared(ISubmodel submodel, String idShortPath) {
+		IStorageSubmodelElement element = StorageSubmodelElementFactory.create(getStorageClassname());
+
+		element.setSubmodelId(submodel.getIdentification().getId());
+		element.setIdShort(idShortPath);
+		element.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+		return element;
+	}
+
+	private String getStorageClassname() {
+		return entityManager.unwrap(JpaEntityManager.class).getServerSession().getDescriptors().entrySet().iterator().next().getValue().getJavaClassName();
+	}
+
+	private static List<String> getParentKeys(ISubmodel submodel) {
+		return submodel.getParent().getKeys().stream().map(s -> s.getValue()).collect(Collectors.toList());
 	}
 
 	// TODO: Builder pattern for JPQL Queries
@@ -152,5 +198,11 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 		query.setParameter("end", end);
 		List<IStorageSubmodelElement> results = query.getResultList();
 		return results;
+	}
+
+	public static class StorageSubmodelElementOperations {
+		public static String CREATE = "CREATE";
+		public static String UPDATE = "UPDATE";
+		public static String DELETE = "DELETE";
 	}
 }
