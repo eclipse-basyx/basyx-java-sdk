@@ -42,13 +42,13 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void addSubmodelElement(ISubmodelElement elem) {
-		persistElementAction(getSubmodelElementCreation(getSubmodel(), elem.getIdShort(), elem));
+		persistElementAction(getStorageElementForActionCreation(getSubmodel(), elem.getIdShort(), elem));
 		submodelAPI.addSubmodelElement(elem);
 	}
 
 	@Override
 	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
-		persistElementAction(getSubmodelElementCreation(getSubmodel(), idShortPath, elem));
+		persistElementAction(getStorageElementForActionCreation(getSubmodel(), idShortPath, elem));
 		submodelAPI.addSubmodelElement(idShortPath, elem);
 	}
 
@@ -59,7 +59,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void deleteSubmodelElement(String idShortPath) {
-		persistElementAction(getSubmodelElementDeletion(getSubmodel(), idShortPath));
+		persistElementAction(getStorageElementForActionDeletion(getSubmodel(), idShortPath));
 		submodelAPI.deleteSubmodelElement(idShortPath);
 	}
 
@@ -75,7 +75,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
-		persistElementAction(getSubmodelElementUpdate(getSubmodel(), idShortPath, newValue));
+		persistElementAction(getStorageElementForActionUpdate(getSubmodel(), idShortPath, newValue));
 		submodelAPI.updateSubmodelElement(idShortPath, newValue);
 	}
 
@@ -105,7 +105,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 		return submodelAPI.getOperationResult(idShort, requestId);
 	}
 
-	public IStorageSubmodelElement getSubmodelElementCreation(ISubmodel submodel, String idShortPath, ISubmodelElement elem) {
+	public IStorageSubmodelElement getStorageElementForActionCreation(ISubmodel submodel, String idShortPath, ISubmodelElement elem) {
 		IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
 		element.setOperation(StorageSubmodelElementOperations.CREATE);
@@ -114,7 +114,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 		return element;
 	}
 
-	public IStorageSubmodelElement getSubmodelElementUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
+	public IStorageSubmodelElement getStorageElementForActionUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
 		IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
 		element.setOperation(StorageSubmodelElementOperations.UPDATE);
@@ -123,7 +123,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 		return element;
 	}
 
-	public IStorageSubmodelElement getSubmodelElementDeletion(ISubmodel submodel, String idShortPath) {
+	public IStorageSubmodelElement getStorageElementForActionDeletion(ISubmodel submodel, String idShortPath) {
 		IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
 		element.setOperation(StorageSubmodelElementOperations.DELETE);
@@ -145,22 +145,21 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 		return entityManager.unwrap(JpaEntityManager.class).getServerSession().getDescriptors().entrySet().iterator().next().getValue().getJavaClassName();
 	}
 
+	@SuppressWarnings("unused")
 	private static List<String> getParentKeys(ISubmodel submodel) {
 		return submodel.getParent().getKeys().stream().map(s -> s.getValue()).collect(Collectors.toList());
 	}
 
-	// TODO: Builder pattern for JPQL Queries
-
 	/**
 	 * Selects all historic StorageSumbodelElements for the given filters.
 	 *
-	 * @param idShort
+	 * @param submodelId
 	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
 	 *         their descending timestamp
 	 */
 	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId) {
-		Query query = entityManager.createQuery("SELECT s from StorageSubmodelElement s WHERE s.submodelId = :submodelId ORDER BY s.timestamp DESC, s.id DESC");
-		query.setParameter("submodelId", submodelId);
+		Query query = new StorageSubmodelQueryBuilder(entityManager).setSubmodelId(submodelId).build();
+		@SuppressWarnings("unchecked")
 		List<IStorageSubmodelElement> results = query.getResultList();
 		return results;
 	}
@@ -168,14 +167,14 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	/**
 	 * Selects all historic StorageSumbodelElements for the given filters.
 	 *
+	 * @param submodelId
 	 * @param idShort
 	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
 	 *         their descending timestamp
 	 */
 	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort) {
-		Query query = entityManager.createQuery("SELECT s from StorageSubmodelElement s WHERE s.submodelId = :submodelId AND s.idShort = :id ORDER BY s.timestamp DESC, s.id DESC");
-		query.setParameter("submodelId", submodelId);
-		query.setParameter("id", idShort);
+		Query query = new StorageSubmodelQueryBuilder(entityManager).setSubmodelId(submodelId).setIdShort(idShort).build();
+		@SuppressWarnings("unchecked")
 		List<IStorageSubmodelElement> results = query.getResultList();
 		return results;
 	}
@@ -183,6 +182,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	/**
 	 * Selects all historic StorageSumbodelElements for the given filters.
 	 *
+	 * @param submodelId
 	 * @param idShort
 	 * @param begin
 	 * @param end
@@ -191,11 +191,8 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	 *         timestamp
 	 */
 	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort, Timestamp begin, Timestamp end) {
-		Query query = entityManager.createQuery("SELECT s from StorageSubmodelElement s WHERE s.submodelId = :submodelId AND s.timestamp BETWEEN :begin AND :end AND s.idShort = :id ORDER BY s.timestamp DESC, s.id DESC");
-		query.setParameter("submodelId", submodelId);
-		query.setParameter("id", idShort);
-		query.setParameter("begin", begin);
-		query.setParameter("end", end);
+		Query query = new StorageSubmodelQueryBuilder(entityManager).setSubmodelId(submodelId).setIdShort(idShort).setTimespan(begin, end).build();
+		@SuppressWarnings("unchecked")
 		List<IStorageSubmodelElement> results = query.getResultList();
 		return results;
 	}
