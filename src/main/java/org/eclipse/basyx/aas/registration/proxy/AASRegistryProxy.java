@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.aas.registration.proxy;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.AASRegistryAPIHelper;
+import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
@@ -25,13 +25,12 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
+import org.eclipse.basyx.vab.protocol.https.HTTPSConnector;
 import org.eclipse.basyx.vab.registry.proxy.VABRegistryProxy;
-
-
 
 /**
  * Local proxy class that hides HTTP calls to BaSys registry
- * 
+ *
  * @author kuhn, schnicke
  *
  */
@@ -39,17 +38,24 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 
 	/**
 	 * Constructor for an AAS registry proxy based on a HTTP connection
-	 * 
+	 *
 	 * @param registryUrl
 	 *            The endpoint of the registry with a HTTP-REST interface
 	 */
 	public AASRegistryProxy(String registryUrl) {
-		this(new JSONConnector(new HTTPConnector(harmonizeURL(registryUrl))));
+		this(getJSONConnectorWithProtocol(registryUrl));
+	}
+
+	private static JSONConnector getJSONConnectorWithProtocol(String registryUrl) {
+		if (isHTTPSUrl(registryUrl)) {
+			return new JSONConnector(new HTTPSConnector(harmonizeURL(registryUrl)));
+		}
+		return new JSONConnector(new HTTPConnector(harmonizeURL(registryUrl)));
 	}
 
 	/**
 	 * Removes prefix if it exists since it will be readded at a later stage
-	 * 
+	 *
 	 * @param url
 	 * @return
 	 */
@@ -62,7 +68,7 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 
 	/**
 	 * Constructor for an AAS registry proxy based on its model provider
-	 * 
+	 *
 	 * @param provider
 	 *            A model provider for the actual registry
 	 */
@@ -102,11 +108,12 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 	public void delete(IIdentifier aasIdentifier) throws ProviderException {
 		this.removeMapping(AASRegistryAPIHelper.getAASPath(aasIdentifier));
 	}
-	
+
 	/**
 	 * Lookup device AAS
 	 */
-	@Override @SuppressWarnings("unchecked")
+	@Override
+	@SuppressWarnings("unchecked")
 	public AASDescriptor lookupAAS(IIdentifier aasIdentifier) throws ProviderException {
 		try {
 			Object result = provider.getValue(AASRegistryAPIHelper.getAASPath(aasIdentifier));
@@ -164,7 +171,6 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 		}
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<SubmodelDescriptor> lookupSubmodels(IIdentifier aasId) throws ProviderException {
@@ -196,4 +202,3 @@ public class AASRegistryProxy extends VABRegistryProxy implements IAASRegistry {
 		}
 	}
 }
-
