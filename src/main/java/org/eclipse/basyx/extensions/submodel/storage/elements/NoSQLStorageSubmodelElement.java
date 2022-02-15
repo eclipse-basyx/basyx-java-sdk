@@ -24,7 +24,7 @@ import jakarta.persistence.Id;
 public class NoSQLStorageSubmodelElement implements IStorageSubmodelElement {
 	@Id
 	@GeneratedValue
-	private String id;
+	private String operationId;
 	private String submodelId;
 	private Timestamp timestamp;
 	private String idShort;

@@ -35,6 +35,8 @@ import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import jakarta.persistence.EntityManager;
+
 /**
  * An implementation of the IAASAggregator interface using maps internally
  *
@@ -83,6 +85,12 @@ public class AASAggregator implements IAASAggregator {
 		this.registry = registry;
 		this.aasApiFactory = new VABAASAPIFactory();
 		this.submodelAggregator = createDefaultSubmodelAggregator();
+	}
+
+	public AASAggregator(IAASRegistry registry, EntityManager entityManager) {
+		this.registry = registry;
+		this.aasApiFactory = new VABAASAPIFactory();
+		this.submodelAggregator = new SubmodelAggregator();
 	}
 
 	/**

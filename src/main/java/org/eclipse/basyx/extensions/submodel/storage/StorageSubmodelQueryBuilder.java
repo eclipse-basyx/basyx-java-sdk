@@ -35,7 +35,7 @@ public class StorageSubmodelQueryBuilder {
 		}
 
 		if (idShort != null) {
-			query.setParameter("id", idShort);
+			query.setParameter("idShort", idShort);
 		}
 
 		if (begin != null && end != null) {
@@ -61,7 +61,7 @@ public class StorageSubmodelQueryBuilder {
 			filterBuilder.setTimespanFilter();
 		}
 		queryString += filterBuilder.build();
-		queryString += " ORDER BY s.timestamp DESC, s.id DESC";
+		queryString += " ORDER BY s.timestamp DESC, s.operationId DESC";
 		return queryString;
 	}
 

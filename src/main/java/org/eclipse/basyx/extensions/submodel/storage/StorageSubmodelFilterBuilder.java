@@ -39,7 +39,7 @@ public class StorageSubmodelFilterBuilder {
 		if (!filterString.isEmpty()) {
 			filterString += " AND ";
 		}
-		filterString += "s.idShort = :id";
+		filterString += "s.idShort = :idShort";
 		return this;
 	}
 

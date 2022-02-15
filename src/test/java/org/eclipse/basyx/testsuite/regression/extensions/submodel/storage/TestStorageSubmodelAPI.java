@@ -17,7 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPI;
-import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPI.StorageSubmodelElementOperations;
+import org.eclipse.basyx.extensions.submodel.storage.SubmodelElementStorageComponent.StorageSubmodelElementOperations;
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;

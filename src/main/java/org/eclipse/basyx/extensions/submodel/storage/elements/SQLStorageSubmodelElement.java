@@ -21,7 +21,7 @@ import jakarta.persistence.Id;
 public class SQLStorageSubmodelElement implements IStorageSubmodelElement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private String id;
+	private String operationId;
 	private String submodelId;
 	private Timestamp timestamp;
 	private String idShort;
