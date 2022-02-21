@@ -19,7 +19,7 @@ import javax.net.ssl.SSLSession;
  * @author haque
  *
  */
-public class DefaultHostNameVerifier implements HostnameVerifier {
+public class NonVerifyingHostnameVerifier implements HostnameVerifier {
     @Override
     public boolean verify(String s, SSLSession sslSession) {
         return true;

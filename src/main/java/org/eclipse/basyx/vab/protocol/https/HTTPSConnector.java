@@ -34,7 +34,7 @@ public class HTTPSConnector extends HTTPConnector {
 	 */
 	public HTTPSConnector(String address) {
 		super(address);
-		setHttpsClient();
+		setHttpsClientWithValidation();
 	}
 	
 	/**
@@ -44,20 +44,37 @@ public class HTTPSConnector extends HTTPConnector {
 	 */
 	public HTTPSConnector(String address, String mediaType) { 
 		super(address, mediaType);
-		setHttpsClient();
+		setHttpsClientWithValidation();
 	}
 	
 	public HTTPSConnector(String address, IAuthorizationSupplier authorizationSupplier) {
 		super(address, authorizationSupplier);
-		setHttpsClient();
+		setHttpsClientWithValidation();
+	}
+
+	public HTTPSConnector(String address, IAuthorizationSupplier authorizationSupplier, boolean validateFlag) {
+		super(address, authorizationSupplier);
+		if (validateFlag) {
+			setHttpsClientWithValidation();
+		} else {
+			setHttpsClientWithoutValidation();
+		}
 	}
 
 	/**
 	 * Configures the client so that it can run with HTTPS protocol
 	 */
-	private void setHttpsClient() {
+	private void setHttpsClientWithoutValidation() {
 		try {
-			this.client = JerseyHttpsClientFactory.getJerseyHTTPSClient();
+			this.client = JerseyHttpsClientFactory.getJerseyHTTPSClientWithoutValidation();
+		} catch (KeyManagementException | NoSuchAlgorithmException e) {
+			logger.error("Cannot create a https client");
+		}
+	}
+
+	private void setHttpsClientWithValidation() {
+		try {
+			this.client = JerseyHttpsClientFactory.getJerseyHTTPSClientWithValidation();
 		} catch (KeyManagementException | NoSuchAlgorithmException e) {
 			logger.error("Cannot create a https client");
 		}

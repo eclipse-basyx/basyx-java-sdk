@@ -9,6 +9,10 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.https;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
@@ -16,9 +20,7 @@ import javax.net.ssl.TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 
 /**
  * A Factory class containing methods creating an HTTPS client
@@ -32,20 +34,32 @@ public class JerseyHttpsClientFactory {
 	private static final String PROTOCOL = "TLSv1.2";
 
 	/**
-	 * Returns an HTTPS client
+	 * Returns an HTTPS client without validation
+	 * 
 	 * @return
 	 * @throws KeyManagementException
 	 * @throws NoSuchAlgorithmException
 	 */
-    public static Client getJerseyHTTPSClient() throws KeyManagementException, NoSuchAlgorithmException {
-        SSLContext sslContext = getSslContext(PROTOCOL);
-        HostnameVerifier allHostsValid = new DefaultHostNameVerifier();
-
-        return ClientBuilder.newBuilder()
-                .sslContext(sslContext)
-                .hostnameVerifier(allHostsValid)
-                .build();
+    public static Client getJerseyHTTPSClientWithoutValidation() throws KeyManagementException, NoSuchAlgorithmException {
+		return getJerseyHTTPSClient(new NonVerifyingHostnameVerifier());
     }
+
+	/**
+	 * Returns an HTTPS client
+	 * 
+	 * @return
+	 * @throws KeyManagementException
+	 * @throws NoSuchAlgorithmException
+	 */
+	public static Client getJerseyHTTPSClientWithValidation() throws KeyManagementException, NoSuchAlgorithmException {
+		return getJerseyHTTPSClient(new DefaultHostnameVerifier());
+	}
+
+
+	private static Client getJerseyHTTPSClient(HostnameVerifier hostnameVerifier) throws KeyManagementException, NoSuchAlgorithmException {
+		SSLContext sslContext = getSslContext(PROTOCOL);
+		return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(hostnameVerifier).build();
+	}
 
     /**
      * Retrieves an SSL Context
