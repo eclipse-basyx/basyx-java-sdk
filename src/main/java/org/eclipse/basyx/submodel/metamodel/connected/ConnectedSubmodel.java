@@ -93,9 +93,15 @@ public class ConnectedSubmodel extends ConnectedElement implements ISubmodel {
 		return HasDataSpecification.createAsFacade(getElem()).getEmbeddedDataSpecifications();
 	}
 
+	
 	@Override
 	public ModelingKind getModelingKind() {
-		return HasKind.createAsFacade(getElem()).getModelingKind();
+		return this.getKind();
+	}
+
+	@Override
+	public ModelingKind getKind() {
+		return HasKind.createAsFacade(getElem()).getKind();
 	}
 
 	@Override

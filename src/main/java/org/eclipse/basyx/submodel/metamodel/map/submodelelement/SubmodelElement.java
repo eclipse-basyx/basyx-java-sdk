@@ -163,13 +163,28 @@ public class SubmodelElement extends VABModelMap<Object> implements ISubmodelEle
 		HasSemantics.createAsFacade(this).setSemanticId(ref);
 	}
 
+	/**
+	 * @deprecated Please use {@link #getKind()} instead.
+	 */
 	@Override
 	public ModelingKind getModelingKind() {
-		return HasKind.createAsFacade(this).getModelingKind();
+		return this.getKind();
 	}
 
+	/**
+	 * @deprecated Please use {@link #setKind(ModelingKind)} instead.
+	 */
 	public void setModelingKind(ModelingKind kind) {
-		HasKind.createAsFacade(this).setModelingKind(kind);
+		this.setKind(kind);
+	}
+
+	@Override
+	public ModelingKind getKind() {
+		return HasKind.createAsFacade(this).getKind();
+	}
+
+	public void setKind(ModelingKind kind) {
+		HasKind.createAsFacade(this).setKind(kind);
 	}
 
 	@Override
