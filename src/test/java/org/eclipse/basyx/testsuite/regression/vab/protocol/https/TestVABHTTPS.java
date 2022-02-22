@@ -17,8 +17,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.basyx.testsuite.regression.vab.modelprovider.TestProvider;
@@ -34,6 +34,7 @@ import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
 import org.eclipse.basyx.vab.protocol.https.HTTPSConnectorProvider;
 import org.eclipse.basyx.vab.protocol.https.JerseyHttpsClientFactory;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,8 +45,8 @@ import org.junit.Test;
  *
  */
 public class TestVABHTTPS extends TestProvider {
-	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory("https"),
-			new HTTPSConnectorProvider());
+
+	protected VABConnectionManager connManager;
 
 	private RecordingProvider recorder = new RecordingProvider(new VABMapProvider(new LinkedHashMap<>()));
 
@@ -58,6 +59,13 @@ public class TestVABHTTPS extends TestProvider {
 					System.getProperty("java.io.tmpdir"), "localhost", 8080, true, "resources/ssl.cert", "pass123")
 					.addServletMapping("/Testsuite/SimpleVAB/*", new SimpleVABElementServlet())
 					.addServletMapping("/Testsuite/Recorder/*", new VABHTTPInterface<RecordingProvider>(recorder)));
+
+	@Before
+	public void setUp() {
+		HTTPSConnectorProvider httpsConnectorProvider = new HTTPSConnectorProvider();
+		httpsConnectorProvider.disableValidation();
+		connManager = new VABConnectionManager(new TestsuiteDirectory("https"), httpsConnectorProvider);
+	}
 
 	@Override
 	protected VABConnectionManager getConnectionManager() {
@@ -120,7 +128,7 @@ public class TestVABHTTPS extends TestProvider {
 	 * @throws KeyManagementException 
 	 */
 	private void performRequest(String URL) throws KeyManagementException, NoSuchAlgorithmException {
-		Client client = JerseyHttpsClientFactory.getJerseyHTTPSClient();
+		Client client = JerseyHttpsClientFactory.getJerseyHTTPSClientWithoutValidation();
 
 		// Called URL
 		WebTarget resource = client.target(URL);
