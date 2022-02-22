@@ -25,11 +25,23 @@ public class NoSQLStorageSubmodelElement implements IStorageSubmodelElement {
 	@Id
 	@GeneratedValue
 	private String operationId;
-	private String submodelId;
 	private Timestamp timestamp;
-	private String idShort;
+	private String submodelId;
+	private String elementIdShortPath;
 	private String operation;
+	private String modelType;
+	private String modelTypeSpecial;
 	private String serializedElementValue;
+
+	@Override
+	public Timestamp getTimestamp() {
+		return timestamp;
+	}
+
+	@Override
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
+	}
 
 	@Override
 	public String getSubmodelId() {
@@ -42,13 +54,13 @@ public class NoSQLStorageSubmodelElement implements IStorageSubmodelElement {
 	}
 
 	@Override
-	public Timestamp getTimestamp() {
-		return timestamp;
+	public String getElementIdShortPath() {
+		return elementIdShortPath;
 	}
 
 	@Override
-	public void setTimestamp(Timestamp timestamp2) {
-		this.timestamp = timestamp2;
+	public void setElementIdShortPath(String elementIdShortPath) {
+		this.elementIdShortPath = elementIdShortPath;
 	}
 
 	@Override
@@ -62,13 +74,23 @@ public class NoSQLStorageSubmodelElement implements IStorageSubmodelElement {
 	}
 
 	@Override
-	public String getIdShort() {
-		return idShort;
+	public String getModelType() {
+		return modelType;
 	}
 
 	@Override
-	public void setIdShort(String idShort) {
-		this.idShort = idShort;
+	public void setModelType(String modelType) {
+		this.modelType = modelType;
+	}
+
+	@Override
+	public String getModelTypeSpecial() {
+		return this.modelTypeSpecial;
+	}
+
+	@Override
+	public void setModelTypeSpecial(String modelTypeSpecial) {
+		this.modelTypeSpecial = modelTypeSpecial;
 	}
 
 	@Override
@@ -80,4 +102,5 @@ public class NoSQLStorageSubmodelElement implements IStorageSubmodelElement {
 	public void setSerializedElementValue(String serializedElementValue) {
 		this.serializedElementValue = serializedElementValue;
 	}
+
 }

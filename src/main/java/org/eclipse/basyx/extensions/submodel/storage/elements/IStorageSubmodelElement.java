@@ -19,15 +19,23 @@ public interface IStorageSubmodelElement {
 
 	public Timestamp getTimestamp();
 
-	public void setTimestamp(Timestamp timestamp2);
+	public void setTimestamp(Timestamp timestamp);
+
+	public String getElementIdShortPath();
+
+	public void setElementIdShortPath(String elementIdShortPath);
 
 	public String getOperation();
 
 	public void setOperation(String operation);
 
-	public String getIdShort();
+	public String getModelType();
 
-	public void setIdShort(String idShort);
+	public void setModelType(String modelType);
+
+	public String getModelTypeSpecial();
+
+	public void setModelTypeSpecial(String modelTypeSpecial);
 
 	public String getSerializedElementValue();
 

@@ -21,12 +21,24 @@ import jakarta.persistence.Id;
 public class SQLStorageSubmodelElement implements IStorageSubmodelElement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private String operationId;
-	private String submodelId;
-	private Timestamp timestamp;
-	private String idShort;
-	private String operation;
-	private String serializedElementValue;
+	private String operationId; // serial number
+	private Timestamp timestamp; // current timestamp
+	private String submodelId; // corresponding submodelId
+	private String elementIdShortPath; // own idShortPath
+	private String operation; // CREATE/UPDATE/DELETE
+	private String modelType; // Property, File, SubmodelCollection?
+	private String modelTypeSpecial; // Kind of Property, ...
+	private String serializedElementValue; // value in serialized form
+
+	@Override
+	public Timestamp getTimestamp() {
+		return timestamp;
+	}
+
+	@Override
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
+	}
 
 	@Override
 	public String getSubmodelId() {
@@ -39,13 +51,13 @@ public class SQLStorageSubmodelElement implements IStorageSubmodelElement {
 	}
 
 	@Override
-	public Timestamp getTimestamp() {
-		return timestamp;
+	public String getElementIdShortPath() {
+		return elementIdShortPath;
 	}
 
 	@Override
-	public void setTimestamp(Timestamp timestamp2) {
-		this.timestamp = timestamp2;
+	public void setElementIdShortPath(String elementIdShortPath) {
+		this.elementIdShortPath = elementIdShortPath;
 	}
 
 	@Override
@@ -59,13 +71,23 @@ public class SQLStorageSubmodelElement implements IStorageSubmodelElement {
 	}
 
 	@Override
-	public String getIdShort() {
-		return idShort;
+	public String getModelType() {
+		return modelType;
 	}
 
 	@Override
-	public void setIdShort(String idShort) {
-		this.idShort = idShort;
+	public void setModelType(String modelType) {
+		this.modelType = modelType;
+	}
+
+	@Override
+	public String getModelTypeSpecial() {
+		return modelTypeSpecial;
+	}
+
+	@Override
+	public void setModelTypeSpecial(String modelTypeSpecial) {
+		this.modelTypeSpecial = modelTypeSpecial;
 	}
 
 	@Override

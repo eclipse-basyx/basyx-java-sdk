@@ -1,6 +1,5 @@
 package org.eclipse.basyx.extensions.submodel.storage;
 
-import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPI;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;

@@ -8,21 +8,21 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package org.eclipse.basyx.extensions.submodel.storage;
+package org.eclipse.basyx.extensions.submodel.storage.elements;
 
 import java.sql.Timestamp;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
-public class StorageSubmodelQueryBuilder {
+public class StorageSubmodelElementQueryBuilder {
 	protected EntityManager entityManager;
 	protected String submodelId;
-	protected String idShort;
+	protected String elementIdShortPath;
 	protected Timestamp begin;
 	protected Timestamp end;
 
-	public StorageSubmodelQueryBuilder(EntityManager givenManager) {
+	public StorageSubmodelElementQueryBuilder(EntityManager givenManager) {
 		entityManager = givenManager;
 	}
 
@@ -34,8 +34,8 @@ public class StorageSubmodelQueryBuilder {
 			query.setParameter("submodelId", submodelId);
 		}
 
-		if (idShort != null) {
-			query.setParameter("idShort", idShort);
+		if (elementIdShortPath != null) {
+			query.setParameter("elementIdShortPath", elementIdShortPath);
 		}
 
 		if (begin != null && end != null) {
@@ -48,13 +48,13 @@ public class StorageSubmodelQueryBuilder {
 
 	private String createQueryString() {
 		String queryString = "SELECT s from StorageSubmodelElement s WHERE ";
-		StorageSubmodelFilterBuilder filterBuilder = new StorageSubmodelFilterBuilder();
+		StorageSubmodelElementFilterBuilder filterBuilder = new StorageSubmodelElementFilterBuilder();
 		if (submodelId != null) {
 			filterBuilder.setSubmodelIdFilter();
 		}
 
-		if (idShort != null) {
-			filterBuilder.setIdShortFilter();
+		if (elementIdShortPath != null) {
+			filterBuilder.setElementIdShortPathFilter();
 		}
 
 		if (begin != null && end != null) {
@@ -65,17 +65,17 @@ public class StorageSubmodelQueryBuilder {
 		return queryString;
 	}
 
-	public StorageSubmodelQueryBuilder setSubmodelId(String submodelId) {
+	public StorageSubmodelElementQueryBuilder setSubmodelId(String submodelId) {
 		this.submodelId = submodelId;
 		return this;
 	}
 
-	public StorageSubmodelQueryBuilder setIdShort(String idShort) {
-		this.idShort = idShort;
+	public StorageSubmodelElementQueryBuilder setElementIdShort(String elementIdShort) {
+		this.elementIdShortPath = elementIdShort;
 		return this;
 	}
 
-	public StorageSubmodelQueryBuilder setTimespan(Timestamp begin, Timestamp end) {
+	public StorageSubmodelElementQueryBuilder setTimespan(Timestamp begin, Timestamp end) {
 		this.begin = begin;
 		this.end = end;
 		return this;

@@ -8,11 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package org.eclipse.basyx.extensions.submodel.storage;
-
-import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
-import org.eclipse.basyx.extensions.submodel.storage.elements.NoSQLStorageSubmodelElement;
-import org.eclipse.basyx.extensions.submodel.storage.elements.SQLStorageSubmodelElement;
+package org.eclipse.basyx.extensions.submodel.storage.elements;
 
 public class StorageSubmodelElementFactory {
 	private StorageSubmodelElementFactory() {

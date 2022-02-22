@@ -8,18 +8,12 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package org.eclipse.basyx.extensions.submodel.storage;
+package org.eclipse.basyx.extensions.submodel.storage.elements;
 
-import java.sql.Timestamp;
-
-public class StorageSubmodelFilterBuilder {
+public class StorageSubmodelElementFilterBuilder {
 	protected String filterString;
-	protected String submodelId;
-	protected String idShort;
-	protected Timestamp begin;
-	protected Timestamp end;
 
-	public StorageSubmodelFilterBuilder() {
+	public StorageSubmodelElementFilterBuilder() {
 		this.filterString = "";
 	}
 
@@ -27,7 +21,7 @@ public class StorageSubmodelFilterBuilder {
 		return filterString;
 	}
 
-	public StorageSubmodelFilterBuilder setSubmodelIdFilter() {
+	public StorageSubmodelElementFilterBuilder setSubmodelIdFilter() {
 		if (!filterString.isEmpty()) {
 			filterString += " AND ";
 		}
@@ -35,15 +29,15 @@ public class StorageSubmodelFilterBuilder {
 		return this;
 	}
 
-	public StorageSubmodelFilterBuilder setIdShortFilter() {
+	public StorageSubmodelElementFilterBuilder setElementIdShortPathFilter() {
 		if (!filterString.isEmpty()) {
 			filterString += " AND ";
 		}
-		filterString += "s.idShort = :idShort";
+		filterString += "s.elementIdShortPath = :elementIdShortPath";
 		return this;
 	}
 
-	public StorageSubmodelFilterBuilder setTimespanFilter() {
+	public StorageSubmodelElementFilterBuilder setTimespanFilter() {
 		if (!filterString.isEmpty()) {
 			filterString += " AND ";
 		}

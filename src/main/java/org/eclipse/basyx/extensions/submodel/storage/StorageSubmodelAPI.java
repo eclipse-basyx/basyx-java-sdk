@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
+import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementComponent;
+import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementQueryBuilder;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
@@ -27,12 +29,12 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 
 	protected ISubmodelAPI submodelAPI;
 	protected EntityManager entityManager;
-	protected SubmodelElementStorageComponent submodelElementStorageComponent;
+	protected StorageSubmodelElementComponent submodelElementStorageComponent;
 
 	public StorageSubmodelAPI(ISubmodelAPI submodelAPI, EntityManager entityManager) {
 		this.submodelAPI = submodelAPI;
 		this.entityManager = entityManager;
-		this.submodelElementStorageComponent = new SubmodelElementStorageComponent(this.entityManager);
+		this.submodelElementStorageComponent = new StorageSubmodelElementComponent(this.entityManager);
 	}
 
 	@Override
@@ -41,47 +43,8 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	}
 
 	@Override
-	public void addSubmodelElement(ISubmodelElement elem) {
-		try {
-			submodelElementStorageComponent.beginTransaction();
-			submodelElementStorageComponent.persistStorageElementCreation(getSubmodel(), elem.getIdShort(), elem);
-			submodelAPI.addSubmodelElement(elem);
-			submodelElementStorageComponent.commitTransaction();
-		} catch (Exception e) {
-			submodelElementStorageComponent.rollbackTransaction();
-			throw e;
-		}
-	}
-
-	@Override
-	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
-		try {
-			submodelElementStorageComponent.beginTransaction();
-			submodelElementStorageComponent.persistStorageElementCreation(getSubmodel(), idShortPath, elem);
-			submodelAPI.addSubmodelElement(idShortPath, elem);
-			submodelElementStorageComponent.commitTransaction();
-		} catch (Exception e) {
-			submodelElementStorageComponent.rollbackTransaction();
-			throw e;
-		}
-	}
-
-	@Override
 	public ISubmodelElement getSubmodelElement(String idShortPath) {
 		return submodelAPI.getSubmodelElement(idShortPath);
-	}
-
-	@Override
-	public void deleteSubmodelElement(String idShortPath) {
-		try {
-			submodelElementStorageComponent.beginTransaction();
-			submodelElementStorageComponent.persistStorageElementDeletion(getSubmodel(), idShortPath);
-			submodelAPI.deleteSubmodelElement(idShortPath);
-			submodelElementStorageComponent.commitTransaction();
-		} catch (Exception e) {
-			submodelElementStorageComponent.rollbackTransaction();
-			throw e;
-		}
 	}
 
 	@Override
@@ -92,19 +55,6 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	@Override
 	public Collection<ISubmodelElement> getSubmodelElements() {
 		return submodelAPI.getSubmodelElements();
-	}
-
-	@Override
-	public void updateSubmodelElement(String idShortPath, Object newValue) {
-		try {
-			submodelElementStorageComponent.beginTransaction();
-			submodelElementStorageComponent.persistStorageElementUpdate(getSubmodel(), idShortPath, newValue);
-			submodelAPI.updateSubmodelElement(idShortPath, newValue);
-			submodelElementStorageComponent.commitTransaction();
-		} catch (Exception e) {
-			submodelElementStorageComponent.rollbackTransaction();
-			throw e;
-		}
 	}
 
 	@Override
@@ -127,6 +77,58 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 		return submodelAPI.getOperationResult(idShort, requestId);
 	}
 
+	@Override
+	public void addSubmodelElement(ISubmodelElement elem) {
+		try {
+			submodelElementStorageComponent.beginTransaction();
+			submodelAPI.addSubmodelElement(elem);
+			submodelElementStorageComponent.persistStorageElementCreation(getSubmodel(), elem.getIdShort(), elem.getLocalCopy());
+			submodelElementStorageComponent.commitTransaction();
+		} catch (Exception e) {
+			submodelElementStorageComponent.rollbackTransaction();
+			throw e;
+		}
+	}
+
+	@Override
+	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
+		try {
+			submodelElementStorageComponent.beginTransaction();
+			submodelAPI.addSubmodelElement(idShortPath, elem);
+			submodelElementStorageComponent.persistStorageElementCreation(getSubmodel(), idShortPath, elem.getLocalCopy());
+			submodelElementStorageComponent.commitTransaction();
+		} catch (Exception e) {
+			submodelElementStorageComponent.rollbackTransaction();
+			throw e;
+		}
+	}
+
+	@Override
+	public void updateSubmodelElement(String idShortPath, Object newValue) {
+		try {
+			submodelElementStorageComponent.beginTransaction();
+			submodelAPI.updateSubmodelElement(idShortPath, newValue);
+			submodelElementStorageComponent.persistStorageElementUpdate(getSubmodel(), idShortPath, newValue);
+			submodelElementStorageComponent.commitTransaction();
+		} catch (Exception e) {
+			submodelElementStorageComponent.rollbackTransaction();
+			throw e;
+		}
+	}
+
+	@Override
+	public void deleteSubmodelElement(String idShortPath) {
+		try {
+			submodelElementStorageComponent.beginTransaction();
+			submodelElementStorageComponent.persistStorageElementDeletion(getSubmodel(), idShortPath);
+			submodelAPI.deleteSubmodelElement(idShortPath);
+			submodelElementStorageComponent.commitTransaction();
+		} catch (Exception e) {
+			submodelElementStorageComponent.rollbackTransaction();
+			throw e;
+		}
+	}
+
 	/**
 	 * Selects all historic StorageSumbodelElements for the given filters.
 	 *
@@ -135,7 +137,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	 *         their descending timestamp
 	 */
 	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId) {
-		Query query = new StorageSubmodelQueryBuilder(entityManager).setSubmodelId(submodelId).build();
+		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).build();
 		@SuppressWarnings("unchecked")
 		List<IStorageSubmodelElement> results = query.getResultList();
 		return results;
@@ -150,7 +152,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	 *         their descending timestamp
 	 */
 	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort) {
-		Query query = new StorageSubmodelQueryBuilder(entityManager).setSubmodelId(submodelId).setIdShort(idShort).build();
+		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(idShort).build();
 		@SuppressWarnings("unchecked")
 		List<IStorageSubmodelElement> results = query.getResultList();
 		return results;
@@ -168,7 +170,7 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	 *         timestamp
 	 */
 	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort, Timestamp begin, Timestamp end) {
-		Query query = new StorageSubmodelQueryBuilder(entityManager).setSubmodelId(submodelId).setIdShort(idShort).setTimespan(begin, end).build();
+		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(idShort).setTimespan(begin, end).build();
 		@SuppressWarnings("unchecked")
 		List<IStorageSubmodelElement> results = query.getResultList();
 		return results;

@@ -24,6 +24,7 @@ import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregator;
+import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPIFactory;
 import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -90,7 +91,7 @@ public class AASAggregator implements IAASAggregator {
 	public AASAggregator(IAASRegistry registry, EntityManager entityManager) {
 		this.registry = registry;
 		this.aasApiFactory = new VABAASAPIFactory();
-		this.submodelAggregator = new SubmodelAggregator();
+		this.submodelAggregator = new SubmodelAggregator(new StorageSubmodelAPIFactory(entityManager));
 	}
 
 	/**
