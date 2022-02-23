@@ -126,4 +126,10 @@ public class AnnotatedRelationshipElement extends RelationshipElement implements
 		setAnnotation(value.getAnnotations());
 	}
 
+	@Override
+	public AnnotatedRelationshipElement getLocalCopy() {
+		AnnotatedRelationshipElement copy = new AnnotatedRelationshipElement();
+		copy.putAll(this);
+		return copy;
+	}
 }

@@ -11,42 +11,59 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.persistence.jpa.JpaEntityManager;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 public class StorageSubmodelElementComponent {
 	private EntityManager entityManager;
+	private EntityTransaction transaction;
 
 	public StorageSubmodelElementComponent(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
 
 	public void beginTransaction() {
-		entityManager.getTransaction().begin();
+		transaction = entityManager.getTransaction();
+		if (!transaction.isActive()) {
+			transaction.begin();
+		}
 	}
 
 	public void commitTransaction() {
-		entityManager.getTransaction().commit();
+		transaction.commit();
 	}
 
 	public void rollbackTransaction() {
-		entityManager.getTransaction().rollback();
+		if (transaction.isActive()) {
+			transaction.rollback();
+		}
 	}
 
 	public void persistStorageElementCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
-		if (submodelElement instanceof SubmodelElementCollection) {
-			SubmodelElementCollection collection = (SubmodelElementCollection) submodelElement;
-			collection.getValue().forEach(element -> {
-				String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
-				persistStorageElementCreation(submodel, elementIdShortPath, element.getLocalCopy());
-			});
-			if (collection.getValue().isEmpty()) {
-				persistCreation(submodel, idShortPath, submodelElement);
-			}
-		} else {
+		if (StorageSubmodelElementComponentHelper.isElementStorable(submodelElement)) {
 			persistCreation(submodel, idShortPath, submodelElement);
 		}
 	}
 
 	private void persistCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
+		if (submodelElement instanceof SubmodelElementCollection) {
+			persistCollectionCreation(submodel, idShortPath, submodelElement);
+		} else {
+			persistElementCreation(submodel, idShortPath, submodelElement);
+		}
+	}
+
+	private void persistCollectionCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
+		SubmodelElementCollection collection = (SubmodelElementCollection) submodelElement;
+		collection.getValue().forEach(element -> {
+			String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
+			persistStorageElementCreation(submodel, elementIdShortPath, element.getLocalCopy());
+		});
+		if (collection.getValue().isEmpty()) {
+			persistElementCreation(submodel, idShortPath, submodelElement);
+		}
+	}
+
+	private void persistElementCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
 		IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
 		element.setOperation(StorageSubmodelElementOperations.CREATE);

@@ -16,6 +16,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 
 @Entity(name = "StorageSubmodelElement")
 public class SQLStorageSubmodelElement implements IStorageSubmodelElement {
@@ -28,6 +29,7 @@ public class SQLStorageSubmodelElement implements IStorageSubmodelElement {
 	private String operation; // CREATE/UPDATE/DELETE
 	private String modelType; // Property, File, SubmodelCollection?
 	private String modelTypeSpecial; // Kind of Property, ...
+	@Lob // allow for large texts
 	private String serializedElementValue; // value in serialized form
 
 	@Override

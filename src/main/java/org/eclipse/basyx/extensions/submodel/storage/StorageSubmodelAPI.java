@@ -81,8 +81,8 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	public void addSubmodelElement(ISubmodelElement elem) {
 		try {
 			submodelElementStorageComponent.beginTransaction();
-			submodelAPI.addSubmodelElement(elem);
 			submodelElementStorageComponent.persistStorageElementCreation(getSubmodel(), elem.getIdShort(), elem.getLocalCopy());
+			submodelAPI.addSubmodelElement(elem);
 			submodelElementStorageComponent.commitTransaction();
 		} catch (Exception e) {
 			submodelElementStorageComponent.rollbackTransaction();
@@ -94,8 +94,8 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
 		try {
 			submodelElementStorageComponent.beginTransaction();
-			submodelAPI.addSubmodelElement(idShortPath, elem);
 			submodelElementStorageComponent.persistStorageElementCreation(getSubmodel(), idShortPath, elem.getLocalCopy());
+			submodelAPI.addSubmodelElement(idShortPath, elem);
 			submodelElementStorageComponent.commitTransaction();
 		} catch (Exception e) {
 			submodelElementStorageComponent.rollbackTransaction();
@@ -107,8 +107,8 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
 		try {
 			submodelElementStorageComponent.beginTransaction();
-			submodelAPI.updateSubmodelElement(idShortPath, newValue);
 			submodelElementStorageComponent.persistStorageElementUpdate(getSubmodel(), idShortPath, newValue);
+			submodelAPI.updateSubmodelElement(idShortPath, newValue);
 			submodelElementStorageComponent.commitTransaction();
 		} catch (Exception e) {
 			submodelElementStorageComponent.rollbackTransaction();
