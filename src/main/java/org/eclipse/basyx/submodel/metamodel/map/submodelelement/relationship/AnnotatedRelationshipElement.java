@@ -128,7 +128,6 @@ public class AnnotatedRelationshipElement extends RelationshipElement implements
 
 	@Override
 	public AnnotatedRelationshipElement getLocalCopy() {
-		// Return a shallow copy
 		AnnotatedRelationshipElement copy = new AnnotatedRelationshipElement();
 		copy.putAll(this);
 		return copy;
