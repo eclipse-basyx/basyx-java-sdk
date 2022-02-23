@@ -23,7 +23,7 @@ import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
-import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregator;
+import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIFactory;
 import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -86,30 +86,14 @@ public class AASAggregator implements IAASAggregator {
 	}
 
 	/**
-	 * Constructs AAS Aggregator using the passed registry and an MQTT
-	 * SubmodelAggregator. This registry is used to resolve requests for remote
-	 * submodels
-	 *
-	 * @param registry
-	 * @param serverEndpoint
-	 * @param clientId
-	 * @throws MqttException
-	 */
-	public AASAggregator(IAASRegistry registry, String serverEndpoint, String clientId) throws MqttException {
-		this.registry = registry;
-		this.aasApiFactory = new VABAASAPIFactory();
-		this.submodelAggregator = new MqttSubmodelAggregator(createDefaultSubmodelAggregator(), serverEndpoint, clientId);
-	}
-
-	/**
 	 * Constructs AAS Aggregator using the passed registry. This registry is used to
 	 * resolve requests for remote submodels. Additionally takes custom API
 	 * providers;
 	 */
-	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAPIFactory submodelApiFactory, IAASRegistry registry) {
+	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAggregator smAggregator, IAASRegistry registry) {
 		this.registry = registry;
 		this.aasApiFactory = aasApiFactory;
-		this.submodelAggregator = new SubmodelAggregator(submodelApiFactory);
+		this.submodelAggregator = smAggregator;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -176,5 +160,9 @@ public class AASAggregator implements IAASAggregator {
 
 	private SubmodelAggregator createDefaultSubmodelAggregator() {
 		return new SubmodelAggregator(new VABSubmodelAPIFactory());
+	}
+
+	private SubmodelAggregator createAggregatorWithMqttSubmodelAPI(String serverEndpoint, String clientId) throws MqttException {
+		return new SubmodelAggregator(new MqttSubmodelAPIFactory(new VABSubmodelAPIFactory(), serverEndpoint, clientId));
 	}
 }
