@@ -157,9 +157,13 @@ public class Property extends DataElement implements IProperty {
 	}
 
 	public void setValueId(IReference ref) {
-		Reference refMap = new Reference();
-		refMap.setKeys(ref.getKeys());
-		put(Property.VALUEID, refMap);
+		if (ref != null) {
+			Reference refMap = new Reference();
+			refMap.setKeys(ref.getKeys());
+			put(Property.VALUEID, refMap);
+		} else {
+			put(Property.VALUEID, null);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
