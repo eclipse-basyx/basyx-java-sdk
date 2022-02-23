@@ -36,7 +36,7 @@ public class ProviderException extends RuntimeException {
 	}
 	
 	public ProviderException(List<Message> messages) {
-		super();
+		super(messages.toString());
 		this.messages = messages;
 	}
 
