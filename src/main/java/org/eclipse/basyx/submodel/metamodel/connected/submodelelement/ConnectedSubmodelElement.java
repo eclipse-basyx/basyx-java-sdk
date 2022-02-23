@@ -74,9 +74,18 @@ public abstract class ConnectedSubmodelElement extends ConnectedElement implemen
 		return HasSemantics.createAsFacade(getElem()).getSemanticId();
 	}
 
+	/**
+	 * @deprecated Please use {@link #getKind()} instead.
+	 */
 	@Override
 	public ModelingKind getModelingKind() {
-		return HasKind.createAsFacade(getElem()).getModelingKind();
+		return this.getKind();
+
+	}
+	
+	@Override
+	public ModelingKind getKind() {
+		return HasKind.createAsFacade(getElem()).getKind();
 
 	}
 

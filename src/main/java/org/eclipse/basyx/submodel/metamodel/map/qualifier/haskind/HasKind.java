@@ -56,14 +56,33 @@ public class HasKind extends VABModelMap<Object> implements IHasKind {
 		return ret;
 	}
 
+	/**
+	 * @deprecated Please use {@link #getKind()} instead.
+	 */
 	@Override
 	public ModelingKind getModelingKind() {
+		return this.getKind();
+	}
+
+	/**
+	 * @deprecated Please use {@link #setKind(ModelingKind)} instead.
+	 */
+	public void setModelingKind(ModelingKind kind) {
+		this.setKind(kind);
+	}
+
+	@Override
+	public ModelingKind getKind() {
 		String str = (String) get(HasKind.KIND);
 		return ModelingKind.fromString(str);
 	}
 
-	public void setModelingKind(ModelingKind kind) {
-		put(HasKind.KIND, kind.toString());
+	public void setKind(ModelingKind kind) {
+		if (kind != null) {
+			put(HasKind.KIND, kind.toString());
+		} else {
+			put(HasKind.KIND, null);
+		}
 	}
 
 }
