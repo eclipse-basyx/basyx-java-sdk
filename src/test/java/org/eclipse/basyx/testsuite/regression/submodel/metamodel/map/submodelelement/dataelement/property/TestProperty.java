@@ -139,6 +139,9 @@ public class TestProperty {
 		IReference ref2 = new Reference(new Key(KeyElements.PROPERTY, true, "custom", IdentifierType.CUSTOM));
 		property.setValueId(ref);
 		assertEquals(ref2, property.getValueId());
+
+		property.setValueId(null);
+		assertNull(property.getValueId());
 	}
 
 	@Test
