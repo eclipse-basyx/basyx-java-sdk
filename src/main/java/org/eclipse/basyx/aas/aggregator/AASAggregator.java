@@ -23,17 +23,14 @@ import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
-import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIFactory;
-import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
-import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
+import org.eclipse.basyx.submodel.aggregator.SubmodelAggregatorFactory;
+import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
-import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
  * An implementation of the IAASAggregator interface using maps internally
@@ -52,25 +49,39 @@ public class AASAggregator implements IAASAggregator {
 	 */
 	protected IAASAPIFactory aasApiFactory;
 
+	protected ISubmodelAggregatorFactory submodelAggregatorFactory;
+
+	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAggregatorFactory submodelAggregatorFactory) {
+		this.aasApiFactory = aasApiFactory;
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
+	}
+
+	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, IAASRegistry registry) {
+		this(aasApiFactory, submodelAggregatorFactory);
+		this.registry = registry;
+	}
+
 	/**
-	 * Store SubmodelAggregator. By default, uses standard SubmodelAggregator
+	 * Constructs AAS Aggregator using the passed registry. This registry is used to
+	 * resolve requests for remote submodels. Additionally takes custom API
+	 * providers;
 	 */
-	protected ISubmodelAggregator submodelAggregator;
+	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAPIFactory submodelApiFactory, IAASRegistry registry) {
+		this(aasApiFactory, new SubmodelAggregatorFactory(submodelApiFactory), registry);
+	}
 
 	/**
 	 * Constructs default AAS Aggregator
 	 */
 	public AASAggregator() {
-		this.aasApiFactory = new VABAASAPIFactory();
-		this.submodelAggregator = createDefaultSubmodelAggregator();
+		this(new VABAASAPIFactory(), new SubmodelAggregatorFactory());
 	}
 
 	/**
 	 * Constructs an AAS aggregator with custom API providers
 	 */
 	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAPIFactory submodelApiFactory) {
-		this.aasApiFactory = aasApiFactory;
-		this.submodelAggregator = new SubmodelAggregator(submodelApiFactory);
+		this(aasApiFactory, new SubmodelAggregatorFactory(submodelApiFactory));
 	}
 
 	/**
@@ -80,20 +91,7 @@ public class AASAggregator implements IAASAggregator {
 	 * @param registry
 	 */
 	public AASAggregator(IAASRegistry registry) {
-		this.registry = registry;
-		this.aasApiFactory = new VABAASAPIFactory();
-		this.submodelAggregator = createDefaultSubmodelAggregator();
-	}
-
-	/**
-	 * Constructs AAS Aggregator using the passed registry. This registry is used to
-	 * resolve requests for remote submodels. Additionally takes custom API
-	 * providers;
-	 */
-	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAggregator smAggregator, IAASRegistry registry) {
-		this.registry = registry;
-		this.aasApiFactory = aasApiFactory;
-		this.submodelAggregator = smAggregator;
+		this(new VABAASAPIFactory(), new SubmodelAggregatorFactory(), registry);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -139,7 +137,7 @@ public class AASAggregator implements IAASAggregator {
 		IConnectorFactory connProvider = new HTTPConnectorFactory();
 		IAASAPI aasApi = aasApiFactory.getAASApi(aas);
 		AASModelProvider contentProvider = new AASModelProvider(aasApi);
-		return new MultiSubmodelProvider(contentProvider, registry, connProvider, aasApiFactory, submodelAggregator);
+		return new MultiSubmodelProvider(contentProvider, registry, connProvider, aasApiFactory, submodelAggregatorFactory.create());
 	}
 
 	@Override
@@ -158,11 +156,4 @@ public class AASAggregator implements IAASAggregator {
 		return provider;
 	}
 
-	private SubmodelAggregator createDefaultSubmodelAggregator() {
-		return new SubmodelAggregator(new VABSubmodelAPIFactory());
-	}
-
-	private SubmodelAggregator createAggregatorWithMqttSubmodelAPI(String serverEndpoint, String clientId) throws MqttException {
-		return new SubmodelAggregator(new MqttSubmodelAPIFactory(new VABSubmodelAPIFactory(), serverEndpoint, clientId));
-	}
 }

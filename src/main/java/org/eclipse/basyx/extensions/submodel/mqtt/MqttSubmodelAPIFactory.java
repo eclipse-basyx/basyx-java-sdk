@@ -25,9 +25,9 @@ public class MqttSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;
 	private MqttClient client;
 
-	public MqttSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, String serverEndpoint, String clientId) throws MqttException {
+	public MqttSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
 		this.apiFactory = factoryToBeDecorated;
-		this.client = new MqttClient(serverEndpoint, clientId);
+		this.client = client;
 	}
 
 	@Override

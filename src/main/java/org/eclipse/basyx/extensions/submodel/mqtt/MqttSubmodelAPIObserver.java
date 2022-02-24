@@ -28,26 +28,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link ISubmodelAPIObserver}
- * Triggers MQTT events for different CRUD operations on the submodel.
+ * Implementation of {@link ISubmodelAPIObserver} Triggers MQTT events for
+ * different CRUD operations on the submodel.
  * 
  * @author conradi
  *
  */
 public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmodelAPIObserver {
 	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelAPIObserver.class);
-	
+
 	// The underlying SubmodelAPI
 	protected ObservableSubmodelAPI observedAPI;
-	
+
 	// Submodel Element whitelist for filtering
 	protected boolean useWhitelist = false;
 	protected Set<String> whitelist = new HashSet<>();
-	
+
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
 	 * 
-	 * @param observedAPI The underlying submodelAPI
+	 * @param observedAPI
+	 *            The underlying submodelAPI
 	 * @throws MqttException
 	 */
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String serverEndpoint, String clientId) throws MqttException {
@@ -69,11 +70,11 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
 	 * 
-	 * @param observedAPI The underlying submodelAPI
+	 * @param observedAPI
+	 *            The underlying submodelAPI
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw)
-			throws MqttException {
+	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		this(observedAPI, serverEndpoint, clientId, user, pw, new MqttDefaultFilePersistence());
 	}
 
@@ -92,9 +93,11 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI.
 	 * 
-	 * @param observedAPI The underlying submodelAPI
-	 * @param client      An already connected mqtt client
-	 * @throws MqttException 
+	 * @param observedAPI
+	 *            The underlying submodelAPI
+	 * @param client
+	 *            An already connected mqtt client
+	 * @throws MqttException
 	 */
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, MqttClient client) throws MqttException {
 		super(client);
@@ -104,7 +107,8 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	}
 
 	/**
-	 * Adds a submodel element to the filter whitelist. Can also be a path for nested submodel elements.
+	 * Adds a submodel element to the filter whitelist. Can also be a path for
+	 * nested submodel elements.
 	 * 
 	 * @param shortId
 	 */
@@ -139,7 +143,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	public void enableWhitelist() {
 		useWhitelist = true;
 	}
-	
+
 	@Override
 	public void elementAdded(String idShortPath, Object newValue) {
 		if (filter(idShortPath)) {
@@ -159,8 +163,8 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		if (filter(idShortPath)) {
 			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_UPDATEELEMENT, getCombinedMessage(getAASId(), getSubmodelId(), idShortPath));
 		}
-	}	
-	
+	}
+
 	public static String getCombinedMessage(String aasId, String submodelId, String elementPart) {
 		elementPart = VABPathTools.stripSlashes(elementPart);
 		return "(" + aasId + "," + submodelId + "," + elementPart + ")";
@@ -170,12 +174,12 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		idShort = VABPathTools.stripSlashes(idShort);
 		return !useWhitelist || whitelist.contains(idShort);
 	}
-	
+
 	private String getSubmodelId() {
 		ISubmodel submodel = observedAPI.getSubmodel();
 		return submodel.getIdentification().getId();
 	}
-	
+
 	private String getAASId() {
 		ISubmodel submodel = observedAPI.getSubmodel();
 		IReference parentReference = submodel.getParent();

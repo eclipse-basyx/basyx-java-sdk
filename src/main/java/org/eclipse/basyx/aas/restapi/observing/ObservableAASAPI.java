@@ -11,12 +11,13 @@ package org.eclipse.basyx.aas.restapi.observing;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.observer.Observable;
 
 /**
- * Implementation of {@link IAASAPI} that calls back registered {@link IAASAPIObserver}
- * when changes on Submodel References occur
+ * Implementation of {@link IAASAPI} that calls back registered
+ * {@link IAASAPIObserver} when changes on Submodel References occur
  * 
  * @author fried
  *
@@ -36,8 +37,12 @@ public class ObservableAASAPI extends Observable<IAASAPIObserver> implements IAA
 
 	@Override
 	public void addSubmodel(IReference submodel) {
-		aasAPI.addSubmodel(submodel);
-		observers.stream().forEach(o -> o.submodelAdded(submodel));
+		for (IKey key : submodel.getKeys()) {
+			if (key.getType().name().equalsIgnoreCase("Submodel")) {
+				aasAPI.addSubmodel(submodel);
+				observers.stream().forEach(o -> o.submodelAdded(submodel));
+			}
+		}
 	}
 
 	@Override

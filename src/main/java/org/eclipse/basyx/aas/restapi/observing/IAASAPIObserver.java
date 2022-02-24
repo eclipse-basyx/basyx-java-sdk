@@ -33,8 +33,8 @@ public interface IAASAPIObserver extends IObserver {
 	/**
 	 * Is called when a submodel reference is removed
 	 * 
-	 * @param id
+	 * @param idShort
 	 *            the idShort of the removed element
 	 */
-	public void submodelRemoved(String id);
+	public void submodelRemoved(String idShort);
 }

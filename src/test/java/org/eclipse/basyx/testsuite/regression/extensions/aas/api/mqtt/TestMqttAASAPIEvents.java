@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -16,8 +16,8 @@ import java.io.IOException;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.aas.restapi.observing.ObservableAASAPI;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPI;
+import org.eclipse.basyx.extensions.aas.api.mqtt.MqttAASAPI;
 import org.eclipse.basyx.extensions.aas.api.mqtt.MqttAASAPIHelper;
 import org.eclipse.basyx.extensions.aas.api.mqtt.MqttAASAPIObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -39,28 +39,31 @@ import io.moquette.broker.config.IResourceLoader;
 import io.moquette.broker.config.ResourceLoaderConfig;
 
 /**
- * Tests for MqttAASAPIObserver
+ * Tests events emitting with the MqttAASAPI
  * 
  * @author fried
  *
  */
-public class MqttAASAPIObserverTest {
-	private static final String SHELLID = "testaasid";
-	private static final Identifier SHELLIDENTIFIER = new Identifier(IdentifierType.IRI, SHELLID);
-	private static final Asset SHELLASSET = new Asset("shellAsset", new Identifier(IdentifierType.IRI, "shellAsset"), AssetKind.INSTANCE);
+public class TestMqttAASAPIEvents {
+	private static final String SHELL_ID = "shel_one";
+	private static final Identifier SHELL_IDENTIFIER = new Identifier(IdentifierType.IRI, SHELL_ID);
 
-	private static final String SUBMODELID = "testsubmodelid";
-	private static final Identifier SUBMODELIDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODELID);
+	private static final String ASSET_ID = "asset_one";
+	private static final Identifier ASSET_IDENTIFIER = new Identifier(IdentifierType.IRI, ASSET_ID);
+	private static final Asset SHELL_ASSET = new Asset(ASSET_ID, ASSET_IDENTIFIER, AssetKind.INSTANCE);
+
+	private static final String SUBMODEL_ID = "submodel_1";
+	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
 
 	private static AssetAdministrationShell shell;
 	private static Submodel submodel;
 
 	private static Server mqttBroker;
-	private static ObservableAASAPI observableAPI;
+	private static MqttAASAPI eventAPI;
 	private MqttTestListener listener;
 
 	/**
-	 * Sets up the MQTT broker and aasAPI for tests
+	 * Sets up the MQTT broker and submodelAPI for tests
 	 */
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
@@ -70,14 +73,13 @@ public class MqttAASAPIObserverTest {
 		final IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
 		mqttBroker.startServer(classPathConfig);
 
-		shell = new AssetAdministrationShell(SHELLID, SHELLIDENTIFIER, SHELLASSET);
-		submodel = new Submodel(SUBMODELID, SUBMODELIDENTIFIER);
+		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 
 		VABAASAPI vabAPI = new VABAASAPI(new VABMapProvider(shell));
-		observableAPI = new ObservableAASAPI(vabAPI);
-		new MqttAASAPIObserver(observableAPI, "tcp://localhost:1884", "testClient");
+		eventAPI = new MqttAASAPI(vabAPI, "tcp://localhost:1884", "testClient");
+		submodel = new Submodel(SUBMODEL_ID, SUBMODEL_IDENTIFIER);
 
-		observableAPI.addSubmodel(submodel.getReference());
+		eventAPI.addSubmodel(submodel.getReference());
 	}
 
 	@AfterClass
@@ -97,22 +99,22 @@ public class MqttAASAPIObserverTest {
 	}
 
 	@Test
-	public void testAddSubmodel() throws InterruptedException {
-		String smIdShort = "testAddProp";
-		Identifier smIdentifier = new Identifier(IdentifierType.IRI, smIdShort);
-		Submodel sm = new Submodel(smIdShort, smIdentifier);
-		observableAPI.addSubmodel(sm.getReference());
+	public void submodelCreationEventSent() throws InterruptedException {
+		String submodelId = "submodel_2";
+		Identifier submodelIdentifier = new Identifier(IdentifierType.IRI, submodelId);
+		Submodel submodel = new Submodel(submodelId, submodelIdentifier);
+		eventAPI.addSubmodel(submodel.getReference());
 
-		assertEquals(MqttAASAPIObserver.getCombinedMessage(shell.getIdShort(), smIdShort), listener.lastPayload);
+		assertEquals(MqttAASAPIObserver.getCombinedMessage(SHELL_ID, submodelId), listener.lastPayload);
 		assertEquals(MqttAASAPIHelper.TOPIC_ADDSUBMODEL, listener.lastTopic);
 	}
 
 	@Test
-	public void testDeleteSubmodel() {
-		String idShort = submodel.getIdShort();
-		observableAPI.removeSubmodel(idShort);
+	public void submodelDeletionEventSent() {
+		eventAPI.removeSubmodel(SUBMODEL_ID);
 
-		assertEquals(MqttAASAPIObserver.getCombinedMessage(SHELLID, idShort), listener.lastPayload);
+		assertEquals(MqttAASAPIObserver.getCombinedMessage(SHELL_ID, SUBMODEL_ID), listener.lastPayload);
 		assertEquals(MqttAASAPIHelper.TOPIC_REMOVESUBMODEL, listener.lastTopic);
 	}
+
 }

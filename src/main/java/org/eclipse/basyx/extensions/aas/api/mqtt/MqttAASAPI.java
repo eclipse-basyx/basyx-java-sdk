@@ -9,8 +9,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.api.mqtt;
 
-import java.util.Set;
-
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.observing.ObservableAASAPI;
@@ -31,7 +29,6 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
  */
 public class MqttAASAPI implements IAASAPI {
 
-	// The underlying AASAPI
 	protected ObservableAASAPI observedAPI;
 
 	private MqttAASAPIObserver observer;
@@ -89,37 +86,14 @@ public class MqttAASAPI implements IAASAPI {
 		observer = new MqttAASAPIObserver(this.observedAPI, client);
 	}
 
-	/**
-	 * Sets a new filter whitelist.
-	 * 
-	 * @param shortIds
-	 */
-	public void setWhitelist(Set<String> shortIds) {
-		observer.setWhitelist(shortIds);
-	}
-
-	/**
-	 * Disables the submodel filter whitelist
-	 */
-	public void disableWhitelist() {
-		observer.disableWhitelist();
-	}
-
-	/**
-	 * Enables the submodel filter whitelist
-	 */
-	public void enableWhitelist() {
-		observer.enableWhitelist();
-	}
-
 	@Override
 	public IAssetAdministrationShell getAAS() {
 		return observedAPI.getAAS();
 	}
 
 	@Override
-	public void addSubmodel(IReference submodel) {
-		observedAPI.addSubmodel(submodel);
+	public void addSubmodel(IReference submodelReference) {
+		observedAPI.addSubmodel(submodelReference);
 	}
 
 	@Override

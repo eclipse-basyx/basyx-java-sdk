@@ -25,9 +25,9 @@ public class MqttAASAPIFactory implements IAASAPIFactory {
 	private IAASAPIFactory apiFactory;
 	private MqttClient client;
 
-	public MqttAASAPIFactory(IAASAPIFactory factoryToBeDecorated, String serverEndpoint, String clientId) throws MqttException {
+	public MqttAASAPIFactory(IAASAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
 		this.apiFactory = factoryToBeDecorated;
-		this.client = new MqttClient(serverEndpoint, clientId);
+		this.client = client;
 	}
 
 	@Override

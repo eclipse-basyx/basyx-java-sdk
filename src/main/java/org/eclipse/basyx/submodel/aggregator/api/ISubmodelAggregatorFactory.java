@@ -7,15 +7,21 @@
  * 
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.api.mqtt;
+
+
+package org.eclipse.basyx.submodel.aggregator.api;
 
 /**
- * A helper class containing string constants of topics used by the AASAPI.
+ * Interface for providing an SubmodelAggregator
  * 
- * @author fried
+ * @author schnicke
  *
  */
-public class MqttAASAPIHelper {
-	public static final String TOPIC_ADDSUBMODEL = "BaSyxAAS_addedSubmodelReference";
-	public static final String TOPIC_REMOVESUBMODEL = "BaSyxAAS_removedSubmodelReference";
+public interface ISubmodelAggregatorFactory {
+	/**
+	 * Return a constructed SubmodelAggregator
+	 * 
+	 * @return
+	 */
+	public ISubmodelAggregator create();
 }
