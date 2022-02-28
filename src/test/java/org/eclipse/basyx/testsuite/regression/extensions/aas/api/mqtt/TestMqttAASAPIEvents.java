@@ -23,20 +23,15 @@ import org.eclipse.basyx.extensions.aas.api.mqtt.MqttAASAPIObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.testsuite.regression.extensions.aas.MqttBrokerSuite;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import io.moquette.broker.Server;
-import io.moquette.broker.config.ClasspathResourceLoader;
-import io.moquette.broker.config.IConfig;
-import io.moquette.broker.config.IResourceLoader;
-import io.moquette.broker.config.ResourceLoaderConfig;
 
 /**
  * Tests events emitting with the MqttAASAPI
@@ -44,7 +39,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
  * @author fried
  *
  */
-public class TestMqttAASAPIEvents {
+public class TestMqttAASAPIEvents extends MqttBrokerSuite {
 	private static final String SHELL_ID = "shel_one";
 	private static final Identifier SHELL_IDENTIFIER = new Identifier(IdentifierType.IRI, SHELL_ID);
 
@@ -60,18 +55,16 @@ public class TestMqttAASAPIEvents {
 
 	private static Server mqttBroker;
 	private static MqttAASAPI eventAPI;
-	private MqttTestListener listener;
+	private static MqttTestListener listener;
 
 	/**
 	 * Sets up the MQTT broker and submodelAPI for tests
 	 */
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
-		// Start MQTT broker
-		mqttBroker = new Server();
-		IResourceLoader classpathLoader = new ClasspathResourceLoader();
-		final IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
-		mqttBroker.startServer(classPathConfig);
+		mqttBroker = createAndStartMqttBroker();
+		listener = new MqttTestListener();
+		mqttBroker.addInterceptHandler(listener);
 
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 
@@ -84,18 +77,8 @@ public class TestMqttAASAPIEvents {
 
 	@AfterClass
 	public static void tearDownClass() {
-		mqttBroker.stopServer();
-	}
-
-	@Before
-	public void setUp() {
-		listener = new MqttTestListener();
-		mqttBroker.addInterceptHandler(listener);
-	}
-
-	@After
-	public void tearDown() {
 		mqttBroker.removeInterceptHandler(listener);
+		mqttBroker.stopServer();
 	}
 
 	@Test

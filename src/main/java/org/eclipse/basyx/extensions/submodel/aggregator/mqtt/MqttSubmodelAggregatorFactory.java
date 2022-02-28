@@ -8,14 +8,20 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-
 package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
 
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+/**
+ * SubmodelAggregator factory for constructing a SubmodelAggregator that emits
+ * Mqtt events.
+ * 
+ * @author fried
+ */
 public class MqttSubmodelAggregatorFactory implements ISubmodelAggregatorFactory {
 
 	ISubmodelAggregator submodelAggregatorToBeObserved;
@@ -31,7 +37,7 @@ public class MqttSubmodelAggregatorFactory implements ISubmodelAggregatorFactory
 		try {
 			return new MqttSubmodelAggregator(submodelAggregatorToBeObserved, client);
 		} catch (MqttException e) {
-			throw new RuntimeException(e);
+			throw new ProviderException(e);
 		}
 	}
 

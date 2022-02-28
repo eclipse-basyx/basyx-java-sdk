@@ -21,11 +21,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * 
  * @author fried
  */
-public class MqttAASAPIFactory implements IAASAPIFactory {
+public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 	private IAASAPIFactory apiFactory;
 	private MqttClient client;
 
-	public MqttAASAPIFactory(IAASAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
+	public MqttDecoratingAASAPIFactory(IAASAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 	}

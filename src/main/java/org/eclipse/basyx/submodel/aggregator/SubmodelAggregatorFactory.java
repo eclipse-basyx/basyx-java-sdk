@@ -8,7 +8,6 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-
 package org.eclipse.basyx.submodel.aggregator;
 
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
@@ -16,14 +15,21 @@ import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 
+/**
+ * 
+ * Factory that constructs a SubmodelAggregator with the given API
+ * 
+ * @author fried
+ *
+ */
 public class SubmodelAggregatorFactory implements ISubmodelAggregatorFactory {
 
 	ISubmodelAPIFactory submodelAPIFactory;
-	
+
 	public SubmodelAggregatorFactory() {
 		submodelAPIFactory = new VABSubmodelAPIFactory();
 	}
-	
+
 	public SubmodelAggregatorFactory(ISubmodelAPIFactory submodelAPIFactory) {
 		this.submodelAPIFactory = submodelAPIFactory;
 	}

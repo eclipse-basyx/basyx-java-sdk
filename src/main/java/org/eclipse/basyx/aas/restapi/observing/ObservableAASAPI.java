@@ -9,11 +9,15 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.restapi.observing;
 
+import java.util.stream.Stream;
+
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.observer.Observable;
+import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 
 /**
  * Implementation of {@link IAASAPI} that calls back registered
@@ -37,12 +41,12 @@ public class ObservableAASAPI extends Observable<IAASAPIObserver> implements IAA
 
 	@Override
 	public void addSubmodel(IReference submodel) {
-		for (IKey key : submodel.getKeys()) {
-			if (key.getType().name().equalsIgnoreCase("Submodel")) {
-				aasAPI.addSubmodel(submodel);
-				observers.stream().forEach(o -> o.submodelAdded(submodel));
-			}
+		Stream<IKey> filtered = submodel.getKeys().stream().filter(o -> o.getType().name().equalsIgnoreCase(KeyElements.SUBMODEL.getStandardizedLiteral()));
+		if (!filtered.anyMatch(o -> o.getType().name().equalsIgnoreCase(KeyElements.SUBMODEL.getStandardizedLiteral()))) {
+			throw new MalformedRequestException("Reference has to contain a submodel");
 		}
+		aasAPI.addSubmodel(submodel);
+		observers.stream().forEach(o -> o.submodelAdded(submodel));
 	}
 
 	@Override

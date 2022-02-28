@@ -21,11 +21,11 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * 
  * @author fried
  */
-public class MqttSubmodelAPIFactory implements ISubmodelAPIFactory {
+public class MqttDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;
 	private MqttClient client;
 
-	public MqttSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
+	public MqttDecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 	}

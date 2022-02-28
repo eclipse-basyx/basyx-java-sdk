@@ -26,13 +26,15 @@ import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.restapi.AASAPIFactory;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregator;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorHelper;
-import org.eclipse.basyx.extensions.aas.api.mqtt.MqttAASAPIFactory;
 import org.eclipse.basyx.extensions.aas.api.mqtt.MqttAASAPIHelper;
+import org.eclipse.basyx.extensions.aas.api.mqtt.MqttDecoratingAASAPIFactory;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttDecoratingSubmodelAggregatorFactory;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregatorHelper;
 import org.eclipse.basyx.submodel.aggregator.SubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
+import org.eclipse.basyx.testsuite.regression.extensions.aas.MqttBrokerSuite;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
@@ -46,18 +48,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import io.moquette.broker.Server;
-import io.moquette.broker.config.ClasspathResourceLoader;
-import io.moquette.broker.config.IConfig;
-import io.moquette.broker.config.IResourceLoader;
-import io.moquette.broker.config.ResourceLoaderConfig;
 
-public class TestFullMqttAASAggregator {
+public class TestFullMqttAASAggregator extends MqttBrokerSuite {
 	protected static Server mqttBroker;
 	protected static MqttClient client;
 	protected static IAASAggregator aggregator;
 	protected static MqttTestListener listener;
 
-	protected static IAASRegistry aasRegistry;
 	protected static ConnectedAssetAdministrationShellManager manager;
 	protected static IIdentifier shellIdentifier = new CustomId("shellId");
 	protected static IIdentifier submodelIdentifier = new CustomId("submodelId");
@@ -65,14 +62,17 @@ public class TestFullMqttAASAggregator {
 	@BeforeClass
 	public static void setUp() throws IOException, MqttSecurityException, MqttException {
 		mqttBroker = createAndStartMqttBroker();
+		listener = new MqttTestListener();
+		mqttBroker.addInterceptHandler(listener);
+
 		client = createMqttClient();
 		client.connect();
 
-		aggregator = new MqttAASAggregator(new AASAggregator(new MqttAASAPIFactory(new AASAPIFactory(), client), new MqttDecoratingSubmodelAggregatorFactory(new SubmodelAggregatorFactory(), client)), client);
-
 		// Create a dummy registry to test integration of XML AAS
-		aasRegistry = new InMemoryRegistry();
+		IAASRegistry aasRegistry = new InMemoryRegistry();
 
+		aggregator = new MqttAASAggregator(new AASAggregator(new MqttDecoratingAASAPIFactory(new AASAPIFactory(), client), new MqttDecoratingSubmodelAggregatorFactory(new SubmodelAggregatorFactory(new VABSubmodelAPIFactory()), client)),
+				client);
 		// Create ConnectedAASManager
 		manager = new ConnectedAssetAdministrationShellManager(aasRegistry, new IConnectorFactory() {
 
@@ -85,17 +85,6 @@ public class TestFullMqttAASAggregator {
 
 	private static MqttClient createMqttClient() throws MqttException {
 		return new MqttClient("tcp://localhost:1884", "testClient", new MqttDefaultFilePersistence());
-	}
-
-	protected static Server createAndStartMqttBroker() throws IOException {
-		Server mqttBroker = new Server();
-		IResourceLoader classpathLoader = new ClasspathResourceLoader();
-		final IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
-		mqttBroker.startServer(classPathConfig);
-
-		listener = new MqttTestListener();
-		mqttBroker.addInterceptHandler(listener);
-		return mqttBroker;
 	}
 
 	@Test

@@ -130,14 +130,21 @@ public class AASAggregator implements IAASAggregator {
 
 	@Override
 	public void updateAAS(AssetAdministrationShell aas) {
-		aasProviderMap.put(aas.getIdentification().getId(), createMultiSubmodelProvider(aas));
+		MultiSubmodelProvider oldProvider = (MultiSubmodelProvider) getAASProvider(aas.getIdentification());
+		IAASAPI aasApi = aasApiFactory.getAASApi(aas);
+		AASModelProvider contentProvider = new AASModelProvider(aasApi);
+		IConnectorFactory connectorFactory = oldProvider.getConnectorFactory();
+
+		MultiSubmodelProvider updatedProvider = new MultiSubmodelProvider(contentProvider, registry, connectorFactory, aasApiFactory, oldProvider.getSmAggregator());
+
+		aasProviderMap.put(aas.getIdentification().getId(), updatedProvider);
 	}
 
 	private MultiSubmodelProvider createMultiSubmodelProvider(AssetAdministrationShell aas) {
-		IConnectorFactory connProvider = new HTTPConnectorFactory();
+		IConnectorFactory connectorFactory = new HTTPConnectorFactory();
 		IAASAPI aasApi = aasApiFactory.getAASApi(aas);
 		AASModelProvider contentProvider = new AASModelProvider(aasApi);
-		return new MultiSubmodelProvider(contentProvider, registry, connProvider, aasApiFactory, submodelAggregatorFactory.create());
+		return new MultiSubmodelProvider(contentProvider, registry, connectorFactory, aasApiFactory, submodelAggregatorFactory.create());
 	}
 
 	@Override
@@ -152,7 +159,6 @@ public class AASAggregator implements IAASAggregator {
 		if (provider == null) {
 			throw new ResourceNotFoundException("AAS with Id " + aasId.getId() + " does not exist");
 		}
-
 		return provider;
 	}
 

@@ -14,6 +14,11 @@ import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
 
+/**
+ * AAS API provider that provides the default AAS API
+ * 
+ * @author fried
+ */
 public class AASAPIFactory implements IAASAPIFactory {
 	IAASAPIFactory aasAPIFactory;
 
