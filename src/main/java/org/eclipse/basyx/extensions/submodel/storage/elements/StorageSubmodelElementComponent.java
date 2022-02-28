@@ -2,9 +2,11 @@ package org.eclipse.basyx.extensions.submodel.storage.elements;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -12,6 +14,7 @@ import org.eclipse.persistence.jpa.JpaEntityManager;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 
 public class StorageSubmodelElementComponent {
 	private EntityManager entityManager;
@@ -81,18 +84,30 @@ public class StorageSubmodelElementComponent {
 
 	public void persistStorageElementUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
 		if (newValue instanceof Collection<?>) {
-			Collection<ISubmodelElement> collection = (Collection<ISubmodelElement>) newValue;
-			collection.forEach(element -> {
-				String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
-				if (submodel.getSubmodelElements().containsKey(elementIdShortPath)) {
-					persistStorageElementUpdate(submodel, elementIdShortPath, element.getValue());
-				} else {
-					persistStorageElementCreation(submodel, elementIdShortPath, element.getLocalCopy());
-				}
-			});
+			persistStorageElementCollectionUpdate(submodel, idShortPath, newValue);
 		} else {
-			persistUpdate(submodel, idShortPath, newValue);
+			persistStorageElementSingleUpdate(submodel, idShortPath, newValue);
 		}
+	}
+
+	private void persistStorageElementSingleUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
+		if (wasElementPartOfSubmodel(submodel.getIdentification().getId(), idShortPath)) {
+			persistUpdate(submodel, idShortPath, newValue);
+		} else {
+			persistStorageElementCreation(submodel, idShortPath, submodel.getSubmodelElement(idShortPath).getLocalCopy());
+		}
+	}
+
+	private void persistStorageElementCollectionUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
+		Collection<ISubmodelElement> collection = (Collection<ISubmodelElement>) newValue;
+		collection.forEach(element -> {
+			String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
+			if (wasElementPartOfSubmodel(submodel.getIdentification().getId(), elementIdShortPath)) {
+				persistStorageElementUpdate(submodel, elementIdShortPath, element.getValue());
+			} else {
+				persistStorageElementCreation(submodel, elementIdShortPath, element.getLocalCopy());
+			}
+		});
 	}
 
 	private void persistUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
@@ -100,10 +115,32 @@ public class StorageSubmodelElementComponent {
 
 		element.setSerializedElementValue(newValue.toString());
 		element.setOperation(StorageSubmodelElementOperations.UPDATE);
-		element.setModelType(submodel.getSubmodelElement(idShortPath).getModelType());
-		element.setModelTypeSpecial(StorageSubmodelElementComponentHelper.getModelTypeSpecial(submodel.getSubmodelElement(idShortPath)));
+		element.setModelType(getSubmodelElement(submodel, idShortPath).getModelType());
+		element.setModelTypeSpecial(StorageSubmodelElementComponentHelper.getModelTypeSpecial(getSubmodelElement(submodel, idShortPath)));
 
 		entityManager.persist(element);
+	}
+
+	private boolean wasElementPartOfSubmodel(String submodelId, String elementIdShortPath) {
+		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(elementIdShortPath).build();
+		@SuppressWarnings("unchecked")
+		List<IStorageSubmodelElement> results = query.getResultList();
+		return (!results.isEmpty());
+	}
+
+	private ISubmodelElement getSubmodelElement(ISubmodel submodel, String elementIdShortPath) {
+		String[] idShortPathArray = VABPathTools.splitPath(elementIdShortPath);
+		if (idShortPathArray.length > 1) {
+			ISubmodelElementCollection collection = (ISubmodelElementCollection) submodel.getSubmodelElement(idShortPathArray[0]);
+
+			for (int currentItem = 1; currentItem < idShortPathArray.length - 1; currentItem++) {
+				collection = (ISubmodelElementCollection) collection.getSubmodelElement(idShortPathArray[currentItem]);
+			}
+
+			return collection.getSubmodelElement(idShortPathArray[idShortPathArray.length - 1]);
+		}
+
+		return submodel.getSubmodelElement(elementIdShortPath);
 	}
 
 	public void persistStorageElementDeletion(ISubmodel submodel, String idShortPath) {

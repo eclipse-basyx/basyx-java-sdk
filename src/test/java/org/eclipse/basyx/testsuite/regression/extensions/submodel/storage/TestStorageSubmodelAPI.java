@@ -102,10 +102,11 @@ public class TestStorageSubmodelAPI {
 		prop.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(prop);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(prop.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(prop.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -116,10 +117,11 @@ public class TestStorageSubmodelAPI {
 		range.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(range);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(range.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(range.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -131,10 +133,11 @@ public class TestStorageSubmodelAPI {
 		blob.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(blob);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(blob.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(blob.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -146,10 +149,11 @@ public class TestStorageSubmodelAPI {
 		file.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(file);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(file.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(file.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -162,10 +166,11 @@ public class TestStorageSubmodelAPI {
 		mlProp.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(mlProp);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(mlProp.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(mlProp.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -185,10 +190,11 @@ public class TestStorageSubmodelAPI {
 		entity.setEntityType(EntityType.SELFMANAGEDENTITY);
 		storageAPI.addSubmodelElement(entity);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(entity.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(entity.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -199,10 +205,11 @@ public class TestStorageSubmodelAPI {
 		refElement.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(refElement);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(refElement.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(refElement.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -215,10 +222,11 @@ public class TestStorageSubmodelAPI {
 		relationshipElement.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(relationshipElement);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(relationshipElement.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(relationshipElement.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -237,10 +245,11 @@ public class TestStorageSubmodelAPI {
 		annotatedRelationshipElement.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(annotatedRelationshipElement);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(annotatedRelationshipElement.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(annotatedRelationshipElement.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -252,10 +261,11 @@ public class TestStorageSubmodelAPI {
 		basicEvent.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(basicEvent);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 
 		assertEquals(basicEvent.getValue().toString(), storedElement.getSerializedElementValue());
 		assertEquals(basicEvent.getModelType(), storedElement.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -265,7 +275,7 @@ public class TestStorageSubmodelAPI {
 		operation.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(operation);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 		assertNull(storedElement);
 	}
 
@@ -276,7 +286,7 @@ public class TestStorageSubmodelAPI {
 		capability.setIdShort(elemIdShort);
 		storageAPI.addSubmodelElement(capability);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(elemIdShort);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(elemIdShort);
 		assertNull(storedElement);
 	}
 
@@ -287,9 +297,10 @@ public class TestStorageSubmodelAPI {
 		coll.setIdShort(collIdShort);
 		storageAPI.addSubmodelElement(coll);
 
-		IStorageSubmodelElement storedColl = getSingleStorageElementWithIdShort(coll.getIdShort());
+		IStorageSubmodelElement storedColl = getLastStorageElementWithIdShort(coll.getIdShort());
 		assertNull(storedColl.getSerializedElementValue());
 		assertEquals(coll.getModelType(), storedColl.getModelType());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedColl.getOperation());
 
 		String elementIdShort = "testAddProp";
 		Property prop = new Property(true);
@@ -297,9 +308,10 @@ public class TestStorageSubmodelAPI {
 		coll.addSubmodelElement(prop);
 		storageAPI.updateSubmodelElement(collIdShort, coll.getValue());
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(VABPathTools.concatenatePaths(collIdShort, elementIdShort));
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(VABPathTools.concatenatePaths(collIdShort, elementIdShort));
 
 		assertEquals(prop.getValue().toString(), storedElement.getSerializedElementValue());
+		assertEquals(StorageSubmodelElementOperations.CREATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -310,8 +322,9 @@ public class TestStorageSubmodelAPI {
 		storageAPI.addSubmodelElement(prop);
 		storageAPI.updateSubmodelElement(idShortPath, false);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(idShortPath);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(idShortPath);
 		assertFalse(Boolean.parseBoolean(storedElement.getSerializedElementValue()));
+		assertEquals(StorageSubmodelElementOperations.UPDATE, storedElement.getOperation());
 	}
 
 	@Test
@@ -325,8 +338,12 @@ public class TestStorageSubmodelAPI {
 
 		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODEL_ID, idShortPath);
 		assertEquals(created_elements, elements.size());
-		assertFalse(Boolean.parseBoolean(elements.get(0).getSerializedElementValue()));
-		assertTrue(Boolean.parseBoolean(elements.get(1).getSerializedElementValue()));
+
+		assertTrue(Boolean.parseBoolean(elements.get(0).getSerializedElementValue()));
+		assertEquals(StorageSubmodelElementOperations.CREATE, elements.get(0).getOperation());
+
+		assertFalse(Boolean.parseBoolean(elements.get(1).getSerializedElementValue()));
+		assertEquals(StorageSubmodelElementOperations.UPDATE, elements.get(1).getOperation());
 	}
 
 	@Test
@@ -337,19 +354,19 @@ public class TestStorageSubmodelAPI {
 		storageAPI.addSubmodelElement(prop);
 		storageAPI.deleteSubmodelElement(idShortPath);
 
-		IStorageSubmodelElement storedElement = getSingleStorageElementWithIdShort(idShortPath);
+		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(idShortPath);
 
 		assertEquals(StorageSubmodelElementOperations.DELETE, storedElement.getOperation());
 	}
 
-	private IStorageSubmodelElement getSingleStorageElementWithIdShort(String idShort) {
+	private IStorageSubmodelElement getLastStorageElementWithIdShort(String idShort) {
 		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODEL_ID, idShort);
 
 		if (elements.isEmpty()) {
 			return null;
 		}
 
-		IStorageSubmodelElement storedElement = elements.get(0);
+		IStorageSubmodelElement storedElement = elements.get(elements.size() - 1);
 		return storedElement;
 	}
 
