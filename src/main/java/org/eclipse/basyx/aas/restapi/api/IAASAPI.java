@@ -36,9 +36,9 @@ public interface IAASAPI {
 	/**
 	 * Removes a submodel reference from the AAS
 	 * 
-	 * @param id
+	 * @param idShort
 	 *            the unique id of the submodel to-be-deleted
 	 */
-	public void removeSubmodel(String id);
+	public void removeSubmodel(String idShort);
 }
 

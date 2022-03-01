@@ -18,6 +18,7 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
@@ -41,22 +42,34 @@ public class MqttAASAggregator implements IAASAggregator {
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param aasAggregatorToBeObserved the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId) throws MqttException {
 		this(aasAggregatorToBeObserved, serverEndpoint, clientId, new MqttDefaultFilePersistence());
 	}
 
+	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, MqttClient client) throws MqttException {
+		observedAASAggregator = new ObservableAASAggregator(aasAggregatorToBeObserved);
+		observer = new MqttAASAggregatorObserver(client);
+		observedAASAggregator.addObserver(observer);
+	}
+
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param aasAggregatorToBeObserved the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * 
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
@@ -68,12 +81,18 @@ public class MqttAASAggregator implements IAASAggregator {
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param aasAggregatorToBeObserved the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param pw password for authentication with broker
- 	 * @param pw password for authentication with broker
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
@@ -82,11 +101,16 @@ public class MqttAASAggregator implements IAASAggregator {
 
 	/**
 	 *
-	 * @param aasAggregatorToBeObserved the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param persistence persistence level
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param persistence
+	 *            persistence level
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {

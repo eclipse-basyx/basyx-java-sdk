@@ -18,11 +18,10 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation variant for the SubmodelAggregator that triggers MQTT events
@@ -33,8 +32,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class MqttSubmodelAggregator implements ISubmodelAggregator {
-	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelAggregator.class);
-
 	protected ObservableSubmodelAggregator observedSubmodelAggregator;
 	private MqttSubmodelAggregatorObserver observer;
 
@@ -91,6 +88,12 @@ public class MqttSubmodelAggregator implements ISubmodelAggregator {
 	public MqttSubmodelAggregator(ISubmodelAggregator submodelAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
 		observedSubmodelAggregator = new ObservableSubmodelAggregator(submodelAggregatorToBeObserved);
 		observer = new MqttSubmodelAggregatorObserver(serverEndpoint, clientId, user, pw, persistence);
+		observedSubmodelAggregator.addObserver(observer);
+	}
+
+	public MqttSubmodelAggregator(ISubmodelAggregator submodelAggregatorToBeObserved, MqttClient client) throws MqttException {
+		observedSubmodelAggregator = new ObservableSubmodelAggregator(submodelAggregatorToBeObserved);
+		observer = new MqttSubmodelAggregatorObserver(client);
 		observedSubmodelAggregator.addObserver(observer);
 	}
 

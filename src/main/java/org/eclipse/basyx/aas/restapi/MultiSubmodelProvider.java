@@ -109,14 +109,15 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 */
 	protected IAASAPIFactory aasApiProvider;
 
-	protected ISubmodelAggregator smAggregator;
+	private ISubmodelAggregator smAggregator;
+
 	/**
 	 * Constructor with empty default aas and default VAB APIs
 	 */
 	public MultiSubmodelProvider() {
-		this.aasApiProvider = new VABAASAPIFactory();
-		this.smAggregator = new SubmodelAggregator();
-		IAASAPI aasApi = aasApiProvider.getAASApi(new AssetAdministrationShell());
+		this.setAasApiProvider(new VABAASAPIFactory());
+		this.setSmAggregator(new SubmodelAggregator());
+		IAASAPI aasApi = getAasApiProvider().getAASApi(new AssetAdministrationShell());
 		setAssetAdministrationShell(new AASModelProvider(aasApi));
 	}
 
@@ -124,8 +125,8 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 * Constructor for using custom APIs
 	 */
 	public MultiSubmodelProvider(AASModelProvider contentProvider, IAASAPIFactory aasApiProvider, ISubmodelAPIFactory smApiProvider) {
-		this.aasApiProvider = aasApiProvider;
-		this.smAggregator = new SubmodelAggregator(smApiProvider);
+		this.setAasApiProvider(aasApiProvider);
+		this.setSmAggregator(new SubmodelAggregator(smApiProvider));
 		setAssetAdministrationShell(contentProvider);
 	}
 
@@ -133,8 +134,8 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 * Constructor that accepts an AAS
 	 */
 	public MultiSubmodelProvider(AASModelProvider contentProvider) {
-		this.aasApiProvider = new VABAASAPIFactory();
-		this.smAggregator = new SubmodelAggregator();
+		this.setAasApiProvider(new VABAASAPIFactory());
+		this.setSmAggregator(new SubmodelAggregator());
 		// Store content provider
 		setAssetAdministrationShell(contentProvider);
 	}
@@ -157,7 +158,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	public MultiSubmodelProvider(IAASRegistry registry, IConnectorFactory provider) {
 		this();
 		this.registry = registry;
-		this.connectorFactory = provider;
+		this.setConnectorFactory(provider);
 	}
 
 	/**
@@ -166,7 +167,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	public MultiSubmodelProvider(AASModelProvider contentProvider, IAASRegistry registry, IConnectorFactory connectorFactory, ISubmodelAPIFactory smApiProvider, IAASAPIFactory aasApiProvider) {
 		this(contentProvider, aasApiProvider, smApiProvider);
 		this.registry = registry;
-		this.connectorFactory = connectorFactory;
+		this.setConnectorFactory(connectorFactory);
 	}
 
 	/**
@@ -174,15 +175,16 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 * and submodelAggregator
 	 */
 	public MultiSubmodelProvider(AASModelProvider contentProvider, IAASRegistry registry, IConnectorFactory connectorFactory, IAASAPIFactory aasApiProvider, ISubmodelAggregator submodelAggregator) {
-		this.aasApiProvider = aasApiProvider;
+		this.setAasApiProvider(aasApiProvider);
 		setAssetAdministrationShell(contentProvider);
-		this.smAggregator = submodelAggregator;
+		this.setSmAggregator(submodelAggregator);
 		this.registry = registry;
-		this.connectorFactory = connectorFactory;
+		this.setConnectorFactory(connectorFactory);
 	}
 
 	/**
-	 * Constructor that accepts a aas provider, a registry, and a connection provider
+	 * Constructor that accepts a aas provider, a registry, and a connection
+	 * provider
 	 *
 	 * @param contentProvider
 	 * @param registry
@@ -191,7 +193,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	public MultiSubmodelProvider(AASModelProvider contentProvider, IAASRegistry registry, HTTPConnectorFactory provider) {
 		this(contentProvider);
 		this.registry = registry;
-		this.connectorFactory = provider;
+		this.setConnectorFactory(provider);
 	}
 
 	/**
@@ -211,14 +213,14 @@ public class MultiSubmodelProvider implements IModelProvider {
 	public void addSubmodel(SubmodelProvider modelContentProvider) {
 		Submodel sm = Submodel.createAsFacade((Map<String, Object>) modelContentProvider.getValue("/submodel"));
 		aas_provider.createValue("/submodels", sm);
-		smAggregator.createSubmodel(modelContentProvider.getAPI());
+		getSmAggregator().createSubmodel(modelContentProvider.getAPI());
 	}
 
 	@SuppressWarnings("unchecked")
 	private void createSubmodel(Object newValue) {
 		Map<String, Object> newSubmodelMap = (Map<String, Object>) newValue;
 		Submodel submodel = Submodel.createAsFacade(newSubmodelMap);
-		smAggregator.createSubmodel(submodel);
+		getSmAggregator().createSubmodel(submodel);
 		aas_provider.createValue("/submodels", submodel);
 	}
 
@@ -229,7 +231,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 *            Element ID
 	 */
 	public void removeProvider(String elementIdShort) {
-		smAggregator.deleteSubmodelByIdShort(elementIdShort);
+		getSmAggregator().deleteSubmodelByIdShort(elementIdShort);
 	}
 
 	/**
@@ -269,7 +271,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	private IModelProvider retrieveSubmodelProvider(String smIdShort) {
 		IModelProvider smProvider;
 		try {
-			ISubmodelAPI smAPI = smAggregator.getSubmodelAPIByIdShort(smIdShort);
+			ISubmodelAPI smAPI = getSmAggregator().getSubmodelAPIByIdShort(smIdShort);
 			smProvider = new SubmodelProvider(smAPI);
 		} catch (ResourceNotFoundException exception) {
 			// Get a model provider for the submodel in the registry
@@ -287,7 +289,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 */
 	private Object retrieveSubmodels() throws ProviderException {
 		// Make a list and return all local submodels
-		Collection<ISubmodel> submodels = smAggregator.getSubmodelList();
+		Collection<ISubmodel> submodels = getSmAggregator().getSubmodelList();
 		addConnectedSubmodels(submodels);
 		return submodels;
 	}
@@ -324,7 +326,8 @@ public class MultiSubmodelProvider implements IModelProvider {
 					}
 				}
 
-				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> connectorFactory.getConnector(endpoint)).map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m)).collect(Collectors.toList());
+				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> getConnectorFactory().getConnector(endpoint)).map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m))
+						.collect(Collectors.toList());
 				submodels.addAll(remoteSms);
 			}
 		}
@@ -361,7 +364,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	private void createAssetAdministrationShell(Object newAAS) {
 		Map<String, Object> newAASMap = (Map<String, Object>) newAAS;
 		AssetAdministrationShell shell = AssetAdministrationShell.createAsFacade(newAASMap);
-		IAASAPI aasApi = aasApiProvider.getAASApi(shell);
+		IAASAPI aasApi = getAasApiProvider().getAASApi(shell);
 		aas_provider = new AASModelProvider(aasApi);
 	}
 
@@ -381,10 +384,10 @@ public class MultiSubmodelProvider implements IModelProvider {
 			if (!isSubmodelLocal(smIdShort)) {
 				return;
 			}
-			Submodel sm = (Submodel) smAggregator.getSubmodelbyIdShort(smIdShort);
+			Submodel sm = (Submodel) getSmAggregator().getSubmodelbyIdShort(smIdShort);
 			String smId = sm.getIdentification().getId();
 			aas_provider.deleteValue(SUBMODELS_PREFIX + "/" + smId);
-			smAggregator.deleteSubmodelByIdShort(smIdShort);
+			getSmAggregator().deleteSubmodelByIdShort(smIdShort);
 		} else if (propertyPath.length() > 0) {
 			String smIdShort = pathElements[2];
 			IModelProvider provider = retrieveSubmodelProvider(smIdShort);
@@ -420,7 +423,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	 */
 	private boolean isSubmodelLocal(String smIdShort) {
 		try {
-			smAggregator.getSubmodelbyIdShort(smIdShort);
+			getSmAggregator().getSubmodelbyIdShort(smIdShort);
 			return true;
 		} catch (ResourceNotFoundException exception) {
 			return false;
@@ -464,7 +467,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 		// Remove "/submodel" since it will be readded later
 		endpoint = endpoint.substring(0, endpoint.length() - SubmodelProvider.SUBMODEL.length() - 1);
 
-		return connectorFactory.getConnector(endpoint);
+		return getConnectorFactory().getConnector(endpoint);
 	}
 
 	/**
@@ -501,5 +504,29 @@ public class MultiSubmodelProvider implements IModelProvider {
 			return endpoint;
 		}
 		return endpoint.substring(0, endServerURL);
+	}
+
+	public ISubmodelAggregator getSmAggregator() {
+		return smAggregator;
+	}
+
+	public void setSmAggregator(ISubmodelAggregator smAggregator) {
+		this.smAggregator = smAggregator;
+	}
+
+	public IAASAPIFactory getAasApiProvider() {
+		return aasApiProvider;
+	}
+
+	public void setAasApiProvider(IAASAPIFactory aasApiProvider) {
+		this.aasApiProvider = aasApiProvider;
+	}
+
+	public IConnectorFactory getConnectorFactory() {
+		return connectorFactory;
+	}
+
+	public void setConnectorFactory(IConnectorFactory connectorFactory) {
+		this.connectorFactory = connectorFactory;
 	}
 }
