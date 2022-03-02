@@ -10,28 +10,44 @@
 
 package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
 
+import java.security.ProviderException;
+
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
+import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregator;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
- * Factory for constructing a new SubmodelAggregator that emits MQTT events
+ * Factory decorating SubmodelAggregator with MQTT events by wrapping an
+ * ISubmodelAggregatorFactory
  * 
  * @author fried
  */
 public class MqttDecoratingSubmodelAggregatorFactory implements ISubmodelAggregatorFactory {
+	private ISubmodelAggregatorFactory submodelAggregatorFactory;
 	private MqttClient mqttClient;
 
-	private ISubmodelAggregatorFactory submodelAggregatorFactory;
+	private ObservableSubmodelAggregator observedSubmodelAggregator;
+	protected MqttSubmodelAggregatorObserver observer;
 
-	public MqttDecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, MqttClient mqttClient) {
+	public MqttDecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory,
+			MqttClient mqttClient) {
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
 		this.mqttClient = mqttClient;
 	}
 
 	@Override
 	public ISubmodelAggregator create() {
-		return new MqttSubmodelAggregatorFactory(submodelAggregatorFactory.create(), mqttClient).create();
+		try {
+			ISubmodelAggregator aggregator = submodelAggregatorFactory.create();
+			observedSubmodelAggregator = new ObservableSubmodelAggregator(aggregator);
+			observer = new MqttSubmodelAggregatorObserver(mqttClient);
+			observedSubmodelAggregator.addObserver(observer);
+			return observedSubmodelAggregator;
+		} catch (MqttException e) {
+			throw new ProviderException(e);
+		}
 	}
 
 }

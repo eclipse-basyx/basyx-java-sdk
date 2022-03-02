@@ -12,12 +12,14 @@ package org.eclipse.basyx.extensions.submodel.mqtt;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
+import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
- * Api provider for constructing a new Submodel API that emits MQTT events
+ * Factory decorating SubmodelAPI with MQTT events by wrapping an
+ * ISubmodelAPIFactory
  * 
  * @author fried
  */
@@ -25,7 +27,11 @@ public class MqttDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;
 	private MqttClient client;
 
-	public MqttDecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
+	private ObservableSubmodelAPI observedAPI;
+	protected MqttSubmodelAPIObserver observer;
+
+	public MqttDecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client)
+			throws MqttException {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 	}
@@ -33,7 +39,9 @@ public class MqttDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
 		try {
-			return new MqttSubmodelAPI(apiFactory.getSubmodelAPI(submodel), client);
+			observedAPI = new ObservableSubmodelAPI(apiFactory.getSubmodelAPI(submodel));
+			observer = new MqttSubmodelAPIObserver(observedAPI, client);
+			return observedAPI;
 		} catch (MqttException e) {
 			throw new ProviderException(e);
 		}

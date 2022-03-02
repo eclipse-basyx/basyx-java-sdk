@@ -32,7 +32,7 @@ public class MqttTestListener implements InterceptHandler {
 	// Topic and payload of the most recent event
 	public String lastTopic;
 	public String lastPayload;
-	public ArrayList<String> topics = new ArrayList<>();
+	private ArrayList<String> topics = new ArrayList<>();
 
 	@Override
 	public String getID() {
@@ -73,5 +73,9 @@ public class MqttTestListener implements InterceptHandler {
 
 	@Override
 	public void onUnsubscribe(InterceptUnsubscribeMessage arg0) {
+	}
+
+	public ArrayList<String> getTopics() {
+		return topics;
 	}
 }

@@ -11,11 +11,12 @@
 package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.mqtt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import org.eclipse.basyx.aas.aggregator.AASAggregator;
+import org.eclipse.basyx.aas.aggregator.AASAggregatorFactory;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
@@ -24,8 +25,8 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.CustomId;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.restapi.AASAPIFactory;
-import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregator;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorHelper;
+import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttDecoratingAASAggregatorFactory;
 import org.eclipse.basyx.extensions.aas.api.mqtt.MqttAASAPIHelper;
 import org.eclipse.basyx.extensions.aas.api.mqtt.MqttDecoratingAASAPIFactory;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttDecoratingSubmodelAggregatorFactory;
@@ -68,19 +69,27 @@ public class TestFullMqttAASAggregator extends MqttBrokerSuite {
 		client = createMqttClient();
 		client.connect();
 
-		// Create a dummy registry to test integration of XML AAS
 		IAASRegistry aasRegistry = new InMemoryRegistry();
 
-		aggregator = new MqttAASAggregator(new AASAggregator(new MqttDecoratingAASAPIFactory(new AASAPIFactory(), client), new MqttDecoratingSubmodelAggregatorFactory(new SubmodelAggregatorFactory(new VABSubmodelAPIFactory()), client)),
-				client);
-		// Create ConnectedAASManager
-		manager = new ConnectedAssetAdministrationShellManager(aasRegistry, new IConnectorFactory() {
+		aggregator = createAggregator(aasRegistry);
+
+		manager = createConnectedAASManager(aasRegistry);
+	}
+
+	private static ConnectedAssetAdministrationShellManager createConnectedAASManager(IAASRegistry aasRegistry) {
+		return new ConnectedAssetAdministrationShellManager(aasRegistry, new IConnectorFactory() {
 
 			@Override
 			public IModelProvider getConnector(String addr) {
 				return new AASAggregatorProvider(aggregator);
 			}
 		});
+	}
+
+	private static IAASAggregator createAggregator(IAASRegistry aasRegistry) throws MqttException {
+		return new MqttDecoratingAASAggregatorFactory(
+				new AASAggregatorFactory(new MqttDecoratingAASAPIFactory(new AASAPIFactory(), client), new MqttDecoratingSubmodelAggregatorFactory(new SubmodelAggregatorFactory(new VABSubmodelAPIFactory()), client), aasRegistry), client)
+						.create();
 	}
 
 	private static MqttClient createMqttClient() throws MqttException {
@@ -92,12 +101,12 @@ public class TestFullMqttAASAggregator extends MqttBrokerSuite {
 		AssetAdministrationShell shell = createShell(shellIdentifier.getId(), shellIdentifier);
 		manager.createAAS(shell, getURL());
 
-		assertEquals(MqttAASAggregatorHelper.TOPIC_CREATEAAS, listener.lastTopic);
+		assertTrue(listenerHasTopic(MqttAASAggregatorHelper.TOPIC_CREATEAAS));
 		assertEquals(shell.getIdShort(), manager.retrieveAAS(shellIdentifier).getIdShort());
 
 		manager.deleteAAS(shellIdentifier);
 
-		assertEquals(MqttAASAggregatorHelper.TOPIC_DELETEAAS, listener.lastTopic);
+		assertTrue(listenerHasTopic(MqttAASAggregatorHelper.TOPIC_DELETEAAS));
 
 		try {
 			manager.retrieveAAS(shellIdentifier);
@@ -118,11 +127,13 @@ public class TestFullMqttAASAggregator extends MqttBrokerSuite {
 
 		manager.createSubmodel(shellIdentifierForSubmodel, submodel);
 
-		assertEquals(MqttAASAPIHelper.TOPIC_ADDSUBMODEL, listener.lastTopic);
+		assertTrue(listenerHasTopic(MqttSubmodelAggregatorHelper.TOPIC_CREATESUBMODEL));
+		assertTrue(listenerHasTopic(MqttAASAPIHelper.TOPIC_ADDSUBMODEL));
 		assertEquals(submodel.getIdShort(), manager.retrieveSubmodel(shellIdentifierForSubmodel, submodelIdentifier).getIdShort());
 
 		manager.deleteSubmodel(shellIdentifierForSubmodel, submodelIdentifier);
-		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
+		assertTrue(listenerHasTopic(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL));
+		assertTrue(listenerHasTopic(MqttAASAPIHelper.TOPIC_REMOVESUBMODEL));
 		try {
 			manager.retrieveSubmodel(shellIdentifierForSubmodel, submodelIdentifier);
 			fail();
@@ -154,5 +165,9 @@ public class TestFullMqttAASAggregator extends MqttBrokerSuite {
 		submodel.setIdentification(submodelIdentifier);
 		submodel.setIdShort(idShort);
 		return submodel;
+	}
+
+	private boolean listenerHasTopic(String expectedTopic) {
+		return listener.getTopics().stream().anyMatch(t -> t.equals(expectedTopic));
 	}
 }

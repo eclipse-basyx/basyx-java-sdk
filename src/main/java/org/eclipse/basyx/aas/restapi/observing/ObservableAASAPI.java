@@ -28,7 +28,7 @@ import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
  */
 public class ObservableAASAPI extends Observable<IAASAPIObserver> implements IAASAPI {
 
-	IAASAPI aasAPI;
+	private IAASAPI aasAPI;
 
 	public ObservableAASAPI(IAASAPI observedAPI) {
 		aasAPI = observedAPI;
@@ -42,9 +42,9 @@ public class ObservableAASAPI extends Observable<IAASAPIObserver> implements IAA
 	@Override
 	public void addSubmodel(IReference submodel) {
 		Stream<IKey> filtered = submodel.getKeys().stream().filter(o -> o.getType().name().equalsIgnoreCase(KeyElements.SUBMODEL.getStandardizedLiteral()));
-		if (!filtered.anyMatch(o -> o.getType().name().equalsIgnoreCase(KeyElements.SUBMODEL.getStandardizedLiteral()))) {
+		if (!containsSubmodelReference(filtered))
 			throw new MalformedRequestException("Reference has to contain a submodel");
-		}
+
 		aasAPI.addSubmodel(submodel);
 		observers.stream().forEach(o -> o.submodelAdded(submodel));
 	}
@@ -53,6 +53,10 @@ public class ObservableAASAPI extends Observable<IAASAPIObserver> implements IAA
 	public void removeSubmodel(String id) {
 		aasAPI.removeSubmodel(id);
 		observers.stream().forEach(o -> o.submodelRemoved(id));
+	}
+
+	private boolean containsSubmodelReference(Stream<IKey> keys) {
+		return keys.count() > 0;
 	}
 
 }

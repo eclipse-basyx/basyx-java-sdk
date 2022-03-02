@@ -133,25 +133,40 @@ public abstract class AASAggregatorSuite {
 		// Get the updated AAS and check its category
 		IAssetAdministrationShell aas = aggregator.getAAS(aasUrn);
 		assertEquals(aas1AltCategory, aas.getCategory());
+	}
 
-		// Create ConnectedAASManager
-		ConnectedAssetAdministrationShellManager manager = new ConnectedAssetAdministrationShellManager(new InMemoryRegistry(), new IConnectorFactory() {
+	@Test
+	public void submodelReferencesPresentAfterUpdate() {
+		IAASAggregator aggregator = getAggregator();
+
+		ModelUrn aasUrn = new ModelUrn(aas1Id);
+
+		ConnectedAssetAdministrationShellManager manager = createConnectedAASManager(aggregator);
+		manager.createAAS(aas1, "");
+
+		Submodel submodel = createSubmodel("testSm", "testSmIdentifier");
+		manager.createSubmodel(aasUrn, submodel);
+
+		aggregator.updateAAS(aas1);
+
+		assertEquals(submodel.getIdShort(), manager.retrieveSubmodel(aasUrn, submodel.getIdentification()).getIdShort());
+	}
+
+	private Submodel createSubmodel(String idShort, String customId) {
+		String submodelId = idShort;
+		Identifier submodelIdentifier = new Identifier(IdentifierType.CUSTOM, customId);
+		Submodel submodel = new Submodel(submodelId, submodelIdentifier);
+		return submodel;
+	}
+
+	private ConnectedAssetAdministrationShellManager createConnectedAASManager(IAASAggregator aggregator) {
+		return new ConnectedAssetAdministrationShellManager(new InMemoryRegistry(), new IConnectorFactory() {
 
 			@Override
 			public IModelProvider getConnector(String addr) {
 				return new AASAggregatorProvider(aggregator);
 			}
 		});
-		manager.createAAS(aas1, "");
-		// Create Submodel
-		String submodelId = "testSm";
-		Identifier submodelIdentifier = new Identifier(IdentifierType.CUSTOM, "testSmIdentifier");
-		Submodel submodel = new Submodel(submodelId, submodelIdentifier);
-		manager.createSubmodel(aasUrn, submodel);
-
-		aggregator.updateAAS(aas1);
-
-		assertEquals(submodel.getIdShort(), manager.retrieveSubmodel(aasUrn, submodelIdentifier).getIdShort());
 	}
 
 	@Test
