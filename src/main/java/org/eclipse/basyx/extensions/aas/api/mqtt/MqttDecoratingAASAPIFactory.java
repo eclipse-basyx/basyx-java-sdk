@@ -26,9 +26,6 @@ public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 	private IAASAPIFactory apiFactory;
 	private MqttClient client;
 
-	private ObservableAASAPI observedAPI;
-	protected MqttAASAPIObserver observer;
-
 	public MqttDecoratingAASAPIFactory(IAASAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
@@ -37,8 +34,8 @@ public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 	@Override
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
 		try {
-			observedAPI = new ObservableAASAPI(apiFactory.getAASApi(aas));
-			observer = new MqttAASAPIObserver(observedAPI, client);
+			ObservableAASAPI observedAPI = new ObservableAASAPI(apiFactory.getAASApi(aas));
+			MqttAASAPIObserver observer = new MqttAASAPIObserver(observedAPI, client);
 			return observedAPI;
 		} catch (MqttException e) {
 			throw new ProviderException(e);

@@ -26,11 +26,7 @@ public class MqttDecoratingAASAggregatorFactory implements IAASAggregatorFactory
 	private IAASAggregatorFactory apiFactory;
 	private MqttClient client;
 
-	private ObservableAASAggregator observedAASAggregator;
-	protected MqttAASAggregatorObserver observer;
-
-	public MqttDecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, MqttClient client)
-			throws MqttException {
+	public MqttDecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, MqttClient client) throws MqttException {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 	}
@@ -39,8 +35,8 @@ public class MqttDecoratingAASAggregatorFactory implements IAASAggregatorFactory
 	public IAASAggregator create() {
 		try {
 			IAASAggregator aggregator = apiFactory.create();
-			observedAASAggregator = new ObservableAASAggregator(aggregator);
-			observer = new MqttAASAggregatorObserver(client);
+			ObservableAASAggregator observedAASAggregator = new ObservableAASAggregator(aggregator);
+			MqttAASAggregatorObserver observer = new MqttAASAggregatorObserver(client);
 			observedAASAggregator.addObserver(observer);
 			return observedAASAggregator;
 		} catch (MqttException exception) {

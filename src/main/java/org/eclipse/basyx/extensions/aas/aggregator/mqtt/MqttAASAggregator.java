@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * @deprecated Deprecated, please use {@link MqttDecoratingAASAggregatorFactory}
  *
  */
+@Deprecated
 public class MqttAASAggregator implements IAASAggregator {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregator.class);
 

@@ -41,8 +41,7 @@ public class ObservableAASAPI extends Observable<IAASAPIObserver> implements IAA
 
 	@Override
 	public void addSubmodel(IReference submodel) {
-		Stream<IKey> filtered = submodel.getKeys().stream().filter(o -> o.getType().name().equalsIgnoreCase(KeyElements.SUBMODEL.getStandardizedLiteral()));
-		if (!containsSubmodelReference(filtered))
+		if (!containsSubmodelReference(submodel))
 			throw new MalformedRequestException("Reference has to contain a submodel");
 
 		aasAPI.addSubmodel(submodel);
@@ -55,8 +54,9 @@ public class ObservableAASAPI extends Observable<IAASAPIObserver> implements IAA
 		observers.stream().forEach(o -> o.submodelRemoved(id));
 	}
 
-	private boolean containsSubmodelReference(Stream<IKey> keys) {
-		return keys.count() > 0;
+	private boolean containsSubmodelReference(IReference submodel) {
+		Stream<IKey> filtered = submodel.getKeys().stream().filter(o -> o.getType().name().equalsIgnoreCase(KeyElements.SUBMODEL.getStandardizedLiteral()));
+		return filtered.count() > 0;
 	}
 
 }

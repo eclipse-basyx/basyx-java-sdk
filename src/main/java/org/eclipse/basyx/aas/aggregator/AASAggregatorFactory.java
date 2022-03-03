@@ -26,33 +26,74 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 public class AASAggregatorFactory implements IAASAggregatorFactory {
 
 	private IAASAggregator aggregator;
+	private IAASAPIFactory aasApiFactory;
+	private ISubmodelAggregatorFactory submodelAggregatorFactory;
+	private IAASRegistry registry;
+	private ISubmodelAPIFactory submodelApiFactory;
 
 	public AASAggregatorFactory() {
-		aggregator = new AASAggregator();
 	}
 
 	public AASAggregatorFactory(IAASAPIFactory aasApiFactory, ISubmodelAggregatorFactory submodelAggregatorFactory) {
-		aggregator = new AASAggregator(aasApiFactory, submodelAggregatorFactory);
+		this.aasApiFactory = aasApiFactory;
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
 	}
 
 	public AASAggregatorFactory(IAASAPIFactory aasApiFactory, ISubmodelAggregatorFactory submodelAggregatorFactory, IAASRegistry registry) {
-		aggregator = new AASAggregator(aasApiFactory, submodelAggregatorFactory, registry);
+		this.aasApiFactory = aasApiFactory;
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.registry = registry;
 	}
 
 	public AASAggregatorFactory(IAASAPIFactory aasApiFactory, ISubmodelAPIFactory submodelApiFactory) {
-		aggregator = new AASAggregator(aasApiFactory, submodelApiFactory);
+		this.aasApiFactory = aasApiFactory;
+		this.submodelApiFactory = submodelApiFactory;
 	}
 
 	public AASAggregatorFactory(IAASAPIFactory aasApiFactory, ISubmodelAPIFactory submodelApiFactory, IAASRegistry registry) {
-		aggregator = new AASAggregator(aasApiFactory, submodelApiFactory, registry);
+		this.aasApiFactory = aasApiFactory;
+		this.submodelApiFactory = submodelApiFactory;
+		this.registry = registry;
 	}
 
 	public AASAggregatorFactory(IAASRegistry registry) {
-		aggregator = new AASAggregator(registry);
+		this.registry = registry;
 	}
 
 	@Override
 	public IAASAggregator create() {
-		return aggregator;
+		return constructAASAggregatorWithGivenArguments();
+	}
+
+	private IAASAggregator constructAASAggregatorWithGivenArguments() {
+		if (isRegistrySet() && isAasApiAndSubmodelAggregatorSet()) {
+			return new AASAggregator(aasApiFactory, submodelAggregatorFactory, registry);
+		} else if (isRegistrySet() && isAasApiAndSubmodelApiSet()) {
+			return new AASAggregator(aasApiFactory, submodelApiFactory, registry);
+		} else if (isOnlyRegistrySet()) {
+			return new AASAggregator(registry);
+		} else if (isAasApiAndSubmodelAggregatorSet()) {
+			return new AASAggregator(aasApiFactory, submodelAggregatorFactory);
+		} else if (isAasApiAndSubmodelApiSet()) {
+			return new AASAggregator(aasApiFactory, submodelApiFactory);
+		} else {
+			return new AASAggregator();
+		}
+	}
+
+	private boolean isRegistrySet() {
+		return registry != null;
+	}
+
+	private boolean isAasApiAndSubmodelAggregatorSet() {
+		return aasApiFactory != null && submodelAggregatorFactory != null;
+	}
+
+	private boolean isAasApiAndSubmodelApiSet() {
+		return aasApiFactory != null && submodelApiFactory != null;
+	}
+
+	private boolean isOnlyRegistrySet() {
+		return isRegistrySet() && aasApiFactory == null && submodelAggregatorFactory == null && submodelApiFactory == null;
 	}
 }

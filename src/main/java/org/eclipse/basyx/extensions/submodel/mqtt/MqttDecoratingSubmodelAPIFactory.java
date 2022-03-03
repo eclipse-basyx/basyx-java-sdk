@@ -27,11 +27,7 @@ public class MqttDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;
 	private MqttClient client;
 
-	private ObservableSubmodelAPI observedAPI;
-	protected MqttSubmodelAPIObserver observer;
-
-	public MqttDecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client)
-			throws MqttException {
+	public MqttDecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 	}
@@ -39,8 +35,8 @@ public class MqttDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
 		try {
-			observedAPI = new ObservableSubmodelAPI(apiFactory.getSubmodelAPI(submodel));
-			observer = new MqttSubmodelAPIObserver(observedAPI, client);
+			ObservableSubmodelAPI observedAPI = new ObservableSubmodelAPI(apiFactory.getSubmodelAPI(submodel));
+			MqttSubmodelAPIObserver observer = new MqttSubmodelAPIObserver(observedAPI, client);
 			return observedAPI;
 		} catch (MqttException e) {
 			throw new ProviderException(e);
