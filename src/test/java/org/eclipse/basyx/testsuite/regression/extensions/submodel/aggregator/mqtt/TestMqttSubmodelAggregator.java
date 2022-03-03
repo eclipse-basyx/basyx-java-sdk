@@ -10,19 +10,20 @@
 package org.eclipse.basyx.testsuite.regression.extensions.submodel.aggregator.mqtt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregator;
+import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttDecoratingSubmodelAggregatorFactory;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregatorHelper;
-import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
+import org.eclipse.basyx.submodel.aggregator.SubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -47,8 +48,8 @@ public class TestMqttSubmodelAggregator {
 	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
 
 	private static Server mqttBroker;
-	private static MqttSubmodelAggregator mqttSubmodelAggregator;
-	private MqttTestListener listener;
+	private static ISubmodelAggregator mqttSubmodelAggregator;
+	private static MqttTestListener listener;
 
 	/**
 	 * Sets up the MQTT broker and SubmodelAggregator for tests
@@ -61,29 +62,24 @@ public class TestMqttSubmodelAggregator {
 		final IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
 		mqttBroker.startServer(classPathConfig);
 
-		// Create underlying submodel aggregator
-		ISubmodelAggregator submodelAggregator = new SubmodelAggregator();
+		MqttClient client = new MqttClient("tcp://localhost:1884", "testClient");
+		client.connect();
 
-		mqttSubmodelAggregator = new MqttSubmodelAggregator(submodelAggregator, "tcp://localhost:1884", "testClient");
-	}
-
-	@AfterClass
-	public static void tearDownClass() {
-		mqttBroker.stopServer();
+		listener = new MqttTestListener();
+		mqttBroker.addInterceptHandler(listener);
+		mqttSubmodelAggregator = new MqttDecoratingSubmodelAggregatorFactory(new SubmodelAggregatorFactory(), client).create();
 	}
 
 	@Before
 	public void setUp() {
 		submodel = new Submodel(SUBMODEL_IDSHORT, SUBMODEL_IDENTIFIER);
 		mqttSubmodelAggregator.createSubmodel(submodel);
-
-		listener = new MqttTestListener();
-		mqttBroker.addInterceptHandler(listener);
 	}
 
-	@After
-	public void tearDown() {
+	@AfterClass
+	public static void tearDownClass() {
 		mqttBroker.removeInterceptHandler(listener);
+		mqttBroker.stopServer();
 	}
 
 	@Test
@@ -95,7 +91,7 @@ public class TestMqttSubmodelAggregator {
 		mqttSubmodelAggregator.createSubmodel(newSubmodel);
 
 		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, newSubmodelId), listener.lastPayload);
-		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_CREATESUBMODEL, listener.lastTopic);
+		assertTrue(listenerHasTopic(MqttSubmodelAggregatorHelper.TOPIC_CREATESUBMODEL));
 	}
 
 	@Test
@@ -104,7 +100,7 @@ public class TestMqttSubmodelAggregator {
 		mqttSubmodelAggregator.updateSubmodel(submodel);
 
 		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_ID), listener.lastPayload);
-		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_UPDATESUBMODEL, listener.lastTopic);
+		assertTrue(listenerHasTopic(MqttSubmodelAggregatorHelper.TOPIC_UPDATESUBMODEL));
 	}
 
 	@Test
@@ -112,7 +108,7 @@ public class TestMqttSubmodelAggregator {
 		mqttSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 
 		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_ID), listener.lastPayload);
-		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
+		assertTrue(listenerHasTopic(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL));
 	}
 
 	@Test
@@ -120,6 +116,10 @@ public class TestMqttSubmodelAggregator {
 		mqttSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 
 		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_ID), listener.lastPayload);
-		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
+		assertTrue(listenerHasTopic(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL));
+	}
+
+	private boolean listenerHasTopic(String expectedTopic) {
+		return listener.getTopics().stream().anyMatch(t -> t.equals(expectedTopic));
 	}
 }

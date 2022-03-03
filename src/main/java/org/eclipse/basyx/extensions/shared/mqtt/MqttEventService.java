@@ -82,12 +82,12 @@ public class MqttEventService {
 	
 	/**
 	 * Constructor for creating an MqttClient with existing client
+	 * 
 	 * @param client
 	 * @throws MqttException
 	 */
 	public MqttEventService(MqttClient client) throws MqttException {
 		this.mqttClient = client;
-		mqttClient.connect();
 	}
 
 	/**
