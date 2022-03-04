@@ -11,8 +11,6 @@
 package org.eclipse.basyx.aas.factory.aasx;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -26,9 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -117,7 +113,7 @@ public class AASXToMetamodelConverter {
 
 	private void loadAASX() throws IOException, InvalidFormatException {
 		if (aasxInputStream == null) {
-			aasxInputStream = getInputStream(aasxPath);
+			aasxInputStream = FileLoaderHelper.getInputStream(aasxPath);
 		}
 
 		if (aasxRoot == null) {
@@ -293,25 +289,5 @@ public class AASXToMetamodelConverter {
 		String targetPath = destDir.toString() + "/" + VABPathTools.getLastElement(filePath);
 		InputStream stream = part.getInputStream();
 		FileUtils.copyInputStreamToFile(stream, new File(targetPath));
-	}
-
-	private InputStream getInputStream(String aasxFilePath) throws IOException {
-		InputStream stream = getResourceStream(aasxFilePath);
-		if (stream != null) {
-			return stream;
-		} else {
-			// Alternativ, if resource has not been found: load from a file
-			try {
-				return new FileInputStream(aasxFilePath);
-			} catch (FileNotFoundException e) {
-				logger.error("File '" + aasxFilePath + "' to be loaded was not found.");
-				throw e;
-			}
-		}
-	}
-
-	private static InputStream getResourceStream(String relativeResourcePath) {
-		ClassLoader classLoader = AASXToMetamodelConverter.class.getClassLoader();
-		return classLoader.getResourceAsStream(relativeResourcePath);
 	}
 }
