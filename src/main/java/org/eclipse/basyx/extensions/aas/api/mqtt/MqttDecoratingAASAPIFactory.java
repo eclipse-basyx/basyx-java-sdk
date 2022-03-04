@@ -26,7 +26,7 @@ public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 	private IAASAPIFactory apiFactory;
 	private MqttClient client;
 
-	public MqttDecoratingAASAPIFactory(IAASAPIFactory factoryToBeDecorated, MqttClient client) throws MqttException {
+	public MqttDecoratingAASAPIFactory(IAASAPIFactory factoryToBeDecorated, MqttClient client) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 	}

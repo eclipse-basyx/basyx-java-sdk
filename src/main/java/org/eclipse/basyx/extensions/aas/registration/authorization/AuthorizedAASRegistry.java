@@ -10,15 +10,14 @@
 package org.eclipse.basyx.extensions.aas.registration.authorization;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
+import org.eclipse.basyx.extensions.shared.authorization.SecurityContextAuthorizer;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -34,11 +33,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @see AASRegistryScopes
  */
 public class AuthorizedAASRegistry implements IAASRegistry {
-	private static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
-	private static final String READ_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASRegistryScopes.READ_SCOPE;
-	private static final String WRITE_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASRegistryScopes.WRITE_SCOPE;
+	public static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
+	public static final String READ_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASRegistryScopes.READ_SCOPE;
+	public static final String WRITE_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASRegistryScopes.WRITE_SCOPE;
 
 	private final IAASRegistry registry;
+	private final SecurityContextAuthorizer authorizer = new SecurityContextAuthorizer();
 
 	/**
 	 * Provides registry implementation that authorizes invocations before forwarding them to the provided registry implementation.
@@ -47,70 +47,51 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 		this.registry = registry;
 	}
 
-	private void throwExceptionInCaseOfInsufficientAuthorization(final String requiredAuthority) {
-		final Optional<Authentication> authentication = getAuthentication();
-		if (!authentication.isPresent()) {
-			throw new ProviderException("Access denied for unauthenticated requestor");
-		}
-		if (!hasRequiredAuthority(authentication.get(), requiredAuthority)) {
-			throw new ProviderException("Access denied as required authority is missing for requestor");
-		}
-	}
-
-	private Optional<Authentication> getAuthentication() {
-		final SecurityContext context = SecurityContextHolder.getContext();
-		return Optional.ofNullable(context.getAuthentication());
-	}
-
-	private boolean hasRequiredAuthority(final Authentication authentication, final String requiredAuthority) {
-		return authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).anyMatch(requiredAuthority::equals);
-	}
-
 	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
-		throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
 		registry.register(deviceAASDescriptor);
 	}
 
 	@Override
 	public void register(IIdentifier aas, SubmodelDescriptor smDescriptor) throws ProviderException {
-		throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
 		registry.register(aas, smDescriptor);
 	}
 
 	@Override
 	public void delete(IIdentifier aasId) throws ProviderException {
-		throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
 		registry.delete(aasId);
 	}
 
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
-		throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
 		registry.delete(aasId, smId);
 	}
 
 	@Override
 	public AASDescriptor lookupAAS(IIdentifier aasId) throws ProviderException {
-		throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
 		return registry.lookupAAS(aasId);
 	}
 
 	@Override
 	public List<AASDescriptor> lookupAll() throws ProviderException {
-		throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
 		return registry.lookupAll();
 	}
 
 	@Override
 	public List<SubmodelDescriptor> lookupSubmodels(IIdentifier aasId) throws ProviderException {
-		throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
 		return registry.lookupSubmodels(aasId);
 	}
 
 	@Override
 	public SubmodelDescriptor lookupSubmodel(IIdentifier aasId, IIdentifier smId) throws ProviderException {
-		throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
 		return registry.lookupSubmodel(aasId, smId);
 	}
 }
