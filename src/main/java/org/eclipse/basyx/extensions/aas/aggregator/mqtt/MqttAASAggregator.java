@@ -18,6 +18,7 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
@@ -30,8 +31,11 @@ import org.slf4j.LoggerFactory;
  * implementation of the IAASAggregator to forward its method calls.
  *
  * @author haque, jungjan, fischer
+ * 
+ * @deprecated Deprecated, please use {@link MqttDecoratingAASAggregatorFactory}
  *
  */
+@Deprecated
 public class MqttAASAggregator implements IAASAggregator {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregator.class);
 
@@ -48,6 +52,12 @@ public class MqttAASAggregator implements IAASAggregator {
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId) throws MqttException {
 		this(aasAggregatorToBeObserved, serverEndpoint, clientId, new MqttDefaultFilePersistence());
+	}
+
+	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, MqttClient client) throws MqttException {
+		observedAASAggregator = new ObservableAASAggregator(aasAggregatorToBeObserved);
+		observer = new MqttAASAggregatorObserver(client);
+		observedAASAggregator.addObserver(observer);
 	}
 
 	/**

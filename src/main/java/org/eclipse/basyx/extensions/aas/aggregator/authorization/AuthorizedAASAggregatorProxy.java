@@ -11,8 +11,8 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
-import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
+import org.eclipse.basyx.vab.protocol.https.HTTPSConnector;
 
 /**
  * Local proxy class that hides HTTP calls to BaSys aggregator with enabled
@@ -32,7 +32,7 @@ public class AuthorizedAASAggregatorProxy extends AASAggregatorProxy {
 	 *            header
 	 */
 	public AuthorizedAASAggregatorProxy(String aasAggregatorUrl, IAuthorizationSupplier authorizationSupplier) {
-		super(new JSONConnector(new HTTPConnector(harmonizeURL(aasAggregatorUrl), authorizationSupplier)));
+		super(new JSONConnector(new HTTPSConnector(harmonizeURL(aasAggregatorUrl), authorizationSupplier)));
 	}
 
 }

@@ -13,19 +13,18 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.eclipse.basyx.aas.aggregator.AASAggregator;
+import org.eclipse.basyx.aas.aggregator.AASAggregatorFactory;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
-import org.eclipse.basyx.aas.aggregator.observing.ObservableAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorHelper;
-import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorObserver;
+import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttDecoratingAASAggregatorFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -49,9 +48,9 @@ public class TestMqttAASAggregatorObserver {
 	private static final Identifier AASIDENTIFIER = new Identifier(IdentifierType.IRI, AASID);
 
 	private static Server mqttBroker;
-	private static ObservableAASAggregator observedAPI;
-	private static MqttAASAggregatorObserver mqttObserver;
-	private MqttTestListener listener;
+	private static IAASAggregator observedAPI;
+	private static MqttClient client;
+	private static MqttTestListener listener;
 
 	/**
 	 * Sets up the MQTT broker and ObservableAASAggregator for tests
@@ -64,42 +63,40 @@ public class TestMqttAASAggregatorObserver {
 		final IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
 		mqttBroker.startServer(classPathConfig);
 
-		// Create underlying aas aggregator
-		IAASAggregator aggregator = new AASAggregator();
-		observedAPI = new ObservableAASAggregator(aggregator);
+		client = new MqttClient("tcp://localhost:1884", "testClient");
+		client.connect();
 
-		// Create mqtt as an observer
-		mqttObserver = new MqttAASAggregatorObserver("tcp://localhost:1884", "testClient");
-		observedAPI.addObserver(mqttObserver);
+		listener = new MqttTestListener();
+		mqttBroker.addInterceptHandler(listener);
+
+		observedAPI = createObservedAASAggregator();
+
+	}
+
+	private static IAASAggregator createObservedAASAggregator() throws MqttException {
+		return new MqttDecoratingAASAggregatorFactory(new AASAggregatorFactory(), client).create();
 	}
 
 	@AfterClass
 	public static void tearDownClass() {
+		mqttBroker.removeInterceptHandler(listener);
 		mqttBroker.stopServer();
 	}
 
 	@Before
 	public void setUp() {
-		shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid1"), AssetKind.INSTANCE));
+		shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetId", new Identifier(IdentifierType.IRI, "assetId"), AssetKind.INSTANCE));
 		observedAPI.createAAS(shell);
-
-		listener = new MqttTestListener();
-		mqttBroker.addInterceptHandler(listener);
-	}
-
-	@After
-	public void tearDown() {
-		mqttBroker.removeInterceptHandler(listener);
 	}
 
 	@Test
 	public void testCreateAAS() {
-		String aasId2 = "aas2";
-		Identifier identifier2 = new Identifier(IdentifierType.IRDI, aasId2);
-		AssetAdministrationShell shell2 = new AssetAdministrationShell(aasId2, identifier2, new Asset("assetid2", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
-		observedAPI.createAAS(shell2);
+		String newAASId = "newAASId";
+		Identifier newAASIdentifier = new Identifier(IdentifierType.IRDI, newAASId);
+		AssetAdministrationShell newShell = new AssetAdministrationShell(newAASId, newAASIdentifier, new Asset("newAssetId", new Identifier(IdentifierType.IRI, "newAssetId"), AssetKind.INSTANCE));
+		observedAPI.createAAS(newShell);
 
-		assertEquals(aasId2, listener.lastPayload);
+		assertEquals(newAASId, listener.lastPayload);
 		assertEquals(MqttAASAggregatorHelper.TOPIC_CREATEAAS, listener.lastTopic);
 	}
 

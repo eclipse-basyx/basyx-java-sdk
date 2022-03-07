@@ -10,6 +10,7 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.qualifier.haskind;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.haskind.HasKind;
@@ -35,13 +36,20 @@ public class TestHasKind {
 	
 	@Test
 	public void testConstructor() {
-		assertEquals(hasKind.getModelingKind(), MODELING_KIND); 
+		assertEquals(hasKind.getKind(), MODELING_KIND); 
 	}
 
 	@Test
 	public void testSetModelingKind() {
 		ModelingKind newModelingKind = ModelingKind.TEMPLATE;
-		hasKind.setModelingKind(newModelingKind);
-		assertEquals(newModelingKind, hasKind.getModelingKind());
+		hasKind.setKind(newModelingKind);
+		assertEquals(newModelingKind, hasKind.getKind());
+	}
+	
+	@Test
+	public void testSetModelingKindOfNull() {
+		// Explicitly set null
+		hasKind.setKind(null);
+		assertNull(hasKind.getKind());
 	}
 }

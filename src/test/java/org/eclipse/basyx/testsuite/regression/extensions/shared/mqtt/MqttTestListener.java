@@ -10,6 +10,7 @@
 package org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import io.moquette.interception.InterceptHandler;
 import io.moquette.interception.messages.InterceptAcknowledgedMessage;
@@ -21,8 +22,8 @@ import io.moquette.interception.messages.InterceptSubscribeMessage;
 import io.moquette.interception.messages.InterceptUnsubscribeMessage;
 
 /**
- * Very simple MQTT broker listener for testing Submodel API events.
- * Stores the last received event and makes its topic and payload available for reading.
+ * Very simple MQTT broker listener for testing Submodel API events. Stores the
+ * last received event and makes its topic and payload available for reading.
  * 
  * @author espen
  *
@@ -31,6 +32,7 @@ public class MqttTestListener implements InterceptHandler {
 	// Topic and payload of the most recent event
 	public String lastTopic;
 	public String lastPayload;
+	private ArrayList<String> topics = new ArrayList<>();
 
 	@Override
 	public String getID() {
@@ -59,7 +61,8 @@ public class MqttTestListener implements InterceptHandler {
 	}
 
 	@Override
-	public void onPublish(InterceptPublishMessage msg) {
+	public synchronized void onPublish(InterceptPublishMessage msg) {
+		topics.add(msg.getTopicName());
 		lastTopic = msg.getTopicName();
 		lastPayload = msg.getPayload().toString(StandardCharsets.UTF_8);
 	}
@@ -70,5 +73,9 @@ public class MqttTestListener implements InterceptHandler {
 
 	@Override
 	public void onUnsubscribe(InterceptUnsubscribeMessage arg0) {
+	}
+
+	public ArrayList<String> getTopics() {
+		return topics;
 	}
 }

@@ -12,6 +12,7 @@ package org.eclipse.basyx.vab.protocol.https;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
+import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
 
 /**
  * An HTTPS Connector provider class
@@ -20,6 +21,36 @@ import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
  *
  */
 public class HTTPSConnectorProvider extends ConnectorFactory {
+	private IAuthorizationSupplier supplier;
+	private boolean validateFlag = true;
+
+	public HTTPSConnectorProvider() {
+	}
+
+	/**
+	 * Constructor to create a HTTPSConenctorProvider with a given authorization
+	 * supplier
+	 * 
+	 * @param supplier
+	 *            given authorization supplier
+	 */
+	public HTTPSConnectorProvider(IAuthorizationSupplier supplier) {
+		this.supplier = supplier;
+	}
+
+	/**
+	 * Enable the validation of hostname in Jersey Https client
+	 */
+	public void enableValidation() {
+		this.validateFlag = true;
+	}
+
+	/**
+	 * Disable the validation of hostname in Jersey Https client
+	 */
+	public void disableValidation() {
+		this.validateFlag = false;
+	}
 
 	/**
 	 * returns HTTPSConnetor wrapped with ConnectedHashmapProvider that handles
@@ -27,6 +58,6 @@ public class HTTPSConnectorProvider extends ConnectorFactory {
 	 */
 	@Override
 	protected IModelProvider createProvider(String addr) {
-		return new JSONConnector(new HTTPSConnector(addr));
+		return new JSONConnector(new HTTPSConnector(addr, supplier, validateFlag));
 	}
 }

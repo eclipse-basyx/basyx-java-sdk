@@ -31,7 +31,9 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
  * 
  * @author espen
  *
+ * @deprecated Deprecated, please use {@link MqttDecoratingSubmodelAPIFactory}
  */
+@Deprecated
 public class MqttSubmodelAPI implements ISubmodelAPI {
 	
 	// The underlying SubmodelAPI

@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.vab.registry.proxy;
@@ -14,6 +14,7 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
+import org.eclipse.basyx.vab.protocol.https.HTTPSConnector;
 import org.eclipse.basyx.vab.registry.api.IVABRegistryService;
 
 public class VABRegistryProxy implements IVABRegistryService {
@@ -24,17 +25,28 @@ public class VABRegistryProxy implements IVABRegistryService {
 
 	/**
 	 * Constructor for a generic VAB directory proxy based on a HTTP connection
-	 * 
+	 *
 	 * @param directoryUrl
 	 *            The endpoint of the registry with a HTTP-REST interface
 	 */
 	public VABRegistryProxy(String directoryUrl) {
-		this(new VABElementProxy("", new JSONConnector(new HTTPConnector(directoryUrl))));
+		this(getJSONConnectorWithProtocol(directoryUrl));
 	}
-	
+
+	protected static boolean isHTTPSUrl(String url) {
+		return url.toLowerCase().startsWith("https");
+	}
+
+	private static VABElementProxy getJSONConnectorWithProtocol(String directoryUrl) {
+		if (isHTTPSUrl(directoryUrl)) {
+			return new VABElementProxy("", new JSONConnector(new HTTPSConnector(directoryUrl)));
+		}
+		return new VABElementProxy("", new JSONConnector(new HTTPConnector(directoryUrl)));
+	}
+
 	/**
 	 * Constructor for a generic VAB directory based on the registry model provider
-	 * 
+	 *
 	 * @param provider
 	 *            A model provider for the actual registry
 	 */
@@ -65,7 +77,7 @@ public class VABRegistryProxy implements IVABRegistryService {
 	@Override
 	public String lookup(String id) {
 		Object response = provider.getValue(id);
-		
+
 		if (response instanceof String) {
 			return (String) response;
 		} else {
