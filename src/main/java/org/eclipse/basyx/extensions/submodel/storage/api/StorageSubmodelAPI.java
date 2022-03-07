@@ -8,22 +8,17 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package org.eclipse.basyx.extensions.submodel.storage;
+package org.eclipse.basyx.extensions.submodel.storage.api;
 
-import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.List;
 
-import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementComponent;
-import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementQueryBuilder;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 
 public class StorageSubmodelAPI implements ISubmodelAPI {
 
@@ -127,53 +122,6 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 			submodelElementStorageComponent.rollbackTransaction();
 			throw e;
 		}
-	}
-
-	/**
-	 * Selects all historic StorageSumbodelElements for the given filters.
-	 *
-	 * @param submodelId
-	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
-	 *         their descending timestamp
-	 */
-	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId) {
-		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).build();
-		@SuppressWarnings("unchecked")
-		List<IStorageSubmodelElement> results = query.getResultList();
-		return results;
-	}
-
-	/**
-	 * Selects all historic StorageSumbodelElements for the given filters.
-	 *
-	 * @param submodelId
-	 * @param idShort
-	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
-	 *         their descending timestamp
-	 */
-	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort) {
-		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(idShort).build();
-		@SuppressWarnings("unchecked")
-		List<IStorageSubmodelElement> results = query.getResultList();
-		return results;
-	}
-
-	/**
-	 * Selects all historic StorageSumbodelElements for the given filters.
-	 *
-	 * @param submodelId
-	 * @param idShort
-	 * @param begin
-	 * @param end
-	 * @return a list of @StorageSubmodelElement with the given idShort with changes
-	 *         between the begin and end timestamp ordered by their descending
-	 *         timestamp
-	 */
-	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort, Timestamp begin, Timestamp end) {
-		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(idShort).setTimespan(begin, end).build();
-		@SuppressWarnings("unchecked")
-		List<IStorageSubmodelElement> results = query.getResultList();
-		return results;
 	}
 
 }

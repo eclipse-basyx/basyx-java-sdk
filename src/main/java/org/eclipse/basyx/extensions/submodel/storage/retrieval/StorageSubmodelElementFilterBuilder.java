@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 
-package org.eclipse.basyx.extensions.submodel.storage.elements;
+package org.eclipse.basyx.extensions.submodel.storage.retrieval;
 
 public class StorageSubmodelElementFilterBuilder {
 	protected String filterString;

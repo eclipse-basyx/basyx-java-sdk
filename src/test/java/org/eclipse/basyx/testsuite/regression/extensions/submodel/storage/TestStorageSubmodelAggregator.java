@@ -4,18 +4,17 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPI;
-import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAggregator;
+import org.eclipse.basyx.extensions.submodel.storage.aggregator.StorageSubmodelAggregator;
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementComponent.StorageSubmodelElementOperations;
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementRetrievalAPI;
+import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
-import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
-import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +26,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 /**
- * Class to test check if the StorageSubmodelAggregator creates database entries
+ * Class to test if the StorageSubmodelAggregator creates database entries
  *
  * @author fischer
  *
@@ -49,7 +48,7 @@ public class TestStorageSubmodelAggregator {
 	private String storageOption;
 	private EntityManager entityManager;
 	private StorageSubmodelAggregator storageSubmodelAggregator;
-	private StorageSubmodelAPI storageAPI;
+	private StorageSubmodelElementRetrievalAPI retrievalAPI;
 
 	@Parameterized.Parameters
 	public static String[] storageOptions() {
@@ -64,14 +63,13 @@ public class TestStorageSubmodelAggregator {
 	public void setUp() {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory(storageOption);
 		entityManager = emf.createEntityManager();
-		storageSubmodelAggregator = new StorageSubmodelAggregator(entityManager);
+		storageSubmodelAggregator = new StorageSubmodelAggregator(new SubmodelAggregator(), entityManager);
 
 		submodel = new Submodel(SUBMODEL_IDSHORT, SUBMODEL_IDENTIFIER);
 		submodel.addSubmodelElement(SUBMODEL_ELEMENT_PROPERTY);
 		storageSubmodelAggregator.createSubmodel(submodel);
 
-		VABSubmodelAPI vabAPI = new VABSubmodelAPI(new VABMapProvider(submodel));
-		storageAPI = new StorageSubmodelAPI(vabAPI, entityManager);
+		retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
 	}
 
 	@Test
@@ -162,20 +160,20 @@ public class TestStorageSubmodelAggregator {
 	}
 
 	private IStorageSubmodelElement getSingleStorageElementWithIdShort(String submodelId, String elementIdShort) {
-		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(submodelId, elementIdShort);
+		List<IStorageSubmodelElement> elements = retrievalAPI.getSubmodelElementHistoricValues(submodelId, elementIdShort);
 		if (elements.isEmpty()) {
 			return null;
 		}
 
-		IStorageSubmodelElement storedElement = elements.get(elements.size() - 1);
-		return storedElement;
+		IStorageSubmodelElement latestStoredElement = elements.get(0);
+		return latestStoredElement;
 	}
 
 	@After
 	public void tearDown() {
 		String[] submodelIds = { SUBMODEL_ID, NEW_SUBMODEL_ID };
 		for (String submodelId : submodelIds) {
-			List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(submodelId);
+			List<IStorageSubmodelElement> elements = retrievalAPI.getSubmodelElementHistoricValues(submodelId);
 			entityManager.getTransaction().begin();
 			elements.forEach((n) -> entityManager.remove(n));
 			entityManager.getTransaction().commit();

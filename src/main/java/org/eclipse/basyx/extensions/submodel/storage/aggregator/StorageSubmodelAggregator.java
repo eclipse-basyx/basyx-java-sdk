@@ -1,9 +1,10 @@
-package org.eclipse.basyx.extensions.submodel.storage;
+package org.eclipse.basyx.extensions.submodel.storage.aggregator;
 
+import java.util.Collection;
 import java.util.Map;
 
 import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementComponent;
-import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
+import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -13,12 +14,38 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 import jakarta.persistence.EntityManager;
 
-public class StorageSubmodelAggregator extends SubmodelAggregator {
+public class StorageSubmodelAggregator implements ISubmodelAggregator {
 	protected StorageSubmodelElementComponent submodelElementStorageComponent;
+	private ISubmodelAggregator decoratedSubmodelAggregator;
 
-	public StorageSubmodelAggregator(EntityManager entityManager) {
-		smApiFactory = new StorageSubmodelAPIFactory(entityManager);
+	public StorageSubmodelAggregator(ISubmodelAggregator decoratedSubmodelAggregator, EntityManager entityManager) {
+		this.decoratedSubmodelAggregator = decoratedSubmodelAggregator;
 		submodelElementStorageComponent = new StorageSubmodelElementComponent(entityManager);
+	}
+
+	@Override
+	public Collection<ISubmodel> getSubmodelList() {
+		return decoratedSubmodelAggregator.getSubmodelList();
+	}
+
+	@Override
+	public ISubmodel getSubmodel(IIdentifier identifier) throws ResourceNotFoundException {
+		return decoratedSubmodelAggregator.getSubmodel(identifier);
+	}
+
+	@Override
+	public ISubmodel getSubmodelbyIdShort(String idShort) throws ResourceNotFoundException {
+		return decoratedSubmodelAggregator.getSubmodelbyIdShort(idShort);
+	}
+
+	@Override
+	public ISubmodelAPI getSubmodelAPIById(IIdentifier identifier) throws ResourceNotFoundException {
+		return decoratedSubmodelAggregator.getSubmodelAPIById(identifier);
+	}
+
+	@Override
+	public ISubmodelAPI getSubmodelAPIByIdShort(String idShort) throws ResourceNotFoundException {
+		return decoratedSubmodelAggregator.getSubmodelAPIByIdShort(idShort);
 	}
 
 	@Override
@@ -27,7 +54,7 @@ public class StorageSubmodelAggregator extends SubmodelAggregator {
 		Map<String, ISubmodelElement> submodelElementMap = submodel.getSubmodelElements();
 		try {
 			submodelElementStorageComponent.beginTransaction();
-			addSubmodelToMap(submodelAPI);
+			decoratedSubmodelAggregator.createSubmodel(submodelAPI);
 			submodelElementMap.forEach((k, v) -> submodelElementStorageComponent.persistStorageElementCreation(submodel, v.getIdShort(), v.getLocalCopy()));
 			submodelElementStorageComponent.commitTransaction();
 		} catch (Exception e) {
@@ -39,8 +66,16 @@ public class StorageSubmodelAggregator extends SubmodelAggregator {
 
 	@Override
 	public void createSubmodel(Submodel submodel) {
-		ISubmodelAPI submodelAPI = smApiFactory.getSubmodelAPI(submodel);
-		createSubmodel(submodelAPI);
+		Map<String, ISubmodelElement> submodelElementMap = submodel.getSubmodelElements();
+		try {
+			submodelElementStorageComponent.beginTransaction();
+			decoratedSubmodelAggregator.createSubmodel(submodel);
+			submodelElementMap.forEach((k, v) -> submodelElementStorageComponent.persistStorageElementCreation(submodel, v.getIdShort(), v.getLocalCopy()));
+			submodelElementStorageComponent.commitTransaction();
+		} catch (Exception e) {
+			submodelElementStorageComponent.rollbackTransaction();
+			throw e;
+		}
 	}
 
 	@Override
@@ -48,8 +83,7 @@ public class StorageSubmodelAggregator extends SubmodelAggregator {
 		Map<String, ISubmodelElement> submodelElementMap = submodel.getSubmodelElements();
 		try {
 			submodelElementStorageComponent.beginTransaction();
-			ISubmodelAPI submodelAPI = smApiFactory.getSubmodelAPI(submodel);
-			addSubmodelToMap(submodelAPI);
+			decoratedSubmodelAggregator.updateSubmodel(submodel);
 			submodelElementMap.forEach((k, v) -> submodelElementStorageComponent.persistStorageElementUpdate(submodel, v.getIdShort(), v.getValue()));
 			submodelElementStorageComponent.commitTransaction();
 		} catch (Exception e) {
@@ -64,7 +98,7 @@ public class StorageSubmodelAggregator extends SubmodelAggregator {
 		Map<String, ISubmodelElement> submodelElementMap = submodel.getSubmodelElements();
 		try {
 			submodelElementStorageComponent.beginTransaction();
-			super.deleteSubmodelByIdentifier(identifier);
+			decoratedSubmodelAggregator.deleteSubmodelByIdentifier(identifier);
 			submodelElementMap.forEach((k, v) -> submodelElementStorageComponent.persistStorageElementDeletion(submodel, v.getIdShort()));
 			submodelElementStorageComponent.commitTransaction();
 		} catch (Exception e) {
@@ -79,7 +113,7 @@ public class StorageSubmodelAggregator extends SubmodelAggregator {
 		Map<String, ISubmodelElement> submodelElementMap = submodel.getSubmodelElements();
 		try {
 			submodelElementStorageComponent.beginTransaction();
-			super.deleteSubmodelByIdShort(idShort);
+			decoratedSubmodelAggregator.deleteSubmodelByIdShort(idShort);
 			submodelElementMap.forEach((k, v) -> submodelElementStorageComponent.persistStorageElementDeletion(submodel, v.getIdShort()));
 			submodelElementStorageComponent.commitTransaction();
 		} catch (Exception e) {
@@ -87,4 +121,5 @@ public class StorageSubmodelAggregator extends SubmodelAggregator {
 			throw e;
 		}
 	}
+
 }

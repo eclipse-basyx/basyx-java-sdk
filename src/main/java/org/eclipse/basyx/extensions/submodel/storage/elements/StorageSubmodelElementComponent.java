@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementRetrievalAPI;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
@@ -14,7 +15,6 @@ import org.eclipse.persistence.jpa.JpaEntityManager;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
 
 public class StorageSubmodelElementComponent {
 	private EntityManager entityManager;
@@ -99,6 +99,7 @@ public class StorageSubmodelElementComponent {
 	}
 
 	private void persistStorageElementCollectionUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
+		@SuppressWarnings("unchecked")
 		Collection<ISubmodelElement> collection = (Collection<ISubmodelElement>) newValue;
 		collection.forEach(element -> {
 			String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
@@ -122,9 +123,8 @@ public class StorageSubmodelElementComponent {
 	}
 
 	private boolean wasElementPartOfSubmodel(String submodelId, String elementIdShortPath) {
-		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(elementIdShortPath).build();
-		@SuppressWarnings("unchecked")
-		List<IStorageSubmodelElement> results = query.getResultList();
+		StorageSubmodelElementRetrievalAPI retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
+		List<IStorageSubmodelElement> results = retrievalAPI.getSubmodelElementHistoricValues(submodelId, elementIdShortPath);
 		return (!results.isEmpty());
 	}
 

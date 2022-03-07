@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelAPI;
+import org.eclipse.basyx.extensions.submodel.storage.api.StorageSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementComponent.StorageSubmodelElementOperations;
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementRetrievalAPI;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
@@ -70,6 +71,7 @@ public class TestStorageSubmodelAPI {
 	private final String SUBMODEL_ID = "testsubmodelid";
 
 	private StorageSubmodelAPI storageAPI;
+	private StorageSubmodelElementRetrievalAPI retrievalAPI;
 	private EntityManager entityManager;
 	private String storageOption;
 
@@ -93,6 +95,7 @@ public class TestStorageSubmodelAPI {
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory(storageOption);
 		entityManager = emf.createEntityManager();
 		storageAPI = new StorageSubmodelAPI(vabAPI, entityManager);
+		retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
 	}
 
 	@Test
@@ -323,6 +326,7 @@ public class TestStorageSubmodelAPI {
 		storageAPI.updateSubmodelElement(idShortPath, false);
 
 		IStorageSubmodelElement storedElement = getLastStorageElementWithIdShort(idShortPath);
+
 		assertFalse(Boolean.parseBoolean(storedElement.getSerializedElementValue()));
 		assertEquals(StorageSubmodelElementOperations.UPDATE, storedElement.getOperation());
 	}
@@ -336,14 +340,14 @@ public class TestStorageSubmodelAPI {
 		storageAPI.addSubmodelElement(prop);
 		storageAPI.updateSubmodelElement(idShortPath, false);
 
-		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODEL_ID, idShortPath);
+		List<IStorageSubmodelElement> elements = retrievalAPI.getSubmodelElementHistoricValues(SUBMODEL_ID, idShortPath);
 		assertEquals(created_elements, elements.size());
 
-		assertTrue(Boolean.parseBoolean(elements.get(0).getSerializedElementValue()));
-		assertEquals(StorageSubmodelElementOperations.CREATE, elements.get(0).getOperation());
+		assertFalse(Boolean.parseBoolean(elements.get(0).getSerializedElementValue()));
+		assertEquals(StorageSubmodelElementOperations.UPDATE, elements.get(0).getOperation());
 
-		assertFalse(Boolean.parseBoolean(elements.get(1).getSerializedElementValue()));
-		assertEquals(StorageSubmodelElementOperations.UPDATE, elements.get(1).getOperation());
+		assertTrue(Boolean.parseBoolean(elements.get(1).getSerializedElementValue()));
+		assertEquals(StorageSubmodelElementOperations.CREATE, elements.get(1).getOperation());
 	}
 
 	@Test
@@ -360,20 +364,20 @@ public class TestStorageSubmodelAPI {
 	}
 
 	private IStorageSubmodelElement getLastStorageElementWithIdShort(String idShort) {
-		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODEL_ID, idShort);
+		List<IStorageSubmodelElement> elements = retrievalAPI.getSubmodelElementHistoricValues(SUBMODEL_ID, idShort);
 
 		if (elements.isEmpty()) {
 			return null;
 		}
 
-		IStorageSubmodelElement storedElement = elements.get(elements.size() - 1);
+		IStorageSubmodelElement storedElement = elements.get(0);
 		return storedElement;
 	}
 
 	@After
 	public void tearDown() {
 		// clear database table again
-		List<IStorageSubmodelElement> elements = storageAPI.getSubmodelElementHistoricValues(SUBMODEL_ID);
+		List<IStorageSubmodelElement> elements = retrievalAPI.getSubmodelElementHistoricValues(SUBMODEL_ID);
 		entityManager.getTransaction().begin();
 		elements.forEach((n) -> entityManager.remove(n));
 		entityManager.getTransaction().commit();
