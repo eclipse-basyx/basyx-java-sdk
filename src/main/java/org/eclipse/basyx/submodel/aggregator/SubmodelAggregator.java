@@ -16,7 +16,7 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 /**
  * A class for aggregating local submodels based on the ISubmodelAPI
- *
+ * 
  * @author espen
  *
  */
@@ -47,6 +47,33 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		return api.getSubmodel();
 	}
 
+	private String getIdShort(IIdentifier identifier) {
+		for (ISubmodelAPI api : smApiMap.values()) {
+			ISubmodel submodel = api.getSubmodel();
+			String idValue = submodel.getIdentification().getId();
+			if (idValue.equals(identifier.getId())) {
+				return submodel.getIdShort();
+			}
+		}
+		throw new ResourceNotFoundException("The submodel with id '" + identifier.getId() + "' could not be found");
+	}
+
+	@Override
+	public void createSubmodel(Submodel submodel) {
+		updateSubmodel(submodel);
+	}
+
+	@Override
+	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
+		ISubmodelAPI submodelAPI = smApiFactory.getSubmodelAPI(submodel);
+		createSubmodel(submodelAPI);
+	}
+	
+	@Override
+	public void createSubmodel(ISubmodelAPI submodelAPI) {
+		smApiMap.put(submodelAPI.getSubmodel().getIdShort(), submodelAPI);
+	}
+
 	@Override
 	public ISubmodel getSubmodelbyIdShort(String idShort) throws ResourceNotFoundException {
 		ISubmodelAPI api = smApiMap.get(idShort);
@@ -55,38 +82,6 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		} else {
 			return api.getSubmodel();
 		}
-	}
-
-	@Override
-	public ISubmodelAPI getSubmodelAPIById(IIdentifier identifier) throws ResourceNotFoundException {
-		String idShort = getIdShort(identifier);
-		return smApiMap.get(idShort);
-	}
-
-	@Override
-	public ISubmodelAPI getSubmodelAPIByIdShort(String idShort) throws ResourceNotFoundException {
-		ISubmodelAPI api = smApiMap.get(idShort);
-		if (api == null) {
-			throw new ResourceNotFoundException("The submodel with idShort '" + idShort + "' could not be found");
-		}
-		return api;
-	}
-
-	@Override
-	public void createSubmodel(ISubmodelAPI submodelAPI) {
-		addSubmodelToMap(submodelAPI);
-	}
-
-	@Override
-	public void createSubmodel(Submodel submodel) {
-		ISubmodelAPI submodelAPI = smApiFactory.getSubmodelAPI(submodel);
-		createSubmodel(submodelAPI);
-	}
-
-	@Override
-	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
-		ISubmodelAPI submodelAPI = smApiFactory.getSubmodelAPI(submodel);
-		addSubmodelToMap(submodelAPI);
 	}
 
 	@Override
@@ -103,18 +98,18 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		smApiMap.remove(idShort);
 	}
 
-	protected String getIdShort(IIdentifier identifier) {
-		for (ISubmodelAPI api : smApiMap.values()) {
-			ISubmodel submodel = api.getSubmodel();
-			String idValue = submodel.getIdentification().getId();
-			if (idValue.equals(identifier.getId())) {
-				return submodel.getIdShort();
-			}
-		}
-		throw new ResourceNotFoundException("The submodel with id '" + identifier.getId() + "' could not be found");
+	@Override
+	public ISubmodelAPI getSubmodelAPIById(IIdentifier identifier) throws ResourceNotFoundException {
+		String idShort = getIdShort(identifier);
+		return smApiMap.get(idShort);
 	}
 
-	protected void addSubmodelToMap(ISubmodelAPI submodelAPI) {
-		smApiMap.put(submodelAPI.getSubmodel().getIdShort(), submodelAPI);
+	@Override
+	public ISubmodelAPI getSubmodelAPIByIdShort(String idShort) throws ResourceNotFoundException {
+		ISubmodelAPI api = smApiMap.get(idShort);
+		if (api == null) {
+			throw new ResourceNotFoundException("The submodel with idShort '" + idShort + "' could not be found");
+		}
+		return api;
 	}
 }
