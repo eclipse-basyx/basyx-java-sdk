@@ -19,9 +19,16 @@ import jakarta.persistence.EntityTransaction;
 public class StorageSubmodelElementComponent {
 	private EntityManager entityManager;
 	private EntityTransaction transaction;
+	private String submodelElementStorageOption;
 
 	public StorageSubmodelElementComponent(EntityManager entityManager) {
 		this.entityManager = entityManager;
+		this.submodelElementStorageOption = StorageSubmodelElementStorageOptions.COMPLETE;
+	}
+
+	public StorageSubmodelElementComponent(EntityManager entityManager, String submodelElementStorageOption) {
+		this.entityManager = entityManager;
+		this.submodelElementStorageOption = submodelElementStorageOption;
 	}
 
 	public void beginTransaction() {
@@ -42,6 +49,7 @@ public class StorageSubmodelElementComponent {
 	}
 
 	public void persistStorageElementCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
+		StorageSubmodelElementComponentHelper.isStorageQualifierSet(submodelElement);
 		if (StorageSubmodelElementComponentHelper.isElementStorable(submodelElement)) {
 			persistCreation(submodel, idShortPath, submodelElement);
 		}
@@ -56,30 +64,31 @@ public class StorageSubmodelElementComponent {
 	}
 
 	private void persistCollectionCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
+		persistElementCreation(submodel, idShortPath, submodelElement);
+
 		SubmodelElementCollection collection = (SubmodelElementCollection) submodelElement;
 		collection.getValue().forEach(element -> {
 			String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
 			persistStorageElementCreation(submodel, elementIdShortPath, element.getLocalCopy());
 		});
-		if (collection.getValue().isEmpty()) {
-			persistElementCreation(submodel, idShortPath, submodelElement);
-		}
 	}
 
 	private void persistElementCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
-		IStorageSubmodelElement element = getShared(submodel, idShortPath);
+		if (shouldStoreElement(submodelElement)) {
+			IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
-		element.setOperation(StorageSubmodelElementOperations.CREATE);
+			element.setOperation(StorageSubmodelElementOperations.CREATE);
 
-		if (!(submodelElement instanceof SubmodelElementCollection)) {
-			String serializedValue = submodelElement.getValue().toString();
-			element.setSerializedElementValue(serializedValue);
+			if (!(submodelElement instanceof SubmodelElementCollection)) {
+				String serializedValue = submodelElement.getValue().toString();
+				element.setSerializedElementValue(serializedValue);
+			}
+
+			element.setModelType(submodelElement.getModelType());
+			element.setModelTypeSpecial(StorageSubmodelElementComponentHelper.getModelTypeSpecial(submodelElement));
+
+			entityManager.persist(element);
 		}
-
-		element.setModelType(submodelElement.getModelType());
-		element.setModelTypeSpecial(StorageSubmodelElementComponentHelper.getModelTypeSpecial(submodelElement));
-
-		entityManager.persist(element);
 	}
 
 	public void persistStorageElementUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
@@ -99,6 +108,10 @@ public class StorageSubmodelElementComponent {
 	}
 
 	private void persistStorageElementCollectionUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
+		if (wasElementPartOfSubmodel(submodel.getIdentification().getId(), idShortPath)) {
+			persistStorageElementUpdate(submodel, idShortPath, null);
+		}
+
 		@SuppressWarnings("unchecked")
 		Collection<ISubmodelElement> collection = (Collection<ISubmodelElement>) newValue;
 		collection.forEach(element -> {
@@ -112,20 +125,54 @@ public class StorageSubmodelElementComponent {
 	}
 
 	private void persistUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
-		IStorageSubmodelElement element = getShared(submodel, idShortPath);
+		if (shouldStoreElement(getSubmodelElement(submodel, idShortPath))) {
+			IStorageSubmodelElement element = getShared(submodel, idShortPath);
 
-		element.setSerializedElementValue(newValue.toString());
-		element.setOperation(StorageSubmodelElementOperations.UPDATE);
-		element.setModelType(getSubmodelElement(submodel, idShortPath).getModelType());
-		element.setModelTypeSpecial(StorageSubmodelElementComponentHelper.getModelTypeSpecial(getSubmodelElement(submodel, idShortPath)));
+			if (newValue != null) {
+				element.setSerializedElementValue(newValue.toString());
+			}
+			element.setOperation(StorageSubmodelElementOperations.UPDATE);
+			element.setModelType(getSubmodelElement(submodel, idShortPath).getModelType());
+			element.setModelTypeSpecial(StorageSubmodelElementComponentHelper.getModelTypeSpecial(getSubmodelElement(submodel, idShortPath)));
 
-		entityManager.persist(element);
+			entityManager.persist(element);
+		}
+	}
+
+	private boolean shouldStoreElement(ISubmodelElement submodelElement) {
+		if (submodelElementStorageOption.equals(StorageSubmodelElementStorageOptions.COMPLETE)) {
+			return true;
+		}
+		if (submodelElementStorageOption.equals(StorageSubmodelElementStorageOptions.QUALIFIER)) {
+			return StorageSubmodelElementComponentHelper.isStorageQualifierSet(submodelElement);
+		}
+		return false;
 	}
 
 	private boolean wasElementPartOfSubmodel(String submodelId, String elementIdShortPath) {
 		StorageSubmodelElementRetrievalAPI retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
 		List<IStorageSubmodelElement> results = retrievalAPI.getSubmodelElementHistoricValues(submodelId, elementIdShortPath);
 		return (!results.isEmpty());
+	}
+
+	public void persistStorageElementDeletion(ISubmodel submodel, String idShortPath) {
+		if (shouldStoreElement(getSubmodelElement(submodel, idShortPath))) {
+			IStorageSubmodelElement element = getShared(submodel, idShortPath);
+
+			element.setOperation(StorageSubmodelElementOperations.DELETE);
+
+			entityManager.persist(element);
+		}
+	}
+
+	private IStorageSubmodelElement getShared(ISubmodel submodel, String idShortPath) {
+		IStorageSubmodelElement element = StorageSubmodelElementFactory.create(getStorageClassname());
+
+		element.setSubmodelId(submodel.getIdentification().getId());
+		element.setElementIdShortPath(idShortPath);
+		element.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+		return element;
 	}
 
 	private ISubmodelElement getSubmodelElement(ISubmodel submodel, String elementIdShortPath) {
@@ -143,31 +190,7 @@ public class StorageSubmodelElementComponent {
 		return submodel.getSubmodelElement(elementIdShortPath);
 	}
 
-	public void persistStorageElementDeletion(ISubmodel submodel, String idShortPath) {
-		IStorageSubmodelElement element = getShared(submodel, idShortPath);
-
-		element.setOperation(StorageSubmodelElementOperations.DELETE);
-
-		entityManager.persist(element);
-	}
-
-	private IStorageSubmodelElement getShared(ISubmodel submodel, String idShortPath) {
-		IStorageSubmodelElement element = StorageSubmodelElementFactory.create(getStorageClassname());
-
-		element.setSubmodelId(submodel.getIdentification().getId());
-		element.setElementIdShortPath(idShortPath);
-		element.setTimestamp(new Timestamp(System.currentTimeMillis()));
-
-		return element;
-	}
-
 	private String getStorageClassname() {
 		return entityManager.unwrap(JpaEntityManager.class).getServerSession().getDescriptors().entrySet().iterator().next().getValue().getJavaClassName();
-	}
-
-	public static class StorageSubmodelElementOperations {
-		public static String CREATE = "CREATE";
-		public static String UPDATE = "UPDATE";
-		public static String DELETE = "DELETE";
 	}
 }

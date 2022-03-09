@@ -23,6 +23,11 @@ public class StorageSubmodelAggregator implements ISubmodelAggregator {
 		submodelElementStorageComponent = new StorageSubmodelElementComponent(entityManager);
 	}
 
+	public StorageSubmodelAggregator(ISubmodelAggregator decoratedSubmodelAggregator, EntityManager entityManager, String submodelElementStorageOption) {
+		this.decoratedSubmodelAggregator = decoratedSubmodelAggregator;
+		submodelElementStorageComponent = new StorageSubmodelElementComponent(entityManager, submodelElementStorageOption);
+	}
+
 	@Override
 	public Collection<ISubmodel> getSubmodelList() {
 		return decoratedSubmodelAggregator.getSubmodelList();

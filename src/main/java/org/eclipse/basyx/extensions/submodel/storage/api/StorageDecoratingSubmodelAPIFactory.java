@@ -9,14 +9,17 @@ import jakarta.persistence.EntityManager;
 public class StorageDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;
 	private EntityManager entityManager;
+	private String submodelElementStorageOption;
 
-	public StorageDecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, EntityManager entityManager) {
+	public StorageDecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, EntityManager entityManager, String submodelElementStorageOption) {
 		this.apiFactory = factoryToBeDecorated;
 		this.entityManager = entityManager;
+		this.submodelElementStorageOption = submodelElementStorageOption;
 	}
 
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
-		return new StorageSubmodelAPI(apiFactory.getSubmodelAPI(submodel), entityManager);
+		return new StorageSubmodelAPI(apiFactory.getSubmodelAPI(submodel), entityManager, submodelElementStorageOption);
 	}
+
 }

@@ -32,6 +32,12 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 		this.submodelElementStorageComponent = new StorageSubmodelElementComponent(this.entityManager);
 	}
 
+	public StorageSubmodelAPI(ISubmodelAPI submodelAPI, EntityManager entityManager, String submodelElementStorageOption) {
+		this.submodelAPI = submodelAPI;
+		this.entityManager = entityManager;
+		this.submodelElementStorageComponent = new StorageSubmodelElementComponent(this.entityManager, submodelElementStorageOption);
+	}
+
 	@Override
 	public ISubmodel getSubmodel() {
 		return submodelAPI.getSubmodel();

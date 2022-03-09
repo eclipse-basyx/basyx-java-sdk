@@ -1,10 +1,13 @@
 package org.eclipse.basyx.extensions.submodel.storage.elements;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IConstraint;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifier;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.Blob;
@@ -19,6 +22,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.relationship.Ann
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.relationship.RelationshipElement;
 
 public class StorageSubmodelElementComponentHelper {
+	public static final String QUALIFIER = "storage";
 
 	public static String getModelTypeSpecial(ISubmodelElement submodelElement) {
 		Map<String, Object> elementMap = submodelElement.getLocalCopy();
@@ -35,4 +39,22 @@ public class StorageSubmodelElementComponentHelper {
 				File.MODELTYPE, AnnotatedRelationshipElement.MODELTYPE, RelationshipElement.MODELTYPE, Entity.MODELTYPE);
 		return supportedModelTypes.contains(submodelElement.getModelType());
 	}
+
+	public static boolean isStorageQualifierSet(ISubmodelElement submodelElement) {
+		Collection<IConstraint> qualifiers = submodelElement.getQualifiers();
+
+		for (IConstraint qualifierConstraint : qualifiers) {
+			Qualifier qualifier = (Qualifier) qualifierConstraint;
+			if (isTrueStorageQualifier(qualifier)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static boolean isTrueStorageQualifier(Qualifier qualifier) {
+		return qualifier.getType().equals(QUALIFIER) && qualifier.getValue().equals("true");
+	}
+
 }
