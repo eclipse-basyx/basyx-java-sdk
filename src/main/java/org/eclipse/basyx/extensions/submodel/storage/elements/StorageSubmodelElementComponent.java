@@ -49,23 +49,20 @@ public class StorageSubmodelElementComponent {
 	}
 
 	public void persistStorageElementCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
-		StorageSubmodelElementComponentHelper.isStorageQualifierSet(submodelElement);
-		if (StorageSubmodelElementComponentHelper.isElementStorable(submodelElement)) {
-			persistCreation(submodel, idShortPath, submodelElement);
+		idShortPath = VABPathTools.stripSlashes(idShortPath);
+		if (StorageSubmodelElementComponentHelper.isElementPersistable(submodelElement)) {
+			if (isElementPersisted(submodel.getIdentification().getId(), idShortPath)) {
+				persist(submodelElement, StorageSubmodelElementOperations.OVERWRITE, submodel.getIdentification().getId(), idShortPath, submodelElement.getValue());
+			} else {
+				persist(submodelElement, StorageSubmodelElementOperations.CREATE, submodel.getIdentification().getId(), idShortPath, submodelElement.getValue());
+			}
+			if (submodelElement instanceof SubmodelElementCollection) {
+				persistCreationOfCollectionElements(submodel, idShortPath, submodelElement);
+			}
 		}
 	}
 
-	private void persistCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
-		if (submodelElement instanceof SubmodelElementCollection) {
-			persistCollectionCreation(submodel, idShortPath, submodelElement);
-		} else {
-			persistElementCreation(submodel, idShortPath, submodelElement);
-		}
-	}
-
-	private void persistCollectionCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
-		persistElementCreation(submodel, idShortPath, submodelElement);
-
+	private void persistCreationOfCollectionElements(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
 		SubmodelElementCollection collection = (SubmodelElementCollection) submodelElement;
 		collection.getValue().forEach(element -> {
 			String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
@@ -73,50 +70,24 @@ public class StorageSubmodelElementComponent {
 		});
 	}
 
-	private void persistElementCreation(ISubmodel submodel, String idShortPath, SubmodelElement submodelElement) {
-		if (shouldStoreElement(submodelElement)) {
-			IStorageSubmodelElement element = getShared(submodel, idShortPath);
-
-			element.setOperation(StorageSubmodelElementOperations.CREATE);
-
-			if (!(submodelElement instanceof SubmodelElementCollection)) {
-				String serializedValue = submodelElement.getValue().toString();
-				element.setSerializedElementValue(serializedValue);
-			}
-
-			element.setModelType(submodelElement.getModelType());
-			element.setModelTypeSpecial(StorageSubmodelElementComponentHelper.getModelTypeSpecial(submodelElement));
-
-			entityManager.persist(element);
-		}
-	}
-
 	public void persistStorageElementUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
-		if (newValue instanceof Collection<?>) {
-			persistStorageElementCollectionUpdate(submodel, idShortPath, newValue);
-		} else {
-			persistStorageElementSingleUpdate(submodel, idShortPath, newValue);
-		}
-	}
-
-	private void persistStorageElementSingleUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
-		if (wasElementPartOfSubmodel(submodel.getIdentification().getId(), idShortPath)) {
-			persistUpdate(submodel, idShortPath, newValue);
+		idShortPath = VABPathTools.stripSlashes(idShortPath);
+		if (isElementPersisted(submodel.getIdentification().getId(), idShortPath)) {
+			persist(getOldSubmodelElement(submodel, idShortPath), StorageSubmodelElementOperations.UPDATE, submodel.getIdentification().getId(), idShortPath, newValue);
+			if (newValue instanceof Collection<?>) {
+				persistStorageElementCollectionUpdate(submodel, idShortPath, newValue);
+			}
 		} else {
 			persistStorageElementCreation(submodel, idShortPath, submodel.getSubmodelElement(idShortPath).getLocalCopy());
 		}
 	}
 
 	private void persistStorageElementCollectionUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
-		if (wasElementPartOfSubmodel(submodel.getIdentification().getId(), idShortPath)) {
-			persistStorageElementUpdate(submodel, idShortPath, null);
-		}
-
 		@SuppressWarnings("unchecked")
 		Collection<ISubmodelElement> collection = (Collection<ISubmodelElement>) newValue;
 		collection.forEach(element -> {
 			String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
-			if (wasElementPartOfSubmodel(submodel.getIdentification().getId(), elementIdShortPath)) {
+			if (isElementPersisted(submodel.getIdentification().getId(), elementIdShortPath)) {
 				persistStorageElementUpdate(submodel, elementIdShortPath, element.getValue());
 			} else {
 				persistStorageElementCreation(submodel, elementIdShortPath, element.getLocalCopy());
@@ -124,18 +95,10 @@ public class StorageSubmodelElementComponent {
 		});
 	}
 
-	private void persistUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
-		if (shouldStoreElement(getSubmodelElement(submodel, idShortPath))) {
-			IStorageSubmodelElement element = getShared(submodel, idShortPath);
-
-			if (newValue != null) {
-				element.setSerializedElementValue(newValue.toString());
-			}
-			element.setOperation(StorageSubmodelElementOperations.UPDATE);
-			element.setModelType(getSubmodelElement(submodel, idShortPath).getModelType());
-			element.setModelTypeSpecial(StorageSubmodelElementComponentHelper.getModelTypeSpecial(getSubmodelElement(submodel, idShortPath)));
-
-			entityManager.persist(element);
+	public void persistStorageElementDeletion(ISubmodel submodel, String idShortPath) {
+		idShortPath = VABPathTools.stripSlashes(idShortPath);
+		if (isElementPersisted(submodel.getIdentification().getId(), idShortPath)) {
+			persist(getOldSubmodelElement(submodel, idShortPath), StorageSubmodelElementOperations.DELETE, submodel.getIdentification().getId(), idShortPath, null);
 		}
 	}
 
@@ -149,33 +112,39 @@ public class StorageSubmodelElementComponent {
 		return false;
 	}
 
-	private boolean wasElementPartOfSubmodel(String submodelId, String elementIdShortPath) {
+	private boolean isElementPersisted(String submodelId, String elementIdShortPath) {
 		StorageSubmodelElementRetrievalAPI retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
 		List<IStorageSubmodelElement> results = retrievalAPI.getSubmodelElementHistoricValues(submodelId, elementIdShortPath);
 		return (!results.isEmpty());
 	}
 
-	public void persistStorageElementDeletion(ISubmodel submodel, String idShortPath) {
-		if (shouldStoreElement(getSubmodelElement(submodel, idShortPath))) {
-			IStorageSubmodelElement element = getShared(submodel, idShortPath);
-
-			element.setOperation(StorageSubmodelElementOperations.DELETE);
+	private void persist(ISubmodelElement submodelElement, String operation, String submodelId, String idShortPath, Object newValue) {
+		if (shouldStoreElement(submodelElement)) {
+			IStorageSubmodelElement element = createStorageSubmodelElement(idShortPath, submodelElement.getModelType(), StorageSubmodelElementComponentHelper.getModelTypeSpecial(submodelElement), operation, submodelId, newValue);
 
 			entityManager.persist(element);
 		}
 	}
 
-	private IStorageSubmodelElement getShared(ISubmodel submodel, String idShortPath) {
+	private IStorageSubmodelElement createStorageSubmodelElement(String idShortPath, String modelType, String modelTypeSpecial, String operation, String submodelId, Object newValue) {
 		IStorageSubmodelElement element = StorageSubmodelElementFactory.create(getStorageClassname());
 
-		element.setSubmodelId(submodel.getIdentification().getId());
 		element.setElementIdShortPath(idShortPath);
+		element.setModelType(modelType);
+		element.setModelTypeSpecial(modelTypeSpecial);
+		element.setOperation(operation);
+		element.setSubmodelId(submodelId);
 		element.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+		if (!(newValue == null || modelType.equals(SubmodelElementCollection.MODELTYPE))) {
+			String serializedValue = newValue.toString();
+			element.setSerializedElementValue(serializedValue);
+		}
 
 		return element;
 	}
 
-	private ISubmodelElement getSubmodelElement(ISubmodel submodel, String elementIdShortPath) {
+	private ISubmodelElement getOldSubmodelElement(ISubmodel submodel, String elementIdShortPath) {
 		String[] idShortPathArray = VABPathTools.splitPath(elementIdShortPath);
 		if (idShortPathArray.length > 1) {
 			ISubmodelElementCollection collection = (ISubmodelElementCollection) submodel.getSubmodelElement(idShortPathArray[0]);

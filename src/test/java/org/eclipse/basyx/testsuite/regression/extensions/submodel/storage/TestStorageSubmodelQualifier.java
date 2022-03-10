@@ -127,6 +127,10 @@ public class TestStorageSubmodelQualifier {
 		storageAPI.updateSubmodelElement(parentElementIdShort, collectionToStore.getValue());
 
 		checkElementUpdate(parentElementIdShort, propToStoreIdShort, propVolatileIdShort, propToStore);
+
+		storageAPI.deleteSubmodelElement(parentElementIdShort);
+
+		checkElementDelete(parentElementIdShort, propToStoreIdShort, propVolatileIdShort);
 	}
 
 	private Property createPropWithQualifier(String elemIdShort) {
@@ -164,6 +168,11 @@ public class TestStorageSubmodelQualifier {
 		assertEquals(StorageSubmodelElementOperations.UPDATE, storedProp.getOperation());
 
 		assertTrue(retrievalAPI.getSubmodelElementHistoricValues(SUBMODEL_ID, VABPathTools.concatenatePaths(parentElementIdShort, propVolatileIdShort)).isEmpty());
+	}
+
+	private void checkElementDelete(String parentElementIdShort, String propStoredIdShort, String propVolatileIdShort) {
+		IStorageSubmodelElement storedCollection = retrievalAPI.getSubmodelElementHistoricValues(SUBMODEL_ID, parentElementIdShort).get(0);
+		assertEquals(StorageSubmodelElementOperations.DELETE, storedCollection.getOperation());
 	}
 
 	@After

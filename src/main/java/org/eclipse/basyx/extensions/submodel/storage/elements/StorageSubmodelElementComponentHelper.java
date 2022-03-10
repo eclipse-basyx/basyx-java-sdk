@@ -34,7 +34,7 @@ public class StorageSubmodelElementComponentHelper {
 		return null;
 	}
 
-	public static boolean isElementStorable(SubmodelElement submodelElement) {
+	public static boolean isElementPersistable(SubmodelElement submodelElement) {
 		List<String> supportedModelTypes = Arrays.asList(Property.MODELTYPE, SubmodelElementCollection.MODELTYPE, Range.MODELTYPE, MultiLanguageProperty.MODELTYPE, ReferenceElement.MODELTYPE, BasicEvent.MODELTYPE, Blob.MODELTYPE,
 				File.MODELTYPE, AnnotatedRelationshipElement.MODELTYPE, RelationshipElement.MODELTYPE, Entity.MODELTYPE);
 		return supportedModelTypes.contains(submodelElement.getModelType());
@@ -45,7 +45,7 @@ public class StorageSubmodelElementComponentHelper {
 
 		for (IConstraint qualifierConstraint : qualifiers) {
 			Qualifier qualifier = (Qualifier) qualifierConstraint;
-			if (isTrueStorageQualifier(qualifier)) {
+			if (isStorageQualifierTrue(qualifier)) {
 				return true;
 			}
 		}
@@ -53,7 +53,7 @@ public class StorageSubmodelElementComponentHelper {
 		return false;
 	}
 
-	private static boolean isTrueStorageQualifier(Qualifier qualifier) {
+	private static boolean isStorageQualifierTrue(Qualifier qualifier) {
 		return qualifier.getType().equals(QUALIFIER) && qualifier.getValue().equals("true");
 	}
 
