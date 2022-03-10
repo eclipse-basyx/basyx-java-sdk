@@ -16,9 +16,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
+import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -198,7 +199,7 @@ public class SubmodelProvider implements IModelProvider {
 				submodelAPI.updateSubmodelElement(idshortPath, newValue);
 			} else {
 				
-				SubmodelElement element = SubmodelElement.createAsFacade((Map<String, Object>) newValue);
+				ISubmodelElement element = SubmodelElementFacadeFactory.createSubmodelElement((Map<String, Object>) newValue);
 				
 				if(!path.endsWith(element.getIdShort())) {
 					throw new MalformedRequestException("The idShort of given Element '"
