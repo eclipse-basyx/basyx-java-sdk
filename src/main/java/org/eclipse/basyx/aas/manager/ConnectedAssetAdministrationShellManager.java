@@ -5,7 +5,9 @@ package org.eclipse.basyx.aas.manager;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.aggregator.AASAggregatorAPIHelper;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
@@ -21,7 +23,6 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.connected.ConnectedSubmodel;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
-import org.eclipse.basyx.vab.exception.FeatureNotImplementedException;
 import org.eclipse.basyx.vab.factory.java.ModelProxyFactory;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -106,9 +107,16 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		return proxyFactory.createProxy(addr);
 	}
 
+	/**
+	 * Retrieves all AASs registered.
+	 * This can take a long time if many AASs are present! Use with caution!
+	 * 
+	 * @return all AASs registered
+	 */
 	@Override
 	public Collection<IAssetAdministrationShell> retrieveAASAll() {
-		throw new FeatureNotImplementedException();
+		List<AASDescriptor> aasDescriptors = aasDirectory.lookupAll();
+		return aasDescriptors.stream().map(d -> retrieveAAS(d.getIdentifier())).collect(Collectors.toList());
 	}
 
 	@Override

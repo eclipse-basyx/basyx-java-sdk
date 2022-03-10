@@ -281,7 +281,7 @@ public abstract class TestSubmodelSuite {
 		Property bigNumberProp = new Property();
 		bigNumberProp.setIdShort("bignumber_prop01");
 		BigInteger bignumber = new BigInteger("9223372036854775817");
-		property.setValue(bignumber);
+		bigNumberProp.setValue(bignumber);
 		ret.put(bigNumberProp.getIdShort(), bigNumberProp);
 
 		return ret;

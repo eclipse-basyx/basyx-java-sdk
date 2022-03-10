@@ -11,7 +11,10 @@ package org.eclipse.basyx.testsuite.regression.aas.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.Collection;
 
 import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
@@ -181,6 +184,28 @@ public class TestConnectedAssetAdministrationShellManager {
 		} catch (ResourceNotFoundException e) {
 			// Expected
 		}
+	}
+	
+	@Test
+	public void testRetrieveAll() {
+		IIdentifier aasId1 = new Identifier(IdentifierType.CUSTOM, "aasId1");
+		String aasIdShort1 = "aasName1";
+		IIdentifier aasId2 = new Identifier(IdentifierType.CUSTOM, "aasId2");
+		String aasIdShort2 = "aasName2";
+		
+		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
+		prepareConnectorProvider(provider);
+		
+		// Create the AASs
+		AssetAdministrationShell aas1 = createTestAAS(aasId1, aasIdShort1);
+		AssetAdministrationShell aas2 = createTestAAS(aasId2, aasIdShort2);
+		manager.createAAS(aas1, "");
+		manager.createAAS(aas2, "");
+
+		// Retrieve them
+		Collection<IAssetAdministrationShell> connectedAASs = manager.retrieveAASAll();
+		assertEquals(2, connectedAASs.size());
+		connectedAASs.stream().forEach(aas -> assertTrue(aas.getIdShort().equals(aasIdShort1) || aas.getIdShort().equals(aasIdShort2)));
 	}
 
 	/**
