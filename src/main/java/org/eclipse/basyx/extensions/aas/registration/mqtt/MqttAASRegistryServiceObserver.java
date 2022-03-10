@@ -56,6 +56,20 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 	}
 
 	/**
+	 * Constructor for creating an MqttClient with authentication and a custom persistence strategy
+	 *
+	 * @param serverEndpoint endpoint of mqtt broker
+	 * @param clientId unique client identifier
+	 * @param user username for authentication with broker
+	 * @param pw password for authentication with broker
+	 * @param mqttPersistence custom mqtt persistence strategy
+	 */
+	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw,
+			MqttClientPersistence mqttPersistence) throws MqttException {
+		super(serverEndpoint, clientId, user, pw, mqttPersistence);
+	}
+
+	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
 	 *  
 	 * @param serverEndpoint endpoint of mqtt broker
