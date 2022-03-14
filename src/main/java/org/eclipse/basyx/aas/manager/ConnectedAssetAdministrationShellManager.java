@@ -170,7 +170,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	public void createAAS(AssetAdministrationShell aas, String endpoint) {
 		endpoint = VABPathTools.stripSlashes(endpoint);
 
-		IModelProvider provider = connectorFactory.getConnector(endpoint);
+		IModelProvider provider = connectorFactory.create(endpoint);
 		AASAggregatorProxy proxy = new AASAggregatorProxy(provider);
 		proxy.createAAS(aas);
 		String combinedEndpoint = VABPathTools.concatenatePaths(endpoint, AASAggregatorAPIHelper.getAASAccessPath(aas.getIdentification()));

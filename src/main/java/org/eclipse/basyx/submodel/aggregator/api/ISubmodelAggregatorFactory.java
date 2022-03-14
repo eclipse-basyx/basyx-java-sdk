@@ -7,6 +7,8 @@
  * 
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
+
+
 package org.eclipse.basyx.submodel.aggregator.api;
 
 /**

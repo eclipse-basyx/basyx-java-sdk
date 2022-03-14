@@ -1,14 +1,9 @@
-/*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+/**
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
- * SPDX-License-Identifier: EPL-2.0
- ******************************************************************************/
+ */
 package org.eclipse.basyx.vab.protocol.api;
 
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
@@ -19,10 +14,11 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
  *
  */
 public interface IConnectorFactory {
+
 	/**
 	 * Gets an IModelProvider connecting the specific address.
-	 * @deprecated This method is deprecated please use {@link #create(String)}
-	 * 
+	 * @deprecated This method is deprecated please use {@link #create(Submodel)}
+	 *
 	 * @param addr 
 	 * 		The address for which a provider is returned. Must be an address limited to one included endpoint.
 	 * 		For example, it does NOT support basyx://localhost:6998//http://localhost/a/b/c, but http://localhost/a/b/c
