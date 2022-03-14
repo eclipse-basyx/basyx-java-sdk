@@ -20,8 +20,14 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 public interface IAASAPIFactory {
 	/**
 	 * Return a constructed AAS API based on a raw model provider
+	 * @deprecated This method is deprecated please use {@link #create(AssetAdministrationShell)}
 	 * 
 	 * @return
 	 */
+	@Deprecated
 	public IAASAPI getAASApi(AssetAdministrationShell aas);
+	
+	public default IAASAPI create(AssetAdministrationShell aas) {
+		return getAASApi(aas);
+	}
 }

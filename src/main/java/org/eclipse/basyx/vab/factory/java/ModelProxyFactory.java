@@ -36,7 +36,7 @@ public class ModelProxyFactory {
 	public VABElementProxy createProxy(String path) {
 		// Create a model provider for the first endpoint
 		String addressEntry = VABPathTools.getFirstEndpoint(path);
-		IModelProvider provider = connectorFactory.getConnector(addressEntry);
+		IModelProvider provider = connectorFactory.create(addressEntry);
 		
 		// Return a proxy for the whole path using the connector to the first endpoint
 		String subPath = VABPathTools.removeFirstEndpoint(path);

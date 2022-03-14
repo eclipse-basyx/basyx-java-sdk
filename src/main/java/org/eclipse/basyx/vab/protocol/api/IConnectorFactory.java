@@ -16,6 +16,7 @@ public interface IConnectorFactory {
 
 	/**
 	 * Gets an IModelProvider connecting the specific address.
+	 * @deprecated This method is deprecated please use {@link #create(String)}
 	 *
 	 * @param addr 
 	 * 		The address for which a provider is returned. Must be an address limited to one included endpoint.
@@ -25,5 +26,10 @@ public interface IConnectorFactory {
 	 * 		E.g. the returned model provider for http://localhost/a/b/c directly points to the element c. Therefore, 
 	 * 		getConnector("http://localhost/a/b/c").getModelPropertyValue(""); returns the value of the element c.  
 	 */
+	@Deprecated
 	public IModelProvider getConnector(String addr);
+	
+	public default IModelProvider create(String addr) {
+		return getConnector(addr);
+	}
 }

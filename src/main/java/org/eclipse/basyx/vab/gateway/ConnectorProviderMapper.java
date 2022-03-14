@@ -45,7 +45,7 @@ public class ConnectorProviderMapper implements IConnectorFactory {
 
 	@Override
 	public IModelProvider getConnector(String addr) {
-		return providerMap.get(getPrefix(addr)).getConnector(addr);
+		return providerMap.get(getPrefix(addr)).create(addr);
 	}
 
 	/**

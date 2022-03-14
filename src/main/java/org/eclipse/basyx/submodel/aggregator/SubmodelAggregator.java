@@ -65,7 +65,7 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 
 	@Override
 	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
-		ISubmodelAPI submodelAPI = smApiFactory.getSubmodelAPI(submodel);
+		ISubmodelAPI submodelAPI = smApiFactory.create(submodel);
 		createSubmodel(submodelAPI);
 	}
 	

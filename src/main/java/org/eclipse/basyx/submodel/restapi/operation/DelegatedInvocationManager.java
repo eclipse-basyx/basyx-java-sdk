@@ -55,7 +55,7 @@ public class DelegatedInvocationManager {
 	public Object invokeDelegatedOperation(Operation operation, Object... parameters) {
 		String delegatedUrl = getDelegatedURL(operation);	
 		return connectorFactory
-				.getConnector(delegatedUrl)
+				.create(delegatedUrl)
 				.invokeOperation("", parameters);
 	}
 	
