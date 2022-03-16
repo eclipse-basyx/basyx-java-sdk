@@ -117,7 +117,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	public MultiSubmodelProvider() {
 		this.setAasApiProvider(new VABAASAPIFactory());
 		this.setSmAggregator(new SubmodelAggregator());
-		IAASAPI aasApi = getAasApiProvider().getAASApi(new AssetAdministrationShell());
+		IAASAPI aasApi = getAasApiProvider().create(new AssetAdministrationShell());
 		setAssetAdministrationShell(new AASModelProvider(aasApi));
 	}
 
@@ -326,7 +326,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 					}
 				}
 
-				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> getConnectorFactory().getConnector(endpoint)).map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m))
+				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> getConnectorFactory().create(endpoint)).map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m))
 						.collect(Collectors.toList());
 				submodels.addAll(remoteSms);
 			}
@@ -364,7 +364,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	private void createAssetAdministrationShell(Object newAAS) {
 		Map<String, Object> newAASMap = (Map<String, Object>) newAAS;
 		AssetAdministrationShell shell = AssetAdministrationShell.createAsFacade(newAASMap);
-		IAASAPI aasApi = getAasApiProvider().getAASApi(shell);
+		IAASAPI aasApi = getAasApiProvider().create(shell);
 		aas_provider = new AASModelProvider(aasApi);
 	}
 
@@ -467,7 +467,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 		// Remove "/submodel" since it will be readded later
 		endpoint = endpoint.substring(0, endpoint.length() - SubmodelProvider.SUBMODEL.length() - 1);
 
-		return getConnectorFactory().getConnector(endpoint);
+		return getConnectorFactory().create(endpoint);
 	}
 
 	/**

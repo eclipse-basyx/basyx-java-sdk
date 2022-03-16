@@ -27,6 +27,6 @@ public class AuthorizedDecoratingSubmodelAPIFactory implements ISubmodelAPIFacto
 
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
-		return new AuthorizedSubmodelAPI(submodelAPIFactory.getSubmodelAPI(submodel));
+		return new AuthorizedSubmodelAPI(submodelAPIFactory.create(submodel));
 	}
 }

@@ -32,7 +32,7 @@ public class AASAPIFactory implements IAASAPIFactory {
 
 	@Override
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
-		return aasAPIFactory.getAASApi(aas);
+		return aasAPIFactory.create(aas);
 	}
 
 }

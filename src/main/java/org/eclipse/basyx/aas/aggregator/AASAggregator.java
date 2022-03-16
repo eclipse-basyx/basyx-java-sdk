@@ -131,7 +131,7 @@ public class AASAggregator implements IAASAggregator {
 	@Override
 	public void updateAAS(AssetAdministrationShell aas) {
 		MultiSubmodelProvider oldProvider = (MultiSubmodelProvider) getAASProvider(aas.getIdentification());
-		IAASAPI aasApi = aasApiFactory.getAASApi(aas);
+		IAASAPI aasApi = aasApiFactory.create(aas);
 		AASModelProvider contentProvider = new AASModelProvider(aasApi);
 		IConnectorFactory connectorFactory = oldProvider.getConnectorFactory();
 
@@ -142,7 +142,7 @@ public class AASAggregator implements IAASAggregator {
 
 	private MultiSubmodelProvider createMultiSubmodelProvider(AssetAdministrationShell aas) {
 		IConnectorFactory connectorFactory = new HTTPConnectorFactory();
-		IAASAPI aasApi = aasApiFactory.getAASApi(aas);
+		IAASAPI aasApi = aasApiFactory.create(aas);
 		AASModelProvider contentProvider = new AASModelProvider(aasApi);
 		return new MultiSubmodelProvider(contentProvider, registry, connectorFactory, aasApiFactory, submodelAggregatorFactory.create());
 	}

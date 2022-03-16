@@ -27,6 +27,6 @@ public class AuthorizedDecoratingAASAPIFactory implements IAASAPIFactory {
 
 	@Override
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
-		return new AuthorizedAASAPI(apiFactory.getAASApi(aas));
+		return new AuthorizedAASAPI(apiFactory.create(aas));
 	}
 }
