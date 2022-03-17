@@ -3,7 +3,7 @@ package org.eclipse.basyx.extensions.submodel.storage.aggregator;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementComponent;
+import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelElementComponent;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;

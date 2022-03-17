@@ -12,7 +12,7 @@ package org.eclipse.basyx.extensions.submodel.storage.api;
 
 import java.util.Collection;
 
-import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementComponent;
+import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelElementComponent;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;

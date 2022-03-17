@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelElementComponentHelper;
 import org.eclipse.basyx.extensions.submodel.storage.api.StorageSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
-import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementComponentHelper;
 import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementOperations;
 import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementStorageOptions;
 import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementRetrievalAPI;

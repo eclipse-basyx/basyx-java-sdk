@@ -1,9 +1,13 @@
-package org.eclipse.basyx.extensions.submodel.storage.elements;
+package org.eclipse.basyx.extensions.submodel.storage;
 
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
+import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementFactory;
+import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementOperations;
+import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementStorageOptions;
 import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementRetrievalAPI;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;

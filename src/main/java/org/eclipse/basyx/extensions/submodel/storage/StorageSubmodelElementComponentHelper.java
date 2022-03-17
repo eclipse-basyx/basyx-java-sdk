@@ -1,4 +1,4 @@
-package org.eclipse.basyx.extensions.submodel.storage.elements;
+package org.eclipse.basyx.extensions.submodel.storage;
 
 import java.util.Arrays;
 import java.util.Collection;
