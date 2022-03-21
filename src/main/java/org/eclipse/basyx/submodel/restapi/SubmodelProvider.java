@@ -273,8 +273,7 @@ public class SubmodelProvider implements IModelProvider {
 	}
 
 	private Object invokeAsync(String path, Object... parameters) {
-		String pathWithoutAsyncInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC),
-				"");
+		String pathWithoutAsyncInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC), "");
 		String strippedPathWithoutAsyncInvoke = VABPathTools.stripSlashes(pathWithoutAsyncInvoke);
 		return submodelAPI.invokeAsync(strippedPathWithoutAsyncInvoke, parameters);
 	}
@@ -292,6 +291,6 @@ public class SubmodelProvider implements IModelProvider {
 	}
 	
 	private String removeSMElementPrefix(String path) {
-		return  path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
+		return path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
 	}
 }

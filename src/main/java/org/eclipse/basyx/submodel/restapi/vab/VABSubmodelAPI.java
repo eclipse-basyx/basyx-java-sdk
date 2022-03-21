@@ -119,8 +119,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public Object invokeOperation(String idShortPath, Object... params) {
-		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementSyncInvokePath(idShortPath),
-				params);
+		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementSyncInvokePath(idShortPath), params);
 	}
 	
 	
