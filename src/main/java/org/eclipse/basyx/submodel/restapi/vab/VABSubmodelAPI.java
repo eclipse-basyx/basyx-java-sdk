@@ -20,8 +20,8 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOpera
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.restapi.MultiSubmodelElementProvider;
-import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.SubmodelAPIHelper;
+import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
@@ -119,13 +119,14 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public Object invokeOperation(String idShortPath, Object... params) {
-		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementPath(idShortPath), params);
+		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementSyncInvokePath(idShortPath),
+				params);
 	}
 	
 	
 	@Override
 	public Object invokeAsync(String idShortPath, Object... params) {
-		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementInvokePath(idShortPath), params);
+		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementAsyncInvokePath(idShortPath), params);
 	}
 	
 	@Override
