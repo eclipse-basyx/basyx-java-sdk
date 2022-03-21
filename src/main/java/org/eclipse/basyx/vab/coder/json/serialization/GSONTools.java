@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,6 +144,8 @@ public class GSONTools implements Serializer {
 			return serializeCollection((Collection<Object>) obj);
 		} else if (isFunction(obj)) {
 			return serializeFunction(obj);
+		} else if (obj instanceof IStorageSubmodelElement) {
+			return serializeStorage(obj);
 		}
 		throw new RuntimeException("Unknown element!");
 	}
@@ -333,6 +336,16 @@ public class GSONTools implements Serializer {
 		} else {
 			return serializeNotSerializableOperation(function);
 		}
+	}
+
+	/**
+	 * Serializes a storage element if possible
+	 *
+	 * @param function
+	 * @return
+	 */
+	private JsonElement serializeStorage(Object storageElement) {
+		return new Gson().toJsonTree(storageElement);
 	}
 
 	/**

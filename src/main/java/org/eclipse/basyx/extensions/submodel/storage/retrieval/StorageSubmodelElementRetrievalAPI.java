@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 
 public class StorageSubmodelElementRetrievalAPI {
+	public static final String HISTORY = "history";
 	protected EntityManager entityManager;
 
 	public StorageSubmodelElementRetrievalAPI(EntityManager entityManager) {

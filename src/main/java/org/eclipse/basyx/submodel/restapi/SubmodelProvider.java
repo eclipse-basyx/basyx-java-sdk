@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.eclipse.basyx.extensions.submodel.storage.api.StorageSubmodelAPI;
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementRetrievalAPI;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
@@ -139,6 +141,14 @@ public class SubmodelProvider implements IModelProvider {
                     idShorts.remove(idShorts.size() - 1);
                     idShorts.remove(idShorts.size() - 1);
                     return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
+                } else if (endsWithHistory(splitted)) {
+                    if (submodelAPI instanceof StorageSubmodelAPI) {
+                        StorageSubmodelAPI storageSubmodelAPI = (StorageSubmodelAPI) submodelAPI;
+                        String idShortPath = VABPathTools.stripSlashes(removeHistorySuffix(path));
+                        return storageSubmodelAPI.getSubmodelElementHistory(submodelAPI.getSubmodel().getIdentification().getId(), idShortPath);
+                    } else {
+                        throw new MalformedRequestException("Can not access history for element without a history.");
+                    }
                 } else {
                     return submodelAPI.getSubmodelElement(path);
                 }
@@ -166,6 +176,10 @@ public class SubmodelProvider implements IModelProvider {
 		return splitted[splitted.length - 1].equals(Property.VALUE);
 	}
 
+	private boolean endsWithHistory(String[] splitted) {
+		return splitted[splitted.length - 1].equals(StorageSubmodelElementRetrievalAPI.HISTORY);
+	}
+
 	/**
      * Removes a trailing <code>/value</code> from the path if it exists.
      *
@@ -174,6 +188,15 @@ public class SubmodelProvider implements IModelProvider {
      */
     private String removeValueSuffix(String path) {
         String suffix = "/" + Property.VALUE;
+		return removeSuffix(path, suffix);
+	}
+
+	private String removeHistorySuffix(String path) {
+		String suffix = "/" + StorageSubmodelElementRetrievalAPI.HISTORY;
+		return removeSuffix(path, suffix);
+	}
+
+    private String removeSuffix(String path, String suffix) {
         if (path.endsWith(suffix)) {
             path = path.substring(0, path.length() - suffix.length());
         }
