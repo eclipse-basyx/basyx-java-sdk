@@ -6,10 +6,13 @@ package org.eclipse.basyx.testsuite.regression.aas.restapi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
@@ -22,6 +25,8 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
@@ -194,6 +199,22 @@ public class MultiSubmodelProviderTest {
 		} catch (ProviderException e) {
 			// Expected
 		}
+	}
+	
+	/**
+	 * Tests if SubmodelElements are returned as a List in Submodel and SubmodelElementCollection and not as Map
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void submodelElementsAreContainedAsList() {
+		List<Map<String, Object>> submodels = (List<Map<String, Object>>) proxy.getValue("/aas/submodels");
+		Map<String, Object> submodel = submodels.get(0);
+		assertTrue(submodel.get(Submodel.SUBMODELELEMENT) instanceof List<?>);
+		List<Map<String, Object>> smCollections = ((List<Map<String, Object>>) submodel.get(Submodel.SUBMODELELEMENT))
+				.stream()
+				.filter(e -> ModelType.createAsFacade(e).getName().equals(SubmodelElementCollection.MODELTYPE))
+				.collect(Collectors.toList());
+		assertTrue(smCollections.get(0).get(Property.VALUE) instanceof List<?>);
 	}
 	
 	@Test

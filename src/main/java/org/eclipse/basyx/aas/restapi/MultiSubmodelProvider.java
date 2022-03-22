@@ -25,6 +25,7 @@ import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -291,7 +292,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 		// Make a list and return all local submodels
 		Collection<ISubmodel> submodels = getSmAggregator().getSubmodelList();
 		addConnectedSubmodels(submodels);
-		return submodels;
+		return submodels.stream().map(sm -> SubmodelElementMapCollectionConverter.smToMap((Submodel) sm)).collect(Collectors.toList());
 	}
 
 	private void addConnectedSubmodels(Collection<ISubmodel> submodels) {

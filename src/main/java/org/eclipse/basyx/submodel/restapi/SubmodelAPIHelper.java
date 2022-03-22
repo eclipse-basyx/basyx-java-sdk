@@ -49,16 +49,28 @@ public class SubmodelAPIHelper {
 	}
 	
 	/**
-	 * Retrieves access path for invocation of element's operation
+	 * Retrieves access path for async invocation of element's operation
+	 * 
 	 * @param idShortPath
 	 * @return
 	 */
-	public static String getSubmodelElementInvokePath(String idShortPath) {
+	public static String getSubmodelElementAsyncInvokePath(String idShortPath) {
 		return VABPathTools.concatenatePaths(getSubmodelElementPath(idShortPath), Operation.INVOKE + OperationProvider.ASYNC);
 	}
 	
 	/**
+	 * Retrieves access path for synchroenous invocation of element's operation
+	 * 
+	 * @param idShortPath
+	 * @return
+	 */
+	public static String getSubmodelElementSyncInvokePath(String idShortPath) {
+		return VABPathTools.concatenatePaths(getSubmodelElementPath(idShortPath), Operation.INVOKE);
+	}
+
+	/**
 	 * Retrieves access path for element value
+	 * 
 	 * @param idShortPath
 	 * @return
 	 */

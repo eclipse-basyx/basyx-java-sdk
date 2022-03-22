@@ -247,23 +247,39 @@ public class SubmodelProvider implements IModelProvider {
 
 	@Override
 	public Object invokeOperation(String path, Object... parameters) throws ProviderException {
-		path = removeSubmodelPrefix(path);
-		if (path.isEmpty()) {
+		String pathWithoutSubmodelPrefix = removeSubmodelPrefix(path);
+		if (pathWithoutSubmodelPrefix.isEmpty()) {
 			throw new MalformedRequestException("Given path must not be empty");
-		} else {
-			if (VABPathTools.isOperationInvokationPath(path)) {
-				if(path.endsWith(OperationProvider.ASYNC)) {
-					path = removeSMElementPrefix(path);
-					path = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC), "");
-					return submodelAPI.invokeAsync(path, parameters);
-				} else {
-					path = removeSMElementPrefix(path);
-					return submodelAPI.invokeOperation(path, parameters);
-				}
-			} else {
-				throw new MalformedRequestException("Given path '" + path + "' does not end in /" + Operation.INVOKE);
-			}
 		}
+
+		if (!VABPathTools.isOperationInvokationPath(pathWithoutSubmodelPrefix)) {
+			throw new MalformedRequestException("Given path '" + path + "' does not end in /" + Operation.INVOKE);
+		}
+		
+		String pathWithoutSMElementPrefix = removeSMElementPrefix(pathWithoutSubmodelPrefix);
+
+		if (isAsyncInvokePath(pathWithoutSMElementPrefix)) {
+			return invokeAsync(pathWithoutSMElementPrefix, parameters);
+		} else {
+			return invokeSync(pathWithoutSMElementPrefix, parameters);
+		}
+
+	}
+
+	private Object invokeSync(String path, Object... parameters) {
+		String pathWithoutInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE), "");
+		String strippedPathWithoutInvoke = VABPathTools.stripSlashes(pathWithoutInvoke);
+		return submodelAPI.invokeOperation(strippedPathWithoutInvoke, parameters);
+	}
+
+	private Object invokeAsync(String path, Object... parameters) {
+		String pathWithoutAsyncInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC), "");
+		String strippedPathWithoutAsyncInvoke = VABPathTools.stripSlashes(pathWithoutAsyncInvoke);
+		return submodelAPI.invokeAsync(strippedPathWithoutAsyncInvoke, parameters);
+	}
+
+	private boolean isAsyncInvokePath(String path) {
+		return path.endsWith(OperationProvider.ASYNC);
 	}
 
 	public ISubmodelAPI getAPI() {
@@ -275,6 +291,6 @@ public class SubmodelProvider implements IModelProvider {
 	}
 	
 	private String removeSMElementPrefix(String path) {
-		return  path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
+		return path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
 	}
 }
