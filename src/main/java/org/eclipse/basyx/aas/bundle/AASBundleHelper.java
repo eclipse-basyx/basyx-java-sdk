@@ -10,10 +10,13 @@
 package org.eclipse.basyx.aas.bundle;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -134,6 +137,39 @@ public class AASBundleHelper {
 					}
 				}
 			}
+		}
+		
+		if(!isRegistryEmpty(registry)) {
+			registry.lookupAll().stream().forEach(aasDesc -> { getSubmodelDescriptors(registry,aasDesc)
+								.stream().forEach(smDesc -> deregisterSubmodel(registry, aasDesc, smDesc));
+								deregisterAAS(registry, aasDesc);
+								});
+		}
+	}
+	
+	private static boolean isRegistryEmpty(IAASRegistry registry) {
+		return registry.lookupAll().isEmpty();
+	}
+	
+	private static List<SubmodelDescriptor> getSubmodelDescriptors(IAASRegistry registry, AASDescriptor aasDesc) {
+		return registry.lookupSubmodels(aasDesc.getIdentifier());
+	}
+	
+	private static void deregisterSubmodel(IAASRegistry registry, AASDescriptor aasDescriptor, SubmodelDescriptor submodelDescriptor) {
+		try {
+			registry.delete(aasDescriptor.getIdentifier(), submodelDescriptor.getIdentifier());
+			logger.info("The SM '" + submodelDescriptor.getIdShort() + "' successfully deregistered.");
+		} catch (ProviderException e) {
+			logger.info("The SM '" + submodelDescriptor.getIdShort() + "' can't be deregistered. It was not found in registry.");
+		}
+	}
+	
+	private static void deregisterAAS(IAASRegistry registry, AASDescriptor aasDescriptor) {
+		try {
+			registry.delete(aasDescriptor.getIdentifier());
+			logger.info("The AAS '" + aasDescriptor.getIdShort() + "' successfully deregistered.");
+		} catch (ProviderException e) {
+			logger.info("The AAS '" + aasDescriptor.getIdShort() + "' can't be deregistered. It was not found in registry.");
 		}
 	}
 }
