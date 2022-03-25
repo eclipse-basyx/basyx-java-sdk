@@ -11,7 +11,6 @@ package org.eclipse.basyx.submodel.metamodel.facade;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,6 +22,7 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.Entity;
 
 
 /**
@@ -108,25 +108,48 @@ public class SubmodelElementMapCollectionConverter {
 	}
 	
 	/**
-	 * Converts a given SubmodelElementCollection to a Map<br>
+	 * Converts a given SubmodelElement to a Map<br>
 	 * Converts the Property.VALUE entry of a SubmodelElementCollection to a Collection.<br>
-	 * If given Element is not a SubmodelElementCollection it will be returned unchanged.
+	 * Converts the statement entry of Entity, if it containes a SubmodelElementCollection as described above.<br>
+	 * If given Element is not a SubmodelElementCollection or an Entity with a SubmodelElementCollection as statement, it will be returned unchanged.
 	 * 
 	 * @param smElement the SubmodelElement to be converted.
 	 * @return a Map made from the given SubmodelElement.
 	 */
 	public static Map<String, Object> smElementToMap(Map<String, Object> smElement) {		
-		
-		if(!SubmodelElementCollection.isSubmodelElementCollection((Map<String, Object>) smElement)) {
-			return (Map<String, Object>) smElement;
+		if (SubmodelElementCollection.isSubmodelElementCollection(smElement)) {
+			return convertSMC(smElement);
+		} else if (Entity.isEntity(smElement)) {
+			return convertEntity(smElement);
+		} else {
+			return smElement;
 		}
-		
-		// Put the Entries of the SM in a new Map
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Map<String, Object> convertEntity(Map<String, Object> smElement) {
 		Map<String, Object> ret = new LinkedHashMap<>();
 		ret.putAll(smElement);
+
+		List<Map<String, Object>> statements = (List<Map<String, Object>>) smElement.get(Entity.STATEMENT);
+		List<Map<String, Object>> convertedStatements = convertStatementList(statements);
 		
+		ret.put(Entity.STATEMENT, convertedStatements);
+
+		return ret;
+	}
+
+	private static List<Map<String, Object>> convertStatementList(List<Map<String, Object>> statements) {
+		return statements.stream().map(SubmodelElementMapCollectionConverter::smElementToMap).collect(Collectors.toList());
+	}
+
+	private static Map<String, Object> convertSMC(Map<String, Object> smElement) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		ret.putAll(smElement);
+
 		ret.put(Property.VALUE, convertIDMapToCollection(smElement.get(Property.VALUE)));
-		
+
 		return ret;
 	}
 	
@@ -154,14 +177,14 @@ public class SubmodelElementMapCollectionConverter {
 				String id = (String) smElement.get(Referable.IDSHORT);
 				
 				if(smElementsMap.containsKey(id)) {
-					throw new IdShortDuplicationException((Map<String, Object>) smElementsMap);
+					throw new IdShortDuplicationException(smElementsMap);
 				}
 				
 				smElementsMap.put(id, smElement);
 			}
 		} else if(smElements instanceof Map<?, ?>){
 			if(isDuplicateIdShortPresentInSubmodelElements((Map<String, Object>) smElements)) {
-				throw new IdShortDuplicationException((Map<String, Object>) smElementsMap);
+				throw new IdShortDuplicationException(smElementsMap);
 			}
 			
 			smElementsMap = (Map<String, Object>) smElements;

@@ -13,15 +13,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.entity.EntityType;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.Entity;
 import org.eclipse.basyx.vab.support.TypeDestroyer;
 import org.junit.Test;
 
@@ -66,6 +71,38 @@ public class TestSubmodelElementMapCollectionConverter {
 		assertEquals(1, ((Collection<ISubmodelElement>) map.get(Submodel.SUBMODELELEMENT)).size());
 	}
 
+	@Test
+	public void entityStatementContainingSMCConverted() {
+		Entity entity = createTestEntityWithSMCAsStatement();
+		
+		Map<String, Object> convertedEntity = SubmodelElementMapCollectionConverter.smElementToMap(entity);
+
+		assertEntityCorrectlyConverted(convertedEntity);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void assertEntityCorrectlyConverted(Map<String, Object> convertedEntity) {
+		List<Map<String, Object>> convertedStatements = (List<Map<String, Object>>) convertedEntity.get(Entity.STATEMENT);
+
+		Map<String, Object> convertedSMC = convertedStatements.get(0);
+		Object convertedSMCValue = convertedSMC.get(Property.VALUE);
+		assertTrue(convertedSMCValue instanceof List<?>);
+	}
+
+	private Entity createTestEntityWithSMCAsStatement() {
+		Entity entity = new Entity("entity", EntityType.COMANAGEDENTITY);
+
+		SubmodelElementCollection smc = new SubmodelElementCollection("smc");
+
+		Property prop = new Property("prop", ValueType.String);
+		smc.addSubmodelElement(prop);
+
+		List<ISubmodelElement> statements = new ArrayList<>();
+		statements.add(smc);
+		entity.setStatements(statements);
+
+		return entity;
+	}
 
 	private Submodel getSM() {
 		Submodel sm = new Submodel("submodelIdShort", new ModelUrn("submodelUrn"));
