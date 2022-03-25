@@ -12,6 +12,7 @@ package org.eclipse.basyx.extensions.submodel.storage.api;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.basyx.extensions.submodel.storage.StorageSubmodelElementComponent;
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
@@ -51,9 +52,9 @@ public class StorageSubmodelAPI implements ISubmodelAPI {
 		return submodelAPI.getSubmodelElement(idShortPath);
 	}
 
-	public List<IStorageSubmodelElement> getSubmodelElementHistory(String submodelId, String idShortPath) {
+	public List<IStorageSubmodelElement> getSubmodelElementHistory(String submodelId, String idShortPath, Map<String, String> parameters) {
 		StorageSubmodelElementRetrievalAPI retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
-		return retrievalAPI.getSubmodelElementHistoricValues(submodelId, idShortPath);
+		return retrievalAPI.getSubmodelElementHistoricValues(submodelId, idShortPath, parameters);
 	}
 
 	@Override

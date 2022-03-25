@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
  * which is available at https://www.eclipse.org/legal/epl-2.0/
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
@@ -33,8 +33,8 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
 
 /**
- * Additional VAB provider specific for providing submodels together
- * with other SDKs by implementing the submodel API.
+ * Additional VAB provider specific for providing submodels together with other
+ * SDKs by implementing the submodel API.
  *
  * The VAB provides generic models without considering high-level information.
  * For example, Operation submodel elements are realized as a Map. The function
@@ -52,7 +52,7 @@ public class SubmodelProvider implements IModelProvider {
 
 	public static final String VALUES = "values";
 	public static final String SUBMODEL = "submodel";
-	
+
 	ISubmodelAPI submodelAPI;
 
 	/**
@@ -64,7 +64,7 @@ public class SubmodelProvider implements IModelProvider {
 
 	/**
 	 * Creates a SubmodelProvider based on the VAB API, wrapping the passed provider
-	 * 
+	 *
 	 * @param provider
 	 *            to be wrapped by submodel API
 	 */
@@ -131,30 +131,32 @@ public class SubmodelProvider implements IModelProvider {
 				// Remove initial "/submodelElements"
 				path = removeSMElementPrefix(path);
 
-                if (endsWithValue(splitted)) { // Request for the value of an property
-                    String idShortPath = removeValueSuffix(path);
-                    return submodelAPI.getSubmodelElementValue(idShortPath);
-                } else if (isInvocationListPath(splitted)) {
-                    List<String> idShorts = getIdShorts(splitted);
+				if (endsWithValue(splitted)) { // Request for the value of an property
+					String idShortPath = removeValueSuffix(path);
+					return submodelAPI.getSubmodelElementValue(idShortPath);
+				} else if (isInvocationListPath(splitted)) {
+					List<String> idShorts = getIdShorts(splitted);
 
-                    // Remove invocationList/{requestId} from the idShorts
-                    idShorts.remove(idShorts.size() - 1);
-                    idShorts.remove(idShorts.size() - 1);
-                    return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
-                } else if (endsWithHistory(splitted)) {
-                    if (submodelAPI instanceof StorageSubmodelAPI) {
-                        StorageSubmodelAPI storageSubmodelAPI = (StorageSubmodelAPI) submodelAPI;
-                        String idShortPath = VABPathTools.stripSlashes(removeHistorySuffix(path));
-                        return storageSubmodelAPI.getSubmodelElementHistory(submodelAPI.getSubmodel().getIdentification().getId(), idShortPath);
-                    } else {
-                        throw new MalformedRequestException("Can not access history for element without a history.");
-                    }
-                } else {
-                    return submodelAPI.getSubmodelElement(path);
-                }
-            }
-        }
-        throw new MalformedRequestException("Unknown path " + path + " was requested");
+					// Remove invocationList/{requestId} from the idShorts
+					idShorts.remove(idShorts.size() - 1);
+					idShorts.remove(idShorts.size() - 1);
+					return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
+				} else if (containsHistory(splitted)) {
+					if (submodelAPI instanceof StorageSubmodelAPI) {
+						StorageSubmodelAPI storageSubmodelAPI = (StorageSubmodelAPI) submodelAPI;
+						Map<String, String> parameters = VABPathTools.getParametersFromPath(path);
+
+						String idShortPath = VABPathTools.stripSlashes(removeHistorySuffixAndParameters(path));
+						return storageSubmodelAPI.getSubmodelElementHistory(submodelAPI.getSubmodel().getIdentification().getId(), idShortPath, parameters);
+					} else {
+						throw new MalformedRequestException("Can not access history for element without a history.");
+					}
+				} else {
+					return submodelAPI.getSubmodelElement(path);
+				}
+			}
+		}
+		throw new MalformedRequestException("Unknown path " + path + " was requested");
 	}
 
 	private List<String> getIdShorts(String[] splitted) {
@@ -171,38 +173,40 @@ public class SubmodelProvider implements IModelProvider {
 		return idShorts;
 	}
 
-
 	private boolean endsWithValue(String[] splitted) {
 		return splitted[splitted.length - 1].equals(Property.VALUE);
 	}
 
-	private boolean endsWithHistory(String[] splitted) {
-		return splitted[splitted.length - 1].equals(StorageSubmodelElementRetrievalAPI.HISTORY);
+	private boolean containsHistory(String[] splitted) {
+		return splitted[splitted.length - 1].startsWith(StorageSubmodelElementRetrievalAPI.HISTORY);
 	}
 
 	/**
-     * Removes a trailing <code>/value</code> from the path if it exists.
-     *
-     * @param path The original path, which might or might not end on {@value Property.VALUE}.
-     * @return The new path
-     */
-    private String removeValueSuffix(String path) {
-        String suffix = "/" + Property.VALUE;
+	 * Removes a trailing <code>/value</code> from the path if it exists.
+	 *
+	 * @param path
+	 *            The original path, which might or might not end on
+	 *            {@value Property.VALUE}.
+	 * @return The new path
+	 */
+	private String removeValueSuffix(String path) {
+		String suffix = "/" + Property.VALUE;
 		return removeSuffix(path, suffix);
 	}
 
-	private String removeHistorySuffix(String path) {
+	private String removeHistorySuffixAndParameters(String path) {
+		// TODO: remove parameters
 		String suffix = "/" + StorageSubmodelElementRetrievalAPI.HISTORY;
 		return removeSuffix(path, suffix);
 	}
 
-    private String removeSuffix(String path, String suffix) {
-        if (path.endsWith(suffix)) {
-            path = path.substring(0, path.length() - suffix.length());
-        }
+	private String removeSuffix(String path, String suffix) {
+		if (path.endsWith(suffix)) {
+			path = path.substring(0, path.length() - suffix.length());
+		}
 
-        return path;
-    }
+		return path;
+	}
 
 	private boolean isInvocationListPath(String[] splitted) {
 		return splitted.length > 2 && splitted[splitted.length - 2].equals(OperationProvider.INVOCATION_LIST);
@@ -221,14 +225,13 @@ public class SubmodelProvider implements IModelProvider {
 			if (endsWithValue(splitted)) {
 				submodelAPI.updateSubmodelElement(idshortPath, newValue);
 			} else {
-				
+
 				ISubmodelElement element = SubmodelElementFacadeFactory.createSubmodelElement((Map<String, Object>) newValue);
-				
-				if(!path.endsWith(element.getIdShort())) {
-					throw new MalformedRequestException("The idShort of given Element '"
-							+ element.getIdShort() + "' does not match the ending of the given path '" + path + "'");
+
+				if (!path.endsWith(element.getIdShort())) {
+					throw new MalformedRequestException("The idShort of given Element '" + element.getIdShort() + "' does not match the ending of the given path '" + path + "'");
 				}
-				
+
 				submodelAPI.addSubmodelElement(idshortPath, element);
 			}
 		}
@@ -275,7 +278,7 @@ public class SubmodelProvider implements IModelProvider {
 			throw new MalformedRequestException("Given path must not be empty");
 		} else {
 			if (VABPathTools.isOperationInvokationPath(path)) {
-				if(path.endsWith(OperationProvider.ASYNC)) {
+				if (path.endsWith(OperationProvider.ASYNC)) {
 					path = removeSMElementPrefix(path);
 					path = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC), "");
 					return submodelAPI.invokeAsync(path, parameters);
@@ -292,12 +295,12 @@ public class SubmodelProvider implements IModelProvider {
 	public ISubmodelAPI getAPI() {
 		return this.submodelAPI;
 	}
-	
+
 	protected void setAPI(ISubmodelAPI api) {
 		this.submodelAPI = api;
 	}
-	
+
 	private String removeSMElementPrefix(String path) {
-		return  path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
+		return path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
 	}
 }

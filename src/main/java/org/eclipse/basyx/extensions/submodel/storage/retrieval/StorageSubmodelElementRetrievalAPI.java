@@ -2,6 +2,7 @@ package org.eclipse.basyx.extensions.submodel.storage.retrieval;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 
@@ -39,6 +40,21 @@ public class StorageSubmodelElementRetrievalAPI {
 	 *         their descending timestamp
 	 */
 	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort) {
+		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(idShort).build();
+		@SuppressWarnings("unchecked")
+		List<IStorageSubmodelElement> results = query.getResultList();
+		return results;
+	}
+
+	/**
+	 * Selects all historic StorageSumbodelElements for the given filters.
+	 *
+	 * @param submodelId
+	 * @param idShort
+	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
+	 *         their descending timestamp
+	 */
+	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort, Map<String, String> parameters) {
 		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(idShort).build();
 		@SuppressWarnings("unchecked")
 		List<IStorageSubmodelElement> results = query.getResultList();
