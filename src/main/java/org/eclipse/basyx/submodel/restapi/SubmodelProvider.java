@@ -195,9 +195,7 @@ public class SubmodelProvider implements IModelProvider {
 	}
 
 	private String removeHistorySuffixAndParameters(String path) {
-		// TODO: remove parameters
-		String suffix = "/" + StorageSubmodelElementRetrievalAPI.HISTORY;
-		return removeSuffix(path, suffix);
+		return path.split("\\/history")[0];
 	}
 
 	private String removeSuffix(String path, String suffix) {
