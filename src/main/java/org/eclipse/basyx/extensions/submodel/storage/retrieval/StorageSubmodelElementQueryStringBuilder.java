@@ -10,7 +10,9 @@
 
 package org.eclipse.basyx.extensions.submodel.storage.retrieval;
 
-import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementFilter.StorageRetrievalOperationAbbreviations;
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.filters.StorageRetrievalOperationAbbreviations;
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.filters.StorageSubmodelElementFilter;
+import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 
 public class StorageSubmodelElementQueryStringBuilder {
 	public static final String BETWEEN_START_SUFFIX = "_START";
@@ -147,8 +149,7 @@ public class StorageSubmodelElementQueryStringBuilder {
 			setParameterBetweenFilter(key);
 			break;
 		default:
-			// TODO: throw error?
-			break;
+			throw new MalformedRequestException("Unkown filter operation: " + filter.getFilterOperation());
 		}
 		return this;
 	}

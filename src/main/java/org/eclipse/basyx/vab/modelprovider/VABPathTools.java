@@ -55,7 +55,7 @@ public class VABPathTools {
 	 */
 	public static String encodePathElement(String elem) {
 		try {
-			return URLEncoder.encode(elem, "UTF-8");
+			return URLEncoder.encode(elem, DEFAULT_ENCODING);
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
@@ -69,7 +69,7 @@ public class VABPathTools {
 	 */
 	public static String decodePathElement(String encodedElem) {
 		try {
-			return URLDecoder.decode(encodedElem, "UTF-8");
+			return URLDecoder.decode(encodedElem, DEFAULT_ENCODING);
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
@@ -462,18 +462,22 @@ public class VABPathTools {
 
 	public static Map<String, String> getParametersFromPath(String path) {
 		if (path.contains("?")) {
-			Map<String, String> parameters = new HashMap<String, String>();
+			Map<String, String> parameterMap = new HashMap<>();
 			String query = path.split("\\?")[1];
 			String[] parameterPairs = query.split("&");
 			for (String pair : parameterPairs) {
 				String[] keyAndValue = pair.split("=");
 				try {
-					parameters.put(URLDecoder.decode(keyAndValue[0], DEFAULT_ENCODING), URLDecoder.decode(keyAndValue[1], DEFAULT_ENCODING));
+					if (keyAndValue.length != 2) {
+						parameterMap.put(URLDecoder.decode(keyAndValue[0], DEFAULT_ENCODING), null);
+					} else {
+						parameterMap.put(URLDecoder.decode(keyAndValue[0], DEFAULT_ENCODING), URLDecoder.decode(keyAndValue[1], DEFAULT_ENCODING));
+					}
 				} catch (UnsupportedEncodingException e) {
 					throw new RuntimeException(e);
 				}
 			}
-			return parameters;
+			return parameterMap;
 		}
 		return null;
 	}

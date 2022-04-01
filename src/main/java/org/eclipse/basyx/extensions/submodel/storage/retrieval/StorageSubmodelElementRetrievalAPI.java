@@ -50,8 +50,8 @@ public class StorageSubmodelElementRetrievalAPI {
 	 *
 	 * @param submodelId
 	 * @param idShort
-	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
-	 *         their descending timestamp
+	 * @param queryParameters
+	 * @return a list of @StorageSubmodelElement with the given idShort
 	 */
 	public List<IStorageSubmodelElement> getSubmodelElementHistoricValues(String submodelId, String idShort, Map<String, String> queryParameters) {
 		Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(idShort).setParameters(queryParameters).build();

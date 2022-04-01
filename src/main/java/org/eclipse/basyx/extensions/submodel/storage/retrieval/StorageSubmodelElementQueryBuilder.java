@@ -10,15 +10,12 @@
 
 package org.eclipse.basyx.extensions.submodel.storage.retrieval;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementFilter.StorageRetrievalOperationAbbreviations;
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.filters.StorageSubmodelElementFilter;
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.filters.StorageSubmodelElementFilterFactory;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 
 import jakarta.persistence.EntityManager;
@@ -36,7 +33,7 @@ public class StorageSubmodelElementQueryBuilder {
 
 	public Query build() {
 		String queryString = createQueryString();
-		Query query = entityManager.createQuery(queryString);
+		Query query = createQuery(queryString);
 
 		if (submodelId != null) {
 			query.setParameter("submodelId", submodelId);
@@ -47,28 +44,16 @@ public class StorageSubmodelElementQueryBuilder {
 		}
 
 		for (StorageSubmodelElementFilter filter : filterList) {
-			// TODO: work with specialized filters to avoid this clutter
-			if (filter.getKey().equals("timestamp")) {
-				if (filter.getFilterOperation().equals(StorageRetrievalOperationAbbreviations.BETWEEN)) {
-					String[] values = filter.getValue().split(",");
-					query.setParameter(filter.getKey() + StorageSubmodelElementQueryStringBuilder.BETWEEN_START_SUFFIX, createTimestamp(values[0]));
-					query.setParameter(filter.getKey() + StorageSubmodelElementQueryStringBuilder.BETWEEN_END_SUFFIX, createTimestamp(values[1]));
-				} else {
-					query.setParameter(filter.getKey(), createTimestamp(filter.getValue()));
-				}
-			} else {
-				query.setParameter(filter.getKey(), filter.getValue());
-			}
+			filter.getParameterMap().forEach(query::setParameter);
 		}
 
 		return query;
 	}
 
-	private Timestamp createTimestamp(String date) {
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	private Query createQuery(String queryString) {
 		try {
-			return new Timestamp(df.parse(date.trim()).getTime());
-		} catch (ParseException e) {
+			return entityManager.createQuery(queryString);
+		} catch (IllegalArgumentException e) {
 			throw new MalformedRequestException(e);
 		}
 	}
@@ -105,8 +90,7 @@ public class StorageSubmodelElementQueryBuilder {
 	public StorageSubmodelElementQueryBuilder setParameters(Map<String, String> queryParameters) {
 		if (queryParameters != null) {
 			for (Entry<String, String> entry : queryParameters.entrySet()) {
-				// TODO: create specialized element filters with interface
-				filterList.add(new StorageSubmodelElementFilter(entry));
+				filterList.addAll(StorageSubmodelElementFilterFactory.createAllFilters(entry));
 			}
 		}
 		return this;
