@@ -59,10 +59,10 @@ public class TestAasEnv {
 	@Test
 	public void testAssetAdministrationShellGetSet() {
 		AasEnv env = new AasEnv();
-		AssetAdministrationShell ass = new AssetAdministrationShell();
-		ass.setIdShort("TestAasEnv");
-		env.setAssetAdministrationShells(Arrays.asList(ass));
-		assertEquals(ass, env.getAssetAdministrationShells().toArray()[0]);
+		AssetAdministrationShell aas = new AssetAdministrationShell();
+		aas.setIdShort("TestAasEnv");
+		env.setAssetAdministrationShells(Arrays.asList(aas));
+		assertEquals(aas, env.getAssetAdministrationShells().toArray()[0]);
 	}
 	
 	@Test
