@@ -109,10 +109,9 @@ public class OperationVariable extends VABModelMap<Object> implements IOperation
 	 */
 	@SuppressWarnings("unchecked")
 	public void setValue(ISubmodelElement value) {
-		if (value.getModelingKind() != ModelingKind.TEMPLATE) {
-			// TODO: Change with 1.0 Release
+		if (value.getKind() != ModelingKind.TEMPLATE) {
 			logger.warn("Modeling kind of Operation variable was wrong and automatically changed to ModelingKind.TEMPLATE");
-			HasKind.createAsFacade((Map<String, Object>) value).setModelingKind(ModelingKind.TEMPLATE);
+			HasKind.createAsFacade((Map<String, Object>) value).setKind(ModelingKind.TEMPLATE);
 		}
 		put(Property.VALUE, value);
 	}

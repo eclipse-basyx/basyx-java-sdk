@@ -37,8 +37,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation variant for the AASAggregator that triggers MQTT events for
@@ -52,7 +50,6 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public class MqttAASAggregator implements IAASAggregator {
-	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregator.class);
 
 	protected ObservableAASAggregator observedAASAggregator;
 	private MqttAASAggregatorObserver observer;

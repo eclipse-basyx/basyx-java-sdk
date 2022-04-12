@@ -59,7 +59,7 @@ public class HasKindXMLConverter {
 			if (hasKindValue.equals("Type")) {
 				hasKindValue = ModelingKind.TEMPLATE.toString();
 			}
-			hasKind.setModelingKind(ModelingKind.fromString(hasKindValue));	
+			hasKind.setKind(ModelingKind.fromString(hasKindValue));
 		}
 	}
 	
@@ -73,9 +73,9 @@ public class HasKindXMLConverter {
 	 * @param hasKind the IHasKind object to be converted to XML
 	 */
 	public static void populateHasKindXML(Document document, Element root, IHasKind hasKind) {
-		if(hasKind.getModelingKind() != null) {
+		if (hasKind.getKind() != null) {
 			Element kindRoot = document.createElement(KIND);
-			kindRoot.appendChild(document.createTextNode(hasKind.getModelingKind().toString()));
+			kindRoot.appendChild(document.createTextNode(hasKind.getKind().toString()));
 			root.appendChild(kindRoot);
 		}
 	}

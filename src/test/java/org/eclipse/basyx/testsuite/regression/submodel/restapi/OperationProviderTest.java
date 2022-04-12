@@ -117,9 +117,9 @@ public class OperationProviderTest {
 		Collection<OperationVariable> in = new ArrayList<>();
 		
 		Property inProp1 = new Property("testIn1", 0);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 		Property inProp2 = new Property("testIn2", 0);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 		
 		in.add(new OperationVariable(inProp1));
 		in.add(new OperationVariable(inProp2));
@@ -131,7 +131,7 @@ public class OperationProviderTest {
 		Collection<OperationVariable> out = new ArrayList<>();
 		
 		Property outProp = new Property("testOut", 0);
-		outProp.setModelingKind(ModelingKind.TEMPLATE);
+		outProp.setKind(ModelingKind.TEMPLATE);
 
 		out.add(new OperationVariable(outProp));
 		

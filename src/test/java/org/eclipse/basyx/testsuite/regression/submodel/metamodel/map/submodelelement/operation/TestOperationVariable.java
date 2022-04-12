@@ -46,7 +46,7 @@ public class TestOperationVariable {
 	private OperationVariable operationVariable;
 	@Before
 	public void buildOperationVariable() {
-		PROPERTY.setModelingKind(ModelingKind.TEMPLATE);
+		PROPERTY.setKind(ModelingKind.TEMPLATE);
 		operationVariable = new OperationVariable(PROPERTY);
 	} 
 	
@@ -58,7 +58,7 @@ public class TestOperationVariable {
 	@Test
 	public void testSetValue() {
 		Property property = new Property("testIdShort", ValueType.String);
-		property.setModelingKind(ModelingKind.TEMPLATE);
+		property.setKind(ModelingKind.TEMPLATE);
 		operationVariable.setValue(property);
 		assertEquals(property, operationVariable.getValue());
 	}
@@ -67,8 +67,8 @@ public class TestOperationVariable {
 	// TODO: Change with 1.0 Release when ModelingKind.Template is obligatory for OperationVariables
 	public void testSetValueChangedModelingKind() {
 		Property property = new Property("testIdShort", ValueType.String);
-		property.setModelingKind(ModelingKind.INSTANCE);
+		property.setKind(ModelingKind.INSTANCE);
 		operationVariable.setValue(property);
-		assertEquals(ModelingKind.TEMPLATE, operationVariable.getValue().getModelingKind());
+		assertEquals(ModelingKind.TEMPLATE, operationVariable.getValue().getKind());
 	}
 }

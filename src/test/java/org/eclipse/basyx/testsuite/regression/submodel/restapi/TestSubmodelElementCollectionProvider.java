@@ -57,11 +57,11 @@ public class TestSubmodelElementCollectionProvider {
 	@Before
 	public void setup() {
 		Property prop1 = new Property(PROP_ID1, PROP_VALUE1);
-		prop1.setModelingKind(ModelingKind.TEMPLATE);
+		prop1.setKind(ModelingKind.TEMPLATE);
 		prop1.setValueType(ValueType.String);
 		
 		Property prop2 = new Property(PROP_ID2, PROP_VALUE2);
-		prop2.setModelingKind(ModelingKind.TEMPLATE);
+		prop2.setKind(ModelingKind.TEMPLATE);
 		prop2.setValueType(ValueType.String);
 		
 		Operation op = new Operation(OP_ID1);

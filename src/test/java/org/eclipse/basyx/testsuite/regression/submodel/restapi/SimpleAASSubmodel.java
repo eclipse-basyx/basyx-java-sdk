@@ -89,11 +89,11 @@ public class SimpleAASSubmodel extends Submodel {
 			return (int) v[0] - (int) v[1];
 		});
 		Property inProp1 = new Property("complexIn1", 0);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 		Property inProp2 = new Property("complexIn2", 0);
-		inProp2.setModelingKind(ModelingKind.TEMPLATE);
+		inProp2.setKind(ModelingKind.TEMPLATE);
 		Property outProp = new Property("complexOut", 0);
-		outProp.setModelingKind(ModelingKind.TEMPLATE);
+		outProp.setKind(ModelingKind.TEMPLATE);
 		complex.setInputVariables(Arrays.asList(new OperationVariable(inProp1),
 				new OperationVariable(inProp2)));
 		complex.setOutputVariables(Collections.singleton(new OperationVariable(outProp)));

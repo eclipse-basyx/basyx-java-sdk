@@ -61,6 +61,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
  * @author espen
  *
  */
+@SuppressWarnings("deprecation")
 public class TestMqttSubmodelAPIEvents {
 	private static final String AASID = "testaasid";
 	private static final String SUBMODELID = "testsubmodelid";

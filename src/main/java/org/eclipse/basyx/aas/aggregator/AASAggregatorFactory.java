@@ -40,7 +40,6 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
  */
 public class AASAggregatorFactory implements IAASAggregatorFactory {
 
-	private IAASAggregator aggregator;
 	private IAASAPIFactory aasApiFactory;
 	private ISubmodelAggregatorFactory submodelAggregatorFactory;
 	private IAASRegistry registry;

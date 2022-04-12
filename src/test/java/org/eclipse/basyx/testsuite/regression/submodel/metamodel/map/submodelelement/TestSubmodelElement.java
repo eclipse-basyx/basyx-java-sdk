@@ -120,7 +120,7 @@ public class TestSubmodelElement {
 	@Test
 	public void testSetModelingKind() {
 		ModelingKind newModelingKind = ModelingKind.TEMPLATE;
-		submodelElement.setModelingKind(newModelingKind);
-		assertEquals(newModelingKind, submodelElement.getModelingKind());
+		submodelElement.setKind(newModelingKind);
+		assertEquals(newModelingKind, submodelElement.getKind());
 	}
 }

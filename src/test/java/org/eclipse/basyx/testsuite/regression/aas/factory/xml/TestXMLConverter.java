@@ -201,7 +201,7 @@ public class TestXMLConverter {
 		assertEquals(ValueType.Double, range.getValueType());
 		
 		IOperation operation = Operation.createAsFacade((Map<String, Object>) submodelList.get(0).getSubmodelElement("operation_ID"));
-		assertEquals(ModelingKind.TEMPLATE, operation.getInOutputVariables().iterator().next().getValue().getModelingKind());
+		assertEquals(ModelingKind.TEMPLATE, operation.getInOutputVariables().iterator().next().getValue().getKind());
 		
 		IDataSpecificationContent content = conceptDescriptionList.get(0).getEmbeddedDataSpecifications().iterator().next().getContent();
 		DataSpecificationIEC61360Content parsed = DataSpecificationIEC61360Content.createAsFacade((Map<String, Object>) content);

@@ -310,6 +310,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 		return submodels.stream().map(sm -> SubmodelElementMapCollectionConverter.smToMap((Submodel) sm)).collect(Collectors.toList());
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addConnectedSubmodels(Collection<ISubmodel> submodels) {
 		if (registry != null) {
 			AASDescriptor desc = registry.lookupAAS(aasId);

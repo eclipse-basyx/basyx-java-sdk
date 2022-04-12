@@ -53,13 +53,13 @@ public class AsyncOperationHelper {
 		IN = new ArrayList<OperationVariable>();
 		OUT = new ArrayList<OperationVariable>();
 		Property asyncIn1 = new Property("asyncIn1", "");
-		asyncIn1.setModelingKind(ModelingKind.TEMPLATE);
+		asyncIn1.setKind(ModelingKind.TEMPLATE);
 		Property asyncIn2 = new Property("asyncIn2", "");
-		asyncIn2.setModelingKind(ModelingKind.TEMPLATE);
+		asyncIn2.setKind(ModelingKind.TEMPLATE);
 		IN.add(new OperationVariable(asyncIn1));
 		IN.add(new OperationVariable(asyncIn2));
 		Property asyncOut = new Property("asyncOut", "");
-		asyncOut.setModelingKind(ModelingKind.TEMPLATE);
+		asyncOut.setKind(ModelingKind.TEMPLATE);
 		OUT.add(new OperationVariable(asyncOut));
 	}
 	

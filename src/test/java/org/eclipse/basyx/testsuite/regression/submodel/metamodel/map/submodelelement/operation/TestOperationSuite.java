@@ -262,29 +262,29 @@ public abstract class TestOperationSuite {
 
 	private Collection<OperationVariable> createInOutVariables() {
 		Property inOutProp = new Property(INOUT_IDSHORT, INOUT_VALUE);
-		inOutProp.setModelingKind(ModelingKind.TEMPLATE);
+		inOutProp.setKind(ModelingKind.TEMPLATE);
 		return Arrays.asList(new OperationVariable(inOutProp));
 	}
 
 	private Collection<OperationVariable> createOutputVariables() {
 		Property outProp = new Property(OUT_IDSHORT, OUT_VALUE);
-		outProp.setModelingKind(ModelingKind.TEMPLATE);
+		outProp.setKind(ModelingKind.TEMPLATE);
 		return Arrays.asList(new OperationVariable(outProp));
 	}
 
 	private Collection<OperationVariable> createOneInputVariables() {
 		Property inProp1 = new Property(IN_IDSHORT1, IN_VALUE);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 
 		return Arrays.asList(new OperationVariable(inProp1));
 	}
 
 	private Collection<OperationVariable> createTwoInputVariables() {
 		Property inProp1 = new Property(IN_IDSHORT1, IN_VALUE);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 
 		Property inProp2 = new Property(IN_IDSHORT2, IN_VALUE);
-		inProp2.setModelingKind(ModelingKind.TEMPLATE);
+		inProp2.setKind(ModelingKind.TEMPLATE);
 
 		return Arrays.asList(new OperationVariable(inProp1), new OperationVariable(inProp2));
 	}

@@ -40,7 +40,7 @@ public class OperationHelper {
 	public static Property createPropertyTemplate(ValueType type) {
 		Property prop = new Property();
 		prop.setValueType(type);
-		prop.setModelingKind(ModelingKind.TEMPLATE);
+		prop.setKind(ModelingKind.TEMPLATE);
 		return prop;
 	}
 

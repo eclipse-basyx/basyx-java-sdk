@@ -40,6 +40,7 @@ import org.junit.rules.ExpectedException;
 
 public class BrowsePathHelperTest {
 	
+	@SuppressWarnings("deprecation")
 	@Rule
 	public final ExpectedException thrown = ExpectedException.none();
 

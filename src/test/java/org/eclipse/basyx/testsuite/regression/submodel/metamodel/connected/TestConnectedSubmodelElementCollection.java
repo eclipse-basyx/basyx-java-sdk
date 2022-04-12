@@ -77,11 +77,11 @@ public class TestConnectedSubmodelElementCollection {
 			return (int) arr[0] + (int) arr[1];
 		});
 		Property aProp = new Property("a", 1);
-		aProp.setModelingKind(ModelingKind.TEMPLATE);
+		aProp.setKind(ModelingKind.TEMPLATE);
 		Property bProp = new Property("b", 2);
-		bProp.setModelingKind(ModelingKind.TEMPLATE);
+		bProp.setKind(ModelingKind.TEMPLATE);
 		Property rProp = new Property("r", 3);
-		rProp.setModelingKind(ModelingKind.TEMPLATE);
+		rProp.setKind(ModelingKind.TEMPLATE);
 		OperationVariable a = new OperationVariable(aProp);
 		OperationVariable b = new OperationVariable(bProp);
 		OperationVariable r = new OperationVariable(rProp);

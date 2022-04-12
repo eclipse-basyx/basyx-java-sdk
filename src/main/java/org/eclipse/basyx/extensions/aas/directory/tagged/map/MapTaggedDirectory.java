@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -64,6 +63,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 		}
 	}
 
+	@Override
 	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor) {
 		super.register(aas, descriptor);
 		addSubmodelTags(descriptor.getTags(), descriptor);
@@ -77,6 +77,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 		submodelTagMap.computeIfAbsent(submodelTag, key -> new LinkedHashSet<TaggedSubmodelDescriptor>()).add(descriptor);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void deleteSubmodelTag(IIdentifier aasIdentifier, IIdentifier smIdentifier) {
 		SubmodelDescriptor submodelDescriptor = super.lookupSubmodel(aasIdentifier, smIdentifier);
 		super.delete(aasIdentifier, smIdentifier);
@@ -107,22 +108,6 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 			for (TaggedSubmodelDescriptor smDesc : smDescriptors) {
 				if (aasDesc.getSubmodelDescriptorFromIdentifierId(smDesc.getIdentifier().getId()) != null) {
 					result.add(smDesc);
-				}
-			}
-		}
-
-		return result;
-	}
-
-	private Set<TaggedSubmodelDescriptor> lookupSubmodelDescriptorsFromAllTaggedAasDescriptors() {
-		Set<TaggedSubmodelDescriptor> result = new LinkedHashSet<>();
-
-		List<AASDescriptor> aasDescriptors = lookupAll();
-
-		for (AASDescriptor descriptor : aasDescriptors) {
-			if (descriptor instanceof TaggedAASDescriptor) {
-				for (SubmodelDescriptor smDescriptor : descriptor.getSubmodelDescriptors()) {
-					result.add(TaggedSubmodelDescriptor.createAsFacade(smDescriptor));
 				}
 			}
 		}

@@ -197,7 +197,7 @@ public class TestAASXToMetamodelConverterFromFile {
 		assertEquals(EXPECTED_SUBMODEL_IDSHORT, specificSubmodel.getIdShort());
 		assertEquals(EXPECTED_SUBMODEL_IDENTIFICATION_ID, specificSubmodel.getIdentification().getId());
 		assertEquals(EXPECTED_SUBMODEL_IDENTIFICATION_ID_TYPE, specificSubmodel.getIdentification().getIdType());
-		assertEquals(EXPECTED_SUBMODEL_MODELING_KIND, specificSubmodel.getModelingKind().toString());
+		assertEquals(EXPECTED_SUBMODEL_MODELING_KIND, specificSubmodel.getKind().toString());
 	}
 
 	/**
@@ -213,7 +213,7 @@ public class TestAASXToMetamodelConverterFromFile {
 
 		// check if the category and modelingKind matches
 		assertEquals(EXPECTED_SUBMODELELEMENT_CATEGORY, submodelElement.getCategory());
-		assertTrue(submodelElement.getModelingKind().name().equalsIgnoreCase(EXPECTED_SUBMODELELEMENT_MODELING_KIND));
+		assertTrue(submodelElement.getKind().name().equalsIgnoreCase(EXPECTED_SUBMODELELEMENT_MODELING_KIND));
 
 		// check if the property matches
 		Property prop = (Property) submodelElement;
@@ -242,7 +242,7 @@ public class TestAASXToMetamodelConverterFromFile {
 
 		// check if the category and modelingKind matches
 		assertEquals(EXPECTED_SUBMODELELEMENT_CATEGORY, submodelElement.getCategory());
-		assertTrue(submodelElement.getModelingKind().name().equalsIgnoreCase(EXPECTED_SUBMODELELEMENT_MODELING_KIND));
+		assertTrue(submodelElement.getKind().name().equalsIgnoreCase(EXPECTED_SUBMODELELEMENT_MODELING_KIND));
 
 		// check if the property matches
 		Property prop = (Property) submodelElement;
@@ -271,7 +271,7 @@ public class TestAASXToMetamodelConverterFromFile {
 
 		// check if the category and modelingKind matches
 		assertEquals(EXPECTED_SUBMODELELEMENT_CATEGORY, submodelElement.getCategory());
-		assertTrue(submodelElement.getModelingKind().name().equalsIgnoreCase(EXPECTED_SUBMODELELEMENT_MODELING_KIND));
+		assertTrue(submodelElement.getKind().name().equalsIgnoreCase(EXPECTED_SUBMODELELEMENT_MODELING_KIND));
 
 		// check if the semantic matches
 		IReference semantic = submodelElement.getSemanticId();

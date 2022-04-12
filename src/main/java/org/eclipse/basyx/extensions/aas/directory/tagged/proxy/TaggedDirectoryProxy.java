@@ -24,16 +24,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.proxy;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
@@ -105,10 +101,12 @@ public class TaggedDirectoryProxy extends AASRegistryProxy implements IAASTagged
 		return desc.stream().map(m -> TaggedAASDescriptor.createAsFacade(m)).collect(Collectors.toSet());
 	}
 
+	@Override
 	public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(String submodelTag) {
 		return performSubmodelTagRequest(submodelTag);
 	}
 
+	@Override
 	public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(Set<String> tags) {
 		return performSubmodelTagRequest(joinTagsAsString(tags));
 	}

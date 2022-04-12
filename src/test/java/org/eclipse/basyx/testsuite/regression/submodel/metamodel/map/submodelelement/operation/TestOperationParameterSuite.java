@@ -115,7 +115,7 @@ public abstract class TestOperationParameterSuite {
 		Reference secondReference = new Reference(new Key(KeyElements.RELATIONSHIPELEMENT, false, "", KeyType.IDSHORT));
 		RelationshipElement relationshipElementAsOperationVariable = new RelationshipElement(RELATIONSHIP_ID_SHORT, firstReference, secondReference);
 
-		relationshipElementAsOperationVariable.setModelingKind(ModelingKind.TEMPLATE);
+		relationshipElementAsOperationVariable.setKind(ModelingKind.TEMPLATE);
 
 		return relationshipElementAsOperationVariable;
 	}
@@ -135,7 +135,7 @@ public abstract class TestOperationParameterSuite {
 		Operation operation = new Operation("inputOperation");
 		operation.setInputVariables(Arrays.asList(opV));
 		operation.setIdShort(OPERATION_ID_SHORT);
-		operation.setModelingKind(ModelingKind.TEMPLATE);
+		operation.setKind(ModelingKind.TEMPLATE);
 
 		return operation;
 	}

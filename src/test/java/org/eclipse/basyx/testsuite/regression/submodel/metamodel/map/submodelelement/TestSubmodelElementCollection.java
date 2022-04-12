@@ -26,6 +26,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelel
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,6 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.eclipse.basyx.aas.metamodel.exception.IdShortDuplicationException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
@@ -270,7 +272,7 @@ public class TestSubmodelElementCollection {
 	 */
 	private Operation getOperation() {
 		Property property = new Property("testOpVariableId");
-		property.setModelingKind(ModelingKind.TEMPLATE);
+		property.setKind(ModelingKind.TEMPLATE);
 		List<OperationVariable> variable = Collections
 				.singletonList(new OperationVariable(property));
 		Operation operation = new Operation(variable, variable, variable, null);
