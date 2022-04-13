@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.modelprovider;
 
@@ -35,23 +50,24 @@ public class VABElementProxy implements IModelProvider {
 	protected IModelProvider provider = null;
 
 	/**
-	 * Creates the proxy based on a specific model provider.
-	 * E.g, if the element resides on <i>basyx://127.0.0.1</i> in the path
-	 * <i>a/b/c</i>, <i>provider</i> would realize the connection to
-	 * <i>basyx://127.0.0.1</i> and <i>addr</i> would be <i>a/b/c</i>. The
-	 * VABElementProxy then directly points to the element.
+	 * Creates the proxy based on a specific model provider. E.g, if the element
+	 * resides on <i>basyx://127.0.0.1</i> in the path <i>a/b/c</i>, <i>provider</i>
+	 * would realize the connection to <i>basyx://127.0.0.1</i> and <i>addr</i>
+	 * would be <i>a/b/c</i>. The VABElementProxy then directly points to the
+	 * element.
 	 * 
 	 * @param addr
 	 *            Address "within" the provider
-	 * @param provider The provider this proxy is based on
-	 * 	
+	 * @param provider
+	 *            The provider this proxy is based on
+	 * 
 	 */
 	public VABElementProxy(String addr, IModelProvider provider) {
 		// Store references
 		this.addr = VABPathTools.stripSlashes(addr);
 		this.provider = provider;
 	}
-	
+
 	/**
 	 * Read VAB element value
 	 */
@@ -155,8 +171,6 @@ public class VABElementProxy implements IModelProvider {
 		}
 	}
 
-
-
 	/**
 	 * Add path to VAB element address. Make sure that resulting path contains the
 	 * proper number of slashes ("/")
@@ -174,7 +188,7 @@ public class VABElementProxy implements IModelProvider {
 		path = VABPathTools.stripSlashes(path);
 
 		// Now combine both paths
-		if ( path.isEmpty() ) {
+		if (path.isEmpty()) {
 			return addr;
 		} else if (addr != null && !addr.isEmpty()) {
 			if (path.startsWith("?")) {

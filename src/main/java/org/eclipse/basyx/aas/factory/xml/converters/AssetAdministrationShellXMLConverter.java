@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.aas.factory.xml.converters;
 
@@ -63,15 +78,16 @@ public class AssetAdministrationShellXMLConverter {
 	 * Parses &lt;aas:assetAdministrationShells&gt; and builds the
 	 * AssetAdministrationShell objects from it
 	 * 
-	 * @param xmlAASObject        a Map containing the content of the XML tag
-	 *                            &lt;aas:assetAdministrationShells&gt;
-	 * @param conceptDescriptions the available concept descriptions
+	 * @param xmlAASObject
+	 *            a Map containing the content of the XML tag
+	 *            &lt;aas:assetAdministrationShells&gt;
+	 * @param conceptDescriptions
+	 *            the available concept descriptions
 	 * @return a List of IAssetAdministrationShell objects parsed form the given XML
 	 *         Map
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<IAssetAdministrationShell> parseAssetAdministrationShells(Map<String, Object> xmlAASObject,
-			Collection<IConceptDescription> conceptDescriptions) {
+	public static List<IAssetAdministrationShell> parseAssetAdministrationShells(Map<String, Object> xmlAASObject, Collection<IConceptDescription> conceptDescriptions) {
 		if (xmlAASObject == null) {
 			return Collections.emptyList();
 		}
@@ -82,10 +98,8 @@ public class AssetAdministrationShellXMLConverter {
 		for (Map<String, Object> xmlAAS : xmlAASs) {
 			AssetAdministrationShell adminShell = new AssetAdministrationShell();
 
-			IdentifiableXMLConverter.populateIdentifiable(xmlAAS,
-					Identifiable.createAsFacadeNonStrict(adminShell, KeyElements.ASSETADMINISTRATIONSHELL));
-			HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlAAS,
-					HasDataSpecification.createAsFacade(adminShell));
+			IdentifiableXMLConverter.populateIdentifiable(xmlAAS, Identifiable.createAsFacadeNonStrict(adminShell, KeyElements.ASSETADMINISTRATIONSHELL));
+			HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlAAS, HasDataSpecification.createAsFacade(adminShell));
 
 			Collection<IView> views = ViewXMLConverter.parseViews(xmlAAS);
 			Collection<IConceptDictionary> conceptDictionary = parseConceptDictionaries(xmlAAS, conceptDescriptions);
@@ -113,7 +127,8 @@ public class AssetAdministrationShellXMLConverter {
 	/**
 	 * Parses &lt;aas:submodelRefs&gt; and builds {@link Reference} objects from it
 	 * 
-	 * @param xmlObject a Map containing the XML tag &lt;aas:submodelRefs&gt;
+	 * @param xmlObject
+	 *            a Map containing the XML tag &lt;aas:submodelRefs&gt;
 	 * @return a Set of {@link IReference} objects parsed form the given XML Map
 	 */
 	@SuppressWarnings("unchecked")
@@ -138,35 +153,30 @@ public class AssetAdministrationShellXMLConverter {
 	 * Parses &lt;aas:conceptDictionaries&gt; and builds IConceptDictionary objects
 	 * from it
 	 * 
-	 * @param xmlConceptDescriptionRefsObject a Map containing the XML tag
-	 *                                        &lt;aas:conceptDictionaries&gt;
-	 * @param conceptDescriptions             the available concept descriptions
+	 * @param xmlConceptDescriptionRefsObject
+	 *            a Map containing the XML tag &lt;aas:conceptDictionaries&gt;
+	 * @param conceptDescriptions
+	 *            the available concept descriptions
 	 * @return a Set of IConceptDictionary objects parsed form the given XML Map
 	 */
 	@SuppressWarnings("unchecked")
-	private static Collection<IConceptDictionary> parseConceptDictionaries(
-			Map<String, Object> xmlConceptDescriptionRefsObject, Collection<IConceptDescription> conceptDescriptions) {
+	private static Collection<IConceptDictionary> parseConceptDictionaries(Map<String, Object> xmlConceptDescriptionRefsObject, Collection<IConceptDescription> conceptDescriptions) {
 		Set<IConceptDictionary> conceptDictionarySet = new HashSet<>();
 		if (xmlConceptDescriptionRefsObject == null)
 			return conceptDictionarySet;
 
-		Map<String, Object> xmlConceptDictionaries = (Map<String, Object>) xmlConceptDescriptionRefsObject
-				.get(CONCEPT_DICTIONARIES);
+		Map<String, Object> xmlConceptDictionaries = (Map<String, Object>) xmlConceptDescriptionRefsObject.get(CONCEPT_DICTIONARIES);
 		if (xmlConceptDictionaries == null)
 			return conceptDictionarySet;
 
-		List<Map<String, Object>> xmlConceptDictionaryList = XMLHelper
-				.getList(xmlConceptDictionaries.get(CONCEPT_DICTIONARY));
+		List<Map<String, Object>> xmlConceptDictionaryList = XMLHelper.getList(xmlConceptDictionaries.get(CONCEPT_DICTIONARY));
 		for (Map<String, Object> xmlConceptDictionary : xmlConceptDictionaryList) {
 			ConceptDictionary conceptDictionary = new ConceptDictionary();
-			ReferableXMLConverter.populateReferable(xmlConceptDictionary,
-					Referable.createAsFacadeNonStrict(conceptDictionary, KeyElements.CONCEPTDICTIONARY));
+			ReferableXMLConverter.populateReferable(xmlConceptDictionary, Referable.createAsFacadeNonStrict(conceptDictionary, KeyElements.CONCEPTDICTIONARY));
 
-			Map<String, Object> xmlConceptDescriptionRefs = (Map<String, Object>) xmlConceptDictionary
-					.get(CONCEPT_DESCRIPTION_REFS);
+			Map<String, Object> xmlConceptDescriptionRefs = (Map<String, Object>) xmlConceptDictionary.get(CONCEPT_DESCRIPTION_REFS);
 			HashSet<IReference> referenceSet = new HashSet<>();
-			List<Map<String, Object>> xmlConceptDescriptionRefsList = XMLHelper
-					.getList(xmlConceptDescriptionRefs.get(CONCEPT_DESCRIPTION_REF));
+			List<Map<String, Object>> xmlConceptDescriptionRefsList = XMLHelper.getList(xmlConceptDescriptionRefs.get(CONCEPT_DESCRIPTION_REF));
 			for (Map<String, Object> xmlConceptDescriptionRef : xmlConceptDescriptionRefsList) {
 				referenceSet.add(ReferenceXMLConverter.parseReference(xmlConceptDescriptionRef));
 			}
@@ -185,8 +195,7 @@ public class AssetAdministrationShellXMLConverter {
 	 * @param conceptDescriptions
 	 * @return the matching concept descriptions
 	 */
-	private static Collection<IConceptDescription> getConceptDescriptions(Collection<IReference> referenceSet,
-			Collection<IConceptDescription> conceptDescriptions) {
+	private static Collection<IConceptDescription> getConceptDescriptions(Collection<IReference> referenceSet, Collection<IConceptDescription> conceptDescriptions) {
 		Collection<IConceptDescription> result = new ArrayList<>();
 		for (IReference ref : referenceSet) {
 			if (ref.getKeys() == null || ref.getKeys().isEmpty()) {
@@ -209,14 +218,15 @@ public class AssetAdministrationShellXMLConverter {
 	 * Builds &lt;aas:assetAdministrationShells&gt; from a given Collection of
 	 * IAssetAdministrationShell objects
 	 * 
-	 * @param document                  the XML document
-	 * @param assetAdministrationShells a Collection of IAssetAdministrationShell
-	 *                                  objects to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param assetAdministrationShells
+	 *            a Collection of IAssetAdministrationShell objects to build the XML
+	 *            for
 	 * @return the &lt;aas:assetAdministrationShells&gt; XML tag for the given
 	 *         IAssetAdministrationShell objects
 	 */
-	public static Element buildAssetAdministrationShellsXML(Document document,
-			Collection<IAssetAdministrationShell> assetAdministrationShells) {
+	public static Element buildAssetAdministrationShellsXML(Document document, Collection<IAssetAdministrationShell> assetAdministrationShells) {
 		Element root = document.createElement(ASSET_ADMINISTRATION_SHELLS);
 
 		List<Element> xmlAASList = new ArrayList<Element>();
@@ -247,9 +257,12 @@ public class AssetAdministrationShellXMLConverter {
 	/**
 	 * Builds &lt;aas:derivedFrom&gt; from a given IAssetAdministrationShell object
 	 * 
-	 * @param document the XML document
-	 * @param root     the XML tag to be populated
-	 * @param aas      the IAssetAdministrationShell object to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param root
+	 *            the XML tag to be populated
+	 * @param aas
+	 *            the IAssetAdministrationShell object to build the XML for
 	 */
 	private static void buildDerivedFrom(Document document, Element root, IAssetAdministrationShell aas) {
 		IReference derivedFrom = aas.getDerivedFrom();
@@ -263,9 +276,12 @@ public class AssetAdministrationShellXMLConverter {
 	/**
 	 * Builds &lt;aas:assetRef&gt; from a given IAssetAdministrationShell object
 	 * 
-	 * @param document the XML document
-	 * @param root     the XML tag to be populated
-	 * @param aas      the IAssetAdministrationShell object to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param root
+	 *            the XML tag to be populated
+	 * @param aas
+	 *            the IAssetAdministrationShell object to build the XML for
 	 */
 	private static void buildAssetRef(Document document, Element root, IAssetAdministrationShell aas) {
 		IReference assetRef = aas.getAssetReference();
@@ -279,9 +295,12 @@ public class AssetAdministrationShellXMLConverter {
 	/**
 	 * Builds &lt;aas:submodelRefs&gt; from a given IAssetAdministrationShell object
 	 * 
-	 * @param document the XML document
-	 * @param root     the XML tag to be populated
-	 * @param aas      the IAssetAdministrationShell object to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param root
+	 *            the XML tag to be populated
+	 * @param aas
+	 *            the IAssetAdministrationShell object to build the XML for
 	 */
 	private static void buildSubmodelRef(Document document, Element root, IAssetAdministrationShell aas) {
 		Collection<IReference> submodelRef = aas.getSubmodelReferences();
@@ -302,8 +321,10 @@ public class AssetAdministrationShellXMLConverter {
 	 * Builds &lt;aas:conceptDictionaries&gt; from a given IAssetAdministrationShell
 	 * object
 	 * 
-	 * @param document the XML document
-	 * @param aas      the IAssetAdministrationShell object to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param aas
+	 *            the IAssetAdministrationShell object to build the XML for
 	 * @return the &lt;aas:conceptDictionaries&gt; XML tag build from the
 	 *         IAssetAdministrationShell object
 	 */

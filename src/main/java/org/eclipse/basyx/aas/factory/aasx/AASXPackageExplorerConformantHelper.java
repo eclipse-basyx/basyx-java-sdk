@@ -1,11 +1,26 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 *
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 package org.eclipse.basyx.aas.factory.aasx;
 
@@ -32,12 +47,12 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
  *
  */
 public class AASXPackageExplorerConformantHelper {
-	
+
 	/**
 	 * Converts meta model elements so that the AASXPackageExplorer can load their
-	 * serialized AASX. This method modifies the passed parameter Asset Administration Shell List.
-	 * As the passed Asset Administration Shell List contains objects as references thatswhy original 
-	 * List is modified.
+	 * serialized AASX. This method modifies the passed parameter Asset
+	 * Administration Shell List. As the passed Asset Administration Shell List
+	 * contains objects as references thatswhy original List is modified.
 	 * 
 	 * @param aasList
 	 * @param assetList
@@ -45,11 +60,9 @@ public class AASXPackageExplorerConformantHelper {
 	 * @param submodelList
 	 * @return
 	 */
-	public static AasEnv adapt(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList,
-		Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList) {
+	public static AasEnv adapt(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList) {
 
-		Collection<IAssetAdministrationShell> convertedAASs = aasList.stream()
-				.map(AASXPackageExplorerConformantHelper::removeFirstKeyFromSubmodelReferences).collect(Collectors.toList());
+		Collection<IAssetAdministrationShell> convertedAASs = aasList.stream().map(AASXPackageExplorerConformantHelper::removeFirstKeyFromSubmodelReferences).collect(Collectors.toList());
 
 		return new AasEnv(convertedAASs, assetList, conceptDescriptionList, submodelList);
 	}
@@ -62,13 +75,11 @@ public class AASXPackageExplorerConformantHelper {
 	 * @return
 	 */
 	public static AasEnv adapt(AasEnv env) {
-		return adapt(env.getAssetAdministrationShells(), env.getAssets(), env.getConceptDescriptions(),
-				env.getSubmodels());
+		return adapt(env.getAssetAdministrationShells(), env.getAssets(), env.getConceptDescriptions(), env.getSubmodels());
 	}
 
 	private static IAssetAdministrationShell removeFirstKeyFromSubmodelReferences(IAssetAdministrationShell shell) {
-		Collection<IReference> convertedReferences = shell.getSubmodelReferences().stream()
-				.map(AASXPackageExplorerConformantHelper::removeFirstKeyElement).collect(Collectors.toList());
+		Collection<IReference> convertedReferences = shell.getSubmodelReferences().stream().map(AASXPackageExplorerConformantHelper::removeFirstKeyElement).collect(Collectors.toList());
 
 		((AssetAdministrationShell) shell).setSubmodelReferences(convertedReferences);
 
@@ -78,9 +89,9 @@ public class AASXPackageExplorerConformantHelper {
 	private static IReference removeFirstKeyElement(IReference reference) {
 		List<IKey> keys = reference.getKeys();
 
-		if(!keys.isEmpty() && keys.get(0).getType().equals(KeyElements.ASSETADMINISTRATIONSHELL)) {
+		if (!keys.isEmpty() && keys.get(0).getType().equals(KeyElements.ASSETADMINISTRATIONSHELL)) {
 			keys.remove(0);
-			
+
 			return new Reference(keys);
 		}
 

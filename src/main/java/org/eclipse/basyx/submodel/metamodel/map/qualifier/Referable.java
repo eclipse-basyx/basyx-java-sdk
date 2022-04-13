@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.qualifier;
 
@@ -36,13 +51,13 @@ import org.slf4j.LoggerFactory;
 public class Referable extends VABModelMap<Object> implements IReferable {
 	private static Logger logger = LoggerFactory.getLogger(Referable.class);
 
-	public static final String IDSHORT="idShort";
-	
-	public static final String CATEGORY="category";
-	
-	public static final String DESCRIPTION="description";
-	
-	public static final String PARENT="parent";
+	public static final String IDSHORT = "idShort";
+
+	public static final String CATEGORY = "category";
+
+	public static final String DESCRIPTION = "description";
+
+	public static final String PARENT = "parent";
 
 	private KeyElements elem;
 
@@ -53,9 +68,10 @@ public class Referable extends VABModelMap<Object> implements IReferable {
 		// Identifies an element within its name space (String)
 		put(IDSHORT, "");
 	}
-	
+
 	/**
 	 * Constructor with mandatory attribute
+	 * 
 	 * @param idShort
 	 */
 	public Referable(String idShort) {
@@ -94,7 +110,7 @@ public class Referable extends VABModelMap<Object> implements IReferable {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Referable.class, map);
 		}
@@ -102,21 +118,22 @@ public class Referable extends VABModelMap<Object> implements IReferable {
 		ret.setMap(map);
 		ret.setElementType(type);
 
-		return ret;	
+		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
 		return map != null && map.get(Referable.IDSHORT) != null;
 	}
-	
+
 	/**
-	 * Creates a Referable object from a map
-	 * without checking the mandatory attributes present
+	 * Creates a Referable object from a map without checking the mandatory
+	 * attributes present
+	 * 
 	 * @param map
 	 * @param type
 	 * @return
@@ -125,12 +142,12 @@ public class Referable extends VABModelMap<Object> implements IReferable {
 		if (map == null) {
 			return null;
 		}
-		
+
 		Referable ret = new Referable();
 		ret.setMap(map);
 		ret.setElementType(type);
 
-		return ret;	
+		return ret;
 	}
 
 	@Override
@@ -156,12 +173,12 @@ public class Referable extends VABModelMap<Object> implements IReferable {
 	}
 
 	public void setIdShort(String idShort) {
-		if(!IdShortValidator.isValid(idShort)) {
+		if (!IdShortValidator.isValid(idShort)) {
 			/*
 			 * Currently, the AASX package explorer does support creating arbitrary
 			 * idShorts. Thus, if this is an exception, AASX files created with the AASX
-			 * package explorer may not be loadable 
-			 * TODO: Replace this with a RuntimeException
+			 * package explorer may not be loadable TODO: Replace this with a
+			 * RuntimeException
 			 */
 			logger.warn("The passed idShort " + idShort + " is not valid! It has to satisfy the RegEx " + IdShortValidator.IDSHORT_REGEX);
 		}

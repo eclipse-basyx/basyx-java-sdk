@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.types.digitalnameplate.submodelelementcollections.address;
 
@@ -30,7 +45,8 @@ import org.eclipse.basyx.submodel.types.digitalnameplate.enums.MailType;
 
 /**
  * Email as defined in the AAS Digital Nameplate Template document <br>
- * It is a submodel element collection which contains email address and encryption method
+ * It is a submodel element collection which contains email address and
+ * encryption method
  * 
  * @author haque
  *
@@ -41,12 +57,13 @@ public class Email extends SubmodelElementCollection {
 	public static final String TYPEOFEMAILADDRESSID = "TypeOfEmailAddress";
 	public static final String TYPEOFPUBLICKEYID = "TypeOfPublickKey";
 	public static final Reference SEMANTICID = new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "0173-1#02-AAQ836#005", KeyType.IRDI));
-	
+
 	private Email() {
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param emailAddress
 	 */
@@ -55,9 +72,10 @@ public class Email extends SubmodelElementCollection {
 		setSemanticId(SEMANTICID);
 		setEmailAddress(emailAddress);
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param emailAddress
 	 */
@@ -66,46 +84,47 @@ public class Email extends SubmodelElementCollection {
 		setSemanticId(SEMANTICID);
 		setEmailAddress(emailAddress);
 	}
-	
+
 	/**
 	 * Creates a Email SMC object from a map
 	 * 
-	 * @param obj a Email SMC object as raw map
+	 * @param obj
+	 *            a Email SMC object as raw map
 	 * @return a Email SMC object, that behaves like a facade for the given map
 	 */
 	public static Email createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Email.class, obj);
 		}
-		
+
 		Email email = new Email();
 		email.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return email;
 	}
-	
+
 	/**
 	 * Creates a Email SMC object from a map without validation
 	 * 
-	 * @param obj a Email SMC object as raw map
+	 * @param obj
+	 *            a Email SMC object as raw map
 	 * @return a Email SMC object, that behaves like a facade for the given map
 	 */
 	private static Email createAsFacadeNonStrict(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		Email email = new Email();
 		email.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return email;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for Email SMC
-	 * exist in the map
+	 * Check whether all mandatory elements for Email SMC exist in the map
 	 * 
 	 * @param obj
 	 * 
@@ -114,22 +133,25 @@ public class Email extends SubmodelElementCollection {
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> obj) {
 		Email email = createAsFacadeNonStrict(obj);
-		
-		return SubmodelElementCollection.isValid(obj)
-				&& Property.isValid((Map<String, Object>) email.getEmailAddress());
+
+		return SubmodelElementCollection.isValid(obj) && Property.isValid((Map<String, Object>) email.getEmailAddress());
 	}
-	
+
 	/**
 	 * Sets electronic mail address of a business partner
-	 * @param emailAddress Property
+	 * 
+	 * @param emailAddress
+	 *            Property
 	 */
 	public void setEmailAddress(Property emailAddress) {
 		addSubmodelElement(emailAddress);
 	}
-	
+
 	/**
 	 * Sets electronic mail address of a business partner
-	 * @param emailAddress String
+	 * 
+	 * @param emailAddress
+	 *            String
 	 */
 	public void setEmailAddress(String emailAddress) {
 		Property emailProp = new Property(EMAILADDRESSID, ValueType.String);
@@ -137,27 +159,34 @@ public class Email extends SubmodelElementCollection {
 		emailProp.setValue(emailAddress);
 		setEmailAddress(emailProp);
 	}
-	
+
 	/**
 	 * Gets electronic mail address of a business partner
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IProperty getEmailAddress() {
 		return Property.createAsFacade((Map<String, Object>) getSubmodelElement(EMAILADDRESSID));
 	}
-	
+
 	/**
-	 * Sets public part of an unsymmetrical key pair to sign or encrypt text or messages
-	 * @param key {@link MultiLanguageProperty}
+	 * Sets public part of an unsymmetrical key pair to sign or encrypt text or
+	 * messages
+	 * 
+	 * @param key
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setPublicKey(MultiLanguageProperty key) {
 		addSubmodelElement(key);
 	}
-	
+
 	/**
-	 * Sets public part of an unsymmetrical key pair to sign or encrypt text or messages
-	 * @param key {@link LangString}
+	 * Sets public part of an unsymmetrical key pair to sign or encrypt text or
+	 * messages
+	 * 
+	 * @param key
+	 *            {@link LangString}
 	 */
 	public void setPublicKey(LangString key) {
 		MultiLanguageProperty publicKey = new MultiLanguageProperty(PUBLICKEYID);
@@ -165,29 +194,35 @@ public class Email extends SubmodelElementCollection {
 		publicKey.setValue(new LangStrings(key));
 		setPublicKey(publicKey);
 	}
-	
+
 	/**
-	 * Gets public part of an unsymmetrical key pair to sign or encrypt text or messages
+	 * Gets public part of an unsymmetrical key pair to sign or encrypt text or
+	 * messages
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IMultiLanguageProperty getPublicKey() {
 		return MultiLanguageProperty.createAsFacade((Map<String, Object>) getSubmodelElement(PUBLICKEYID));
 	}
-	
+
 	/**
 	 * Sets characterization of an e-mail address according to its location or usage
 	 * enumeration
-	 * @param type {@link Property}
+	 * 
+	 * @param type
+	 *            {@link Property}
 	 */
 	public void setTypeOfEmailAddress(Property type) {
 		addSubmodelElement(type);
 	}
-	
+
 	/**
 	 * Sets characterization of an e-mail address according to its location or usage
 	 * enumeration
-	 * @param type {@link MailType}
+	 * 
+	 * @param type
+	 *            {@link MailType}
 	 */
 	public void setTypeOfEmailAddress(MailType type) {
 		Property mailTypeProp = new Property(TYPEOFEMAILADDRESSID, ValueType.String);
@@ -195,28 +230,33 @@ public class Email extends SubmodelElementCollection {
 		mailTypeProp.setValue(type.toString());
 		setTypeOfEmailAddress(mailTypeProp);
 	}
-	
+
 	/**
 	 * Gets characterization of an e-mail address according to its location or usage
 	 * enumeration
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IProperty getTypeOfEmailAddress() {
 		return Property.createAsFacade((Map<String, Object>) getSubmodelElement(TYPEOFEMAILADDRESSID));
 	}
-	
+
 	/**
 	 * Sets characterization of a public key according to its encryption process
-	 * @param key {@link MultiLanguageProperty}
+	 * 
+	 * @param key
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setTypeOfPublicKey(MultiLanguageProperty key) {
 		addSubmodelElement(key);
 	}
-	
+
 	/**
 	 * Sets characterization of a public key according to its encryption process
-	 * @param key {@link LangString}
+	 * 
+	 * @param key
+	 *            {@link LangString}
 	 */
 	public void setTypeOfPublicKey(LangString key) {
 		MultiLanguageProperty typeOfPublicKey = new MultiLanguageProperty(TYPEOFPUBLICKEYID);
@@ -224,9 +264,10 @@ public class Email extends SubmodelElementCollection {
 		typeOfPublicKey.setValue(new LangStrings(key));
 		setTypeOfPublicKey(typeOfPublicKey);
 	}
-	
+
 	/**
 	 * Gets characterization of a public key according to its encryption process
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")

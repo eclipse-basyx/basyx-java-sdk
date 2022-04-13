@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.coder.json.metaprotocol;
 
@@ -79,42 +94,37 @@ public class Result extends LinkedHashMap<String, Object> {
 	public Result(Exception e) {
 		this(false, getMessageListFromException(e));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static Result createAsFacade(Map<String, Object> map) {
 		boolean success = (Boolean) map.get(SUCCESS);
 		Object entity = map.get(ENTITY);
 		List<Message> messages = new ArrayList<>();
-		
-		for(Map<String, Object> messageMap: (List<Map<String, Object>>)map.get(MESSAGES)) {
+
+		for (Map<String, Object> messageMap : (List<Map<String, Object>>) map.get(MESSAGES)) {
 			messages.add(Message.createAsFacade(messageMap));
 		}
-		
+
 		return new Result(success, entity, messages);
 	}
 
 	private static List<Message> getMessageListFromException(Exception e) {
 
 		List<Message> messageList = new LinkedList<Message>();
-		
 
 		// Translate the exception to code
 		if (e instanceof ProviderException) {
 			String code = new Integer(ExceptionToHTTPCodeMapper.mapFromException((ProviderException) e)).toString();
-			Message message = new Message(MessageType.Exception, code,
-					e.getClass().getSimpleName() + ": " + e.getMessage());
+			Message message = new Message(MessageType.Exception, code, e.getClass().getSimpleName() + ": " + e.getMessage());
 
 			// replace with desired debugging output
 			messageList.add(message);
 		}
 
-
-
 		if (e.getCause() != null) {
 			messageList.addAll(getMessageListFromException((Exception) e.getCause()));
 		}
 
-		
 		return messageList;
 	}
 

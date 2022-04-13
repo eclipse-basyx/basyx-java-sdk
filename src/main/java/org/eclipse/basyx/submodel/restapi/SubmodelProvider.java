@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
@@ -31,8 +46,8 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
 
 /**
- * Additional VAB provider specific for providing submodels together
- * with other SDKs by implementing the submodel API.
+ * Additional VAB provider specific for providing submodels together with other
+ * SDKs by implementing the submodel API.
  *
  * The VAB provides generic models without considering high-level information.
  * For example, Operation submodel elements are realized as a Map. The function
@@ -50,7 +65,7 @@ public class SubmodelProvider implements IModelProvider {
 
 	public static final String VALUES = "values";
 	public static final String SUBMODEL = "submodel";
-	
+
 	ISubmodelAPI submodelAPI;
 
 	/**
@@ -129,22 +144,22 @@ public class SubmodelProvider implements IModelProvider {
 				// Remove initial "/submodelElements"
 				path = removeSMElementPrefix(path);
 
-                if (endsWithValue(splitted)) { // Request for the value of an property
-                    String idShortPath = removeValueSuffix(path);
-                    return submodelAPI.getSubmodelElementValue(idShortPath);
-                } else if (isInvocationListPath(splitted)) {
-                    List<String> idShorts = getIdShorts(splitted);
+				if (endsWithValue(splitted)) { // Request for the value of an property
+					String idShortPath = removeValueSuffix(path);
+					return submodelAPI.getSubmodelElementValue(idShortPath);
+				} else if (isInvocationListPath(splitted)) {
+					List<String> idShorts = getIdShorts(splitted);
 
-                    // Remove invocationList/{requestId} from the idShorts
-                    idShorts.remove(idShorts.size() - 1);
-                    idShorts.remove(idShorts.size() - 1);
-                    return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
-                } else {
-                    return submodelAPI.getSubmodelElement(path);
-                }
-            }
-        }
-        throw new MalformedRequestException("Unknown path " + path + " was requested");
+					// Remove invocationList/{requestId} from the idShorts
+					idShorts.remove(idShorts.size() - 1);
+					idShorts.remove(idShorts.size() - 1);
+					return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
+				} else {
+					return submodelAPI.getSubmodelElement(path);
+				}
+			}
+		}
+		throw new MalformedRequestException("Unknown path " + path + " was requested");
 	}
 
 	private List<String> getIdShorts(String[] splitted) {
@@ -161,25 +176,26 @@ public class SubmodelProvider implements IModelProvider {
 		return idShorts;
 	}
 
-
 	private boolean endsWithValue(String[] splitted) {
 		return splitted[splitted.length - 1].equals(Property.VALUE);
 	}
 
 	/**
-     * Removes a trailing <code>/value</code> from the path if it exists.
-     *
-     * @param path The original path, which might or might not end on {@value Property.VALUE}.
-     * @return The new path
-     */
-    private String removeValueSuffix(String path) {
-        String suffix = "/" + Property.VALUE;
-        if (path.endsWith(suffix)) {
-            path = path.substring(0, path.length() - suffix.length());
-        }
+	 * Removes a trailing <code>/value</code> from the path if it exists.
+	 *
+	 * @param path
+	 *            The original path, which might or might not end on
+	 *            {@value Property.VALUE}.
+	 * @return The new path
+	 */
+	private String removeValueSuffix(String path) {
+		String suffix = "/" + Property.VALUE;
+		if (path.endsWith(suffix)) {
+			path = path.substring(0, path.length() - suffix.length());
+		}
 
-        return path;
-    }
+		return path;
+	}
 
 	private boolean isInvocationListPath(String[] splitted) {
 		return splitted.length > 2 && splitted[splitted.length - 2].equals(OperationProvider.INVOCATION_LIST);
@@ -198,14 +214,13 @@ public class SubmodelProvider implements IModelProvider {
 			if (endsWithValue(splitted)) {
 				submodelAPI.updateSubmodelElement(idshortPath, newValue);
 			} else {
-				
+
 				ISubmodelElement element = SubmodelElementFacadeFactory.createSubmodelElement((Map<String, Object>) newValue);
-				
-				if(!path.endsWith(element.getIdShort())) {
-					throw new MalformedRequestException("The idShort of given Element '"
-							+ element.getIdShort() + "' does not match the ending of the given path '" + path + "'");
+
+				if (!path.endsWith(element.getIdShort())) {
+					throw new MalformedRequestException("The idShort of given Element '" + element.getIdShort() + "' does not match the ending of the given path '" + path + "'");
 				}
-				
+
 				submodelAPI.addSubmodelElement(idshortPath, element);
 			}
 		}
@@ -255,7 +270,7 @@ public class SubmodelProvider implements IModelProvider {
 		if (!VABPathTools.isOperationInvokationPath(pathWithoutSubmodelPrefix)) {
 			throw new MalformedRequestException("Given path '" + path + "' does not end in /" + Operation.INVOKE);
 		}
-		
+
 		String pathWithoutSMElementPrefix = removeSMElementPrefix(pathWithoutSubmodelPrefix);
 
 		if (isAsyncInvokePath(pathWithoutSMElementPrefix)) {
@@ -285,11 +300,11 @@ public class SubmodelProvider implements IModelProvider {
 	public ISubmodelAPI getAPI() {
 		return this.submodelAPI;
 	}
-	
+
 	protected void setAPI(ISubmodelAPI api) {
 		this.submodelAPI = api;
 	}
-	
+
 	private String removeSMElementPrefix(String path) {
 		return path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
 	}

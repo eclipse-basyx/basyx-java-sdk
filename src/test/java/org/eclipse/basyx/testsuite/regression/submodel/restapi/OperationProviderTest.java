@@ -1,11 +1,26 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 *
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.restapi;
 
@@ -53,175 +68,168 @@ public class OperationProviderTest {
 
 	private static final String OPID_IN = "opIn";
 	private static final String OPID_OUT = "opOut";
-	
+
 	private static final String API_INVOKE_URL = "http://" + SERVER + ":" + PORT + "/" + CONTEXT_PATH + "/" + OPID_OUT + "/invoke";
-	
+
 	private static Integer requestId = 0;
-	
+
 	private static final Function<Object[], Object> NULL_RETURN_FUNC = (Function<Object[], Object>) v -> {
 		// Do nothing, just return
-		// This is a function with return type "void" 
+		// This is a function with return type "void"
 		return null;
 	};
-	
+
 	private static final Function<Object[], Object> SUB_RETURN_FUNC = (Function<Object[], Object>) v -> {
 		return (Integer) v[0] - (Integer) v[1];
 	};
-	
+
 	private static OperationProvider opProviderIn;
 	private static OperationProvider opProviderOut;
-	
-	
+
 	@BeforeClass
 	public static void setup() {
-		
+
 		Collection<OperationVariable> in = getInVariables();
 		Collection<OperationVariable> out = getOutVariables();
-		
+
 		Operation inOperation = createOperation(OPID_IN, in, new ArrayList<>(), NULL_RETURN_FUNC);
 		opProviderIn = new OperationProvider(new VABLambdaProvider(inOperation));
-		
-		
+
 		Operation outOperation = createOperation(OPID_OUT, in, out, SUB_RETURN_FUNC);
 		opProviderOut = new OperationProvider(new VABLambdaProvider(outOperation));
-		
+
 	}
-	
-	
-	private static Operation createOperation(String id, Collection<OperationVariable> in,
-			Collection<OperationVariable> out, Function<Object[], Object> func) {
+
+	private static Operation createOperation(String id, Collection<OperationVariable> in, Collection<OperationVariable> out, Function<Object[], Object> func) {
 		Operation operation = new Operation(id);
 		operation.setInputVariables(in);
 		operation.setOutputVariables(out);
 		operation.setInvokable(func);
 		return operation;
 	}
-		
-	
+
 	private static Collection<OperationVariable> getInVariables() {
 		Collection<OperationVariable> in = new ArrayList<>();
-		
+
 		Property inProp1 = new Property("testIn1", 0);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 		Property inProp2 = new Property("testIn2", 0);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
-		
+		inProp1.setKind(ModelingKind.TEMPLATE);
+
 		in.add(new OperationVariable(inProp1));
 		in.add(new OperationVariable(inProp2));
-		
+
 		return in;
 	}
-	
+
 	private static Collection<OperationVariable> getOutVariables() {
 		Collection<OperationVariable> out = new ArrayList<>();
-		
+
 		Property outProp = new Property("testOut", 0);
-		outProp.setModelingKind(ModelingKind.TEMPLATE);
+		outProp.setKind(ModelingKind.TEMPLATE);
 
 		out.add(new OperationVariable(outProp));
-		
+
 		return out;
 	}
-	
-	
+
 	/**
-	 * Tests an Operation call with non wrapped parameters
-	 * Operation has no return value
+	 * Tests an Operation call with non wrapped parameters Operation has no return
+	 * value
 	 */
 	@Test
 	public void testNonWrappedInputWithoutOutput() {
 		opProviderIn.invokeOperation("invoke", 1, 2);
 	}
-	
+
 	/**
-	 * Tests an Operation call with an InvocationRequest
-	 * Operation has no return value
+	 * Tests an Operation call with an InvocationRequest Operation has no return
+	 * value
 	 */
 	@Test
-	public void testInvocationRequestInputWithoutOutput() {	
+	public void testInvocationRequestInputWithoutOutput() {
 		Property inProp1 = new Property("testIn1", 10);
 		Property inProp2 = new Property("testIn2", 6);
 		InvocationRequest request = getInvocationRequest(inProp1, inProp2);
 		invokeSync(opProviderIn, request);
 	}
-	
+
 	/**
-	 * Tests an Operation call with non wrapped parameters
-	 * Operation returns the given parameter
+	 * Tests an Operation call with non wrapped parameters Operation returns the
+	 * given parameter
 	 */
 	@Test
 	public void testNonWrappedInputWithOutput() {
 		assertEquals(4, opProviderOut.invokeOperation("invoke", 10, 6));
 	}
-	
+
 	/**
-	 * Tests an Operation call with an InvocationRequest
-	 * Operation returns the given parameter
+	 * Tests an Operation call with an InvocationRequest Operation returns the given
+	 * parameter
 	 */
 	@Test
 	public void testInvocationRequestInputWithOutput() throws Exception {
-		
+
 		Property inProp1 = new Property("testIn1", 10);
 		Property inProp2 = new Property("testIn2", 6);
 		InvocationRequest request = getInvocationRequest(inProp1, inProp2);
-		
+
 		Collection<IOperationVariable> outResponseSync = invokeSync(opProviderOut, request);
 		Collection<IOperationVariable> outResponseAsync = invokeAsync(opProviderOut, request);
 		assertEquals(1, outResponseSync.size());
 		assertEquals(1, outResponseAsync.size());
-		
+
 		Property propSync = (Property) outResponseSync.iterator().next().getValue();
 		Property propAsync = (Property) outResponseAsync.iterator().next().getValue();
-		
+
 		assertEquals(4, propSync.getValue());
 		assertEquals(4, propAsync.getValue());
 	}
-	
+
 	/**
 	 * Swap the parameters in request to check if they are sorted by id
 	 */
 	@Test
 	public void testInvocationRequestWithSwappedParameters() throws Exception {
-		
+
 		Property inProp1 = new Property("testIn1", 10);
 		Property inProp2 = new Property("testIn2", 6);
 		InvocationRequest request = getInvocationRequest(inProp2, inProp1);
-		
-		
+
 		Collection<IOperationVariable> outResponseSync = invokeSync(opProviderOut, request);
 		Collection<IOperationVariable> outResponseAsync = invokeAsync(opProviderOut, request);
 		assertEquals(1, outResponseSync.size());
 		assertEquals(1, outResponseAsync.size());
-		
+
 		Property propSync = (Property) outResponseSync.iterator().next().getValue();
 		Property propAsync = (Property) outResponseAsync.iterator().next().getValue();
-		
+
 		assertEquals(4, propSync.getValue());
 		assertEquals(4, propAsync.getValue());
 	}
-	
+
 	/**
 	 * Tests to call an Operation expecting 2 parameters with only 1
 	 */
 	@Test
 	public void testInvocationRequestWithTooFewParameters() throws Exception {
 		Property inProp1 = new Property("testIn1", 5);
-		
+
 		InvocationRequest request = getInvocationRequest(inProp1);
-		
+
 		try {
 			invokeSync(opProviderOut, request);
 			fail();
-		} catch(MalformedRequestException e) {
+		} catch (MalformedRequestException e) {
 		}
-		
+
 		try {
 			invokeAsync(opProviderOut, request);
 			fail();
-		} catch(MalformedRequestException e) {
+		} catch (MalformedRequestException e) {
 		}
 	}
-	
+
 	/**
 	 * Tests to call Operation with right number of parameters but a wrong id
 	 */
@@ -231,20 +239,20 @@ public class OperationProviderTest {
 		Property inProp2 = new Property("testIn3", 6);
 
 		InvocationRequest request = getInvocationRequest(inProp1, inProp2);
-		
+
 		try {
 			invokeSync(opProviderOut, request);
 			fail();
-		} catch(MalformedRequestException e) {
+		} catch (MalformedRequestException e) {
 		}
-		
+
 		try {
 			invokeAsync(opProviderOut, request);
 			fail();
-		} catch(MalformedRequestException e) {
+		} catch (MalformedRequestException e) {
 		}
 	}
-	
+
 	@Test
 	public void testInvocationDelegation() {
 		// Start an http server with an operation
@@ -252,49 +260,48 @@ public class OperationProviderTest {
 		context.addServletMapping("/" + OPID_OUT + "/*", new VABHTTPInterface<IModelProvider>(opProviderOut));
 		BaSyxHTTPServer server = new BaSyxHTTPServer(context);
 		server.start();
-		
+
 		Operation delegatedOperation = createOperation("delegatedOperation", null, null, null);
-		
+
 		// Create a delegated qualifier and add to the operation
 		Qualifier qualifier = DelegatedInvocationManager.createDelegationQualifier(API_INVOKE_URL);
 		delegatedOperation.setQualifiers(Arrays.asList(qualifier));
-		
+
 		OperationProvider delegatedOpProvider = new OperationProvider(new VABLambdaProvider(delegatedOperation));
-		
+
 		assertEquals(4, delegatedOpProvider.invokeOperation("invoke", 10, 6));
-		
+
 		server.shutdown();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Collection<IOperationVariable> invokeSync(OperationProvider provider, InvocationRequest request) {
-		InvocationResponse response = InvocationResponse
-				.createAsFacade((Map<String, Object>) provider.invokeOperation("invoke", request));
+		InvocationResponse response = InvocationResponse.createAsFacade((Map<String, Object>) provider.invokeOperation("invoke", request));
 		return response.getOutputArguments();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Collection<IOperationVariable> invokeAsync(OperationProvider provider, InvocationRequest request) throws Exception {
 		Object response = provider.invokeOperation("invoke?async=true", request);
 		assertTrue(response instanceof CallbackResponse);
 		Thread.sleep(10);
-		
+
 		InvocationResponse invokeResponse = InvocationResponse.createAsFacade((Map<String, Object>) provider.getValue("/invocationList/" + request.getRequestId()));
 		return invokeResponse.getOutputArguments();
 	}
-	
+
 	/**
 	 * Builds an InvocationRequest with given parameters
 	 * 
-	 * @param in the parameters for the InvocationRequest
+	 * @param in
+	 *            the parameters for the InvocationRequest
 	 * @return the InvocationRequest
 	 */
 	private InvocationRequest getInvocationRequest(Property... in) {
 		Collection<IOperationVariable> inout = new ArrayList<>();
-		
-		Collection<IOperationVariable> inVariables = Arrays.asList(in).stream()
-				.map(i -> new OperationVariable(i)).collect(Collectors.toList());
-		
+
+		Collection<IOperationVariable> inVariables = Arrays.asList(in).stream().map(i -> new OperationVariable(i)).collect(Collectors.toList());
+
 		return new InvocationRequest((requestId++).toString(), inout, inVariables, 100);
 	}
 }

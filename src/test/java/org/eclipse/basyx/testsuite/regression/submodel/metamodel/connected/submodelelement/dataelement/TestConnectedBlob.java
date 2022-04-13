@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement.dataelement;
 
@@ -30,21 +45,21 @@ public class TestConnectedBlob {
 	public final String BLOB_CONTENT = "BLOB_VALUE";
 
 	protected ConnectedBlob connectedBlob;
-	protected Blob blob;	
-	
+	protected Blob blob;
+
 	@Before
 	public void build() {
 		blob = new Blob("testIdShort", "mimeType");
-		
+
 		byte[] value = BLOB_CONTENT.getBytes(StandardCharsets.UTF_8);
-		
+
 		blob.setByteArrayValue(value);
-		
+
 		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(blob);
 
 		connectedBlob = new ConnectedBlob(elementProxy);
 	}
-	
+
 	/**
 	 * Tests if getValue() returns the correct value
 	 */
@@ -63,7 +78,7 @@ public class TestConnectedBlob {
 		assertArrayEquals(blob.getByteArrayValue(), connectedBlob.getByteArrayValue());
 		assertArrayEquals(BLOB_CONTENT.getBytes(StandardCharsets.UTF_8), connectedBlob.getByteArrayValue());
 	}
-	
+
 	/**
 	 * Tests if getMimeType() returns the correct value
 	 */
@@ -71,7 +86,7 @@ public class TestConnectedBlob {
 	public void testGetMimeType() {
 		assertEquals(blob.getMimeType(), connectedBlob.getMimeType());
 	}
-	
+
 	/**
 	 * Tests if getUTF8String() returns the correct value
 	 */
@@ -111,15 +126,15 @@ public class TestConnectedBlob {
 		connectedBlob.setValue(newStringValue);
 		assertEquals("NEW", connectedBlob.getUTF8String());
 	}
-	
+
 	@Test
 	public void setValueUpdatesValueCorrectly() {
 		triggerCachingOfSubmodelElement();
 
 		byte[] expected = BLOB_CONTENT.getBytes(StandardCharsets.US_ASCII);
-		
+
 		connectedBlob.setValue(Base64.getEncoder().encodeToString(expected));
-		
+
 		assertEquals(Base64.getEncoder().encodeToString(expected), connectedBlob.getValue());
 	}
 

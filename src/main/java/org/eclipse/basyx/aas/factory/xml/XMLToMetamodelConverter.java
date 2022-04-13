@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.aas.factory.xml;
 
@@ -36,7 +51,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class XMLToMetamodelConverter {
-	
+
 	private AasEnv aasEnv;
 
 	/**
@@ -51,21 +66,16 @@ public class XMLToMetamodelConverter {
 	@SuppressWarnings("unchecked")
 	public XMLToMetamodelConverter(String xmlContent) throws ParserConfigurationException, SAXException, IOException {
 		Map<String, Object> root = new LinkedHashMap<>();
-		root.putAll((Map<? extends String, ? extends Object>) XmlParser.buildXmlMap(xmlContent)
-				.get(MetamodelToXMLConverter.AASENV));
+		root.putAll((Map<? extends String, ? extends Object>) XmlParser.buildXmlMap(xmlContent).get(MetamodelToXMLConverter.AASENV));
 
-		Map<String, Object> xmlAASs = (Map<String, Object>) root
-				.get(AssetAdministrationShellXMLConverter.ASSET_ADMINISTRATION_SHELLS);
-		
-		Map<String, Object> xmlConceptDescriptions = (Map<String, Object>) root
-				.get(ConceptDescriptionXMLConverter.CONCEPT_DESCRIPTIONS);
-		
-		List<IConceptDescription> conceptDescriptions = ConceptDescriptionXMLConverter
-				.parseConceptDescriptions(xmlConceptDescriptions);
-		
-		List<IAssetAdministrationShell> shells = AssetAdministrationShellXMLConverter
-				.parseAssetAdministrationShells(xmlAASs, conceptDescriptions);
-		
+		Map<String, Object> xmlAASs = (Map<String, Object>) root.get(AssetAdministrationShellXMLConverter.ASSET_ADMINISTRATION_SHELLS);
+
+		Map<String, Object> xmlConceptDescriptions = (Map<String, Object>) root.get(ConceptDescriptionXMLConverter.CONCEPT_DESCRIPTIONS);
+
+		List<IConceptDescription> conceptDescriptions = ConceptDescriptionXMLConverter.parseConceptDescriptions(xmlConceptDescriptions);
+
+		List<IAssetAdministrationShell> shells = AssetAdministrationShellXMLConverter.parseAssetAdministrationShells(xmlAASs, conceptDescriptions);
+
 		Map<String, Object> xmlSubmodels = (Map<String, Object>) root.get(SubmodelXMLConverter.SUBMODELS);
 		List<ISubmodel> submodels = SubmodelXMLConverter.parseSubmodels(xmlSubmodels);
 		Map<String, Object> xmlAssets = (Map<String, Object>) root.get(AssetXMLConverter.ASSETS);
@@ -82,7 +92,7 @@ public class XMLToMetamodelConverter {
 	public AasEnv parseAasEnv() {
 		return aasEnv;
 	}
-	
+
 	/**
 	 * Parses the AASs from the XML
 	 * 
@@ -95,7 +105,6 @@ public class XMLToMetamodelConverter {
 		return new ArrayList<>(aasEnv.getAssetAdministrationShells());
 	}
 
-	
 	/**
 	 * Parses the Assets from the XML
 	 * 
@@ -108,7 +117,6 @@ public class XMLToMetamodelConverter {
 		return new ArrayList<>(aasEnv.getAssets());
 	}
 
-	
 	/**
 	 * Parses the Submodels from the XML
 	 * 
@@ -118,7 +126,6 @@ public class XMLToMetamodelConverter {
 		return new ArrayList<>(aasEnv.getSubmodels());
 	}
 
-	
 	/**
 	 * Parses the ConceptDescriptions from the XML
 	 * 
@@ -127,5 +134,5 @@ public class XMLToMetamodelConverter {
 	public List<IConceptDescription> parseConceptDescriptions() {
 		return new ArrayList<>(aasEnv.getConceptDescriptions());
 	}
-	
+
 }

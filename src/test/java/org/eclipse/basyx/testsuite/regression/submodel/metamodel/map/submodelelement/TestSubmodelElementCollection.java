@@ -1,16 +1,32 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelelement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,6 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.eclipse.basyx.aas.metamodel.exception.IdShortDuplicationException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
@@ -59,7 +76,7 @@ public class TestSubmodelElementCollection {
 	private Collection<ISubmodelElement> elements1;
 	private Collection<ISubmodelElement> elements2;
 	private SubmodelElementCollection elementCollection;
-	
+
 	@Before
 	public void buildSubmodelElementCollection() {
 		elements1 = new ArrayList<>();
@@ -68,39 +85,39 @@ public class TestSubmodelElementCollection {
 
 		elements2 = new ArrayList<ISubmodelElement>();
 		elements2.add(new Property("idShort1", "testId1"));
-		elements2.add(new Property("idShort2","testId2"));
+		elements2.add(new Property("idShort2", "testId2"));
 		elementCollection = new SubmodelElementCollection(elements2, false, false);
 		elementCollection.setIdShort("testCollectionId");
-	} 
+	}
 
 	@Test
 	public void testConstructor() {
 		SubmodelElementCollection elementCollection = new SubmodelElementCollection(elements1, true, true);
 		assertTrue(elementCollection.isAllowDuplicates());
 		assertTrue(elementCollection.isOrdered());
-		
+
 		ISubmodelElement checkOperation = elementCollection.getSubmodelElements().get(OPERATION_ID);
 		assertEquals(OPERATION_ID, checkOperation.getIdShort());
-	} 
-	
+	}
+
 	@Test
 	public void testAddValue() {
 		Property element = new Property("testProperty");
 		element.setIdShort("propId");
 		elementCollection.addSubmodelElement(element);
 		elements2.add(element);
-		
+
 		ISubmodelElement checkProperty = elementCollection.getSubmodelElements().get("propId");
 		assertEquals(element.getIdShort(), checkProperty.getIdShort());
-	} 
-	
+	}
+
 	@Test
 	public void testSetDataSpecificationReferences() {
 		Collection<IReference> refs = Collections.singleton(REFERENCE);
 		elementCollection.setDataSpecificationReferences(refs);
 		assertEquals(refs, elementCollection.getDataSpecificationReferences());
-	} 
-	
+	}
+
 	@Test
 	public void testSetValue() {
 		Collection<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
@@ -108,36 +125,36 @@ public class TestSubmodelElementCollection {
 		element.setIdShort("propId");
 		elements.add(element);
 		elementCollection.setValue(elements);
-		
+
 		ISubmodelElement checkProperty = elementCollection.getSubmodelElements().get("propId");
 		assertEquals(element.getIdShort(), checkProperty.getIdShort());
-	} 
-	
+	}
+
 	@Test
 	public void testSetOrdered() {
 		elementCollection.setOrdered(false);
 		assertTrue(!elementCollection.isOrdered());
-	} 
-	
+	}
+
 	@Test
 	public void testSetAllowDuplicates() {
 		elementCollection.setAllowDuplicates(false);
 		assertTrue(!elementCollection.isAllowDuplicates());
-	} 
-	
+	}
+
 	@Test
 	public void testKeepsOrderWhenOrdered() {
-	  SubmodelElementCollection sec1 = new SubmodelElementCollection("sec1");
-	  sec1.setOrdered(true);
-	  sec1.addSubmodelElement(new Property("id1", "blub1"));
-	  sec1.addSubmodelElement(new Property("id2", "blub2"));
-	  sec1.addSubmodelElement(new Property("id3", "blub3"));
-	  sec1.addSubmodelElement(new Property("id4", "blub4"));
-	  
-	  List<String> idShortsInOrder = sec1.getValue().stream().map(e -> e.getIdShort()).collect(Collectors.toList());
-	  assertEquals(Arrays.asList("id1","id2","id3","id4"), idShortsInOrder);
+		SubmodelElementCollection sec1 = new SubmodelElementCollection("sec1");
+		sec1.setOrdered(true);
+		sec1.addSubmodelElement(new Property("id1", "blub1"));
+		sec1.addSubmodelElement(new Property("id2", "blub2"));
+		sec1.addSubmodelElement(new Property("id3", "blub3"));
+		sec1.addSubmodelElement(new Property("id4", "blub4"));
+
+		List<String> idShortsInOrder = sec1.getValue().stream().map(e -> e.getIdShort()).collect(Collectors.toList());
+		assertEquals(Arrays.asList("id1", "id2", "id3", "id4"), idShortsInOrder);
 	}
-	
+
 	@Test
 	public void testSetElements() {
 		String idShort = "testIdShort";
@@ -150,7 +167,7 @@ public class TestSubmodelElementCollection {
 		elementsMap.put(idShort, element);
 		elementCollection.setElements(elementsMap);
 		assertEquals(elementsMap, elementCollection.getSubmodelElements());
-	} 
+	}
 
 	@Test
 	public void testConstructor1() {
@@ -184,33 +201,33 @@ public class TestSubmodelElementCollection {
 		submodelElements.put(newIdShort, property);
 		assertEquals(submodelElements, collection.getSubmodelElements());
 	}
-	
+
 	@Test
 	public void testGetSubmodelElement() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 		ISubmodelElement retrievedElement = collection.getSubmodelElement(PROPERTY_ID);
 		assertEquals(getProperty(), retrievedElement);
 	}
-	
+
 	@Test(expected = ResourceNotFoundException.class)
 	public void testGetSubmodelElementNotExist() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 		collection.getSubmodelElement("Id_Which_Does_Not_Exist");
 	}
-	
+
 	@Test(expected = ResourceNotFoundException.class)
 	public void testDeleteSubmodelElement() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 		collection.deleteSubmodelElement(PROPERTY_ID);
 		collection.getSubmodelElement(PROPERTY_ID);
 	}
-	
+
 	@Test(expected = ResourceNotFoundException.class)
 	public void testDeleteSubmodelElementNotExist() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
 		collection.deleteSubmodelElement("Id_Which_Does_Not_Exist");
 	}
-	
+
 	@Test
 	public void testGetValues() {
 		SubmodelElementCollection collection = new SubmodelElementCollection(elements1, false, false);
@@ -220,14 +237,14 @@ public class TestSubmodelElementCollection {
 		assertEquals(1, elements.size());
 		assertTrue(elements.containsKey(PROPERTY_ID));
 		assertEquals(property.getValue(), elements.get(PROPERTY_ID));
-		
+
 		String newKey = "newKey";
 		String newValue = "newValue";
-		
+
 		Property property2 = new Property(newKey, newValue);
 		property2.setValueType(ValueType.String);
 		collection.addSubmodelElement(property2);
-		
+
 		elements = collection.getValues();
 		assertEquals(2, elements.size());
 		assertTrue(elements.containsKey(newKey));
@@ -242,8 +259,7 @@ public class TestSubmodelElementCollection {
 	private Property getProperty() {
 		Referable referable = new Referable(PROPERTY_ID, "testCategory", new LangStrings("DE", "test"));
 		Reference semanticId = new Reference(new Key(KeyElements.ASSET, true, "testValue", IdentifierType.IRI));
-		Qualifiable qualifiable = new Qualifiable(new Formula(Collections
-				.singleton(new Reference(new Key(KeyElements.BLOB, true, "TestValue", IdentifierType.IRI)))));
+		Qualifiable qualifiable = new Qualifiable(new Formula(Collections.singleton(new Reference(new Key(KeyElements.BLOB, true, "TestValue", IdentifierType.IRI)))));
 		Property property = new Property("testValue", referable, semanticId, qualifiable);
 		return property;
 	}
@@ -255,14 +271,13 @@ public class TestSubmodelElementCollection {
 	 */
 	private Operation getOperation() {
 		Property property = new Property("testOpVariableId");
-		property.setModelingKind(ModelingKind.TEMPLATE);
-		List<OperationVariable> variable = Collections
-				.singletonList(new OperationVariable(property));
+		property.setKind(ModelingKind.TEMPLATE);
+		List<OperationVariable> variable = Collections.singletonList(new OperationVariable(property));
 		Operation operation = new Operation(variable, variable, variable, null);
 		operation.put(Referable.IDSHORT, OPERATION_ID);
 		return operation;
 	}
-	
+
 	@Test(expected = IdShortDuplicationException.class)
 	public void checkForExceptionWithDuplicateIdShortInSubmodelElementCollection() {
 		Map<String, Object> faultySubmodelElementCollection = createSubmodelElementCollectionWithDuplicateIdShortProperties();
@@ -272,18 +287,18 @@ public class TestSubmodelElementCollection {
 
 	private Map<String, Object> createSubmodelElementCollectionWithDuplicateIdShortProperties() {
 		String duplicateIdShort = "testProp";
-		
+
 		Property property1 = new Property(duplicateIdShort, 5);
 		Property property2 = new Property(duplicateIdShort, 7);
-		
+
 		Collection<Map<String, Object>> collection = Arrays.asList(property1, property2);
-		
+
 		String idShort = "submodelElementCollectionIdShort";
-		
+
 		SubmodelElementCollection submodelElementCollection = new SubmodelElementCollection(idShort);
-		
+
 		submodelElementCollection.setValue(collection);
-		
+
 		return submodelElementCollection;
 	}
 }

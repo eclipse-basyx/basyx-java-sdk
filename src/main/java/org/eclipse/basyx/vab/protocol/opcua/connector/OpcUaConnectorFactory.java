@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  *
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * SPDX-License-Identifier: EPL-2.0
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.opcua.connector;
 
@@ -17,47 +32,49 @@ import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
  */
 public class OpcUaConnectorFactory extends ConnectorFactory {
 
-    private final ClientConfiguration defaultConfiguration;
+	private final ClientConfiguration defaultConfiguration;
 
-    /**
-     * Creates a new connector factory.
-     */
-    public OpcUaConnectorFactory() {
-        super();
-        defaultConfiguration = null;
-    }
+	/**
+	 * Creates a new connector factory.
+	 */
+	public OpcUaConnectorFactory() {
+		super();
+		defaultConfiguration = null;
+	}
 
-    /**
-     * Creates a new connector factory which applies a default client configuration to connectors.
-     *
-     * <p>
-     * Note, that the configuration is copied internally, so changes made to the object after creating
-     * the factory do not apply to connectors created by it.
-     *
-     * @param defaultConfiguration The default connector configuration.
-     */
-    public OpcUaConnectorFactory(ClientConfiguration defaultConfiguration) {
-        super();
-        this.defaultConfiguration = defaultConfiguration;
-    }
+	/**
+	 * Creates a new connector factory which applies a default client configuration
+	 * to connectors.
+	 *
+	 * <p>
+	 * Note, that the configuration is copied internally, so changes made to the
+	 * object after creating the factory do not apply to connectors created by it.
+	 *
+	 * @param defaultConfiguration
+	 *            The default connector configuration.
+	 */
+	public OpcUaConnectorFactory(ClientConfiguration defaultConfiguration) {
+		super();
+		this.defaultConfiguration = defaultConfiguration;
+	}
 
-    /**
-     * Creates a new {@link OpcUaConnector} for the given endpoint URL.
-     *
-     * <p>
-     * If a default configuration has been set, it will be applied to the connector before it is
-     * returned.
-     *
-     * @return A new {@link OpcUaConnector} for the given endpoint URL.
-     */
-    @Override
-    protected IModelProvider createProvider(String addr) {
-        OpcUaConnector c = new OpcUaConnector(addr);
+	/**
+	 * Creates a new {@link OpcUaConnector} for the given endpoint URL.
+	 *
+	 * <p>
+	 * If a default configuration has been set, it will be applied to the connector
+	 * before it is returned.
+	 *
+	 * @return A new {@link OpcUaConnector} for the given endpoint URL.
+	 */
+	@Override
+	protected IModelProvider createProvider(String addr) {
+		OpcUaConnector c = new OpcUaConnector(addr);
 
-        if (defaultConfiguration != null) {
-            c.getClient().setConfiguration(defaultConfiguration);
-        }
+		if (defaultConfiguration != null) {
+			c.getClient().setConfiguration(defaultConfiguration);
+		}
 
-        return c;
-    }
+		return c;
+	}
 }

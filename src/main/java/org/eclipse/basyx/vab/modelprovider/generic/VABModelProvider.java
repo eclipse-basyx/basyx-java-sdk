@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.modelprovider.generic;
 
@@ -110,9 +125,9 @@ public class VABModelProvider implements IModelProvider {
 
 	@Override
 	public Object invokeOperation(String path, Object... parameters) {
-		
+
 		path = VABPathTools.stripInvokeFromPath(path);
-		
+
 		Object childElement = getValue(path);
 
 		// Invoke operation for function interfaces
@@ -179,8 +194,9 @@ public class VABModelProvider implements IModelProvider {
 	}
 
 	/**
-	 * Get the parent of an element in this provider. The path should include the path to the element separated by '/'.
-	 * E.g., for accessing element c in path a/b, the path should be a/b/c.
+	 * Get the parent of an element in this provider. The path should include the
+	 * path to the element separated by '/'. E.g., for accessing element c in path
+	 * a/b, the path should be a/b/c.
 	 */
 	private Object getParentElement(String path) {
 		VABPathTools.checkPathForNull(path);
@@ -201,10 +217,9 @@ public class VABModelProvider implements IModelProvider {
 		return currentElement;
 	}
 
-
 	/**
-	 * Instead of returning the parent element of a path, this function gives the target element.
-	 * E.g., it returns c for the path a/b/c
+	 * Instead of returning the parent element of a path, this function gives the
+	 * target element. E.g., it returns c for the path a/b/c
 	 */
 	protected Object getTargetElement(String path) {
 		VABPathTools.checkPathForNull(path);

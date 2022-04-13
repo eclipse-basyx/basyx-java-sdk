@@ -73,7 +73,6 @@ public class TestHTTPSVerification {
 		proxy.getValue("/primitives/integer");
 	}
 
-
 	/**
 	 * Create a test that verifies the host name with a mocked certificate.
 	 * 
@@ -105,6 +104,5 @@ public class TestHTTPSVerification {
 		request.accept(MediaType.APPLICATION_JSON);
 		request.get(String.class);
 	}
-
 
 }

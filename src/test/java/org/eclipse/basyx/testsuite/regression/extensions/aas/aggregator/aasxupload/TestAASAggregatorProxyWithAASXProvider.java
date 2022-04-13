@@ -1,12 +1,27 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 * 
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 * 
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 
 package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.aasxupload;
@@ -43,23 +58,21 @@ public class TestAASAggregatorProxyWithAASXProvider extends TestAASAggregatorPro
 	private static final String CONTEXT_PATH = "aggregator";
 	private static final String API_URL = "http://" + SERVER + ":" + PORT + "/" + CONTEXT_PATH + "/shells";
 	private AASAggregatorAASXUploadProvider provider = new AASAggregatorAASXUploadProvider(new AASAggregatorAASXUpload(new AASAggregator()));
-	
+
 	@Rule
-	public AASHTTPServerResource res = new AASHTTPServerResource(
-			new BaSyxContext("/" + CONTEXT_PATH, "", SERVER, PORT)
-					.addServletMapping("/*", new VABHTTPInterface<IModelProvider>(provider)));
-	
+	public AASHTTPServerResource res = new AASHTTPServerResource(new BaSyxContext("/" + CONTEXT_PATH, "", SERVER, PORT).addServletMapping("/*", new VABHTTPInterface<IModelProvider>(provider)));
+
 	@Override
 	protected IAASAggregator getAggregator() {
 		return new AASAggregatorAASXUploadProxy(API_URL);
 	}
-	
+
 	@Test
 	public void testClientUpload() throws ClientProtocolException, IOException {
 		AASAggregatorAASXUploadProxy proxy = new AASAggregatorAASXUploadProxy(API_URL);
-	    proxy.uploadAASX(new FileInputStream(Paths.get(TestAASAggregatorAASXUploadSuite.AASX_PATH).toFile()));
-		
-	    Collection<IAssetAdministrationShell> uploadedShells = proxy.getAASList();
-	    TestAASAggregatorAASXUploadSuite.checkAASX(uploadedShells);
+		proxy.uploadAASX(new FileInputStream(Paths.get(TestAASAggregatorAASXUploadSuite.AASX_PATH).toFile()));
+
+		Collection<IAssetAdministrationShell> uploadedShells = proxy.getAASList();
+		TestAASAggregatorAASXUploadSuite.checkAASX(uploadedShells);
 	}
 }

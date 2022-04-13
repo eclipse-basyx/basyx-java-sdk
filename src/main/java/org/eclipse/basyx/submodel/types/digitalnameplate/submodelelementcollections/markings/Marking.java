@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.types.digitalnameplate.submodelelementcollections.markings;
 
@@ -31,8 +46,8 @@ import org.eclipse.basyx.submodel.types.helper.SubmodelElementRetrievalHelper;
 
 /**
  * Marking as defined in the AAS Digital Nameplate Template document <br>
- * It is a submodel element collection which
- * contains information about the marking labelled on the device
+ * It is a submodel element collection which contains information about the
+ * marking labelled on the device
  * 
  * @author haque
  *
@@ -42,10 +57,10 @@ public class Marking extends SubmodelElementCollection {
 	public static final String MARKINGFILEID = "MarkingFile";
 	public static final String MARKINGADDITIONALTEXTPREFIX = "MarkingAdditionalText";
 	public static final Reference SEMANTICID = new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "https://admin-shell.io/zvei/nameplate/0/1/Nameplate/Markings/Marking", KeyType.IRI));
-	
+
 	private Marking() {
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
 	 * 
@@ -60,7 +75,7 @@ public class Marking extends SubmodelElementCollection {
 		setMarkingName(markingName);
 		setMarkingFile(markingFile);
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
 	 * 
@@ -75,46 +90,47 @@ public class Marking extends SubmodelElementCollection {
 		setMarkingName(markingName);
 		setMarkingFile(markingFile);
 	}
-	
+
 	/**
 	 * Creates a Marking SMC object from a map
 	 * 
-	 * @param obj a Marking SMC object as raw map
+	 * @param obj
+	 *            a Marking SMC object as raw map
 	 * @return a Marking SMC object, that behaves like a facade for the given map
 	 */
 	public static Marking createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Marking.class, obj);
 		}
-		
+
 		Marking marking = new Marking();
 		marking.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return marking;
 	}
-	
+
 	/**
 	 * Creates a Marking SMC object from a map without validation
 	 * 
-	 * @param obj a Marking SMC object as raw map
+	 * @param obj
+	 *            a Marking SMC object as raw map
 	 * @return a Marking SMC object, that behaves like a facade for the given map
 	 */
 	private static Marking createAsFacadeNonStrict(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		Marking marking = new Marking();
 		marking.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return marking;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for Marking SMC
-	 * exist in the map
+	 * Check whether all mandatory elements for Marking SMC exist in the map
 	 * 
 	 * @param obj
 	 * 
@@ -123,27 +139,27 @@ public class Marking extends SubmodelElementCollection {
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> obj) {
 		Marking marking = createAsFacadeNonStrict(obj);
-		return SubmodelElementCollection.isValid(obj)
-				&& Property.isValid((Map<String, Object>) marking.getMarkingName())
-				&& File.isValid((Map<String, Object>) marking.getMarkingFile());
+		return SubmodelElementCollection.isValid(obj) && Property.isValid((Map<String, Object>) marking.getMarkingName()) && File.isValid((Map<String, Object>) marking.getMarkingFile());
 	}
-	
+
 	/**
 	 * Sets common name of the marking
 	 * 
-	 * Note: CE marking is declared as mandatory according to EU
-     * Machine Directive 2006/42/EC.
+	 * Note: CE marking is declared as mandatory according to EU Machine Directive
+	 * 2006/42/EC.
+	 * 
 	 * @param markingName
 	 */
 	public void setMarkingName(Property markingName) {
 		addSubmodelElement(markingName);
 	}
-	
+
 	/**
 	 * Sets common name of the marking
 	 * 
-	 * Note: CE marking is declared as mandatory according to EU
-     * Machine Directive 2006/42/EC.
+	 * Note: CE marking is declared as mandatory according to EU Machine Directive
+	 * 2006/42/EC.
+	 * 
 	 * @param markingName
 	 */
 	public void setMarkingName(String markingName) {
@@ -152,45 +168,48 @@ public class Marking extends SubmodelElementCollection {
 		markingNameProp.setValue(markingName);
 		setMarkingName(markingNameProp);
 	}
-	
+
 	/**
 	 * Gets common name of the marking
 	 * 
-	 * Note: CE marking is declared as mandatory according to EU
-     * Machine Directive 2006/42/EC.
+	 * Note: CE marking is declared as mandatory according to EU Machine Directive
+	 * 2006/42/EC.
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IProperty getMarkingName() {
 		return Property.createAsFacade((Map<String, Object>) getSubmodelElement(MARKINGNAMEID));
 	}
-	
+
 	/**
 	 * Sets picture of the marking
-     * 
-     * Note: CE marking is declared as mandatory according to EU
-     * Machine Directive 2006/42/EC.
+	 * 
+	 * Note: CE marking is declared as mandatory according to EU Machine Directive
+	 * 2006/42/EC.
+	 * 
 	 * @param markingFile
 	 */
 	public void setMarkingFile(File markingFile) {
 		addSubmodelElement(markingFile);
 	}
-	
+
 	/**
 	 * Gets picture of the marking
-     * 
-     * Note: CE marking is declared as mandatory according to EU
-     * Machine Directive 2006/42/EC.
+	 * 
+	 * Note: CE marking is declared as mandatory according to EU Machine Directive
+	 * 2006/42/EC.
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IFile getMarkingFile() {
 		return File.createAsFacade((Map<String, Object>) getSubmodelElement(MARKINGFILEID));
 	}
-	
+
 	/**
-	 * Sets where applicable, additional information on the marking in
-     * plain text
+	 * Sets where applicable, additional information on the marking in plain text
+	 * 
 	 * @param markingAdditionalText
 	 */
 	public void setMarkingAdditionalText(List<Property> markingAdditionalText) {
@@ -200,17 +219,17 @@ public class Marking extends SubmodelElementCollection {
 			}
 		}
 	}
-	
+
 	/**
-	 * Gets where applicable, additional information on the marking in
-     * plain text
+	 * Gets where applicable, additional information on the marking in plain text
+	 * 
 	 * @return
 	 */
 	public List<IProperty> getMarkingAdditionalText() {
 		List<IProperty> ret = new ArrayList<IProperty>();
 		List<ISubmodelElement> elements = SubmodelElementRetrievalHelper.getSubmodelElementsByIdPrefix(MARKINGADDITIONALTEXTPREFIX, getSubmodelElements());
-		
-		for (ISubmodelElement element: elements) {
+
+		for (ISubmodelElement element : elements) {
 			ret.add((IProperty) element);
 		}
 		return ret;

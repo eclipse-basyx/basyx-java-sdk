@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
@@ -39,12 +54,14 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 	 */
 	protected IModelProvider getElementProvider(String idShort) {
 
-		// The "value" before the id is needed by the providers lower down in order to handle collections correctly
-		// The paths then look like e.g. "submodelElements/collectionID/value/propertyID"
-		IModelProvider defaultProvider = new VABElementProxy(
-				VABPathTools.concatenatePaths(MultiSubmodelElementProvider.VALUE, idShort), proxy);
+		// The "value" before the id is needed by the providers lower down in order to
+		// handle collections correctly
+		// The paths then look like e.g.
+		// "submodelElements/collectionID/value/propertyID"
+		IModelProvider defaultProvider = new VABElementProxy(VABPathTools.concatenatePaths(MultiSubmodelElementProvider.VALUE, idShort), proxy);
 
-		// Wrap the property with idShort into a SubmodelElementProvider and return that provider
+		// Wrap the property with idShort into a SubmodelElementProvider and return that
+		// provider
 		return new SubmodelElementProvider(defaultProvider);
 	}
 
@@ -55,10 +72,10 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 
 		if (path.isEmpty()) {
 			return getSubmodelElementCollection();
-		} else if(isValueAccess(path)) {
+		} else if (isValueAccess(path)) {
 			return getElements();
 		} else if (isValuesAccess(path)) {
-			return getElementsValues();			
+			return getElementsValues();
 		} else {
 			return getElementByIdShort(pathElements);
 		}
@@ -72,10 +89,9 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 
 		if (path.isEmpty()) {
 			// Convert the Collection of Elements to the internally used Map
-			Map<String, Object> value =
-					SubmodelElementMapCollectionConverter.mapToSmECollection((Map<String, Object>) newValue);
+			Map<String, Object> value = SubmodelElementMapCollectionConverter.mapToSmECollection((Map<String, Object>) newValue);
 			proxy.setValue(path, value);
-		} else if(isValueAccess(path)) {
+		} else if (isValueAccess(path)) {
 			// Convert the Collection of Elements to the internally used Map
 			Map<String, Object> value = SubmodelElementMapCollectionConverter.convertCollectionToIDMap(newValue);
 			proxy.setValue(path, value);
@@ -112,16 +128,17 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 	public void deleteValue(String path) throws ProviderException {
 		path = VABPathTools.stripSlashes(path);
 		String[] pathElements = VABPathTools.splitPath(path);
-		
+
 		// "value" is a keyword and can not be used as the ID of an Element
 		if (path.isEmpty() || isValueAccess(path)) {
 			throw new MalformedRequestException("Path must not be empty or /value");
 		} else {
 			// If Path contains only one Element, use the proxy directly
-			if(pathElements.length == 1) {
+			if (pathElements.length == 1) {
 				proxy.deleteValue(VABPathTools.concatenatePaths(MultiSubmodelElementProvider.VALUE, path));
 			} else {
-				// If Path contains more Elements, get the Provider for the first Element in Path
+				// If Path contains more Elements, get the Provider for the first Element in
+				// Path
 				String idShort = pathElements[0];
 				String subPath = VABPathTools.buildPath(pathElements, 1);
 				getElementProvider(idShort).deleteValue(subPath);
@@ -148,30 +165,33 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 			return getElementProvider(idShort).invokeOperation(subPath, parameter);
 		}
 	}
-	
+
 	private boolean isValueAccess(String path) {
 		return path.equals(MultiSubmodelElementProvider.VALUE);
 	}
-	
+
 	private boolean isValuesAccess(String path) {
 		return path.equals(SubmodelProvider.VALUES);
 	}
-	
+
 	/**
 	 * Gets single element by idShort
-	 * @param pathElements containing idShort as the first item
+	 * 
+	 * @param pathElements
+	 *            containing idShort as the first item
 	 * @return
 	 */
 	private Object getElementByIdShort(String[] pathElements) {
 		String idShort = pathElements[0];
 		String subPath = VABPathTools.buildPath(pathElements, 1);
-		
+
 		return getElementProvider(idShort).getValue(subPath);
 	}
-	
+
 	/**
-	 * Gets elements values from the proxy
-	 * Converts the internally used Map to a Collection before returning the smECollection
+	 * Gets elements values from the proxy Converts the internally used Map to a
+	 * Collection before returning the smECollection
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -180,18 +200,20 @@ public class SubmodelElementCollectionProvider implements IModelProvider {
 		SubmodelElementCollection smElemColl = SubmodelElementCollection.createAsFacade(map);
 		return smElemColl.getValues();
 	}
-	
+
 	/**
 	 * Gets element collection from the proxy
+	 * 
 	 * @return Only a Collection of Elements. Not the internally used Map.
 	 */
 	private Collection<Map<String, Object>> getElements() {
 		return SubmodelElementMapCollectionConverter.convertIDMapToCollection(proxy.getValue(MultiSubmodelElementProvider.VALUE));
 	}
-	
+
 	/**
-	 * Gets Submodel Element Collection from the proxy
-	 * Converts the internally used Map to a Collection before returning the smECollection
+	 * Gets Submodel Element Collection from the proxy Converts the internally used
+	 * Map to a Collection before returning the smECollection
+	 * 
 	 * @return map of the SMElementCollection
 	 */
 	@SuppressWarnings("unchecked")
