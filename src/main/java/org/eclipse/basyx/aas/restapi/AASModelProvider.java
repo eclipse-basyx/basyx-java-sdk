@@ -118,7 +118,7 @@ public class AASModelProvider implements IModelProvider {
 		path = preparePath(path);
 		String[] splitted = VABPathTools.splitPath(path);
 		if (splitted.length == 3 && splitted[1].equals(AssetAdministrationShell.SUBMODELS)) {
-			String id = splitted[2];
+			String id = VABPathTools.decodePathElement(splitted[2]);
 			aasApi.removeSubmodel(id);
 		} else {
 			throw new MalformedRequestException("Delete on path " + path + " is not supported");
