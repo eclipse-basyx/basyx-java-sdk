@@ -71,27 +71,28 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.security.web.util.matcher.AnyRequestMatcher;
 
 /**
- * Starter Class for Apache Tomcat HTTP server that adds the provided servlets and respective mappings on startup.
+ * Starter Class for Apache Tomcat HTTP server that adds the provided servlets
+ * and respective mappings on startup.
  * 
  * @author pschorn, espen, haque
  * 
  */
 public class BaSyxHTTPServer {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(BaSyxHTTPServer.class);
-	
+
 	private final Tomcat tomcat;
 
 	static {
 		// Enable coding of forward slash in tomcat
 		System.setProperty("org.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH", "true");
-		
+
 		// Throw exception on startup error, unless user explicitly disables it
 		if (System.getProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE") == null) {
 			System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
 		}
 	}
-	   
+
 	/**
 	 * Constructor
 	 * 
@@ -108,14 +109,14 @@ public class BaSyxHTTPServer {
 		// Set random name to prevent lifecycle expections during shutdown of multiple
 		// instances
 		tomcat.getEngine().setName(UUID.randomUUID().toString());
-		
+
 		if (context.isSecuredConnectionEnabled()) {
 			Connector httpsConnector = tomcat.getConnector();
 			configureSslConnector(context, httpsConnector);
 		} else {
 			tomcat.setPort(context.port);
 		}
-		
+
 		tomcat.setHostname(context.hostname);
 		tomcat.getHost().setAppBase(".");
 
@@ -201,20 +202,15 @@ public class BaSyxHTTPServer {
 	}
 
 	private BearerTokenAuthenticationFilter createBearerTokenAuthenticationFilter(final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
-		final JwtDecoder jwtDecoder = createJwtDecoder(
-				jwtBearerTokenAuthenticationConfiguration.getIssuerUri(),
-				jwtBearerTokenAuthenticationConfiguration.getJwkSetUri(),
-				jwtBearerTokenAuthenticationConfiguration.getRequiredAud().orElse(null)
-		);
+		final JwtDecoder jwtDecoder = createJwtDecoder(jwtBearerTokenAuthenticationConfiguration.getIssuerUri(), jwtBearerTokenAuthenticationConfiguration.getJwkSetUri(),
+				jwtBearerTokenAuthenticationConfiguration.getRequiredAud().orElse(null));
 		final JwtAuthenticationProvider jwtAuthenticationProvider = new JwtAuthenticationProvider(jwtDecoder);
 		final AuthenticationManager authenticationManager = new ProviderManager(jwtAuthenticationProvider);
 		return new BearerTokenAuthenticationFilter(authenticationManager);
 	}
 
 	private JwtDecoder createJwtDecoder(final String issuerUri, final String jwkSetUri, @Nullable final String requiredAud) {
-		final NimbusJwtDecoder nimbusJwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri)
-				.jwsAlgorithm(SignatureAlgorithm.from("RS256"))
-				.build();
+		final NimbusJwtDecoder nimbusJwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri).jwsAlgorithm(SignatureAlgorithm.from("RS256")).build();
 		nimbusJwtDecoder.setJwtValidator(createOAuth2TokenValidator(issuerUri, requiredAud));
 
 		return nimbusJwtDecoder;
@@ -237,6 +233,7 @@ public class BaSyxHTTPServer {
 
 	/**
 	 * SSL Configuration for SSL connector
+	 * 
 	 * @param context
 	 * @param httpsConnector
 	 */
@@ -250,13 +247,13 @@ public class BaSyxHTTPServer {
 		httpsConnector.setAttribute("SSLEnabled", true);
 		httpsConnector.setAttribute("protocol", "HTTP/1.1");
 		httpsConnector.setAttribute("keystorePass", context.getKeyPassword());
-		
+
 		httpsConnector.setAttribute("keyAlias", "tomcat");
-		
+
 		httpsConnector.setAttribute("maxThreads", "200");
 		httpsConnector.setAttribute("protocol", "org.apache.coyote.http11.Http11AprProtocol");
-	 }
-	
+	}
+
 	/**
 	 * Starts the server in a new thread to avoid blocking the main thread
 	 * 
@@ -264,21 +261,25 @@ public class BaSyxHTTPServer {
 	 * This method blocks until the server is up and running.
 	 * 
 	 * <p>
-	 * If an error occurs during server startup the process is aborted and the method returns immediately. 
-	 * {@link #hasEnded()} returns <code>true</code> in this case.
-	 * <br>This behavior can be disabled by setting the system property 
-	 * <code>org.apache.catalina.startup.EXIT_ON_INIT_FAILURE = false</code>, for instance with the <code>-D</code> 
-	 * command line option when launching the JVM, or through {@link System#setProperty(String, String)} (before the 
-	 * first call to {@link BaSyxHTTPServer}). In this case the startup is finished regardless of any errors and 
-	 * subsequent calls to {@link #hasEnded()} return <code>false</code>, but the server might be left in an undefined 
-	 * and non-functional state.
+	 * If an error occurs during server startup the process is aborted and the
+	 * method returns immediately. {@link #hasEnded()} returns <code>true</code> in
+	 * this case. <br>
+	 * This behavior can be disabled by setting the system property
+	 * <code>org.apache.catalina.startup.EXIT_ON_INIT_FAILURE = false</code>, for
+	 * instance with the <code>-D</code> command line option when launching the JVM,
+	 * or through {@link System#setProperty(String, String)} (before the first call
+	 * to {@link BaSyxHTTPServer}). In this case the startup is finished regardless
+	 * of any errors and subsequent calls to {@link #hasEnded()} return
+	 * <code>false</code>, but the server might be left in an undefined and
+	 * non-functional state.
 	 * 
 	 * <p>
-	 * TODO: Throw exception upon startup failure. This is a breaking change, so wait until next major version.
+	 * TODO: Throw exception upon startup failure. This is a breaking change, so
+	 * wait until next major version.
 	 */
 	public void start() {
 		logger.trace("Starting Tomcat.....");
-		
+
 		Thread serverThread = new Thread(() -> {
 			try {
 				tomcat.stop();
@@ -296,19 +297,19 @@ public class BaSyxHTTPServer {
 				});
 
 				tomcat.start();
-				
+
 				// Keeps the server thread alive until the server is shut down
 				tomcat.getServer().await();
 			} catch (LifecycleException e) {
 				logger.error("Failed to start HTTP server.", e);
-				
+
 				synchronized (tomcat) {
 					tomcat.notifyAll();
 				}
 			}
 		});
 		serverThread.start();
-		
+
 		// Wait until tomcat is started before returning
 		EnumSet<LifecycleState> returnStates = EnumSet.of(LifecycleState.STARTED, LifecycleState.FAILED);
 		synchronized (tomcat) {
@@ -324,12 +325,13 @@ public class BaSyxHTTPServer {
 	}
 
 	/**
-	 * This Method stops and destroys the tomcat instance. This is important since Tomcat would be already 
-	 * bound to port 8080 when new tests are run that require a start of tomcat
+	 * This Method stops and destroys the tomcat instance. This is important since
+	 * Tomcat would be already bound to port 8080 when new tests are run that
+	 * require a start of tomcat
 	 */
 	public void shutdown() {
 		logger.trace("Shutting down BaSyx HTTP Server...");
-		
+
 		try {
 			tomcat.stop();
 			tomcat.destroy();
@@ -338,11 +340,12 @@ public class BaSyxHTTPServer {
 			logger.error("Exception in shutdown", e);
 		}
 	}
-	
+
 	/**
 	 * Returns a value indicating whether the server is currently running.
 	 * 
-	 * @return <code>false</code> if the server is running, <code>true</code> otherwise.
+	 * @return <code>false</code> if the server is running, <code>true</code>
+	 *         otherwise.
 	 */
 	public boolean hasEnded() {
 		return tomcat.getServer().getState() != LifecycleState.STARTED;

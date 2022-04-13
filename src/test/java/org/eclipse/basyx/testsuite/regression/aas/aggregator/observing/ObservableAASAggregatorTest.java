@@ -42,70 +42,69 @@ import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class ObservableAASAggregatorTest {
 	protected AssetAdministrationShell shell;
 	private static final String AASID = "aasid1";
 	private static final Identifier AASIDENTIFIER = new Identifier(IdentifierType.IRI, AASID);
-	
+
 	private ObservableAASAggregator observerdAASAggregator;
 	private MockObserver observer;
-	
+
 	@Before
 	public void setup() {
 		IAASAggregator aggregator = new AASAggregator();
 		shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset(AASID, AASIDENTIFIER, AssetKind.INSTANCE));
 		aggregator.createAAS(shell);
-		
+
 		observerdAASAggregator = new ObservableAASAggregator(aggregator);
-		
+
 		// Create an Observer
 		observer = new MockObserver();
-		
+
 		// Register the observer at the API
 		observerdAASAggregator.addObserver(observer);
 	}
-	
+
 	@Test
 	public void testCreateAAS() {
 		String aasId2 = "aas2";
 		Identifier identifier2 = new Identifier(IdentifierType.IRDI, aasId2);
 		AssetAdministrationShell shell2 = new AssetAdministrationShell(aasId2, identifier2, new Asset("assetid2", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
 		observerdAASAggregator.createAAS(shell2);
-		
+
 		assertEquals(aasId2, observer.aasId);
 		assertTrue(observer.createdNotified);
 	}
-	
+
 	@Test
 	public void testUpdateAAS() {
 		shell.setCategory("newCategory");
 		observerdAASAggregator.updateAAS(shell);
-		
+
 		assertTrue(observer.updatedNotified);
 		assertEquals(AASID, observer.aasId);
 	}
-	
+
 	@Test
 	public void testDeleteAAS() {
 		observerdAASAggregator.deleteAAS(AASIDENTIFIER);
 		assertTrue(observer.deletedNotified);
 		assertEquals(AASID, observer.aasId);
 	}
-	
+
 	@Test
 	public void testRemoveObserver() {
 		assertTrue(observerdAASAggregator.removeObserver(observer));
 		observerdAASAggregator.deleteAAS(AASIDENTIFIER);
 		assertFalse(observer.deletedNotified);
 	}
-	
+
 	private class MockObserver implements IAASAggregatorObserver {
-		
+
 		public boolean createdNotified = false;
 		public boolean deletedNotified = false;
 		public boolean updatedNotified = false;
-		
+
 		public String aasId = "";
 
 		@Override

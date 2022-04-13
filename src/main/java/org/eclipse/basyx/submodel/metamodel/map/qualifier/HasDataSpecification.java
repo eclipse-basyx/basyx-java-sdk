@@ -46,6 +46,7 @@ import org.eclipse.basyx.vab.model.VABModelMap;
 public class HasDataSpecification extends VABModelMap<Object> implements IHasDataSpecification {
 	public static final String DATASPECIFICATION = "dataSpecification";
 	public static final String EMBEDDEDDATASPECIFICATIONS = "embeddedDataSpecifications";
+
 	/**
 	 * Constructor
 	 */

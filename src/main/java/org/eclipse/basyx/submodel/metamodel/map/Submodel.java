@@ -97,9 +97,10 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		put(SUBMODELELEMENT, new LinkedHashMap<String, ISubmodelElement>());
 
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 * @param identification
 	 */
@@ -109,12 +110,10 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		setIdShort(idShort);
 	}
 
-
 	/**
 	 * Constructor
 	 */
-	public Submodel(HasSemantics semantics, Identifiable identifiable, Qualifiable qualifiable,
-			HasDataSpecification specification, HasKind hasKind) {
+	public Submodel(HasSemantics semantics, Identifiable identifiable, Qualifiable qualifiable, HasDataSpecification specification, HasKind hasKind) {
 		this();
 		// Add qualifiers
 		putAll(semantics);
@@ -148,21 +147,21 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Submodel.class, map);
 		}
-		
+
 		if (!map.containsKey(SUBMODELELEMENT)) {
 			map.put(SUBMODELELEMENT, new ArrayList<>());
 		}
 
-		return SubmodelElementMapCollectionConverter.mapToSM(map);	
+		return SubmodelElementMapCollectionConverter.mapToSM(map);
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
@@ -241,7 +240,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 	public void setKind(ModelingKind kind) {
 		HasKind.createAsFacade(this).setKind(kind);
 	}
-	
+
 	@Override
 	public String getIdShort() {
 		return Referable.createAsFacade(this, getKeyElement()).getIdShort();
@@ -254,7 +253,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 	public void setProperties(Map<String, IProperty> properties) {
 		// first, remove all properties
 		Set<Entry<String, ISubmodelElement>> elementSet = getSubmodelElements().entrySet();
-		for ( Iterator<Entry<String, ISubmodelElement>> iterator = elementSet.iterator(); iterator.hasNext(); ) {
+		for (Iterator<Entry<String, ISubmodelElement>> iterator = elementSet.iterator(); iterator.hasNext();) {
 			Entry<String, ISubmodelElement> entry = iterator.next();
 			if (entry.getValue() instanceof IProperty) {
 				iterator.remove();
@@ -337,7 +336,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		});
 		return operations;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, ISubmodelElement> getSubmodelElements() {
@@ -348,7 +347,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 	public Map<String, Object> getValues() {
 		return ElementContainerValuesHelper.getSubmodelValue(this);
 	}
-	
+
 	@Override
 	public Collection<IConstraint> getQualifiers() {
 		return Qualifiable.createAsFacade(this).getQualifiers();
@@ -365,6 +364,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	/**
 	 * Retrieves an element from element collection
+	 * 
 	 * @param id
 	 * @return retrieved element
 	 */
@@ -376,6 +376,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	/**
 	 * Deletes an element from element collection
+	 * 
 	 * @param id
 	 */
 	@Override

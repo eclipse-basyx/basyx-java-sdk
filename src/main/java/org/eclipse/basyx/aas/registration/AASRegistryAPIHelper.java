@@ -33,40 +33,44 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**
  * API helper for AAS Registry
+ * 
  * @author haque
  *
  */
 public class AASRegistryAPIHelper {
-	
+
 	/**
 	 * Retrieves base access path
+	 * 
 	 * @return
 	 */
 	public static String getRegistryPath() {
 		return AASRegistryModelProvider.PREFIX;
 	}
-	
+
 	/**
 	 * Retrieves an access path for an AAS
+	 * 
 	 * @param aasId
 	 * @return
 	 */
 	public static String getAASPath(IIdentifier aasId) {
 		return VABPathTools.concatenatePaths(getRegistryPath(), VABPathTools.encodePathElement(aasId.getId()));
 	}
-	
+
 	/**
 	 * Retrieves an access path for all the submodels inside an AAS
+	 * 
 	 * @param aasId
 	 * @return
 	 */
 	public static String getSubmodelListOfAASPath(IIdentifier aasId) {
 		return VABPathTools.concatenatePaths(getRegistryPath(), buildSubmodelPath(aasId));
 	}
-	
-	
+
 	/**
 	 * Retrieves an access path for a submodel
+	 * 
 	 * @param aasId
 	 * @param submodelId
 	 * @return
@@ -74,7 +78,7 @@ public class AASRegistryAPIHelper {
 	public static String getSubmodelAccessPath(IIdentifier aasId, IIdentifier submodelId) {
 		return VABPathTools.concatenatePaths(getSubmodelListOfAASPath(aasId), VABPathTools.encodePathElement(submodelId.getId()));
 	}
-	
+
 	private static String buildSubmodelPath(IIdentifier aas) throws ProviderException {
 		// Encode id to handle usage of reserved symbols, e.g. /
 		String encodedAASId = VABPathTools.encodePathElement(aas.getId());

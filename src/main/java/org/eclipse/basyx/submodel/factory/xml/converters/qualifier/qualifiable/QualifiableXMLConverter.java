@@ -48,13 +48,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Handles the conversion between an IQualifiable object and the XML tag &lt;aas:qualifier&gt; in both directions
+ * Handles the conversion between an IQualifiable object and the XML tag
+ * &lt;aas:qualifier&gt; in both directions
  * 
  * @author conradi
  *
  */
 public class QualifiableXMLConverter {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(QualifiableXMLConverter.class);
 
 	public static final String QUALIFIER = "aas:qualifier";
@@ -65,13 +66,14 @@ public class QualifiableXMLConverter {
 	public static final String VALUE = "aas:value";
 	public static final String VALUE_TYPE = "aas:valueType";
 	public static final String VALUE_ID = "aas:valueId";
-	
 
 	/**
 	 * Populates a given Qualifiable object with the data form the given XML
 	 * 
-	 * @param xmlObject the XML map containing the &lt;aas:qualifier&gt; tag
-	 * @param qualifiable the Qualifiable object to be populated
+	 * @param xmlObject
+	 *            the XML map containing the &lt;aas:qualifier&gt; tag
+	 * @param qualifiable
+	 *            the Qualifiable object to be populated
 	 */
 	@SuppressWarnings("unchecked")
 	public static void populateQualifiable(Map<String, Object> xmlObject, Qualifiable qualifiable) {
@@ -80,55 +82,56 @@ public class QualifiableXMLConverter {
 			qualifiable.setQualifiers(parseConstraints(qualifierObj));
 		}
 	}
-	
-	
+
 	/**
 	 * Parses the IConstraint objects form XML
 	 * 
-	 * @param xmlConstraints the XML map containing the &lt;aas:formula&gt; and &lt;aas:qualifier&gt; tags
+	 * @param xmlConstraints
+	 *            the XML map containing the &lt;aas:formula&gt; and
+	 *            &lt;aas:qualifier&gt; tags
 	 * @return the Set of IConstraint objects parsed
 	 */
 	private static Collection<IConstraint> parseConstraints(Map<String, Object> xmlConstraints) {
 		Collection<IConstraint> constraints = new HashSet<>();
-		
-		if(xmlConstraints == null) return constraints;
-		
+
+		if (xmlConstraints == null)
+			return constraints;
+
 		List<Map<String, Object>> xmlQualifier = XMLHelper.getList(xmlConstraints.get(QUALIFIER));
 		xmlQualifier.stream().map(QualifiableXMLConverter::parseQualifier).forEach(constraints::add);
 
-			
 		List<Map<String, Object>> xmlFormula = XMLHelper.getList(xmlConstraints.get(FORMULA));
 		xmlFormula.stream().map(QualifiableXMLConverter::parseFormula).forEach(constraints::add);
-			
-		
+
 		return constraints;
 	}
-	
-	
+
 	/**
 	 * Parses a Formula object form XML
 	 * 
-	 * @param xmlFormula the XML map containing the content of the &lt;aas:formula&gt; tag
+	 * @param xmlFormula
+	 *            the XML map containing the content of the &lt;aas:formula&gt; tag
 	 * @return the parsed Formula object
 	 */
 	@SuppressWarnings("unchecked")
 	private static Formula parseFormula(Map<String, Object> xmlFormula) {
 		Map<String, Object> dependsOnObj = (Map<String, Object>) xmlFormula.get(DEPENDS_ON_REFS);
 		Collection<IReference> referenceList = new HashSet<>();
-				
+
 		List<Map<String, Object>> xmlReferenceList = XMLHelper.getList(dependsOnObj.get(REFERENCE));
 		for (Map<String, Object> xmlReference : xmlReferenceList) {
 			referenceList.add(ReferenceXMLConverter.parseReference(xmlReference));
 		}
-		
+
 		return new Formula(referenceList);
 	}
-	
-	
+
 	/**
 	 * Parses a Qualifier object form XML
 	 * 
-	 * @param xmlQualifier the XML map containing the content of the &lt;aas:qualifier&gt; tag
+	 * @param xmlQualifier
+	 *            the XML map containing the content of the &lt;aas:qualifier&gt;
+	 *            tag
 	 * @return the parsed Qualifier object
 	 */
 	@SuppressWarnings("unchecked")
@@ -137,12 +140,12 @@ public class QualifiableXMLConverter {
 		String value = XMLHelper.getString(xmlQualifier.get(VALUE));
 		String valueType = XMLHelper.getString(xmlQualifier.get(VALUE_TYPE));
 		Map<String, Object> qualifierValueIdObj = (Map<String, Object>) xmlQualifier.get(VALUE_ID);
-		
+
 		Reference ref = ReferenceXMLConverter.parseReference(qualifierValueIdObj);
-		
+
 		Qualifier qualifier = new Qualifier();
 		HasSemanticsXMLConverter.populateHasSemantics(xmlQualifier, HasSemantics.createAsFacade(qualifier));
-		
+
 		qualifier.setType(type);
 		qualifier.setValue(value);
 		qualifier.setValueId(ref);
@@ -155,33 +158,32 @@ public class QualifiableXMLConverter {
 		return qualifier;
 	}
 
-	
-	
-
 	/**
 	 * Populates a given XML map with the data from a given IQualifiable object<br>
 	 * Creates the &lt;aas:qualifier&gt; tag in the given root
 	 * 
-	 * @param document the XML document
-	 * @param root the XML root Element to be populated
-	 * @param qualifiable the IQualifiable object to be converted to XML
+	 * @param document
+	 *            the XML document
+	 * @param root
+	 *            the XML root Element to be populated
+	 * @param qualifiable
+	 *            the IQualifiable object to be converted to XML
 	 */
 	public static void populateQualifiableXML(Document document, Element root, IQualifiable qualifiable) {
-		if(qualifiable.getQualifiers() == null || qualifiable.getQualifiers().size() == 0) return;
-		
-		
+		if (qualifiable.getQualifiers() == null || qualifiable.getQualifiers().size() == 0)
+			return;
+
 		Collection<IConstraint> constraints = qualifiable.getQualifiers();
-		
+
 		Element qualifierRoot = document.createElement(QUALIFIER);
-		
+
 		for (IConstraint constraint : constraints) {
 			qualifierRoot.appendChild(buildQualifiersXML(document, constraint));
 		}
 
 		root.appendChild(qualifierRoot);
 	}
-	
-	
+
 	/**
 	 * Builds XML from a given IConstraint objcet
 	 * 
@@ -193,22 +195,23 @@ public class QualifiableXMLConverter {
 	 */
 	private static Element buildQualifiersXML(Document document, IConstraint constraint) {
 
-		//the constraints can be IFormula or IQualifier
-		if(constraint instanceof IFormula) {
+		// the constraints can be IFormula or IQualifier
+		if (constraint instanceof IFormula) {
 			return buildFormulaXML(document, (IFormula) constraint);
-		} else if(constraint instanceof IQualifier) {
+		} else if (constraint instanceof IQualifier) {
 			return buildQualifierXML(document, (IQualifier) constraint);
 		}
-		
+
 		throw new RuntimeException("Unknown qualifier type " + constraint);
 	}
-	
-	
+
 	/**
 	 * Builds XML from a given IFormula object
 	 * 
-	 * @param document the XML document
-	 * @param formula the IFormula to be converted to XML
+	 * @param document
+	 *            the XML document
+	 * @param formula
+	 *            the IFormula to be converted to XML
 	 * @return the &lt;aas:formula&gt; XML tag build from the IFormula
 	 */
 	private static Element buildFormulaXML(Document document, IFormula formula) {
@@ -221,13 +224,14 @@ public class QualifiableXMLConverter {
 		formulaRoot.appendChild(dependsOnRoot);
 		return formulaRoot;
 	}
-	
-	
+
 	/**
 	 * Builds XML from a given IQualifier object
 	 * 
-	 * @param document the XML document
-	 * @param qualifier the IQualifier to be converted to XML
+	 * @param document
+	 *            the XML document
+	 * @param qualifier
+	 *            the IQualifier to be converted to XML
 	 * @return the &lt;aas:qualifier&gt; XML tag build from the IQualifier
 	 */
 	private static Element buildQualifierXML(Document document, IQualifier qualifier) {
@@ -236,10 +240,10 @@ public class QualifiableXMLConverter {
 		String value = XMLHelper.getString(qualifier.getValue());
 		String valueType = qualifier.getValueType().toString();
 		Element qualifierRoot = document.createElement(QUALIFIER);
-		
+
 		Element qualifierValueId = document.createElement(VALUE_ID);
 		Element keysElement = ReferenceXMLConverter.buildReferenceXML(document, qualId);
-		if(keysElement != null) {
+		if (keysElement != null) {
 			qualifierValueId.appendChild(keysElement);
 		}
 		qualifierRoot.appendChild(qualifierValueId);
@@ -247,17 +251,17 @@ public class QualifiableXMLConverter {
 		Element qualifierValue = document.createElement(VALUE);
 		qualifierValue.appendChild(document.createTextNode(value));
 		qualifierRoot.appendChild(qualifierValue);
-		
+
 		Element qualifierType = document.createElement(TYPE);
 		qualifierType.appendChild(document.createTextNode(type));
 		qualifierRoot.appendChild(qualifierType);
-		
+
 		Element qualifierValueType = document.createElement(VALUE_TYPE);
 		qualifierValueType.appendChild(document.createTextNode(valueType));
 		qualifierRoot.appendChild(qualifierValueType);
-		
+
 		HasSemanticsXMLConverter.populateHasSemanticsXML(document, qualifierRoot, qualifier);
-		
+
 		return qualifierRoot;
 	}
 }

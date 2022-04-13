@@ -67,9 +67,10 @@ public class ConceptDescription extends VABModelMap<Object> implements IConceptD
 		// Add attributes
 		put(ISCASEOF, new HashSet<Reference>());
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 * @param identification
 	 */
@@ -91,19 +92,19 @@ public class ConceptDescription extends VABModelMap<Object> implements IConceptD
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(ConceptDescription.class, map);
 		}
-		
+
 		ConceptDescription ret = new ConceptDescription();
 		ret.setMap(map);
-		return ret;	
+		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
@@ -169,6 +170,7 @@ public class ConceptDescription extends VABModelMap<Object> implements IConceptD
 	public LangStrings getDescription() {
 		return Referable.createAsFacade(this, getKeyElement()).getDescription();
 	}
+
 	@Override
 	public IReference getParent() {
 		return Referable.createAsFacade(this, getKeyElement()).getParent();
@@ -191,7 +193,7 @@ public class ConceptDescription extends VABModelMap<Object> implements IConceptD
 	public void setParent(IReference obj) {
 		Referable.createAsFacade(this, getKeyElement()).setParent(obj);
 	}
-	
+
 	private KeyElements getKeyElement() {
 		return KeyElements.CONCEPTDESCRIPTION;
 	}
@@ -200,5 +202,5 @@ public class ConceptDescription extends VABModelMap<Object> implements IConceptD
 	public IReference getReference() {
 		return Identifiable.createAsFacade(this, getKeyElement()).getReference();
 	}
-	
+
 }

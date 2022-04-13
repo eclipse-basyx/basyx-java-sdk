@@ -53,11 +53,8 @@ public class SimpleAASSubmodel extends Submodel {
 
 	public static final String EXCEPTION_MESSAGE = "Exception description";
 
-	public static final List<String> KEYWORDS = Collections.unmodifiableList(Arrays.asList(
-	        Property.MODELTYPE, Property.VALUETYPE, Property.VALUE, Property.VALUEID,
-	        Submodel.MODELTYPE, Submodel.SUBMODELELEMENT,
-	        Operation.MODELTYPE, Operation.INVOKE, Operation.OUT, Operation.IN, Operation.INOUT, Operation.INVOKABLE,
-	        SubmodelElementCollection.MODELTYPE, SubmodelElementCollection.ALLOWDUPLICATES, SubmodelElementCollection.ORDERED));
+	public static final List<String> KEYWORDS = Collections.unmodifiableList(Arrays.asList(Property.MODELTYPE, Property.VALUETYPE, Property.VALUE, Property.VALUEID, Submodel.MODELTYPE, Submodel.SUBMODELELEMENT, Operation.MODELTYPE,
+			Operation.INVOKE, Operation.OUT, Operation.IN, Operation.INOUT, Operation.INVOKABLE, SubmodelElementCollection.MODELTYPE, SubmodelElementCollection.ALLOWDUPLICATES, SubmodelElementCollection.ORDERED));
 
 	public SimpleAASSubmodel() {
 		this("SimpleAASSubmodel");
@@ -94,8 +91,7 @@ public class SimpleAASSubmodel extends Submodel {
 		inProp2.setKind(ModelingKind.TEMPLATE);
 		Property outProp = new Property("complexOut", 0);
 		outProp.setKind(ModelingKind.TEMPLATE);
-		complex.setInputVariables(Arrays.asList(new OperationVariable(inProp1),
-				new OperationVariable(inProp2)));
+		complex.setInputVariables(Arrays.asList(new OperationVariable(inProp1), new OperationVariable(inProp2)));
 		complex.setOutputVariables(Collections.singleton(new OperationVariable(outProp)));
 		complex.setIdShort("complex");
 		addSubmodelElement(complex);
@@ -125,7 +121,7 @@ public class SimpleAASSubmodel extends Submodel {
 			return 123;
 		});
 		opInCollection.setIdShort("operationId");
-		
+
 		SubmodelElementCollection containerProp = new SubmodelElementCollection();
 		containerProp.setIdShort("container");
 		containerProp.addSubmodelElement(intProp);
@@ -139,6 +135,6 @@ public class SimpleAASSubmodel extends Submodel {
 		// Create various submodel elements with keywords in their idShorts
 		SubmodelElementCollection containerKeywords = new SubmodelElementCollection();
 		containerKeywords.setIdShort("keywords");
-        addSubmodelElement(containerKeywords);
+		addSubmodelElement(containerKeywords);
 	}
 }

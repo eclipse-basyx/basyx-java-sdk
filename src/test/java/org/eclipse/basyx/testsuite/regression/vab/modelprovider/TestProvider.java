@@ -28,8 +28,9 @@ import org.eclipse.basyx.vab.manager.VABConnectionManager;
 import org.junit.Test;
 
 /**
- * Abstract test suite for testing CRUD-operations for different types of model providers.
- * The concrete test cases implement concrete VABConnectionManagers that are tested
+ * Abstract test suite for testing CRUD-operations for different types of model
+ * providers. The concrete test cases implement concrete VABConnectionManagers
+ * that are tested
  * 
  * @author espen
  *

@@ -47,8 +47,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests createAsFacade and isValid of {@link Phone} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link Phone} for their correctness
  * 
  * @author haque
  *
@@ -58,7 +57,7 @@ public class TestPhone {
 	public static MultiLanguageProperty telephone = new MultiLanguageProperty(Phone.TELEPHONENUMBERID);
 	public static Property typeOfTelephone = new Property(Phone.TYPEOFTELEPHONEID, ValueType.String);
 	private Map<String, Object> phoneMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void buildPhone() {
 		telephone.setValue(new LangStrings(new LangString("DE", "0631123456")));
@@ -70,7 +69,7 @@ public class TestPhone {
 		phoneMap.put(HasSemantics.SEMANTICID, Phone.SEMANTICID);
 		phoneMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		Phone phoneFromMap = Phone.createAsFacade(phoneMap);
@@ -79,14 +78,14 @@ public class TestPhone {
 		assertEquals(typeOfTelephone, phoneFromMap.getTypeOfTelephone());
 		assertEquals(IDSHORT, phoneFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		phoneMap.remove(Referable.IDSHORT);
 		Phone.createAsFacade(phoneMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionTelephoneNumber() {
 		List<ISubmodelElement> newElements = new ArrayList<ISubmodelElement>();
 		newElements.add(typeOfTelephone);

@@ -37,10 +37,10 @@ import org.eclipse.basyx.vab.model.VABModelMap;
 public class CallbackResponse extends VABModelMap<Object> {
 	public static final String REQUESTID = "requestId";
 	public static final String CALLBACKURL = "callbackUrl";
-	
+
 	public CallbackResponse() {
 	}
-	
+
 	public static CallbackResponse createAsFacade(Map<String, Object> map) {
 		if (map == null) {
 			return null;

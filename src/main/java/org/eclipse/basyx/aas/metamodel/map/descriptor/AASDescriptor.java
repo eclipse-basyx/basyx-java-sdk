@@ -49,7 +49,7 @@ import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 public class AASDescriptor extends ModelDescriptor {
 	public static final String MODELTYPE = "AssetAdministrationShellDescriptor";
 	public static final String ASSET = "asset";
-	
+
 	/**
 	 * Create descriptor from existing hash map
 	 */
@@ -76,7 +76,6 @@ public class AASDescriptor extends ModelDescriptor {
 		this(assetAdministrationShell.getIdShort(), assetAdministrationShell.getIdentification(), assetAdministrationShell.getAsset(), endpoint);
 	}
 
-
 	/**
 	 * Create a new descriptor with aasid, idshort , assetid, and endpoint
 	 */
@@ -88,11 +87,11 @@ public class AASDescriptor extends ModelDescriptor {
 
 		// Set Submodels
 		put(AssetAdministrationShell.SUBMODELS, new HashSet<SubmodelDescriptor>());
-		
+
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	/**
 	 * Create a new descriptor with minimal information
 	 */
@@ -113,7 +112,7 @@ public class AASDescriptor extends ModelDescriptor {
 	public AASDescriptor(IIdentifier aasid, String httpEndpoint) {
 		this("", aasid, httpEndpoint);
 	}
-	
+
 	/**
 	 * Add a sub model descriptor
 	 */
@@ -121,7 +120,7 @@ public class AASDescriptor extends ModelDescriptor {
 	public AASDescriptor addSubmodelDescriptor(SubmodelDescriptor desc) {
 		// Sub model descriptors are stored in a list
 		Collection<Map<String, Object>> submodelDescriptors = (Collection<Map<String, Object>>) get(AssetAdministrationShell.SUBMODELS);
-		
+
 		// Add new sub model descriptor to list
 		submodelDescriptors.add(desc);
 		put(AssetAdministrationShell.SUBMODELS, submodelDescriptors);
@@ -162,8 +161,7 @@ public class AASDescriptor extends ModelDescriptor {
 	@SuppressWarnings("unchecked")
 	public SubmodelDescriptor getSubmodelDescriptorFromIdentifierId(String subModelId) {
 		// Sub model descriptors are stored in a list
-		Collection<Map<String, Object>> smDescriptorMaps = (Collection<Map<String, Object>>) get(
-				AssetAdministrationShell.SUBMODELS);
+		Collection<Map<String, Object>> smDescriptorMaps = (Collection<Map<String, Object>>) get(AssetAdministrationShell.SUBMODELS);
 
 		// Go through all descriptors (as maps) and find the one with the subModelId
 		for (Map<String, Object> smDescriptorMap : smDescriptorMaps) {
@@ -173,7 +171,7 @@ public class AASDescriptor extends ModelDescriptor {
 				return new SubmodelDescriptor(smDescriptorMap);
 			}
 		}
-		
+
 		// No descriptor found
 		return null;
 	}
@@ -210,7 +208,7 @@ public class AASDescriptor extends ModelDescriptor {
 	protected String getModelType() {
 		return MODELTYPE;
 	}
-	
+
 	/**
 	 * Get asset
 	 */
@@ -219,7 +217,7 @@ public class AASDescriptor extends ModelDescriptor {
 		Map<String, Object> assetModel = (Map<String, Object>) get(ASSET);
 		return Asset.createAsFacade(assetModel);
 	}
-	
+
 	@Override
 	public void validate(Map<String, Object> map) {
 		super.validate(map);
@@ -230,4 +228,3 @@ public class AASDescriptor extends ModelDescriptor {
 		}
 	}
 }
-

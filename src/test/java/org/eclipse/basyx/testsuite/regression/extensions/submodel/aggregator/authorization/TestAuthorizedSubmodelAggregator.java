@@ -71,7 +71,6 @@ public class TestAuthorizedSubmodelAggregator {
 
 	private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(AuthorizedSubmodelAggregator.READ_AUTHORITY, AuthorizedSubmodelAggregator.WRITE_AUTHORITY);
 
-
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
 		submodel = new Submodel(SUBMODEL_IDSHORT, SUBMODEL_IDENTIFIER);
@@ -150,7 +149,6 @@ public class TestAuthorizedSubmodelAggregator {
 		ISubmodel returnedSubmodel = authorizedSubmodelAggregator.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
 		assertEquals(submodel, returnedSubmodel);
 	}
-
 
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIById_thenThrowProviderException() {

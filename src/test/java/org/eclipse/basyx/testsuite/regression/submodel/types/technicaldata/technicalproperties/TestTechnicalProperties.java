@@ -61,9 +61,9 @@ public class TestTechnicalProperties {
 	public static SubmodelElementCollection subSection = new SubmodelElementCollection(TechnicalProperties.SUBSECTIONPREFIX + "01");
 	public static SubmodelElement arbitrary1 = new Property("arbitraryId1", ValueType.String);
 	public static SubmodelElement arbitrary2 = new Property("arbitraryId2", ValueType.String);
-	
+
 	private Map<String, Object> technicalMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void init() {
 		mainSection.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, TechnicalProperties.MAINSECTIONID, IdentifierType.IRDI)));
@@ -76,12 +76,12 @@ public class TestTechnicalProperties {
 		elements.add(subSection);
 		elements.add(arbitrary1);
 		elements.add(arbitrary2);
-		
+
 		technicalMap.put(Referable.IDSHORT, TechnicalProperties.IDSHORT);
 		technicalMap.put(HasSemantics.SEMANTICID, TechnicalProperties.SEMANTICID);
 		technicalMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		TechnicalProperties propFromMap = TechnicalProperties.createAsFacade(technicalMap);
@@ -92,8 +92,8 @@ public class TestTechnicalProperties {
 		assertEquals(Collections.singletonList(arbitrary1), propFromMap.getArbitrary());
 		assertEquals(Collections.singletonList(arbitrary2), propFromMap.getSMENotDescribedBySemanticId());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		technicalMap.remove(Referable.IDSHORT);
 		TechnicalProperties.createAsFacade(technicalMap);

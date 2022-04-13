@@ -29,8 +29,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
-
 /**
  * Default type factory
  *
@@ -46,7 +44,6 @@ public class DefaultTypeFactory implements GSONToolsFactory {
 	public Map<String, Object> createMap() {
 		return new LinkedHashMap<>();
 	}
-
 
 	/**
 	 * Create a collection

@@ -39,10 +39,10 @@ import org.slf4j.LoggerFactory;
  */
 public class FileLoaderHelper {
 	private static Logger logger = LoggerFactory.getLogger(FileLoaderHelper.class);
-	
+
 	public static InputStream getInputStream(String aasxFilePath) throws IOException {
 		InputStream stream = getResourceStream(aasxFilePath);
-		
+
 		if (stream != null) {
 			return stream;
 		} else {
@@ -57,7 +57,7 @@ public class FileLoaderHelper {
 
 	private static InputStream getResourceStream(String relativeResourcePath) {
 		ClassLoader classLoader = AASXToMetamodelConverter.class.getClassLoader();
-		
+
 		return classLoader.getResourceAsStream(relativeResourcePath);
 	}
 }

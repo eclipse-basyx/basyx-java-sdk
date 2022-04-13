@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.api.qualifier;
 
-
 /**
  * Administrative metainformation for an element like version information.
  * 
@@ -38,7 +37,7 @@ public interface IAdministrativeInformation extends IHasDataSpecification {
 	 * @return
 	 */
 	public String getVersion();
-	
+
 	/**
 	 * Gets the revision of the element
 	 * 

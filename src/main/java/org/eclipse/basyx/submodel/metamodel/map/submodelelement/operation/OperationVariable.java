@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class OperationVariable extends VABModelMap<Object> implements IOperationVariable {
 	public static final Logger logger = LoggerFactory.getLogger(OperationVariable.class);
-	
+
 	public static final String MODELTYPE = "OperationVariable";
 
 	/**
@@ -60,7 +60,7 @@ public class OperationVariable extends VABModelMap<Object> implements IOperation
 	public OperationVariable(SubmodelElement value) {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
-		
+
 		setValue(value);
 	}
 
@@ -68,44 +68,45 @@ public class OperationVariable extends VABModelMap<Object> implements IOperation
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	/**
 	 * Creates an OperationVariable object from a map
 	 * 
-	 * @param obj an OperationVariable object as raw map
-	 * @return an OperationVariable object, that behaves like a facade for the given map
+	 * @param obj
+	 *            an OperationVariable object as raw map
+	 * @return an OperationVariable object, that behaves like a facade for the given
+	 *         map
 	 */
 	public static OperationVariable createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
-			throw new MetamodelConstructionException(OperationVariable.class, obj);	
+			throw new MetamodelConstructionException(OperationVariable.class, obj);
 		}
-		
+
 		OperationVariable facade = new OperationVariable();
 		facade.setMap(obj);
 		return facade;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> obj) {
-		return obj != null &&
-				obj.containsKey(Property.VALUE) && 
-				SubmodelElement.isValid((Map<String, Object>) obj.get(Property.VALUE));
+		return obj != null && obj.containsKey(Property.VALUE) && SubmodelElement.isValid((Map<String, Object>) obj.get(Property.VALUE));
 	}
 
 	/**
 	 * Sets value of operation variable
 	 *
 	 * @param value
-	 * @throws RuntimeException if modelingkind of the value is not of modelingkind.template
+	 * @throws RuntimeException
+	 *             if modelingkind of the value is not of modelingkind.template
 	 */
 	@SuppressWarnings("unchecked")
 	public void setValue(ISubmodelElement value) {

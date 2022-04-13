@@ -38,8 +38,8 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
  *
- * Implementation of {@link IAASAggregator} that calls back registered {@link IAASAggregatorObserver}
- * when changes on AAS occur
+ * Implementation of {@link IAASAggregator} that calls back registered
+ * {@link IAASAggregatorObserver} when changes on AAS occur
  *
  * @author haque
  *
@@ -47,11 +47,11 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 public class ObservableAASAggregator extends Observable<IAASAggregatorObserver> implements IAASAggregator {
 
 	private IAASAggregator aasAggregator;
-	
+
 	public ObservableAASAggregator(IAASAggregator aggregator) {
 		this.aasAggregator = aggregator;
 	}
-	
+
 	@Override
 	public Collection<IAssetAdministrationShell> getAASList() {
 		return aasAggregator.getAASList();

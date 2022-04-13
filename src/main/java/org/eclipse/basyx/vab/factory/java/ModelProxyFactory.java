@@ -30,9 +30,10 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 
 /**
- * A factory for creating model providers out of addresses with multiple endpoints included.
+ * A factory for creating model providers out of addresses with multiple
+ * endpoints included.
  * 
- *  @author espen
+ * @author espen
  *
  */
 public class ModelProxyFactory {
@@ -41,18 +42,20 @@ public class ModelProxyFactory {
 	public ModelProxyFactory(IConnectorFactory connectorFactory) {
 		this.connectorFactory = connectorFactory;
 	}
-	
+
 	/**
 	 * Returns an element proxy for a path that can contain multiple endpoints
 	 * 
-	 * @param path A path containing one or more endpoints.
-	 * @return A proxy that directly connects to the element referenced by the given path.
+	 * @param path
+	 *            A path containing one or more endpoints.
+	 * @return A proxy that directly connects to the element referenced by the given
+	 *         path.
 	 */
 	public VABElementProxy createProxy(String path) {
 		// Create a model provider for the first endpoint
 		String addressEntry = VABPathTools.getFirstEndpoint(path);
 		IModelProvider provider = connectorFactory.create(addressEntry);
-		
+
 		// Return a proxy for the whole path using the connector to the first endpoint
 		String subPath = VABPathTools.removeFirstEndpoint(path);
 		return new VABElementProxy(subPath, provider);

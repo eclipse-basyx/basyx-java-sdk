@@ -49,20 +49,19 @@ public class TestConnectedBasicEvent {
 
 	ConnectedBasicEvent connectedEvent;
 	BasicEvent event;
-	
+
 	@Before
 	public void build() {
-		
+
 		Reference ref = new Reference(new Key(KeyElements.BLOB, true, "", IdentifierType.CUSTOM));
-		
+
 		event = new BasicEvent(ref);
-		
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(event))));
+
+		VABConnectionManagerStub manager = new VABConnectionManagerStub(new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(event))));
 
 		connectedEvent = new ConnectedBasicEvent(manager.connectToVABElement(""));
 	}
-	
+
 	/**
 	 * Tests if getObserved() returns the correct value
 	 */

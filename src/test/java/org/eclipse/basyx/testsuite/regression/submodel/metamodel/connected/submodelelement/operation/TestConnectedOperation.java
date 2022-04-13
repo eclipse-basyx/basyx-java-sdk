@@ -49,8 +49,7 @@ public class TestConnectedOperation extends TestOperationSuite {
 	protected IOperation prepareOperation(Operation operation) {
 		Map<String, Object> destroyType = TypeDestroyer.destroyType(operation);
 		// Create a dummy connection manager containing the created Operation map
-		VABConnectionManager manager = new VABConnectionManagerStub(
-				new OperationProvider(new VABMapProvider(destroyType)));
+		VABConnectionManager manager = new VABConnectionManagerStub(new OperationProvider(new VABMapProvider(destroyType)));
 
 		// Create the ConnectedOperation based on the manager stub
 		return new ConnectedOperation(manager.connectToVABElement(""));

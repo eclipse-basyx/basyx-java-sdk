@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 
 public class SubmodelElementRetrievalHelper {
-	
+
 	public static List<ISubmodelElement> getSubmodelElementsByIdPrefix(String prefix, Map<String, ISubmodelElement> elemMap) {
 		if (elemMap != null && elemMap.size() > 0) {
 			return elemMap.values().stream().filter(s -> s.getIdShort().startsWith(prefix)).collect(Collectors.toList());

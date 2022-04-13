@@ -37,12 +37,13 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * A registry implementation that authorizes invocations before forwarding them to
- * an underlying registry implementation.
+ * A registry implementation that authorizes invocations before forwarding them
+ * to an underlying registry implementation.
  * <p>
- * Implementation Note:
- * This implementation internally uses {@link SecurityContextHolder} to access the {@link SecurityContext} and its {@link Authentication}.
- * For read operations we require Read Scope Authority, for mutations we require Write Scope Authority.
+ * Implementation Note: This implementation internally uses
+ * {@link SecurityContextHolder} to access the {@link SecurityContext} and its
+ * {@link Authentication}. For read operations we require Read Scope Authority,
+ * for mutations we require Write Scope Authority.
  *
  * @author pneuschwander
  * @see AASRegistryScopes
@@ -56,7 +57,8 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 	private final SecurityContextAuthorizer authorizer = new SecurityContextAuthorizer();
 
 	/**
-	 * Provides registry implementation that authorizes invocations before forwarding them to the provided registry implementation.
+	 * Provides registry implementation that authorizes invocations before
+	 * forwarding them to the provided registry implementation.
 	 */
 	public AuthorizedAASRegistry(final IAASRegistry registry) {
 		this.registry = registry;

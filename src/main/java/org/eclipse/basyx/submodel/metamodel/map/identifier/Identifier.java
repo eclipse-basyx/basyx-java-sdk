@@ -62,19 +62,19 @@ public class Identifier extends VABModelMap<Object> implements IIdentifier {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Identifier.class, map);
 		}
-		
+
 		Identifier ret = new Identifier();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {

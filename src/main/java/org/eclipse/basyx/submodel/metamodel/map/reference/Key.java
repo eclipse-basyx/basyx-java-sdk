@@ -66,7 +66,7 @@ public class Key extends VABModelMap<Object> implements IKey {
 		put(VALUE, value);
 		put(IDTYPE, idType.toString());
 	}
-	
+
 	/**
 	 * Helper constructor to translate IdentifierType to KeyType. <br>
 	 * In the meta model KeyType inheritcs from IdentifiertType, however Java does
@@ -98,42 +98,37 @@ public class Key extends VABModelMap<Object> implements IKey {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Key.class, map);
 		}
-		
+
 		Key ret = new Key();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
-		return map != null &&
-				map.containsKey(TYPE) &&
-				map.containsKey(LOCAL) &&
-				map.containsKey(VALUE) &&
-				map.containsKey(IDTYPE);
+		return map != null && map.containsKey(TYPE) && map.containsKey(LOCAL) && map.containsKey(VALUE) && map.containsKey(IDTYPE);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static boolean isKey(Object value) {
-		if(!(value instanceof Map<?, ?>)) {
+		if (!(value instanceof Map<?, ?>)) {
 			return false;
 		}
-		
+
 		Map<String, Object> map = (Map<String, Object>) value;
-		
-		if(!(map.get(LOCAL) instanceof Boolean && map.get(VALUE) instanceof String
-				&& map.get(IDTYPE) instanceof String && map.get(TYPE) instanceof String)) {
+
+		if (!(map.get(LOCAL) instanceof Boolean && map.get(VALUE) instanceof String && map.get(IDTYPE) instanceof String && map.get(TYPE) instanceof String)) {
 			return false;
 		}
-		
+
 		try {
 			// Try to convert the Strings to Enum-Types
 			// If that fails an Exception is thrown
@@ -142,7 +137,7 @@ public class Key extends VABModelMap<Object> implements IKey {
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
-		
+
 		return true;
 	}
 

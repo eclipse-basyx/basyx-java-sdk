@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.basyx.testsuite.regression.aas.bundle;
 
 import java.util.Collections;
@@ -46,9 +45,8 @@ public class TestAASBundleFactory {
 	@Test
 	public void testBundleCreationAssetAlreadySetInAAS() {
 		Asset asset = new Asset("assetIdShort", new CustomId("assetId"), AssetKind.INSTANCE);
-		
+
 		AssetAdministrationShell shell = new AssetAdministrationShell("aasIdShort", new CustomId("aasId"), asset);
-		new AASBundleFactory().create(Collections.singleton(shell), Collections.emptySet(),
-				Collections.singleton(asset));
+		new AASBundleFactory().create(Collections.singleton(shell), Collections.emptySet(), Collections.singleton(asset));
 	}
 }

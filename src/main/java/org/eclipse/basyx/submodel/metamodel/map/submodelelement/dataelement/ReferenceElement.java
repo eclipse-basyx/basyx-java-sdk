@@ -86,35 +86,37 @@ public class ReferenceElement extends DataElement implements IReferenceElement {
 		putAll(new ModelType(MODELTYPE));
 		put(Property.VALUE, ref);
 	}
-	
+
 	/**
 	 * Creates a ReferenceElement object from a map
 	 * 
-	 * @param obj a ReferenceElement object as raw map
-	 * @return a ReferenceElement object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a ReferenceElement object as raw map
+	 * @return a ReferenceElement object, that behaves like a facade for the given
+	 *         map
 	 */
 	public static ReferenceElement createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		ReferenceElement ret = new ReferenceElement();
 		ret.setMap(obj);
 		return ret;
 	}
 
 	/**
-	 * Returns true if the given submodel element map is recognized as a ReferenceElement
+	 * Returns true if the given submodel element map is recognized as a
+	 * ReferenceElement
 	 */
 	public static boolean isReferenceElement(Map<String, Object> map) {
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained (fallback)
-		// Ambiguous - fallback could be further improved by parsing the value and recognizing references
-		return MODELTYPE.equals(modelType)
-				|| (modelType == null && (map.containsKey(Property.VALUE) && !map.containsKey(Property.VALUETYPE)
-				&& !map.containsKey(Property.VALUEID) && !map.containsKey(File.MIMETYPE)
-				&& !map.containsKey(SubmodelElementCollection.ORDERED)
-						&& !map.containsKey(SubmodelElementCollection.ALLOWDUPLICATES)));
+		// Either model type is set or the element type specific attributes are
+		// contained (fallback)
+		// Ambiguous - fallback could be further improved by parsing the value and
+		// recognizing references
+		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(Property.VALUE) && !map.containsKey(Property.VALUETYPE) && !map.containsKey(Property.VALUEID) && !map.containsKey(File.MIMETYPE)
+				&& !map.containsKey(SubmodelElementCollection.ORDERED) && !map.containsKey(SubmodelElementCollection.ALLOWDUPLICATES)));
 	}
 
 	@Override
@@ -122,18 +124,17 @@ public class ReferenceElement extends DataElement implements IReferenceElement {
 	public IReference getValue() {
 		return Reference.createAsFacade((Map<String, Object>) get(Property.VALUE));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
-		if(Reference.isReference(value)) {
+		if (Reference.isReference(value)) {
 			setValue(Reference.createAsFacade((Map<String, Object>) value));
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Given Object is not a Reference");
 		}
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.REFERENCEELEMENT;

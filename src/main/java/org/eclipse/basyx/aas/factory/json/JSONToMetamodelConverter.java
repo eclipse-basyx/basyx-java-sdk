@@ -51,13 +51,14 @@ import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
  *
  */
 public class JSONToMetamodelConverter {
-	
+
 	private AasEnv aasEnv;
 
 	/**
 	 * Initializes the parser with XML given as a String
 	 * 
-	 * @param jsonContent the JSON content to be parsed
+	 * @param jsonContent
+	 *            the JSON content to be parsed
 	 */
 	public JSONToMetamodelConverter(String jsonContent) {
 		Map<String, Object> root = createRoot(jsonContent);
@@ -75,38 +76,29 @@ public class JSONToMetamodelConverter {
 
 	@SuppressWarnings("unchecked")
 	private List<ISubmodel> createSubmodels(Map<String, Object> root) {
-		return ((List<Object>) root.get(MetamodelToJSONConverter.SUBMODELS)).stream()
-				.map(smMap -> Submodel.createAsFacade((Map<String, Object>) smMap)).collect(Collectors.toList());
+		return ((List<Object>) root.get(MetamodelToJSONConverter.SUBMODELS)).stream().map(smMap -> Submodel.createAsFacade((Map<String, Object>) smMap)).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<IConceptDescription> createConceptDescriptions(Map<String, Object> root) {
-		return ((List<Object>) root
-				.get(MetamodelToJSONConverter.CONCEPT_DESCRIPTIONS)).stream()
-						.map(cdMap -> ConceptDescription.createAsFacade((Map<String, Object>) cdMap))
-						.collect(Collectors.toList());
+		return ((List<Object>) root.get(MetamodelToJSONConverter.CONCEPT_DESCRIPTIONS)).stream().map(cdMap -> ConceptDescription.createAsFacade((Map<String, Object>) cdMap)).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<IAssetAdministrationShell> createShells(Map<String, Object> root, List<IAsset> assets) {
-		return ((List<Object>) root
-				.get(MetamodelToJSONConverter.ASSET_ADMINISTRATION_SHELLS)).stream()
-						.map(aasObject -> handleJSONAssetReference(aasObject, (List<Asset>) (List<?>) assets))
-						.collect(Collectors.toList());
+		return ((List<Object>) root.get(MetamodelToJSONConverter.ASSET_ADMINISTRATION_SHELLS)).stream().map(aasObject -> handleJSONAssetReference(aasObject, (List<Asset>) (List<?>) assets)).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<IAsset> createAssets(Map<String, Object> root) {
-		return ((List<Object>) root.get(MetamodelToJSONConverter.ASSETS)).stream()
-				.map(aMap -> Asset.createAsFacade((Map<String, Object>) aMap)).collect(Collectors.toList());
+		return ((List<Object>) root.get(MetamodelToJSONConverter.ASSETS)).stream().map(aMap -> Asset.createAsFacade((Map<String, Object>) aMap)).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> createRoot(String jsonContent) {
-		return (Map<String, Object>) new GSONTools(new DefaultTypeFactory())
-				.deserialize(jsonContent);
+		return (Map<String, Object>) new GSONTools(new DefaultTypeFactory()).deserialize(jsonContent);
 	}
-	
+
 	/**
 	 * Parses the AasEnv from the JSON
 	 * 
@@ -140,12 +132,10 @@ public class JSONToMetamodelConverter {
 	}
 
 	@SuppressWarnings("unchecked")
-	private AssetAdministrationShell handleReference(Object aasObject, Map<String, Object> aasMap,
-			Map<String, Object> assetRefMap, List<Asset> assets) {
+	private AssetAdministrationShell handleReference(Object aasObject, Map<String, Object> aasMap, Map<String, Object> assetRefMap, List<Asset> assets) {
 		aasMap.put(AssetAdministrationShell.ASSETREF, assetRefMap);
-		
-		IReference assetRef = Reference
-				.createAsFacade((Map<String, Object>) aasMap.get(AssetAdministrationShell.ASSETREF));
+
+		IReference assetRef = Reference.createAsFacade((Map<String, Object>) aasMap.get(AssetAdministrationShell.ASSETREF));
 		IKey lastKey = assetRef.getKeys().get(assetRef.getKeys().size() - 1);
 		String idValue = lastKey.getValue();
 		for (Asset asset : assets) {
@@ -161,7 +151,7 @@ public class JSONToMetamodelConverter {
 	private boolean isAssetReference(Map<String, Object> assetRefMap) {
 		return assetRefMap.get(Reference.KEY) != null && assetRefMap.get(Asset.KIND) == null;
 	}
-	
+
 	/**
 	 * Parses the Submodels from the JSON
 	 * 
@@ -171,7 +161,7 @@ public class JSONToMetamodelConverter {
 	public List<Submodel> parseSubmodels() {
 		return new ArrayList<>((List<Submodel>) (List<?>) aasEnv.getSubmodels());
 	}
-	
+
 	/**
 	 * Parses the Assets from the JSON
 	 * 

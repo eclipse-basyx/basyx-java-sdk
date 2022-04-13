@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class XMLToMetamodelConverter {
-	
+
 	private AasEnv aasEnv;
 
 	/**
@@ -66,21 +66,16 @@ public class XMLToMetamodelConverter {
 	@SuppressWarnings("unchecked")
 	public XMLToMetamodelConverter(String xmlContent) throws ParserConfigurationException, SAXException, IOException {
 		Map<String, Object> root = new LinkedHashMap<>();
-		root.putAll((Map<? extends String, ? extends Object>) XmlParser.buildXmlMap(xmlContent)
-				.get(MetamodelToXMLConverter.AASENV));
+		root.putAll((Map<? extends String, ? extends Object>) XmlParser.buildXmlMap(xmlContent).get(MetamodelToXMLConverter.AASENV));
 
-		Map<String, Object> xmlAASs = (Map<String, Object>) root
-				.get(AssetAdministrationShellXMLConverter.ASSET_ADMINISTRATION_SHELLS);
-		
-		Map<String, Object> xmlConceptDescriptions = (Map<String, Object>) root
-				.get(ConceptDescriptionXMLConverter.CONCEPT_DESCRIPTIONS);
-		
-		List<IConceptDescription> conceptDescriptions = ConceptDescriptionXMLConverter
-				.parseConceptDescriptions(xmlConceptDescriptions);
-		
-		List<IAssetAdministrationShell> shells = AssetAdministrationShellXMLConverter
-				.parseAssetAdministrationShells(xmlAASs, conceptDescriptions);
-		
+		Map<String, Object> xmlAASs = (Map<String, Object>) root.get(AssetAdministrationShellXMLConverter.ASSET_ADMINISTRATION_SHELLS);
+
+		Map<String, Object> xmlConceptDescriptions = (Map<String, Object>) root.get(ConceptDescriptionXMLConverter.CONCEPT_DESCRIPTIONS);
+
+		List<IConceptDescription> conceptDescriptions = ConceptDescriptionXMLConverter.parseConceptDescriptions(xmlConceptDescriptions);
+
+		List<IAssetAdministrationShell> shells = AssetAdministrationShellXMLConverter.parseAssetAdministrationShells(xmlAASs, conceptDescriptions);
+
 		Map<String, Object> xmlSubmodels = (Map<String, Object>) root.get(SubmodelXMLConverter.SUBMODELS);
 		List<ISubmodel> submodels = SubmodelXMLConverter.parseSubmodels(xmlSubmodels);
 		Map<String, Object> xmlAssets = (Map<String, Object>) root.get(AssetXMLConverter.ASSETS);
@@ -97,7 +92,7 @@ public class XMLToMetamodelConverter {
 	public AasEnv parseAasEnv() {
 		return aasEnv;
 	}
-	
+
 	/**
 	 * Parses the AASs from the XML
 	 * 
@@ -110,7 +105,6 @@ public class XMLToMetamodelConverter {
 		return new ArrayList<>(aasEnv.getAssetAdministrationShells());
 	}
 
-	
 	/**
 	 * Parses the Assets from the XML
 	 * 
@@ -123,7 +117,6 @@ public class XMLToMetamodelConverter {
 		return new ArrayList<>(aasEnv.getAssets());
 	}
 
-	
 	/**
 	 * Parses the Submodels from the XML
 	 * 
@@ -133,7 +126,6 @@ public class XMLToMetamodelConverter {
 		return new ArrayList<>(aasEnv.getSubmodels());
 	}
 
-	
 	/**
 	 * Parses the ConceptDescriptions from the XML
 	 * 
@@ -142,5 +134,5 @@ public class XMLToMetamodelConverter {
 	public List<IConceptDescription> parseConceptDescriptions() {
 		return new ArrayList<>(aasEnv.getConceptDescriptions());
 	}
-	
+
 }

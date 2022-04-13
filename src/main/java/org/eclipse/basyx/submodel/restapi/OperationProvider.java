@@ -62,7 +62,7 @@ public class OperationProvider implements IModelProvider {
 
 	private IModelProvider modelProvider;
 	private DelegatedInvocationManager invocationHelper;
-	
+
 	public OperationProvider(IModelProvider modelProvider) {
 		this(modelProvider, new DelegatedInvocationManager(new HTTPConnectorFactory()));
 	}
@@ -124,12 +124,12 @@ public class OperationProvider implements IModelProvider {
 			throw new MalformedRequestException("Only operations can be invoked.");
 		}
 		Operation op = Operation.createAsFacade((Map<String, Object>) childElement);
-		
+
 		if (DelegatedInvocationManager.isDelegatingOperation(op)) {
 			return invocationHelper.invokeDelegatedOperation(op, parameters);
 		} else {
 			InvocationRequest request = getInvocationRequest(parameters, op);
-			
+
 			if (request != null && isAsync) {
 				return handleAsyncRequestInvokation(op, request);
 			} else if (request != null) {
@@ -138,7 +138,7 @@ public class OperationProvider implements IModelProvider {
 				return handleAsyncParameterInvokation(op, parameters);
 			} else {
 				return handleSyncParameterInvokation(op, parameters);
-			}	
+			}
 		}
 	}
 

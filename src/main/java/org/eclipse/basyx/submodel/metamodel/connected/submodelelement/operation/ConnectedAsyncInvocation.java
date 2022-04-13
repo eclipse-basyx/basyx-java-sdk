@@ -49,12 +49,12 @@ public class ConnectedAsyncInvocation implements IAsyncInvocation {
 
 	private String operationId;
 	private String requestId;
-	
+
 	private VABElementProxy proxy;
-	
+
 	private Object result = null;
 	private boolean resultRetrieved = false;
-	
+
 	@SuppressWarnings("unchecked")
 	public ConnectedAsyncInvocation(VABElementProxy proxy, String operationId, InvocationRequest request) {
 		this.proxy = proxy;
@@ -62,7 +62,7 @@ public class ConnectedAsyncInvocation implements IAsyncInvocation {
 		CallbackResponse response = CallbackResponse.createAsFacade((Map<String, Object>) proxy.invokeOperation(Operation.INVOKE + OperationProvider.ASYNC, request));
 		requestId = response.getRequestId();
 	}
-	
+
 	@Override
 	public Object getResult() {
 		// Wait for Operation to finish
@@ -72,26 +72,24 @@ public class ConnectedAsyncInvocation implements IAsyncInvocation {
 			} catch (InterruptedException e) {
 			}
 		}
-		
+
 		// Side-effect of isFinished is querying the result.
 		// Thus, it can be assumed, the the result will be available here
 
 		if (result instanceof Exception) {
-			throw new OperationExecutionErrorException("Exception while executing Invocation '"
-					+ requestId + "' of Operation '" + operationId + "'");
+			throw new OperationExecutionErrorException("Exception while executing Invocation '" + requestId + "' of Operation '" + operationId + "'");
 		} else if (ExecutionState.FAILED == result) {
-			throw new OperationExecutionErrorException("Exception while executing Invocation '" + requestId
-					+ "' of Operation '" + operationId + "'; Operation failed");
+			throw new OperationExecutionErrorException("Exception while executing Invocation '" + requestId + "' of Operation '" + operationId + "'; Operation failed");
 		} else if (ExecutionState.TIMEOUT == result) {
-			throw new OperationExecutionTimeoutException(
-					"Invocation '" + requestId + "' of Operation '" + operationId + "' timed out");
+			throw new OperationExecutionTimeoutException("Invocation '" + requestId + "' of Operation '" + operationId + "' timed out");
 		} else {
 			return result;
 		}
 	}
-	
+
 	/**
-	 * Queries the operation with the connected proxy to see, if the result is already finished
+	 * Queries the operation with the connected proxy to see, if the result is
+	 * already finished
 	 */
 	@Override
 	public boolean isFinished() {
@@ -109,7 +107,7 @@ public class ConnectedAsyncInvocation implements IAsyncInvocation {
 		// 1. Retrieve InvocationResponse from proxy
 		Object responseObj = null;
 		try {
-			 responseObj = proxy.getValue(getListPath());
+			responseObj = proxy.getValue(getListPath());
 		} catch (ProviderException e) {
 			// As the Submodel-API does not specify a request to ask whether
 			// the operation is finished, it has to be done via the retrieval of the value.
@@ -127,9 +125,9 @@ public class ConnectedAsyncInvocation implements IAsyncInvocation {
 
 		// 2. Cast response to InvocationResponse
 		InvocationResponse response = null;
-		if ( responseObj instanceof InvocationResponse ) {
+		if (responseObj instanceof InvocationResponse) {
 			response = (InvocationResponse) responseObj;
-		} else if ( result instanceof Map<?, ?> ) {
+		} else if (result instanceof Map<?, ?>) {
 			response = InvocationResponse.createAsFacade((Map<String, Object>) result);
 		} else {
 			// got no valid InvocationResponse
@@ -138,19 +136,19 @@ public class ConnectedAsyncInvocation implements IAsyncInvocation {
 
 		// 3. Transform to direct result
 		switch (response.getExecutionState()) {
-			case COMPLETED:
-				// Finished => set internal state
-				resultRetrieved = true;
-				result = response.getFirstOutput();
-				break;
-			case FAILED:
-			case TIMEOUT:
-				// Finished, but no result => set internal state
-				resultRetrieved = true;
-				result = response.getExecutionState();
-				break;
-			default:
-				// Not finished, yet, result hasn't been retrieved
+		case COMPLETED:
+			// Finished => set internal state
+			resultRetrieved = true;
+			result = response.getFirstOutput();
+			break;
+		case FAILED:
+		case TIMEOUT:
+			// Finished, but no result => set internal state
+			resultRetrieved = true;
+			result = response.getExecutionState();
+			break;
+		default:
+			// Not finished, yet, result hasn't been retrieved
 		}
 	}
 
@@ -161,7 +159,7 @@ public class ConnectedAsyncInvocation implements IAsyncInvocation {
 	public String getOperationId() {
 		return operationId;
 	}
-	
+
 	private String getListPath() {
 		return VABPathTools.concatenatePaths(OperationProvider.INVOCATION_LIST, requestId);
 	}

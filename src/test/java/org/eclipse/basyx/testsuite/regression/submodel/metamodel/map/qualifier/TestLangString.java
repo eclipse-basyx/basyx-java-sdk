@@ -39,7 +39,7 @@ import org.junit.Test;
 public class TestLangString {
 	private static final String LANGUAGE = "Eng";
 	private static final String DESCRIPTION = "test";
-	
+
 	@Test
 	public void testConstructor() {
 		LangString langString = new LangString(LANGUAGE, DESCRIPTION);

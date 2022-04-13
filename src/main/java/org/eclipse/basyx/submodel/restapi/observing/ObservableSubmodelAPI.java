@@ -33,8 +33,8 @@ import org.eclipse.basyx.submodel.observer.Observable;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 /**
- * Implementation of {@link ISubmodelAPI} that calls back registered {@link ISubmodelAPIObserver}
- * when changes on SubmodelElements occur
+ * Implementation of {@link ISubmodelAPI} that calls back registered
+ * {@link ISubmodelAPIObserver} when changes on SubmodelElements occur
  * 
  * @author conradi
  *
@@ -46,7 +46,7 @@ public class ObservableSubmodelAPI extends Observable<ISubmodelAPIObserver> impl
 	public ObservableSubmodelAPI(ISubmodelAPI observerdAPI) {
 		submodelAPI = observerdAPI;
 	}
-	
+
 	@Override
 	public ISubmodel getSubmodel() {
 		return submodelAPI.getSubmodel();

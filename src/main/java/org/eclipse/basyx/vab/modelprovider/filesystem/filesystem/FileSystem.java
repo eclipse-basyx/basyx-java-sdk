@@ -29,14 +29,15 @@ import java.util.List;
 
 /**
  * Abstracts from a generic file system
+ * 
  * @author schnicke
  *
  */
 public interface FileSystem {
-	
+
 	/**
 	 * Reads the content of a file formated as UTF-8.<br>
-	 * Throws an Exception if file at given path does not exist. 
+	 * Throws an Exception if file at given path does not exist.
 	 * 
 	 * @param path
 	 * @return The content of specified file as String
@@ -51,7 +52,8 @@ public interface FileSystem {
 	 * Does not create nonexistent parent directories.
 	 * 
 	 * @param path
-	 * @param content the String to be written to a file
+	 * @param content
+	 *            the String to be written to a file
 	 * @throws IOException
 	 */
 	public void writeFile(String path, String content) throws IOException;
@@ -83,23 +85,23 @@ public interface FileSystem {
 	 * @throws IOException
 	 */
 	public List<File> readDirectory(String path) throws IOException;
-	
+
 	/**
-	 * Deletes the directory at the specified path,
-	 * including contained files and subdirectories.<br>
-	 * Does not throw an Exception if directory at path does not exist. 
+	 * Deletes the directory at the specified path, including contained files and
+	 * subdirectories.<br>
+	 * Does not throw an Exception if directory at path does not exist.
 	 * 
 	 * @param path
 	 * @throws IOException
 	 */
 	public void deleteDirectory(String path) throws IOException;
-	
+
 	/**
 	 * Gets the FileType of an object at a specified path
 	 * 
 	 * @param path
-	 * @return The FileType of the object at the given path
-	 * or null if this object does not exist
+	 * @return The FileType of the object at the given path or null if this object
+	 *         does not exist
 	 */
 	public FileType getType(String path);
 }

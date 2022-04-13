@@ -139,16 +139,14 @@ public class ConnectedAssetAdministrationShell extends ConnectedElement implemen
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<IView> getViews() {
-		Collection<Map<String, Object>> coll = (Collection<Map<String, Object>>) getElem()
-				.getPath(AssetAdministrationShell.VIEWS);
+		Collection<Map<String, Object>> coll = (Collection<Map<String, Object>>) getElem().getPath(AssetAdministrationShell.VIEWS);
 		return coll.stream().map(View::createAsFacade).collect(Collectors.toSet());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<IConceptDictionary> getConceptDictionary() {
-		Collection<Map<String, Object>> set = (Collection<Map<String, Object>>) getElem()
-				.getPath(AssetAdministrationShell.CONCEPTDICTIONARY);
+		Collection<Map<String, Object>> set = (Collection<Map<String, Object>>) getElem().getPath(AssetAdministrationShell.CONCEPTDICTIONARY);
 		return set.stream().map(ConceptDictionary::createAsFacade).collect(Collectors.toSet());
 	}
 
@@ -207,10 +205,10 @@ public class ConnectedAssetAdministrationShell extends ConnectedElement implemen
 	public IReference getAssetReference() {
 		return Reference.createAsFacade((Map<String, Object>) getElem().getPath(AssetAdministrationShell.ASSETREF));
 	}
-	
+
 	private KeyElements getKeyElement() {
 		return KeyElements.ASSETADMINISTRATIONSHELL;
-	} 
+	}
 
 	@Override
 	public IReference getReference() {

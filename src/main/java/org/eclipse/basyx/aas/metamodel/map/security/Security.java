@@ -47,7 +47,8 @@ public class Security extends VABModelMap<Object> implements ISecurity {
 	/**
 	 * Constructor
 	 */
-	public Security() {}
+	public Security() {
+	}
 
 	/**
 	 * Creates a Security object from a map
@@ -75,7 +76,6 @@ public class Security extends VABModelMap<Object> implements ISecurity {
 	public void setAccessControlPolicyPoints(IAccessControlPolicyPoints obj) {
 		put(Security.ACCESSCONTROLPOLICYPOINTS, obj);
 	}
-
 
 	@Override
 	public ICertificate getCertificate() {

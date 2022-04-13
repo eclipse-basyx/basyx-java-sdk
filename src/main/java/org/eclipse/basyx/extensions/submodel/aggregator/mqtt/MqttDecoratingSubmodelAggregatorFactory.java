@@ -46,8 +46,7 @@ public class MqttDecoratingSubmodelAggregatorFactory implements ISubmodelAggrega
 	private ObservableSubmodelAggregator observedSubmodelAggregator;
 	protected MqttSubmodelAggregatorObserver observer;
 
-	public MqttDecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory,
-			MqttClient mqttClient) {
+	public MqttDecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, MqttClient mqttClient) {
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
 		this.mqttClient = mqttClient;
 	}

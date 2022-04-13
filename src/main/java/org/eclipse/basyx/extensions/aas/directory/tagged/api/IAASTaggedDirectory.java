@@ -56,10 +56,13 @@ public interface IAASTaggedDirectory extends IAASRegistry {
 	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags);
 
 	/**
-	 * Registers SM descriptor with tags in the registry, deletes the old registration if exists.
+	 * Registers SM descriptor with tags in the registry, deletes the old
+	 * registration if exists.
 	 *
-	 * @param aas identifier for the Asset Administration Shell.
-	 * @param descriptor with information of tags.
+	 * @param aas
+	 *            identifier for the Asset Administration Shell.
+	 * @param descriptor
+	 *            with information of tags.
 	 */
 	public default void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor) {
 		throw new UnsupportedOperationException("The method registerSubmodel has not been implemented!");
@@ -86,16 +89,16 @@ public interface IAASTaggedDirectory extends IAASRegistry {
 	}
 
 	/**
-	 * Looks up all SM that are tagged with <i>submodelTags</i> and that belongs to an AssetAdministrationShell 
-	 * tagged with <i>aasTags</i>. If a tag is given with a wildcard character asterisk (*), the tag will have the effect to match
+	 * Looks up all SM that are tagged with <i>submodelTags</i> and that belongs to
+	 * an AssetAdministrationShell tagged with <i>aasTags</i>. If a tag is given
+	 * with a wildcard character asterisk (*), the tag will have the effect to match
 	 * all other tags.
 	 *
 	 * @param aasTags
 	 * @param submodelTags
 	 * @return
 	 */
-	public default Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(Set<String> aasTags,
-			Set<String> submodelTags) {
+	public default Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(Set<String> aasTags, Set<String> submodelTags) {
 		throw new UnsupportedOperationException("The method lookupBothAasAndSubmodelTags has not been implemented!");
 	}
 

@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class AASAggregatorProxy implements IAASAggregator {
 	protected IModelProvider provider;
 	private static Logger logger = LoggerFactory.getLogger(AASRegistryProxy.class);
-	
+
 	/**
 	 * Constructor for an AAS aggregator proxy based on a HTTP connection
 	 * 
@@ -104,7 +104,6 @@ public class AASAggregatorProxy implements IAASAggregator {
 		VABElementProxy proxy = getAASProxy(aasId);
 		return new ConnectedAssetAdministrationShell(proxy, localCopy);
 	}
-
 
 	private VABElementProxy getAASProxy(IIdentifier aasId) {
 		String path = AASAggregatorAPIHelper.getAASAccessPath(aasId);

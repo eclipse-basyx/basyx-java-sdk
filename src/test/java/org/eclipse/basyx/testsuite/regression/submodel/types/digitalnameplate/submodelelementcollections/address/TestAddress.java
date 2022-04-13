@@ -49,8 +49,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests createAsFacade and isValid of {@link Address} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link Address} for their correctness
  * 
  * @author haque
  *
@@ -74,10 +73,9 @@ public class TestAddress {
 	public static Fax fax2 = new Fax("Fax02", new LangString("DE", "123456711"));
 	public static Email email1 = new Email("Email01", new Property(Email.EMAILADDRESSID, "abc@test.com"));
 	public static Email email2 = new Email("Email02", new Property(Email.EMAILADDRESSID, "abcd@test.com"));
-	
 
 	private Map<String, Object> addressMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void buildFax() {
 		department.setValue(new LangStrings(new LangString("DE", "Dept Test")));
@@ -91,7 +89,7 @@ public class TestAddress {
 		vatNumber.setValue(new LangStrings(new LangString("DE", "123456")));
 		addressRemarks.setValue(new LangStrings(new LangString("DE", "test remarks")));
 		additLink.setValue("test.com");
-		
+
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(department);
 		elements.add(street);
@@ -110,12 +108,12 @@ public class TestAddress {
 		elements.add(fax2);
 		elements.add(email1);
 		elements.add(email2);
-		
+
 		addressMap.put(Referable.IDSHORT, IDSHORT);
 		addressMap.put(HasSemantics.SEMANTICID, Address.SEMANTICID);
 		addressMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		Address addressFromMap = Address.createAsFacade(addressMap);
@@ -145,41 +143,41 @@ public class TestAddress {
 		assertEquals(faxes, addressFromMap.getFax());
 		assertEquals(emails, addressFromMap.getEmail());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		addressMap.remove(Referable.IDSHORT);
 		Address.createAsFacade(addressMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionStreet() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)addressMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) addressMap.get(Property.VALUE);
 		elements.remove(street);
 		Address.createAsFacade(addressMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionZipCode() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)addressMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) addressMap.get(Property.VALUE);
 		elements.remove(zipCode);
 		Address.createAsFacade(addressMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionCityTown() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)addressMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) addressMap.get(Property.VALUE);
 		elements.remove(cityTown);
 		Address.createAsFacade(addressMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionNationalCode() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)addressMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) addressMap.get(Property.VALUE);
 		elements.remove(nationalCode);
 		Address.createAsFacade(addressMap);
 	}

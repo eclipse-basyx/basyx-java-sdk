@@ -59,69 +59,69 @@ public class TestConceptDescription {
 	private static final IdentifierType ID_TYPE = IdentifierType.CUSTOM;
 	private static final Identifier IDENTIFIER = new Identifier(ID_TYPE, VALUE);
 	private static final Reference REFERENCE = new Reference(IDENTIFIER, KEY_ELEMENTS, IS_LOCAL);
-	
+
 	private ConceptDescription description;
-	
+
 	@Before
 	public void buildConceptDescription() {
-		description = new ConceptDescription("testConceptDescriptionID", new Identifier(IdentifierType.IRDI,  "testId"));
+		description = new ConceptDescription("testConceptDescriptionID", new Identifier(IdentifierType.IRDI, "testId"));
 	}
-	
+
 	@Test
 	public void testSetDataSpecificationReferences() {
 		Collection<IReference> references = Collections.singleton(REFERENCE);
 		description.setDataSpecificationReferences(references);
 		assertEquals(references, description.getDataSpecificationReferences());
 	}
-	
+
 	@Test
 	public void testSetAdministration() {
 		String versionString = "1.0";
 		String revisionString = "4";
 		AdministrativeInformation information = new AdministrativeInformation(versionString, revisionString);
-		
+
 		description.setAdministration(information);
 		assertEquals(information, description.getAdministration());
 	}
-	
+
 	@Test
 	public void testSetIdentification() {
 		description.setIdentification(ID_TYPE, ID_SHORT_STRING);
 		Identifier identifier = new Identifier(ID_TYPE, ID_SHORT_STRING);
 		assertEquals(identifier, description.getIdentification());
 	}
-	
+
 	@Test
 	public void testSetIsCaseOf() {
-		Collection<IReference> references = Collections.singleton(REFERENCE); 
+		Collection<IReference> references = Collections.singleton(REFERENCE);
 		description.setIsCaseOf(Collections.singletonList(REFERENCE));
 		assertEquals(references, description.getIsCaseOf());
 	}
-	
+
 	@Test
 	public void testSetIdShort() {
 		description.setIdShort(ID_SHORT_STRING);
 		assertEquals(ID_SHORT_STRING, description.getIdShort());
 	}
-	
+
 	@Test
 	public void testSetCategory() {
 		description.setCategory(CATE_STRING);
 		assertEquals(CATE_STRING, description.getCategory());
 	}
-	
+
 	@Test
 	public void testSetDescription() {
 		description.setDescription(DESCRIPTION);
 		assertEquals(DESCRIPTION, description.getDescription());
 	}
-	
+
 	@Test
 	public void testSetParent() {
 		description.setParent(REFERENCE);
 		assertEquals(REFERENCE, description.getParent());
 	}
-	
+
 	@Test
 	public void testSetEmbeddedDataSpecifications() {
 		EmbeddedDataSpecification embeddedDataSpecification = new EmbeddedDataSpecification();

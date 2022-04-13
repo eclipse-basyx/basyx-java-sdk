@@ -36,6 +36,7 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
  * "Connected" implementation of IBasicEvent
+ * 
  * @author conradi
  *
  */
@@ -50,7 +51,7 @@ public class ConnectedBasicEvent extends ConnectedSubmodelElement implements IBa
 	public IReference getObserved() {
 		return Reference.createAsFacade((Map<String, Object>) getElem().getPath(BasicEvent.OBSERVED));
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.BASICEVENT;

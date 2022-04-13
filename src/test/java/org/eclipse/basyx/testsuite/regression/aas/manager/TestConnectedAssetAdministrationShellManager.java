@@ -70,7 +70,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	ConnectedAssetAdministrationShellManager manager;
 	ConnectorProviderStub connectorProvider;
 	IAASRegistry registry;
-	
+
 	/**
 	 * Create infrastructure
 	 */
@@ -95,7 +95,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		String aasIdShort = "aasName";
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
- 
+
 		// Create an AAS containing a reference to the created Submodel
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
 		manager.createAAS(aas, "");
@@ -110,7 +110,6 @@ public class TestConnectedAssetAdministrationShellManager {
 		assertEquals(aasId.getId(), connectedAAS.getIdentification().getId());
 		assertEquals(aasId.getIdType(), connectedAAS.getIdentification().getIdType());
 	}
-
 
 	@Test
 	public void testCreateSubmodel() throws Exception {
@@ -162,7 +161,7 @@ public class TestConnectedAssetAdministrationShellManager {
 
 		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
 		String smIdShort = "smName";
-		
+
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
 
@@ -200,17 +199,17 @@ public class TestConnectedAssetAdministrationShellManager {
 			// Expected
 		}
 	}
-	
+
 	@Test
 	public void testRetrieveAll() {
 		IIdentifier aasId1 = new Identifier(IdentifierType.CUSTOM, "aasId1");
 		String aasIdShort1 = "aasName1";
 		IIdentifier aasId2 = new Identifier(IdentifierType.CUSTOM, "aasId2");
 		String aasIdShort2 = "aasName2";
-		
+
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
-		
+
 		// Create the AASs
 		AssetAdministrationShell aas1 = createTestAAS(aasId1, aasIdShort1);
 		AssetAdministrationShell aas2 = createTestAAS(aasId2, aasIdShort2);
@@ -230,9 +229,9 @@ public class TestConnectedAssetAdministrationShellManager {
 	public void testRetrieveNonexistentAAS() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
-		
+
 		IIdentifier nonexistentAASId = new Identifier(IdentifierType.CUSTOM, "nonexistentAAS");
-		
+
 		// Try to retrieve a nonexistent AAS
 		try {
 			manager.retrieveAAS(nonexistentAASId);
@@ -240,7 +239,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		} catch (ResourceNotFoundException e) {
 		}
 	}
-	
+
 	/**
 	 * Tries to retrieve a nonexistent Submodel from a nonexistent AAS
 	 */
@@ -248,10 +247,10 @@ public class TestConnectedAssetAdministrationShellManager {
 	public void testRetrieveNonexistentSMFromNonexistentSM() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
-		
+
 		IIdentifier nonexistentAASId = new Identifier(IdentifierType.CUSTOM, "nonexistentAAS");
 		IIdentifier nonexistentSMId = new Identifier(IdentifierType.CUSTOM, "nonexistentSM");
-		
+
 		// Try to retrieve a nonexistent Submodel from a nonexistent AAS
 		try {
 			manager.retrieveSubmodel(nonexistentAASId, nonexistentSMId);
@@ -259,7 +258,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		} catch (ResourceNotFoundException e) {
 		}
 	}
-	
+
 	/**
 	 * Tries to retrieve a nonexistent Submodel from an existing AAS
 	 */
@@ -267,10 +266,10 @@ public class TestConnectedAssetAdministrationShellManager {
 	public void testRetrieveNonexistentSMFromExistentAAS() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
-		
+
 		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
 		IIdentifier nonexistentSMId = new Identifier(IdentifierType.CUSTOM, "nonexistentSM");
-		
+
 		// Try to retrieve a nonexistent Submodel from an existing AAS
 		try {
 			manager.retrieveSubmodel(aasId, nonexistentSMId);
@@ -278,7 +277,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		} catch (ResourceNotFoundException e) {
 		}
 	}
-	
+
 	/**
 	 * @param provider
 	 */

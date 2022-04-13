@@ -40,14 +40,14 @@ public enum EntityType implements StandardizedLiteralEnum {
 	 * be part of a self-managed entity.
 	 */
 	COMANAGEDENTITY("CoManagedEntity"),
-	
+
 	/**
 	 * Self-Managed Entities have their own AAS but can be part of the bill of
 	 * material of a composite self-managed entity. The asset of an I4.0 Component
 	 * is a self-managed entity per definition.
 	 */
 	SELFMANAGEDENTITY("SelfManagedEntity");
-	
+
 	private String standardizedLiteral;
 
 	private EntityType(String standardizedLiteral) {

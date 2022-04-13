@@ -29,8 +29,9 @@ import org.eclipse.basyx.vab.protocol.basyx.server.BaSyxTCPServer;
 import org.junit.rules.ExternalResource;
 
 /**
- * This class initializes a TCP Server and adds a provider to it. Note that this server can only provide one
- * model per port and new servers have to be started for each model.
+ * This class initializes a TCP Server and adds a provider to it. Note that this
+ * server can only provide one model per port and new servers have to be started
+ * for each model.
  *
  * @author pschorn, espen
  *

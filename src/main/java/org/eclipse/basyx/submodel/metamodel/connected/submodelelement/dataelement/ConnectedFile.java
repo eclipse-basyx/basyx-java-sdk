@@ -32,13 +32,14 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
  * "Connected" implementation of IFile
+ * 
  * @author rajashek
  *
  */
 public class ConnectedFile extends ConnectedDataElement implements IFile {
-	
+
 	public ConnectedFile(VABElementProxy proxy) {
-		super(proxy);		
+		super(proxy);
 	}
 
 	@Override
@@ -51,7 +52,7 @@ public class ConnectedFile extends ConnectedDataElement implements IFile {
 	public String getMimeType() {
 		return (String) getElem().get(File.MIMETYPE);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.FILE;
@@ -61,7 +62,7 @@ public class ConnectedFile extends ConnectedDataElement implements IFile {
 	public File getLocalCopy() {
 		return File.createAsFacade(getElem()).getLocalCopy();
 	}
-	
+
 	@Override
 	public void setValue(String value) {
 		super.setValue(value);

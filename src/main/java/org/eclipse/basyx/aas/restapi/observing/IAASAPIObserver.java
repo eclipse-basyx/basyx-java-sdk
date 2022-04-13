@@ -28,8 +28,8 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
- * Observer for the AASAPI that triggers MQTT events for different
- * operations on the AAS.
+ * Observer for the AASAPI that triggers MQTT events for different operations on
+ * the AAS.
  *
  * @author fried
  *

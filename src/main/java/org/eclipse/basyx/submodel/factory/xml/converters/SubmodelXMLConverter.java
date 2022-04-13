@@ -49,7 +49,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Handles the conversion between ISubmodel objects and the XML tag &lt;aas:submodels&gt; in both directions
+ * Handles the conversion between ISubmodel objects and the XML tag
+ * &lt;aas:submodels&gt; in both directions
  * 
  * @author conradi
  *
@@ -58,52 +59,52 @@ public class SubmodelXMLConverter {
 
 	public static final String SUBMODELS = "aas:submodels";
 	public static final String SUBMODEL = "aas:submodel";
-	
+
 	/**
 	 * Parses &lt;aas:submodels&gt; and builds the Submodel objects from it
 	 * 
-	 * @param xmlObject a Map containing the content of the XML tag &lt;aas:submodels&gt;
+	 * @param xmlObject
+	 *            a Map containing the content of the XML tag &lt;aas:submodels&gt;
 	 * @return a List of ISubmodel objects parsed form the given XML Map
 	 */
 	public static List<ISubmodel> parseSubmodels(Map<String, Object> xmlObject) {
 		List<Map<String, Object>> xmlSubmodels = XMLHelper.getList(xmlObject.get(SUBMODEL));
 		List<ISubmodel> submodels = new ArrayList<>();
-		
+
 		for (Map<String, Object> xmlSubmodel : xmlSubmodels) {
 			Submodel submodel = new Submodel();
-			
+
 			IdentifiableXMLConverter.populateIdentifiable(xmlSubmodel, Identifiable.createAsFacadeNonStrict(submodel, KeyElements.SUBMODEL));
 			HasSemanticsXMLConverter.populateHasSemantics(xmlSubmodel, HasSemantics.createAsFacade(submodel));
 			HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlSubmodel, HasDataSpecification.createAsFacade(submodel));
 			QualifiableXMLConverter.populateQualifiable(xmlSubmodel, Qualifiable.createAsFacade(submodel));
 			HasKindXMLConverter.populateHasKind(xmlSubmodel, HasKind.createAsFacade(submodel));
-						
+
 			List<ISubmodelElement> submodelElements = SubmodelElementXMLConverter.parseSubmodelElements(xmlSubmodel);
-						
+
 			for (ISubmodelElement submdoElement : submodelElements) {
 				submodel.addSubmodelElement(submdoElement);
 			}
-			
+
 			submodels.add(submodel);
 		}
 		return submodels;
 	}
-	
-	
-	
-	
+
 	/**
 	 * Builds &lt;aas:submodels&gt; from a given Collection of ISubmodel objects
 	 * 
-	 * @param document the XML document
-	 * @param subModels a Collection of ISubmodel objects to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param subModels
+	 *            a Collection of ISubmodel objects to build the XML for
 	 * @return the &lt;aas:submodels&gt; XML tag for the given ISubmodel objects
 	 */
 	public static Element buildSubmodelsXML(Document document, Collection<ISubmodel> subModels) {
 		Element root = document.createElement(SUBMODELS);
-		
+
 		List<Element> xmlSubmodelList = new ArrayList<>();
-		for(ISubmodel subModel: subModels) {
+		for (ISubmodel subModel : subModels) {
 			Element subModelRoot = document.createElement(SUBMODEL);
 
 			IdentifiableXMLConverter.populateIdentifiableXML(document, subModelRoot, subModel);
@@ -111,16 +112,16 @@ public class SubmodelXMLConverter {
 			HasSemanticsXMLConverter.populateHasSemanticsXML(document, subModelRoot, subModel);
 			QualifiableXMLConverter.populateQualifiableXML(document, subModelRoot, subModel);
 			HasDataSpecificationXMLConverter.populateHasDataSpecificationXML(document, subModelRoot, subModel);
-			
+
 			Collection<ISubmodelElement> submodelElements = (Collection<ISubmodelElement>) subModel.getSubmodelElements().values();
 
 			Element xmlSubmodelElements = SubmodelElementXMLConverter.buildSubmodelElementsXML(document, submodelElements);
 			subModelRoot.appendChild(xmlSubmodelElements);
-			
+
 			xmlSubmodelList.add(subModelRoot);
 		}
-		
-		for(Element element: xmlSubmodelList) {
+
+		for (Element element : xmlSubmodelList) {
 			root.appendChild(element);
 		}
 		return root;

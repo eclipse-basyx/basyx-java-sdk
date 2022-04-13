@@ -48,17 +48,17 @@ import org.w3c.dom.Element;
  *
  */
 public class EntityXMLConverter extends SubmodelElementXMLConverter {
-	
+
 	public static final String ENTITY = "aas:entity";
 	public static final String ENTITY_TYPE = "aas:entityType";
 	public static final String STATEMENTS = "aas:statements";
 	public static final String ASSET_REF = "aas:assetRef";
-	
-	
+
 	/**
 	 * Parses a Map containing the content of XML tag &lt;aas:entity&gt;
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:entity&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag &lt;aas:entity&gt;
 	 * @return the parsed Entity
 	 */
 	@SuppressWarnings("unchecked")
@@ -73,41 +73,40 @@ public class EntityXMLConverter extends SubmodelElementXMLConverter {
 		populateSubmodelElement(xmlObject, entity);
 		return entity;
 	}
-	
-	
-	
-	
+
 	/**
 	 * Builds the &lt;aas:entity&gt; XML tag for an Entity
 	 * 
-	 * @param document the XML document
-	 * @param entity the IEntity to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param entity
+	 *            the IEntity to build the XML for
 	 * @return the &lt;aas:entity&gt; XML tag for the given Entity
 	 */
 	public static Element buildEntity(Document document, IEntity entity) {
 		Element entityRoot = document.createElement(ENTITY);
-		
+
 		populateSubmodelElement(document, entityRoot, entity);
-		
+
 		IReference assetRef = entity.getAsset();
-		if(assetRef != null) {
+		if (assetRef != null) {
 			Element assetRefRoot = document.createElement(ASSET_REF);
 			assetRefRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, assetRef));
 			entityRoot.appendChild(assetRefRoot);
 		}
-		
+
 		Object entityTypeObj = entity.getEntityType();
 		String entityType = entityTypeObj == null ? null : entityTypeObj.toString();
-		if(entityType != null) {
+		if (entityType != null) {
 			Element entityTypeRoot = document.createElement(ENTITY_TYPE);
 			entityTypeRoot.appendChild(document.createTextNode(entityType));
 			entityRoot.appendChild(entityTypeRoot);
 		}
-		
+
 		Collection<ISubmodelElement> statement = entity.getStatements();
-		
-		//recursively build the SubmodelElements contained in the statement
-		if(statement != null) {
+
+		// recursively build the SubmodelElements contained in the statement
+		if (statement != null) {
 			Element statementsRoot = document.createElement(STATEMENTS);
 			entityRoot.appendChild(statementsRoot);
 			buildSubmodelElements(document, statementsRoot, statement);

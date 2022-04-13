@@ -99,13 +99,15 @@ public class AdministrativeInformation extends VABModelMap<Object> implements IA
 	public void setEmbeddedDataSpecifications(Collection<IEmbeddedDataSpecification> embeddedDataSpecifications) {
 		HasDataSpecification.createAsFacade(this).setEmbeddedDataSpecifications(embeddedDataSpecifications);
 	}
-	
+
 	/**
 	 * Sets version and revision
-	 * @param version
-	 * @param revision 
 	 * 
-	 * @throws RuntimeException when revision is given without a valid version
+	 * @param version
+	 * @param revision
+	 * 
+	 * @throws RuntimeException
+	 *             when revision is given without a valid version
 	 */
 	public void setVersionInformation(String version, String revision) {
 		setVersion(version);

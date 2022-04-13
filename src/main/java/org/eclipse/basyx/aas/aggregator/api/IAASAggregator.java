@@ -32,7 +32,6 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
-
 /**
  * Interface for the Asset Administration Shell Aggregator API <br>
  * It is used to manage multiple AASs at the same endpoint
@@ -41,26 +40,28 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
  *
  */
 public interface IAASAggregator {
-	
+
 	/**
 	 * Retrieves all Asset Administration Shells from the endpoint
 	 * 
 	 * @return a List of all found Asset Administration Shells
 	 */
 	public Collection<IAssetAdministrationShell> getAASList();
-	
+
 	/**
 	 * Retrieves a specific Asset Administration Shell
 	 * 
-	 * @param aasId the ID of the AAS
+	 * @param aasId
+	 *            the ID of the AAS
 	 * @return the requested AAS
 	 */
 	public IAssetAdministrationShell getAAS(IIdentifier aasId) throws ResourceNotFoundException;
-	
+
 	/**
 	 * Retrieves the provider for a specific Asset Administration Shell
 	 * 
-	 * @param aasId the ID of the AAS
+	 * @param aasId
+	 *            the ID of the AAS
 	 * @return the requested AAS provider
 	 */
 	public IModelProvider getAASProvider(IIdentifier aasId) throws ResourceNotFoundException;
@@ -68,21 +69,24 @@ public interface IAASAggregator {
 	/**
 	 * Creates a new Asset Administration Shell at the endpoint
 	 * 
-	 * @param aas the AAS to be created
+	 * @param aas
+	 *            the AAS to be created
 	 */
 	public void createAAS(AssetAdministrationShell aas);
-	
+
 	/**
 	 * Updates a specific Asset Administration Shell
 	 * 
-	 * @param aas the updated AAS
+	 * @param aas
+	 *            the updated AAS
 	 */
 	public void updateAAS(AssetAdministrationShell aas) throws ResourceNotFoundException;
-	
+
 	/**
 	 * Deletes a specific Asset Administration Shell
 	 * 
-	 * @param aasId the ID of the AAS to be deleted
+	 * @param aasId
+	 *            the ID of the AAS to be deleted
 	 */
 	public void deleteAAS(IIdentifier aasId);
 

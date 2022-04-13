@@ -55,7 +55,6 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.junit.Test;
 
-
 /**
  * Test suite for AAS testing. <br />
  * Can be extended to test arbitrary AAS implementations, as long as they
@@ -185,7 +184,7 @@ public abstract class AssetAdministrationShellSuite {
 		assertEquals(EXPECTED_ADMINISTRATIVEINFORMATION.getRevision(), info.getRevision());
 		assertEquals(EXPECTED_ADMINISTRATIVEINFORMATION.getVersion(), info.getVersion());
 	}
-	
+
 	@Test
 	public void testAddSubmodel() {
 		// Create a submodel
@@ -195,11 +194,11 @@ public abstract class AssetAdministrationShellSuite {
 		Property prop = new Property("prop1", ValueType.String);
 		prop.setValue("testProperty");
 		subModel.addSubmodelElement(prop);
-		
-		//Retrieve the aas
+
+		// Retrieve the aas
 		IAssetAdministrationShell shell = retrieveShell();
 		shell.addSubmodel(subModel);
-		
+
 		// Create the expected reference for assertion
 		List<IKey> expected1Keys = new ArrayList<>();
 		expected1Keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID.getId(), AASID.getIdType()));
@@ -216,5 +215,5 @@ public abstract class AssetAdministrationShellSuite {
 		assertTrue(smReferences.contains(expected1));
 		assertTrue(smReferences.contains(expected2));
 		assertEquals(2, smReferences.size());
-	} 
+	}
 }

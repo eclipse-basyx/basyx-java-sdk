@@ -46,8 +46,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests constructor and getter of {@link SubmodelElement} for their
- * correctness
+ * Tests constructor and getter of {@link SubmodelElement} for their correctness
  * 
  * @author haque
  *
@@ -55,21 +54,21 @@ import org.junit.Test;
 public class TestSubmodelElement {
 	private static final Reference REFERENCE = new Reference(new Identifier(IdentifierType.CUSTOM, "testValue"), KeyElements.ACCESSPERMISSIONRULE, false);
 	private static final Formula FORMULA = new Formula(Collections.singleton(new Reference(new Key(KeyElements.BLOB, true, "TestValue", IdentifierType.IRI))));
-	
+
 	private SubmodelElement submodelElement;
-	
+
 	@Before
 	public void buidSubmodelElement() {
 		submodelElement = new Property("testIdShort", "testId");
 	}
-	
+
 	@Test
 	public void testSetDataSpecificationReferences() {
 		Collection<IReference> refs = Collections.singleton(REFERENCE);
 		submodelElement.setDataSpecificationReferences(refs);
 		assertEquals(refs, submodelElement.getDataSpecificationReferences());
-	} 
-	
+	}
+
 	@Test
 	public void testSetEmbeddedDataSpecifications() {
 		EmbeddedDataSpecification embeddedDataSpecification = new EmbeddedDataSpecification();
@@ -77,46 +76,46 @@ public class TestSubmodelElement {
 		submodelElement.setEmbeddedDataSpecifications(specifications);
 		assertEquals(specifications, submodelElement.getEmbeddedDataSpecifications());
 	}
-	
+
 	@Test
 	public void testSetIdShort() {
 		String newIdString = "newId";
 		submodelElement.setIdShort(newIdString);
 		assertEquals(newIdString, submodelElement.getIdShort());
 	}
-	
+
 	@Test
 	public void testSetCategory() {
 		String newCategoryString = "newCategory";
 		submodelElement.setCategory(newCategoryString);
 		assertEquals(newCategoryString, submodelElement.getCategory());
 	}
-	
+
 	@Test
 	public void testSetDescription() {
 		LangStrings newDescriptionString = new LangStrings("DE", "newTest");
 		submodelElement.setDescription(newDescriptionString);
 		assertEquals(newDescriptionString, submodelElement.getDescription());
 	}
-	
+
 	@Test
 	public void testSetParent() {
 		submodelElement.setParent(REFERENCE);
 		assertEquals(REFERENCE, submodelElement.getParent());
 	}
-	
+
 	@Test
 	public void testSetQualifier() {
 		submodelElement.setQualifiers(Collections.singleton(FORMULA));
 		assertEquals(Collections.singleton(FORMULA), submodelElement.getQualifiers());
 	}
-	
+
 	@Test
 	public void testSetSemanticID() {
 		submodelElement.setSemanticId(REFERENCE);
 		assertEquals(REFERENCE, submodelElement.getSemanticId());
 	}
-	
+
 	@Test
 	public void testSetModelingKind() {
 		ModelingKind newModelingKind = ModelingKind.TEMPLATE;

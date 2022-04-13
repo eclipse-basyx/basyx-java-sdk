@@ -35,13 +35,14 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
  * "Connected" implementation of IBlob
+ * 
  * @author rajashek
  *
  */
 public class ConnectedBlob extends ConnectedDataElement implements IBlob {
-	
+
 	public ConnectedBlob(VABElementProxy proxy) {
-		super(proxy);		
+		super(proxy);
 	}
 
 	@Override
@@ -56,9 +57,9 @@ public class ConnectedBlob extends ConnectedDataElement implements IBlob {
 
 	@Override
 	public String getMimeType() {
-		return (String)	getElem().get(Blob.MIMETYPE);
+		return (String) getElem().get(Blob.MIMETYPE);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.BLOB;
@@ -78,7 +79,6 @@ public class ConnectedBlob extends ConnectedDataElement implements IBlob {
 			throw new IllegalArgumentException("Given Object is not a String");
 		}
 	}
-
 
 	@Override
 	public byte[] getByteArrayValue() {
@@ -106,4 +106,3 @@ public class ConnectedBlob extends ConnectedDataElement implements IBlob {
 		setByteArrayValue(byteArray);
 	}
 }
-

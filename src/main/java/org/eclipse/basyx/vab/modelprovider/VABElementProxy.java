@@ -50,23 +50,24 @@ public class VABElementProxy implements IModelProvider {
 	protected IModelProvider provider = null;
 
 	/**
-	 * Creates the proxy based on a specific model provider.
-	 * E.g, if the element resides on <i>basyx://127.0.0.1</i> in the path
-	 * <i>a/b/c</i>, <i>provider</i> would realize the connection to
-	 * <i>basyx://127.0.0.1</i> and <i>addr</i> would be <i>a/b/c</i>. The
-	 * VABElementProxy then directly points to the element.
+	 * Creates the proxy based on a specific model provider. E.g, if the element
+	 * resides on <i>basyx://127.0.0.1</i> in the path <i>a/b/c</i>, <i>provider</i>
+	 * would realize the connection to <i>basyx://127.0.0.1</i> and <i>addr</i>
+	 * would be <i>a/b/c</i>. The VABElementProxy then directly points to the
+	 * element.
 	 * 
 	 * @param addr
 	 *            Address "within" the provider
-	 * @param provider The provider this proxy is based on
-	 * 	
+	 * @param provider
+	 *            The provider this proxy is based on
+	 * 
 	 */
 	public VABElementProxy(String addr, IModelProvider provider) {
 		// Store references
 		this.addr = VABPathTools.stripSlashes(addr);
 		this.provider = provider;
 	}
-	
+
 	/**
 	 * Read VAB element value
 	 */
@@ -170,8 +171,6 @@ public class VABElementProxy implements IModelProvider {
 		}
 	}
 
-
-
 	/**
 	 * Add path to VAB element address. Make sure that resulting path contains the
 	 * proper number of slashes ("/")
@@ -189,7 +188,7 @@ public class VABElementProxy implements IModelProvider {
 		path = VABPathTools.stripSlashes(path);
 
 		// Now combine both paths
-		if ( path.isEmpty() ) {
+		if (path.isEmpty()) {
 			return addr;
 		} else if (addr != null && !addr.isEmpty()) {
 			if (path.startsWith("?")) {

@@ -28,13 +28,15 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
  * Constants for the OAuth2 scopes related to the {@link AuthorizedAASAPI}.
  *
  * @author jungjan, fried, fischer
- * @see <a href="https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @see <a href=
+ *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
  */
 public final class AASAPIScopes {
 	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-api:read";
 	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-api:write";
 
 	private AASAPIScopes() {
-		// This class should not be instantiated as it serves as a holder for constants only
+		// This class should not be instantiated as it serves as a holder for constants
+		// only
 	}
 }

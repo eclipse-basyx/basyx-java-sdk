@@ -32,47 +32,49 @@ import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
  */
 public class OpcUaConnectorFactory extends ConnectorFactory {
 
-    private final ClientConfiguration defaultConfiguration;
+	private final ClientConfiguration defaultConfiguration;
 
-    /**
-     * Creates a new connector factory.
-     */
-    public OpcUaConnectorFactory() {
-        super();
-        defaultConfiguration = null;
-    }
+	/**
+	 * Creates a new connector factory.
+	 */
+	public OpcUaConnectorFactory() {
+		super();
+		defaultConfiguration = null;
+	}
 
-    /**
-     * Creates a new connector factory which applies a default client configuration to connectors.
-     *
-     * <p>
-     * Note, that the configuration is copied internally, so changes made to the object after creating
-     * the factory do not apply to connectors created by it.
-     *
-     * @param defaultConfiguration The default connector configuration.
-     */
-    public OpcUaConnectorFactory(ClientConfiguration defaultConfiguration) {
-        super();
-        this.defaultConfiguration = defaultConfiguration;
-    }
+	/**
+	 * Creates a new connector factory which applies a default client configuration
+	 * to connectors.
+	 *
+	 * <p>
+	 * Note, that the configuration is copied internally, so changes made to the
+	 * object after creating the factory do not apply to connectors created by it.
+	 *
+	 * @param defaultConfiguration
+	 *            The default connector configuration.
+	 */
+	public OpcUaConnectorFactory(ClientConfiguration defaultConfiguration) {
+		super();
+		this.defaultConfiguration = defaultConfiguration;
+	}
 
-    /**
-     * Creates a new {@link OpcUaConnector} for the given endpoint URL.
-     *
-     * <p>
-     * If a default configuration has been set, it will be applied to the connector before it is
-     * returned.
-     *
-     * @return A new {@link OpcUaConnector} for the given endpoint URL.
-     */
-    @Override
-    protected IModelProvider createProvider(String addr) {
-        OpcUaConnector c = new OpcUaConnector(addr);
+	/**
+	 * Creates a new {@link OpcUaConnector} for the given endpoint URL.
+	 *
+	 * <p>
+	 * If a default configuration has been set, it will be applied to the connector
+	 * before it is returned.
+	 *
+	 * @return A new {@link OpcUaConnector} for the given endpoint URL.
+	 */
+	@Override
+	protected IModelProvider createProvider(String addr) {
+		OpcUaConnector c = new OpcUaConnector(addr);
 
-        if (defaultConfiguration != null) {
-            c.getClient().setConfiguration(defaultConfiguration);
-        }
+		if (defaultConfiguration != null) {
+			c.getClient().setConfiguration(defaultConfiguration);
+		}
 
-        return c;
-    }
+		return c;
+	}
 }

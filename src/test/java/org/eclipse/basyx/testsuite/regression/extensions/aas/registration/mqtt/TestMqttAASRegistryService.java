@@ -61,13 +61,13 @@ import io.moquette.broker.config.ResourceLoaderConfig;
  *
  */
 public class TestMqttAASRegistryService {
-	
+
 	private static final String AASID = "aasid1";
 	private static final String SUBMODELID = "submodelid1";
 	private static final String AASENDPOINT = "http://localhost:8080/aasList/" + AASID + "/aas";
 	private static final Identifier AASIDENTIFIER = new Identifier(IdentifierType.IRI, AASID);
 	private static final Identifier SUBMODELIDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODELID);
-	
+
 	private static Server mqttBroker;
 	private static MqttAASRegistryService eventAPI;
 	private MqttTestListener listener;
@@ -85,7 +85,7 @@ public class TestMqttAASRegistryService {
 
 		// Create underlying registry service
 		IAASRegistry registryService = new InMemoryRegistry();
-		
+
 		eventAPI = new MqttAASRegistryService(registryService, "tcp://localhost:1884", "testClient");
 	}
 
@@ -93,41 +93,41 @@ public class TestMqttAASRegistryService {
 	public static void tearDownClass() {
 		mqttBroker.stopServer();
 	}
-	
+
 	@Before
 	public void setUp() {
 		AssetAdministrationShell shell = new AssetAdministrationShell(AASID, AASIDENTIFIER, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid1"), AssetKind.INSTANCE));
 		AASDescriptor aasDescriptor = new AASDescriptor(shell, AASENDPOINT);
 		eventAPI.register(aasDescriptor);
-		
+
 		Submodel submodel = new Submodel(SUBMODELID, SUBMODELIDENTIFIER);
 		String submodelEndpoint = AASENDPOINT + "/submodels/" + SUBMODELID + "/submodel";
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, submodelEndpoint);
 		eventAPI.register(AASIDENTIFIER, submodelDescriptor);
-		
+
 		listener = new MqttTestListener();
 		mqttBroker.addInterceptHandler(listener);
 	}
-	
+
 	@After
 	public void tearDown() {
 		mqttBroker.removeInterceptHandler(listener);
 	}
-	
+
 	@Test
 	public void testRegisterAAS() {
 		String newAASId = "aasid2";
 		Identifier newIdentifier = new Identifier(IdentifierType.IRI, newAASId);
 		AssetAdministrationShell shell = new AssetAdministrationShell(newAASId, newIdentifier, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
 		String aasEndpoint = "http://localhost:8080/aasList/" + newAASId + "/aas";
-		
+
 		AASDescriptor aasDescriptor = new AASDescriptor(shell, aasEndpoint);
 		eventAPI.register(aasDescriptor);
-		
+
 		assertEquals(newAASId, listener.lastPayload);
 		assertEquals(MqttAASRegistryHelper.TOPIC_REGISTERAAS, listener.lastTopic);
 	}
-	
+
 	@Test
 	public void testRegisterSubmodel() {
 		String submodelid = "submodelid2";
@@ -135,21 +135,21 @@ public class TestMqttAASRegistryService {
 		Submodel submodel = new Submodel(submodelid, newSubmodelIdentifier);
 		String submodelEndpoint = AASENDPOINT + "/submodels/" + submodelid + "/submodel";
 		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, submodelEndpoint);
-		
+
 		eventAPI.register(AASIDENTIFIER, submodelDescriptor);
-		
+
 		assertEquals(MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
 		assertEquals(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, listener.lastTopic);
 	}
-	
+
 	@Test
 	public void testDeleteAAS() {
 		eventAPI.delete(AASIDENTIFIER);
-		
+
 		assertEquals(AASID, listener.lastPayload);
 		assertEquals(MqttAASRegistryHelper.TOPIC_DELETEAAS, listener.lastTopic);
 	}
-	
+
 	@Test
 	public void testDeleteSubmodel() {
 		eventAPI.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);

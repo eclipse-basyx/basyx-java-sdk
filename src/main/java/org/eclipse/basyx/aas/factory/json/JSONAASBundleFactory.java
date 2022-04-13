@@ -50,7 +50,7 @@ public class JSONAASBundleFactory {
 	/**
 	 * 
 	 * @param jsonContent
-	 *                    the content of the JSON
+	 *            the content of the JSON
 	 */
 	public JSONAASBundleFactory(String jsonContent) {
 		this.content = jsonContent;

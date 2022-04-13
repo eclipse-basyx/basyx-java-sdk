@@ -46,13 +46,12 @@ public class Range extends DataElement implements IRange {
 	public static final String VALUETYPE = "valueType";
 	public static final String MIN = "min";
 	public static final String MAX = "max";
-	
 
 	public Range() {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	public Range(ValueType valueType) {
 		this();
 		setValueType(valueType);
@@ -60,6 +59,7 @@ public class Range extends DataElement implements IRange {
 
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 * @param valueType
 	 */
@@ -69,50 +69,52 @@ public class Range extends DataElement implements IRange {
 		putAll(new ModelType(MODELTYPE));
 		setValueType(valueType);
 	}
-	
+
 	public Range(ValueType valueType, Object min, Object max) {
 		this(valueType);
 		put(MIN, min);
 		put(MAX, max);
 	}
-	
+
 	/**
 	 * Creates a Range object from a map
 	 * 
-	 * @param obj a Range object as raw map
+	 * @param obj
+	 *            a Range object as raw map
 	 * @return a Range object, that behaves like a facade for the given map
 	 */
 	public static Range createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Range.class, obj);
 		}
-		
+
 		Range facade = new Range();
 		facade.setMap(obj);
 		return facade;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
 		return DataElement.isValid(obj) && obj.containsKey(VALUETYPE);
 	}
-	
+
 	/**
-	 * Returns true if the given submodel element map is recognized as a Range element
+	 * Returns true if the given submodel element map is recognized as a Range
+	 * element
 	 */
 	public static boolean isRange(Map<String, Object> map) {
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained (fallback)
-		return MODELTYPE.equals(modelType)
-				|| (modelType == null && (map.containsKey(MIN) && map.containsKey(MAX) && map.containsKey(VALUETYPE)));
+		// Either model type is set or the element type specific attributes are
+		// contained (fallback)
+		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(MIN) && map.containsKey(MAX) && map.containsKey(VALUETYPE)));
 	}
 
 	private void setValueType(ValueType valueType) {
@@ -127,9 +129,9 @@ public class Range extends DataElement implements IRange {
 	@Override
 	public Object getMin() {
 		Object value = get(MIN);
-		if(value instanceof String) {
+		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
-		}else {
+		} else {
 			return value;
 		}
 	}
@@ -137,13 +139,13 @@ public class Range extends DataElement implements IRange {
 	@Override
 	public Object getMax() {
 		Object value = get(MAX);
-		if(value instanceof String) {
+		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
-		}else {
+		} else {
 			return value;
 		}
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.RANGE;
@@ -153,11 +155,11 @@ public class Range extends DataElement implements IRange {
 	public RangeValue getValue() {
 		return new RangeValue(getMin(), getMax());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
-		if(RangeValue.isRangeValue(value)) {
+		if (RangeValue.isRangeValue(value)) {
 			RangeValue rv = RangeValue.createAsFacade((Map<String, Object>) value);
 			setValue(rv);
 		} else {

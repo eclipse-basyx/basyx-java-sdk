@@ -69,11 +69,8 @@ public class TestVABHTTPS extends TestProvider {
 	 * Makes sure Tomcat Server is started after before each test case
 	 */
 	@Rule
-	public AASHTTPServerResource res = new AASHTTPServerResource(
-			new BaSyxContext("/basys.sdk", 
-					System.getProperty("java.io.tmpdir"), "localhost", 8080, true, "resources/ssl.cert", "pass123")
-					.addServletMapping("/Testsuite/SimpleVAB/*", new SimpleVABElementServlet())
-					.addServletMapping("/Testsuite/Recorder/*", new VABHTTPInterface<RecordingProvider>(recorder)));
+	public AASHTTPServerResource res = new AASHTTPServerResource(new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir"), "localhost", 8080, true, "resources/ssl.cert", "pass123")
+			.addServletMapping("/Testsuite/SimpleVAB/*", new SimpleVABElementServlet()).addServletMapping("/Testsuite/Recorder/*", new VABHTTPInterface<RecordingProvider>(recorder)));
 
 	@Before
 	public void setUp() {
@@ -86,14 +83,15 @@ public class TestVABHTTPS extends TestProvider {
 	protected VABConnectionManager getConnectionManager() {
 		return connManager;
 	}
-	
+
 	/**
 	 * Tests for URL with no ending slash when accessing the root element, e.g.
 	 * http://localhost:8080/basys.sdk/Testsuite/SimpleVAB <br />
 	 * The SDK ensures that each access ends with a <i>/</i>. However, browser
 	 * requests do not necessarily conform to this
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * 
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
 	 */
 	@Test
 	public void testRootURL() throws KeyManagementException, NoSuchAlgorithmException {
@@ -139,8 +137,8 @@ public class TestVABHTTPS extends TestProvider {
 	 * Performs an HTTP request on an URL
 	 * 
 	 * @param URL
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
 	 */
 	private void performRequest(String URL) throws KeyManagementException, NoSuchAlgorithmException {
 		Client client = JerseyHttpsClientFactory.getJerseyHTTPSClientWithoutValidation();

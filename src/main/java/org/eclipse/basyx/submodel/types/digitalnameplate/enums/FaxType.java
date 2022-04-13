@@ -28,23 +28,24 @@ import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnum;
 import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnumHelper;
 
 /**
- * characterization of the fax according its location or usage
- * as described in the AAS Digital Nameplate template
+ * characterization of the fax according its location or usage as described in
+ * the AAS Digital Nameplate template
+ * 
  * @author haque
  *
  */
-public enum FaxType implements StandardizedLiteralEnum  {
-	
+public enum FaxType implements StandardizedLiteralEnum {
+
 	/**
 	 * (office, 0173-1#07-AAS754#001)
 	 */
 	OFFICE("1"),
-	
+
 	/**
 	 * (secretary, 0173-1#07-AAS756#001)
 	 */
 	SECRETARY("3"),
-	
+
 	/**
 	 * (home, 0173-1#07-AAS758#001)
 	 */

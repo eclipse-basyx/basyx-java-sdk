@@ -92,5 +92,4 @@ public class Formula extends Constraint implements IFormula {
 		return ReferenceHelper.transform(get(Formula.DEPENDSON));
 	}
 
-
 }

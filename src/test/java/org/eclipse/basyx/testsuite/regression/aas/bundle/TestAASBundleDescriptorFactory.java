@@ -58,10 +58,10 @@ public class TestAASBundleDescriptorFactory {
 		sm.setIdentification(IdentifierType.IRI, "aasIdIRI");
 
 		AASBundle bundle = new AASBundle(shell, Collections.singleton(sm));
-		
-		String basePath = "http://localhost:4040/test";		
+
+		String basePath = "http://localhost:4040/test";
 		AASDescriptor desc = AASBundleDescriptorFactory.createAASDescriptor(bundle, basePath);
-		
+
 		String aasPath = VABPathTools.concatenatePaths(basePath, AASAggregatorProvider.PREFIX, aasId, "aas");
 		String smPath = VABPathTools.concatenatePaths(aasPath, "submodels", sm.getIdShort(), "submodel");
 		assertEquals(aasPath, desc.getFirstEndpoint());

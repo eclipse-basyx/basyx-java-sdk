@@ -29,8 +29,6 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.eclipse.basyx.vab.registry.api.IVABRegistryService;
 
-
-
 /**
  * Allows access to elements provided by the VAB
  * 
@@ -44,12 +42,11 @@ public class VABConnectionManager {
 	 */
 	protected IVABRegistryService directoryService = null;
 
-	
 	/**
 	 * Store connection providers
 	 */
 	protected IConnectorFactory connectorFactory = null;
-	
+
 	/**
 	 * Factory for creating proxies for addresses with multiple endpoints
 	 */
@@ -68,15 +65,16 @@ public class VABConnectionManager {
 
 		// Set connector reference
 		this.connectorFactory = providerProvider;
-		
+
 		// Set proxy factory
 		this.proxyFactory = new ModelProxyFactory(providerProvider);
 	}
-	
+
 	/**
 	 * Connect to an VAB element
 	 * 
-	 * @param urn the URN that describes the element. 
+	 * @param urn
+	 *            the URN that describes the element.
 	 */
 	public VABElementProxy connectToVABElement(String urn) {
 
@@ -85,7 +83,7 @@ public class VABConnectionManager {
 
 		// Lookup address in directory server
 		addr = directoryService.lookup(urn);
-		
+
 		return connectToVABElementByPath(addr);
 	}
 
@@ -96,6 +94,6 @@ public class VABConnectionManager {
 	 *            the path that describes the element location.
 	 */
 	public VABElementProxy connectToVABElementByPath(String path) {
-		return proxyFactory.createProxy(path);	
+		return proxyFactory.createProxy(path);
 	}
 }

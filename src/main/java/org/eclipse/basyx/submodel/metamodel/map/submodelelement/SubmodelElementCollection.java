@@ -60,7 +60,6 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	public static final String ALLOWDUPLICATES = "allowDuplicates";
 	public static final String MODELTYPE = "SubmodelElementCollection";
 
-
 	/**
 	 * Constructor
 	 */
@@ -73,9 +72,10 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 		put(ORDERED, true);
 		put(ALLOWDUPLICATES, true);
 	}
-	
+
 	/**
 	 * Constructor with only mandatory attribute
+	 * 
 	 * @param idShort
 	 */
 	public SubmodelElementCollection(String idShort) {
@@ -104,48 +104,51 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	public SubmodelElementCollection(Collection<ISubmodelElement> value, boolean ordered, boolean allowDuplicates) {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
-		
+
 		// Put attributes
 		put(Property.VALUE, SubmodelElementMapCollectionConverter.convertCollectionToIDMap(value));
 		put(ORDERED, ordered);
 		put(ALLOWDUPLICATES, allowDuplicates);
 	}
-	
+
 	/**
 	 * Creates a SubmodelElementCollection object from a map
 	 * 
-	 * @param obj a SubmodelElementCollection object as raw map
-	 * @return a SubmodelElementCollection object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a SubmodelElementCollection object as raw map
+	 * @return a SubmodelElementCollection object, that behaves like a facade for
+	 *         the given map
 	 */
 	public static SubmodelElementCollection createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(SubmodelElementCollection.class, obj);
 		}
-		
+
 		return SubmodelElementMapCollectionConverter.mapToSmECollection(obj);
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
 		return SubmodelElement.isValid(obj);
 	}
-	
+
 	/**
-	 * Returns true if the given submodel element map is recognized as a submodel element collection
+	 * Returns true if the given submodel element map is recognized as a submodel
+	 * element collection
 	 */
 	public static boolean isSubmodelElementCollection(Map<String, Object> map) {
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained (fallback)
-		return MODELTYPE.equals(modelType) || (modelType == null
-				&& (map.containsKey(Property.VALUE) && map.containsKey(ORDERED) && map.containsKey(ALLOWDUPLICATES)));
+		// Either model type is set or the element type specific attributes are
+		// contained (fallback)
+		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(Property.VALUE) && map.containsKey(ORDERED) && map.containsKey(ALLOWDUPLICATES)));
 	}
 
 	/**
@@ -235,8 +238,8 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	public Map<String, IProperty> getProperties() {
 		Map<String, IProperty> ret = new LinkedHashMap<>();
 		Map<String, ISubmodelElement> smElems = (Map<String, ISubmodelElement>) get(Property.VALUE);
-		
-		for(ISubmodelElement smElement: smElems.values()) {
+
+		for (ISubmodelElement smElement : smElems.values()) {
 			if (Property.isProperty((Map<String, Object>) smElement)) {
 				ret.put(smElement.getIdShort(), (IProperty) smElement);
 			}
@@ -250,8 +253,8 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	public Map<String, IOperation> getOperations() {
 		Map<String, IOperation> ret = new LinkedHashMap<>();
 		Map<String, ISubmodelElement> smElems = (Map<String, ISubmodelElement>) get(Property.VALUE);
-		
-		for(ISubmodelElement smElement: smElems.values()) {
+
+		for (ISubmodelElement smElement : smElems.values()) {
 			if (Operation.isOperation(smElement)) {
 				ret.put(smElement.getIdShort(), (IOperation) smElement);
 			}
@@ -262,6 +265,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 
 	/**
 	 * Retrieves an element from element collection
+	 * 
 	 * @param id
 	 * @return retrieved element
 	 */
@@ -274,6 +278,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 
 	/**
 	 * Deletes an element from element collection
+	 * 
 	 * @param id
 	 */
 	@SuppressWarnings("unchecked")
@@ -282,7 +287,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 		Map<String, ISubmodelElement> submodelElems = (Map<String, ISubmodelElement>) get(Property.VALUE);
 		ElementContainerHelper.removeElementById(submodelElems, id);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.SUBMODELELEMENTCOLLECTION;

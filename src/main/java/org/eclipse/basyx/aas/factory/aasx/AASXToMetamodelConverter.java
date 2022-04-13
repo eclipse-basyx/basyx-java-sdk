@@ -92,8 +92,7 @@ public class AASXToMetamodelConverter {
 		this.aasxInputStream = stream;
 	}
 
-	public AasEnv retrieveAasEnv()
-			throws ParserConfigurationException, SAXException, IOException, InvalidFormatException {
+	public AasEnv retrieveAasEnv() throws ParserConfigurationException, SAXException, IOException, InvalidFormatException {
 		if (aasEnv != null) {
 			return aasEnv;
 		}
@@ -118,8 +117,7 @@ public class AASXToMetamodelConverter {
 
 		AasEnv localAasEnv = retrieveAasEnv();
 
-		bundles = new AASBundleFactory().create(localAasEnv.getAssetAdministrationShells(), localAasEnv.getSubmodels(),
-				localAasEnv.getAssets());
+		bundles = new AASBundleFactory().create(localAasEnv.getAssetAdministrationShells(), localAasEnv.getSubmodels(), localAasEnv.getAssets());
 
 		closeOPCPackage();
 

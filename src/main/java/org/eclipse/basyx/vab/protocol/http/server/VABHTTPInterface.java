@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 
-
 /**
  * VAB provider class that enables access to an IModelProvider via HTTP REST
  * interface<br>
@@ -74,22 +73,19 @@ import com.google.common.io.ByteSource;
  *
  */
 public class VABHTTPInterface<ModelProvider extends IModelProvider> extends BasysHTTPServlet {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(VABHTTPInterface.class);
-	
+
 	/**
 	 * Version information to identify the version of serialized instances
 	 */
 	private static final long serialVersionUID = 1L;
 
-	
 	/**
 	 * Reference to IModelProvider backend
 	 */
 	protected JSONProvider<ModelProvider> providerBackend = null;
 
-	
-	
 	/**
 	 * Constructor
 	 */
@@ -98,7 +94,6 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 		providerBackend = new JSONProvider<ModelProvider>(provider);
 	}
 
-	
 	/**
 	 * Access model provider
 	 */
@@ -115,7 +110,6 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 		outputStream.flush();
 	}
 
-	
 	/**
 	 * Implement "Get" operation
 	 * 
@@ -134,15 +128,14 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 
 			// Process get request
 			providerBackend.processBaSysGet(path, resp.getOutputStream());
-		} catch(ProviderException e) {
+		} catch (ProviderException e) {
 			int httpCode = ExceptionToHTTPCodeMapper.mapFromException(e);
 			resp.setStatus(httpCode);
 			logger.debug("Exception in HTTP-GET. Response-code: " + httpCode, e);
 		}
-		
+
 	}
 
-	
 	/**
 	 * Implement "Set" operation
 	 */
@@ -158,14 +151,13 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 			resp.setStatus(200);
 
 			providerBackend.processBaSysSet(path, serValue.toString(), resp.getOutputStream());
-		} catch(ProviderException e) {
+		} catch (ProviderException e) {
 			int httpCode = ExceptionToHTTPCodeMapper.mapFromException(e);
 			resp.setStatus(httpCode);
 			logger.debug("Exception in HTTP-PUT. Response-code: " + httpCode, e);
 		}
 	}
 
-	
 	/**
 	 * Handle HTTP POST operation. Creates a new Property, Operation, Event,
 	 * Submodel or AAS or AASX or invokes an operation.
@@ -174,7 +166,7 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			String path = extractPath(req);
-			
+
 			setPostResponseHeader(resp);
 
 			if (ServletFileUpload.isMultipartContent(req)) {
@@ -189,7 +181,6 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 		}
 	}
 
-	
 	/**
 	 * Handle a HTTP PATCH operation. Updates a map or collection
 	 * 
@@ -204,14 +195,13 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 			resp.setStatus(200);
 
 			providerBackend.processBaSysDelete(path, serValue, resp.getOutputStream());
-		} catch(ProviderException e) {
+		} catch (ProviderException e) {
 			int httpCode = ExceptionToHTTPCodeMapper.mapFromException(e);
 			resp.setStatus(httpCode);
 			logger.debug("Exception in HTTP-PATCH. Response-code: " + httpCode, e);
 		}
 	}
 
-	
 	/**
 	 * Implement "Delete" operation. Deletes any resource under the given path.
 	 */
@@ -225,16 +215,14 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 
 			resp.setStatus(200);
 
-
 			providerBackend.processBaSysDelete(path, nullParam, resp.getOutputStream());
-		} catch(ProviderException e) {
+		} catch (ProviderException e) {
 			int httpCode = ExceptionToHTTPCodeMapper.mapFromException(e);
 			resp.setStatus(httpCode);
 			logger.debug("Exception in HTTP-DELETE. Response-code: " + httpCode, e);
 		}
 	}
 
-	
 	private String extractPath(HttpServletRequest req) throws UnsupportedEncodingException {
 		// Extract path
 		String uri = req.getRequestURI();
@@ -266,7 +254,7 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 	 */
 	private String extractParameters(HttpServletRequest req) {
 		Enumeration<String> parameterNames = req.getParameterNames();
-		
+
 		// Collect list of parameters
 		List<String> parameters = new ArrayList<>();
 		while (parameterNames.hasMoreElements()) {
@@ -299,55 +287,58 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 		return req.getContextPath().length() + req.getServletPath().length();
 	}
 
-
 	/**
-	 * Read serialized value 
+	 * Read serialized value
+	 * 
 	 * @param req
 	 * @return
 	 * @throws IOException
 	 */
 	private String extractSerializedValue(HttpServletRequest req) throws IOException {
 		// https://www.baeldung.com/convert-input-stream-to-string#guava
-        return getByteSource(req).asCharSource(Charsets.UTF_8).read();
+		return getByteSource(req).asCharSource(Charsets.UTF_8).read();
 	}
-	
+
 	/**
 	 * Extracts input streams from request
+	 * 
 	 * @param req
 	 * @return
 	 * @throws IOException
-	 * @throws ServletException 
+	 * @throws ServletException
 	 */
-	private Collection<InputStream> extractInputStreams(HttpServletRequest req) throws IOException, ServletException{
+	private Collection<InputStream> extractInputStreams(HttpServletRequest req) throws IOException, ServletException {
 		Collection<InputStream> fileStreams = new ArrayList<InputStream>();
 		try {
-	        List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(req);
-	        for (FileItem item : items) {
-	            if (!item.isFormField()) {
-	                fileStreams.add(item.getInputStream());
-	            }
-	        }
-	    } catch (FileUploadException e) {
-	    	throw new ServletException("Cannot parse multipart request.", e);
-	    }
+			List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(req);
+			for (FileItem item : items) {
+				if (!item.isFormField()) {
+					fileStreams.add(item.getInputStream());
+				}
+			}
+		} catch (FileUploadException e) {
+			throw new ServletException("Cannot parse multipart request.", e);
+		}
 		return fileStreams;
 	}
-	
+
 	/**
 	 * Gets a {@link ByteSource} from request stream
+	 * 
 	 * @return
 	 */
 	private ByteSource getByteSource(HttpServletRequest req) {
 		return new ByteSource() {
-	        @Override
-	        public InputStream openStream() throws IOException {
-	            return req.getInputStream();
-	        }
-	    };
+			@Override
+			public InputStream openStream() throws IOException {
+				return req.getInputStream();
+			}
+		};
 	}
-	
+
 	/**
 	 * Setup HTML response header for HttpPost
+	 * 
 	 * @param resp
 	 */
 	private void setPostResponseHeader(HttpServletResponse resp) {
@@ -356,26 +347,26 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 		resp.setCharacterEncoding("UTF-8");
 	}
 
-
 	/**
 	 * Handles multipart/form-data request in HttpPost
+	 * 
 	 * @param req
 	 * @param path
 	 * @param resp
 	 * @throws IOException
-	 * @throws ServletException 
+	 * @throws ServletException
 	 */
 	private void handleMultipartFormDataRequest(HttpServletRequest req, String path, HttpServletResponse resp) throws IOException, ServletException {
-		Collection<InputStream> fileStreams = extractInputStreams(req);	
+		Collection<InputStream> fileStreams = extractInputStreams(req);
 		for (InputStream fileStream : fileStreams) {
-		    providerBackend.processBaSysUpload(path, fileStream, resp.getOutputStream());
-		    fileStream.close();	
+			providerBackend.processBaSysUpload(path, fileStream, resp.getOutputStream());
+			fileStream.close();
 		}
 	}
 
-
 	/**
 	 * Handles POST request with JSON body
+	 * 
 	 * @param req
 	 * @param path
 	 * @param resp
@@ -384,7 +375,7 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 	private void handleJSONPostRequest(HttpServletRequest req, String path, HttpServletResponse resp) throws IOException {
 		String serValue = extractSerializedValue(req);
 		logger.trace("DoPost: {}", serValue);
-		
+
 		// Check if request is for property creation or operation invoke
 		if (VABPathTools.isOperationInvokationPath(path)) {
 			// Invoke BaSys VAB 'invoke' primitive

@@ -39,7 +39,7 @@ import org.eclipse.basyx.vab.coder.json.metaprotocol.MessageType;
 public class ProviderException extends RuntimeException {
 
 	private List<Message> messages = new ArrayList<>();
-	
+
 	/**
 	 * Version information for serialized instances
 	 */
@@ -49,7 +49,7 @@ public class ProviderException extends RuntimeException {
 		super(msg);
 		messages.add(new Message(MessageType.Exception, msg));
 	}
-	
+
 	public ProviderException(List<Message> messages) {
 		super(messages.toString());
 		this.messages = messages;
@@ -62,7 +62,7 @@ public class ProviderException extends RuntimeException {
 	public ProviderException(String message, Throwable cause) {
 		super(message, cause);
 	}
-	
+
 	public List<Message> getMessages() {
 		return messages;
 	}

@@ -125,9 +125,9 @@ public class VABModelProvider implements IModelProvider {
 
 	@Override
 	public Object invokeOperation(String path, Object... parameters) {
-		
+
 		path = VABPathTools.stripInvokeFromPath(path);
-		
+
 		Object childElement = getValue(path);
 
 		// Invoke operation for function interfaces
@@ -194,8 +194,9 @@ public class VABModelProvider implements IModelProvider {
 	}
 
 	/**
-	 * Get the parent of an element in this provider. The path should include the path to the element separated by '/'.
-	 * E.g., for accessing element c in path a/b, the path should be a/b/c.
+	 * Get the parent of an element in this provider. The path should include the
+	 * path to the element separated by '/'. E.g., for accessing element c in path
+	 * a/b, the path should be a/b/c.
 	 */
 	private Object getParentElement(String path) {
 		VABPathTools.checkPathForNull(path);
@@ -216,10 +217,9 @@ public class VABModelProvider implements IModelProvider {
 		return currentElement;
 	}
 
-
 	/**
-	 * Instead of returning the parent element of a path, this function gives the target element.
-	 * E.g., it returns c for the path a/b/c
+	 * Instead of returning the parent element of a path, this function gives the
+	 * target element. E.g., it returns c for the path a/b/c
 	 */
 	protected Object getTargetElement(String path) {
 		VABPathTools.checkPathForNull(path);

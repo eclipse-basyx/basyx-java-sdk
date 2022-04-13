@@ -51,9 +51,9 @@ import org.junit.Test;
  *
  */
 public class TestAASDescriptor extends ModelDescriptorTestSuite {
-	
+
 	private Map<String, Object> map;
-	
+
 	@Before
 	public void initialize() {
 		map = new LinkedHashMap<String, Object>();
@@ -82,61 +82,61 @@ public class TestAASDescriptor extends ModelDescriptorTestSuite {
 		// Assert correct retrieval
 		assertEquals(2, descriptor.getSubmodelDescriptors().size());
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateNoIdShort() {
 		map.remove(Referable.IDSHORT);
 		new AASDescriptor(map);
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateNullIdShort() {
 		map.put(Referable.IDSHORT, null);
 		new AASDescriptor(map);
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateWrongIdShort() {
 		map.put(Referable.IDSHORT, 0);
 		new AASDescriptor(map);
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateNoIdentification() {
 		map.remove(Identifiable.IDENTIFICATION);
 		new AASDescriptor(map);
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateNullIdentification() {
 		map.put(Identifiable.IDENTIFICATION, null);
 		new AASDescriptor(map);
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateWrongdentification() {
 		map.put(Identifiable.IDENTIFICATION, "testId");
 		new AASDescriptor(map);
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateNoEndpoints() {
 		map.remove(ModelDescriptor.ENDPOINTS);
 		new AASDescriptor(map);
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateNullEndpoints() {
 		map.put(ModelDescriptor.ENDPOINTS, null);
 		new AASDescriptor(map);
 	}
-	
+
 	@Test(expected = MalformedRequestException.class)
 	public void testValidateWrongEndpoints() {
 		map.put(ModelDescriptor.ENDPOINTS, "testEndpoint");
 		new AASDescriptor(map);
 	}
-	
+
 	@Test
 	public void testValidateNoSubmodels() {
 		map.remove(AssetAdministrationShell.SUBMODELS);

@@ -42,11 +42,12 @@ public class HasKind extends VABModelMap<Object> implements IHasKind {
 	/**
 	 * Constructor
 	 */
-	public HasKind() {}
+	public HasKind() {
+	}
 
 	/**
-	 * Constructor that takes
-	 * {@link ModelingKind} (either Kind.Instance or Kind.Type)
+	 * Constructor that takes {@link ModelingKind} (either Kind.Instance or
+	 * Kind.Type)
 	 */
 	public HasKind(ModelingKind kind) {
 		// Kind of the element: either type or instance.

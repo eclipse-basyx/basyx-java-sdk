@@ -34,9 +34,6 @@ import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.HasSemantics;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 
-
-
-
 /**
  * AAS descriptor class
  * 
@@ -44,7 +41,7 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
  *
  */
 public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics {
-	
+
 	public static final String MODELTYPE = "SubmodelDescriptor";
 
 	/**
@@ -54,11 +51,11 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 		super(map);
 		validate(map);
 	}
-	
+
 	protected SubmodelDescriptor() {
-	  super();
+		super();
 	}
-	
+
 	/**
 	 * Create a new aas descriptor with minimal information based on an existing
 	 * submodel.
@@ -66,16 +63,16 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 	public SubmodelDescriptor(ISubmodel sm, String httpEndpoint) {
 		// Create descriptor with minimal information (id and idShort)
 		this(sm.getIdShort(), sm.getIdentification(), httpEndpoint);
-		
+
 		putAll(new HasSemantics(sm.getSemanticId()));
 	}
-	
+
 	/**
 	 * Create a new descriptor with minimal information
 	 */
 	public SubmodelDescriptor(String idShort, IIdentifier id, String httpEndpoint) {
 		super(idShort, id, harmonizeEndpoint(httpEndpoint));
-		
+
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
@@ -103,4 +100,3 @@ public class SubmodelDescriptor extends ModelDescriptor implements IHasSemantics
 	}
 
 }
-

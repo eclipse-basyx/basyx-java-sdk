@@ -37,12 +37,13 @@ import org.eclipse.basyx.vab.model.VABModelMap;
 public class LangString extends VABModelMap<Object> {
 	private static final String LANGUAGE = "language";
 	private static final String DESCRIPTION = "text";
-	
+
 	private LangString() {
 	}
-	
+
 	/**
 	 * Constructor that accepts a language and a description
+	 * 
 	 * @param language
 	 * @param description
 	 */
@@ -50,13 +51,13 @@ public class LangString extends VABModelMap<Object> {
 		put(LANGUAGE, language);
 		put(DESCRIPTION, description);
 	}
-	
+
 	/**
 	 * Creates a LangString object from a map
 	 * 
-	 * @param map a LangString object as raw map
-	 * @return a LangString object, that behaves like a facade for
-	 *         the given map
+	 * @param map
+	 *            a LangString object as raw map
+	 * @return a LangString object, that behaves like a facade for the given map
 	 */
 	public static LangString createAsFacade(Map<String, Object> map) {
 		if (map == null) {
@@ -67,31 +68,33 @@ public class LangString extends VABModelMap<Object> {
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static boolean isLangString(Object value) {
-		if(!(value instanceof Map<?, ?>)) {
+		if (!(value instanceof Map<?, ?>)) {
 			return false;
 		}
-		
+
 		Map<String, Object> map = (Map<String, Object>) value;
-		
+
 		return map.get(LANGUAGE) instanceof String && map.get(DESCRIPTION) instanceof String;
 	}
-	
+
 	/**
 	 * Get Language of the langString
+	 * 
 	 * @return Language
 	 */
 	public String getLanguage() {
 		return (String) get(LANGUAGE);
 	}
-	
+
 	/**
 	 * Get Description of the langString
+	 * 
 	 * @return Description
 	 */
 	public String getDescription() {
 		return (String) get(DESCRIPTION);
-	} 
+	}
 }

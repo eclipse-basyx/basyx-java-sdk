@@ -44,12 +44,13 @@ import org.junit.Test;
 
 /**
  * Test suite for testing AAS Aggregator along with AASX upload
+ * 
  * @author haque
  *
  */
 public abstract class TestAASAggregatorAASXUploadSuite extends AASAggregatorSuite {
 	public static final String AASX_PATH = "src/test/resources/aas/factory/aasx/01_Festo.aasx";
-	
+
 	@Test
 	public void testUploadAASX() throws ClientProtocolException, IOException {
 		File file = Paths.get(AASX_PATH).toFile();
@@ -57,16 +58,16 @@ public abstract class TestAASAggregatorAASXUploadSuite extends AASAggregatorSuit
 		aggregator.uploadAASX(new FileInputStream(file));
 		checkAASX(aggregator.getAASList());
 	}
-	
+
 	public static void checkAASX(Collection<IAssetAdministrationShell> shells) {
 		assertEquals(2, shells.size());
-		
+
 		Iterator<IAssetAdministrationShell> iterator = shells.iterator();
 		IAssetAdministrationShell shell1 = iterator.next();
-		
+
 		assertEquals("smart.festo.com/demo/aas/1/1/454576463545648365874", shell1.getIdentification().getId());
 		assertEquals("Festo_3S7PM0CP4BD", shell1.getIdShort());
-		
+
 		Iterator<IReference> smIteratorShell1 = shell1.getSubmodelReferences().iterator();
 		IReference shell1Sm1 = smIteratorShell1.next();
 		assertEquals("www.company.com/ids/sm/4343_5072_7091_3242", shell1Sm1.getKeys().get(0).getValue());
@@ -78,11 +79,11 @@ public abstract class TestAASAggregatorAASXUploadSuite extends AASAggregatorSuit
 		assertEquals("www.company.com/ids/sm/6053_5072_7091_5102", shell1Sm4.getKeys().get(0).getValue());
 		IReference shell1Sm5 = smIteratorShell1.next();
 		assertEquals("www.company.com/ids/sm/6563_5072_7091_4267", shell1Sm5.getKeys().get(0).getValue());
-		
+
 		IAssetAdministrationShell shell2 = iterator.next();
 		assertEquals("www.admin-shell.io/aas-sample/1/1", shell2.getIdentification().getId());
 		assertEquals("test_asset_aas", shell2.getIdShort());
-		
+
 		Iterator<IReference> smIteratorShell2 = shell2.getSubmodelReferences().iterator();
 		IReference shell2Sm1 = smIteratorShell2.next();
 		assertEquals("de.iese.com/ids/sm/0000_000_000_001", shell2Sm1.getKeys().get(0).getValue());

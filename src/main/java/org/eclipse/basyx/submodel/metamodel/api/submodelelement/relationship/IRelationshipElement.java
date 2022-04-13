@@ -35,7 +35,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.relationship.Rel
  *
  */
 public interface IRelationshipElement extends ISubmodelElement {
-	
+
 	@Override
 	RelationshipElementValue getValue();
 

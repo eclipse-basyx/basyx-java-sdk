@@ -51,14 +51,16 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.types.helper.SubmodelElementRetrievalHelper;
 
 /**
- * GeneralInformation as described in the Submodel Template AAS Technical Data Document
+ * GeneralInformation as described in the Submodel Template AAS Technical Data
+ * Document
  * 
- * It is a submodel element collection which contains General information, for example ordering and manufacturer information.
+ * It is a submodel element collection which contains General information, for
+ * example ordering and manufacturer information.
  * 
  * @author haque
  *
  */
-public class GeneralInformation extends SubmodelElementCollection{
+public class GeneralInformation extends SubmodelElementCollection {
 	public static final String IDSHORT = "GeneralInformation";
 	public static final String MANUFACTURERNAMEID = "ManufacturerName";
 	public static final String MANUFACTURERLOGOID = "ManufacturerLogo";
@@ -67,7 +69,7 @@ public class GeneralInformation extends SubmodelElementCollection{
 	public static final String MANUFACTURERORDERCODEID = "ManufacturerOrderCode";
 	public static final String PRODUCTIMAGEPREFIX = "ProductImage";
 	public static final Reference SEMANTICID = new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "https://admin-shell.io/ZVEI/TechnicalData/GeneralInformation/1/1", KeyType.IRI));
-	
+
 	private GeneralInformation() {
 	}
 
@@ -82,7 +84,7 @@ public class GeneralInformation extends SubmodelElementCollection{
 	public GeneralInformation(Property manufacturerName, MultiLanguageProperty manufacturerProductDesignation, Property manufacturerPartNumber, Property manufacturerOrderCode) {
 		this(IDSHORT, manufacturerName, manufacturerProductDesignation, manufacturerPartNumber, manufacturerOrderCode);
 	}
-	
+
 	/**
 	 * Constructor with default idShort
 	 * 
@@ -94,7 +96,7 @@ public class GeneralInformation extends SubmodelElementCollection{
 	public GeneralInformation(String manufacturerName, LangString manufacturerProductDesignation, String manufacturerPartNumber, String manufacturerOrderCode) {
 		this(IDSHORT, manufacturerName, manufacturerProductDesignation, manufacturerPartNumber, manufacturerOrderCode);
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
 	 * 
@@ -112,7 +114,7 @@ public class GeneralInformation extends SubmodelElementCollection{
 		setManufacturerPartNumber(manufacturerPartNumber);
 		setManufacturerOrderCode(manufacturerOrderCode);
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
 	 * 
@@ -130,46 +132,50 @@ public class GeneralInformation extends SubmodelElementCollection{
 		setManufacturerPartNumber(manufacturerPartNumber);
 		setManufacturerOrderCode(manufacturerOrderCode);
 	}
-	
+
 	/**
 	 * Creates a GeneralInformation SMC object from a map
 	 * 
-	 * @param obj a GeneralInformation SMC object as raw map
-	 * @return a GeneralInformation SMC object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a GeneralInformation SMC object as raw map
+	 * @return a GeneralInformation SMC object, that behaves like a facade for the
+	 *         given map
 	 */
 	public static GeneralInformation createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(GeneralInformation.class, obj);
 		}
-		
+
 		GeneralInformation generalInformation = new GeneralInformation();
 		generalInformation.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return generalInformation;
 	}
-	
+
 	/**
 	 * Creates a GeneralInformation SMC object from a map without validation
 	 * 
-	 * @param obj a GeneralInformation SMC object as raw map
-	 * @return a GeneralInformation SMC object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a GeneralInformation SMC object as raw map
+	 * @return a GeneralInformation SMC object, that behaves like a facade for the
+	 *         given map
 	 */
 	private static GeneralInformation createAsFacadeNonStrict(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		GeneralInformation generalInformation = new GeneralInformation();
 		generalInformation.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return generalInformation;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for GeneralInformation SMC
-	 * exist in the map
+	 * Check whether all mandatory elements for GeneralInformation SMC exist in the
+	 * map
 	 * 
 	 * @param obj
 	 * 
@@ -178,24 +184,26 @@ public class GeneralInformation extends SubmodelElementCollection{
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> obj) {
 		GeneralInformation generalInformation = createAsFacadeNonStrict(obj);
-		return SubmodelElementCollection.isValid(obj)
-				&& Property.isValid((Map<String, Object>) generalInformation.getManufacturerName())
-				&& MultiLanguageProperty.isValid((Map<String, Object>) generalInformation.getManufacturerProductDesignation())
-				&& Property.isValid((Map<String, Object>) generalInformation.getManufacturerPartNumber())
+		return SubmodelElementCollection.isValid(obj) && Property.isValid((Map<String, Object>) generalInformation.getManufacturerName())
+				&& MultiLanguageProperty.isValid((Map<String, Object>) generalInformation.getManufacturerProductDesignation()) && Property.isValid((Map<String, Object>) generalInformation.getManufacturerPartNumber())
 				&& Property.isValid((Map<String, Object>) generalInformation.getManufacturerOrderCode());
 	}
-	
+
 	/**
-	 * Sets legally valid designation of the natural or judicial body which is directly responsible for the design, production, packaging and labeling of a product in respect to its being brought into the market.
+	 * Sets legally valid designation of the natural or judicial body which is
+	 * directly responsible for the design, production, packaging and labeling of a
+	 * product in respect to its being brought into the market.
 	 * 
 	 * @param name
 	 */
 	public void setManufacturerName(Property name) {
 		addSubmodelElement(name);
 	}
-	
+
 	/**
-	 * Sets legally valid designation of the natural or judicial body which is directly responsible for the design, production, packaging and labeling of a product in respect to its being brought into the market.
+	 * Sets legally valid designation of the natural or judicial body which is
+	 * directly responsible for the design, production, packaging and labeling of a
+	 * product in respect to its being brought into the market.
 	 * 
 	 * @param name
 	 */
@@ -205,9 +213,11 @@ public class GeneralInformation extends SubmodelElementCollection{
 		nameProp.setValue(name);
 		setManufacturerName(nameProp);
 	}
-	
+
 	/**
-	 * Gets legally valid designation of the natural or judicial body which is directly responsible for the design, production, packaging and labeling of a product in respect to its being brought into the market.
+	 * Gets legally valid designation of the natural or judicial body which is
+	 * directly responsible for the design, production, packaging and labeling of a
+	 * product in respect to its being brought into the market.
 	 * 
 	 * @return
 	 */
@@ -215,18 +225,20 @@ public class GeneralInformation extends SubmodelElementCollection{
 	public IProperty getManufacturerName() {
 		return Property.createAsFacade((Map<String, Object>) getSubmodelElement(MANUFACTURERNAMEID));
 	}
-	
+
 	/**
-	 * Sets imagefile for logo of manufacturer provided in common format (.png, .jpg).
+	 * Sets imagefile for logo of manufacturer provided in common format (.png,
+	 * .jpg).
 	 * 
 	 * @param logo
 	 */
 	public void setManufacturerLogo(File logo) {
 		addSubmodelElement(logo);
 	}
-	
+
 	/**
-	 * Gets imagefile for logo of manufacturer provided in common format (.png, .jpg).
+	 * Gets imagefile for logo of manufacturer provided in common format (.png,
+	 * .jpg).
 	 * 
 	 * @return
 	 */
@@ -234,24 +246,28 @@ public class GeneralInformation extends SubmodelElementCollection{
 	public IFile getManufacturerLogo() {
 		return File.createAsFacade((Map<String, Object>) getSubmodelElement(MANUFACTURERLOGOID));
 	}
-	
+
 	/**
-	 * Sets product designation as given by the mnaufacturer. Short description of the product, product group or function (short text) in common language.
+	 * Sets product designation as given by the mnaufacturer. Short description of
+	 * the product, product group or function (short text) in common language.
 	 * 
 	 * Note: Whenever possible, a multi-language definition is preferred.
 	 * 
-	 * @param designation {@link MultiLanguageProperty}
+	 * @param designation
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setManufacturerProductDesignation(MultiLanguageProperty designation) {
 		addSubmodelElement(designation);
 	}
-	
+
 	/**
-	 * Sets product designation as given by the mnaufacturer. Short description of the product, product group or function (short text) in common language.
+	 * Sets product designation as given by the mnaufacturer. Short description of
+	 * the product, product group or function (short text) in common language.
 	 * 
 	 * Note: Whenever possible, a multi-language definition is preferred.
 	 * 
-	 * @param designation {@link LangString}
+	 * @param designation
+	 *            {@link LangString}
 	 */
 	public void setManufacturerProductDesignation(LangString designation) {
 		MultiLanguageProperty designationProp = new MultiLanguageProperty(MANUFACTURERPRODUCTDESIGNATIONID);
@@ -259,32 +275,40 @@ public class GeneralInformation extends SubmodelElementCollection{
 		designationProp.setValue(new LangStrings(designation));
 		setManufacturerProductDesignation(designationProp);
 	}
-	
+
 	/**
-	 * Gets product designation as given by the mnaufacturer. Short description of the product, product group or function (short text) in common language.
+	 * Gets product designation as given by the mnaufacturer. Short description of
+	 * the product, product group or function (short text) in common language.
 	 * 
 	 * Note: Whenever possible, a multi-language definition is preferred.
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IMultiLanguageProperty getManufacturerProductDesignation() {
 		return MultiLanguageProperty.createAsFacade((Map<String, Object>) getSubmodelElement(MANUFACTURERPRODUCTDESIGNATIONID));
 	}
-	
+
 	/**
-	 * Sets unique product identifier of the manufacturer for the product type respective the type designation of the industrial equipemnt.
+	 * Sets unique product identifier of the manufacturer for the product type
+	 * respective the type designation of the industrial equipemnt.
 	 * 
-	 * Note: The Manufacturer part number is represented as a string, although often a numerical id.
+	 * Note: The Manufacturer part number is represented as a string, although often
+	 * a numerical id.
+	 * 
 	 * @param partNumber
 	 */
 	public void setManufacturerPartNumber(Property partNumber) {
 		addSubmodelElement(partNumber);
 	}
-	
+
 	/**
-	 * Sets unique product identifier of the manufacturer for the product type respective the type designation of the industrial equipemnt.
+	 * Sets unique product identifier of the manufacturer for the product type
+	 * respective the type designation of the industrial equipemnt.
 	 * 
-	 * Note: The Manufacturer part number is represented as a string, although often a numerical id.
+	 * Note: The Manufacturer part number is represented as a string, although often
+	 * a numerical id.
+	 * 
 	 * @param partNumber
 	 */
 	public void setManufacturerPartNumber(String partNumber) {
@@ -293,29 +317,34 @@ public class GeneralInformation extends SubmodelElementCollection{
 		partNumberProp.setValue(partNumber);
 		setManufacturerPartNumber(partNumberProp);
 	}
-	
+
 	/**
-	 * Gets unique product identifier of the manufacturer for the product type respective the type designation of the industrial equipemnt.
+	 * Gets unique product identifier of the manufacturer for the product type
+	 * respective the type designation of the industrial equipemnt.
 	 * 
-	 * Note: The Manufacturer part number is represented as a string, although often a numerical id.
+	 * Note: The Manufacturer part number is represented as a string, although often
+	 * a numerical id.
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IProperty getManufacturerPartNumber() {
 		return Property.createAsFacade((Map<String, Object>) getSubmodelElement(MANUFACTURERPARTNUMBERID));
 	}
-	
+
 	/**
-	 * Sets unique product identifier of the manufacturer sufficient to order the exact same product.
+	 * Sets unique product identifier of the manufacturer sufficient to order the
+	 * exact same product.
 	 * 
 	 * @param orderCode
 	 */
 	public void setManufacturerOrderCode(Property orderCode) {
 		addSubmodelElement(orderCode);
 	}
-	
+
 	/**
-	 * Sets unique product identifier of the manufacturer sufficient to order the exact same product.
+	 * Sets unique product identifier of the manufacturer sufficient to order the
+	 * exact same product.
 	 * 
 	 * @param orderCode
 	 */
@@ -325,9 +354,10 @@ public class GeneralInformation extends SubmodelElementCollection{
 		orderCodeProp.setValue(orderCode);
 		setManufacturerOrderCode(orderCodeProp);
 	}
-	
+
 	/**
-	 * Gets unique product identifier of the manufacturer sufficient to order the exact same product.
+	 * Gets unique product identifier of the manufacturer sufficient to order the
+	 * exact same product.
 	 * 
 	 * @return
 	 */
@@ -335,9 +365,10 @@ public class GeneralInformation extends SubmodelElementCollection{
 	public IProperty getManufacturerOrderCode() {
 		return Property.createAsFacade((Map<String, Object>) getSubmodelElement(MANUFACTURERORDERCODEID));
 	}
-	
+
 	/**
-	 * Sets image file for associated product provided in common format (.png, .jpg).
+	 * Sets image file for associated product provided in common format (.png,
+	 * .jpg).
 	 * 
 	 * @param images
 	 */
@@ -348,9 +379,10 @@ public class GeneralInformation extends SubmodelElementCollection{
 			}
 		}
 	}
-	
+
 	/**
-	 * Gets image file for associated product provided in common format (.png, .jpg).
+	 * Gets image file for associated product provided in common format (.png,
+	 * .jpg).
 	 * 
 	 * @return
 	 */
@@ -358,8 +390,8 @@ public class GeneralInformation extends SubmodelElementCollection{
 	public List<IFile> getProductImages() {
 		List<IFile> ret = new ArrayList<IFile>();
 		List<ISubmodelElement> elements = SubmodelElementRetrievalHelper.getSubmodelElementsByIdPrefix(PRODUCTIMAGEPREFIX, getSubmodelElements());
-		
-		for (ISubmodelElement element: elements) {
+
+		for (ISubmodelElement element : elements) {
 			ret.add(File.createAsFacade((Map<String, Object>) element));
 		}
 		return ret;

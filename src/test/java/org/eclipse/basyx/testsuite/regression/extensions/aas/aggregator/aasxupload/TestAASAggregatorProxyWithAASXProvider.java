@@ -58,23 +58,21 @@ public class TestAASAggregatorProxyWithAASXProvider extends TestAASAggregatorPro
 	private static final String CONTEXT_PATH = "aggregator";
 	private static final String API_URL = "http://" + SERVER + ":" + PORT + "/" + CONTEXT_PATH + "/shells";
 	private AASAggregatorAASXUploadProvider provider = new AASAggregatorAASXUploadProvider(new AASAggregatorAASXUpload(new AASAggregator()));
-	
+
 	@Rule
-	public AASHTTPServerResource res = new AASHTTPServerResource(
-			new BaSyxContext("/" + CONTEXT_PATH, "", SERVER, PORT)
-					.addServletMapping("/*", new VABHTTPInterface<IModelProvider>(provider)));
-	
+	public AASHTTPServerResource res = new AASHTTPServerResource(new BaSyxContext("/" + CONTEXT_PATH, "", SERVER, PORT).addServletMapping("/*", new VABHTTPInterface<IModelProvider>(provider)));
+
 	@Override
 	protected IAASAggregator getAggregator() {
 		return new AASAggregatorAASXUploadProxy(API_URL);
 	}
-	
+
 	@Test
 	public void testClientUpload() throws ClientProtocolException, IOException {
 		AASAggregatorAASXUploadProxy proxy = new AASAggregatorAASXUploadProxy(API_URL);
-	    proxy.uploadAASX(new FileInputStream(Paths.get(TestAASAggregatorAASXUploadSuite.AASX_PATH).toFile()));
-		
-	    Collection<IAssetAdministrationShell> uploadedShells = proxy.getAASList();
-	    TestAASAggregatorAASXUploadSuite.checkAASX(uploadedShells);
+		proxy.uploadAASX(new FileInputStream(Paths.get(TestAASAggregatorAASXUploadSuite.AASX_PATH).toFile()));
+
+		Collection<IAssetAdministrationShell> uploadedShells = proxy.getAASList();
+		TestAASAggregatorAASXUploadSuite.checkAASX(uploadedShells);
 	}
 }

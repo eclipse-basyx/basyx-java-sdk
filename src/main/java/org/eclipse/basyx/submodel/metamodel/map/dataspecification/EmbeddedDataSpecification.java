@@ -42,7 +42,8 @@ public class EmbeddedDataSpecification extends VABModelMap<Object> implements IE
 	 * 
 	 * @param map
 	 *            a EmbeddedDataSpecification object as raw map
-	 * @return a EmbeddedDataSpecification object, that behaves like a facade for the given map
+	 * @return a EmbeddedDataSpecification object, that behaves like a facade for
+	 *         the given map
 	 */
 	public static EmbeddedDataSpecification createAsFacade(Map<String, Object> map) {
 		if (map == null) {

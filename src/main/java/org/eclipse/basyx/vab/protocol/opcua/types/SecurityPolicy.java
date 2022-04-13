@@ -28,10 +28,5 @@ package org.eclipse.basyx.vab.protocol.opcua.types;
  * Available security policies for OPC UA connections.
  */
 public enum SecurityPolicy {
-    None,
-    Basic128Rsa15,
-    Basic256,
-    Basic256Sha256,
-    Aes128_Sha256_RsaOaep,
-    Aes256_Sha256_RsaPss
+	None, Basic128Rsa15, Basic256, Basic256Sha256, Aes128_Sha256_RsaOaep, Aes256_Sha256_RsaPss
 }

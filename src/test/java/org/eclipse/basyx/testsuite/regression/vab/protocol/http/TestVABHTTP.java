@@ -67,12 +67,11 @@ import org.junit.Test;
  */
 public class TestVABHTTP extends TestProvider {
 	public static final String AASX_PATH = "src/test/resources/aas/factory/aasx/01_Festo.aasx";
-	
+
 	private static final String RECORDER_URL = "http://localhost:8080/basys.sdk/Testsuite/Recorder/";
 	private static final String SIMPLE_VAB_URL = "http://localhost:8080/basys.sdk/Testsuite/SimpleVAB";
-	
-	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(),
-			new HTTPConnectorFactory());
+
+	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(), new HTTPConnectorFactory());
 
 	private RecordingProvider recorder = new RecordingProvider(new VABMapProvider(new LinkedHashMap<>()));
 
@@ -80,10 +79,8 @@ public class TestVABHTTP extends TestProvider {
 	 * Makes sure Tomcat Server is started after before each test case
 	 */
 	@Rule
-	public AASHTTPServerResource res = new AASHTTPServerResource(
-			new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir"))
-					.addServletMapping("/Testsuite/SimpleVAB/*", new SimpleVABElementServlet())
-					.addServletMapping("/Testsuite/Recorder/*", new VABHTTPInterface<RecordingProvider>(recorder)));
+	public AASHTTPServerResource res = new AASHTTPServerResource(new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir")).addServletMapping("/Testsuite/SimpleVAB/*", new SimpleVABElementServlet())
+			.addServletMapping("/Testsuite/Recorder/*", new VABHTTPInterface<RecordingProvider>(recorder)));
 
 	@Override
 	protected VABConnectionManager getConnectionManager() {
@@ -102,8 +99,8 @@ public class TestVABHTTP extends TestProvider {
 	}
 
 	/**
-	 * Tests, if the provider throws a ResourceNotFoundException, if the HTTP endpoint
-	 * could not be reached
+	 * Tests, if the provider throws a ResourceNotFoundException, if the HTTP
+	 * endpoint could not be reached
 	 */
 	@Test(expected = ResourceNotFoundException.class)
 	public void testResourceNotFound() {
@@ -144,22 +141,22 @@ public class TestVABHTTP extends TestProvider {
 		assertEquals(1, paths.size());
 		assertEquals(parameterRequest, VABPathTools.stripSlashes(paths.get(0)));
 	}
-	
+
 	@Test
 	public void testUpload() throws ClientProtocolException, IOException {
 		String parameterRequest = "aasx";
 		String uploadURL = RECORDER_URL + parameterRequest;
 		String strToSend = "1";
 		HTTPUploadHelper.uploadHTTPPost(new ByteArrayInputStream(strToSend.getBytes()), uploadURL);
-		
+
 		List<String> paths = recorder.getPaths();
 		assertEquals(1, paths.size());
 		assertEquals(parameterRequest, VABPathTools.stripSlashes(paths.get(0)));
-		
+
 		Object retStr = recorder.getValue(parameterRequest);
 		assertEquals(strToSend, retStr);
 	}
-	
+
 	@Test
 	public void invokeExceptionFunction() {
 		VABElementProxy connVABElement = connManager.connectToVABElement("urn:fhg:es.iese:vab:1:1:simplevabelement");
@@ -195,7 +192,6 @@ public class TestVABHTTP extends TestProvider {
 	 */
 	private void performRequest(String URL) {
 		Client client = ClientBuilder.newClient();
-
 
 		// Called URL
 		WebTarget resource = client.target(URL);

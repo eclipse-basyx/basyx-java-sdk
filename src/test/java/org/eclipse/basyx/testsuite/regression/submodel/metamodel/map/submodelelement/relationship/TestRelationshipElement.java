@@ -46,26 +46,26 @@ import org.junit.Test;
 public class TestRelationshipElement {
 	private static final Reference FIRST = new Reference(new Key(KeyElements.ASSET, true, "firstValue", IdentifierType.IRI));
 	private static final Reference SECOND = new Reference(new Identifier(IdentifierType.CUSTOM, "secondId"), KeyElements.BLOB, false);
-	
+
 	private RelationshipElement relationshipElement;
-	
+
 	@Before
 	public void buildRelationshipElement() {
 		relationshipElement = new RelationshipElement(FIRST, SECOND);
-	} 
-	
+	}
+
 	@Test
 	public void testConstructor() {
 		assertEquals(FIRST, relationshipElement.getFirst());
 		assertEquals(SECOND, relationshipElement.getSecond());
-	} 
-	
+	}
+
 	@Test
 	public void testSetFirst() {
 		Reference newFirst = new Reference(new Key(KeyElements.CAPABILITY, false, "newFirst", IdentifierType.IRI));
 		relationshipElement.setFirst(newFirst);
 		assertEquals(newFirst, relationshipElement.getFirst());
-	} 
+	}
 
 	@Test
 	public void testSetSecond() {
@@ -73,12 +73,12 @@ public class TestRelationshipElement {
 		relationshipElement.setSecond(newSecond);
 		assertEquals(newSecond, relationshipElement.getSecond());
 	}
-	
+
 	@Test
 	public void testGetValue() {
 		RelationshipElementValue value = relationshipElement.getValue();
 		assertEquals(FIRST.getKeys().get(0).getValue(), value.getFirst().getKeys().get(0).getValue());
 		assertEquals(SECOND.getKeys().get(0).getValue(), value.getSecond().getKeys().get(0).getValue());
 	}
-	
+
 }

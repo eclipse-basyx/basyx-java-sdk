@@ -39,7 +39,8 @@ import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
 
 /**
  * Model provider explicitely meant to implement the access to the AAS object.
- * This excludes access to the submodels, that are wrapped into their own provider.
+ * This excludes access to the submodels, that are wrapped into their own
+ * provider.
  * 
  * @author espen
  *
@@ -49,8 +50,8 @@ public class AASModelProvider implements IModelProvider {
 	private IAASAPI aasApi;
 
 	/**
-	 * Constructor based on the model provider containing the AAS model. This is based
-	 * on the default AAS API
+	 * Constructor based on the model provider containing the AAS model. This is
+	 * based on the default AAS API
 	 */
 	public AASModelProvider(IModelProvider modelProvider) {
 		aasApi = new VABAASAPI(modelProvider);
@@ -130,7 +131,8 @@ public class AASModelProvider implements IModelProvider {
 	}
 
 	/**
-	 * Operations that can be invoked are not contained inside of AAS, but inside of submodels
+	 * Operations that can be invoked are not contained inside of AAS, but inside of
+	 * submodels
 	 */
 	@Override
 	public Object invokeOperation(String path, Object... parameter) throws ProviderException {

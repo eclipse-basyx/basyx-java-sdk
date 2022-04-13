@@ -45,21 +45,21 @@ public class TestConnectedBlob {
 	public final String BLOB_CONTENT = "BLOB_VALUE";
 
 	protected ConnectedBlob connectedBlob;
-	protected Blob blob;	
-	
+	protected Blob blob;
+
 	@Before
 	public void build() {
 		blob = new Blob("testIdShort", "mimeType");
-		
+
 		byte[] value = BLOB_CONTENT.getBytes(StandardCharsets.UTF_8);
-		
+
 		blob.setByteArrayValue(value);
-		
+
 		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(blob);
 
 		connectedBlob = new ConnectedBlob(elementProxy);
 	}
-	
+
 	/**
 	 * Tests if getValue() returns the correct value
 	 */
@@ -78,7 +78,7 @@ public class TestConnectedBlob {
 		assertArrayEquals(blob.getByteArrayValue(), connectedBlob.getByteArrayValue());
 		assertArrayEquals(BLOB_CONTENT.getBytes(StandardCharsets.UTF_8), connectedBlob.getByteArrayValue());
 	}
-	
+
 	/**
 	 * Tests if getMimeType() returns the correct value
 	 */
@@ -86,7 +86,7 @@ public class TestConnectedBlob {
 	public void testGetMimeType() {
 		assertEquals(blob.getMimeType(), connectedBlob.getMimeType());
 	}
-	
+
 	/**
 	 * Tests if getUTF8String() returns the correct value
 	 */
@@ -126,15 +126,15 @@ public class TestConnectedBlob {
 		connectedBlob.setValue(newStringValue);
 		assertEquals("NEW", connectedBlob.getUTF8String());
 	}
-	
+
 	@Test
 	public void setValueUpdatesValueCorrectly() {
 		triggerCachingOfSubmodelElement();
 
 		byte[] expected = BLOB_CONTENT.getBytes(StandardCharsets.US_ASCII);
-		
+
 		connectedBlob.setValue(Base64.getEncoder().encodeToString(expected));
-		
+
 		assertEquals(Base64.getEncoder().encodeToString(expected), connectedBlob.getValue());
 	}
 

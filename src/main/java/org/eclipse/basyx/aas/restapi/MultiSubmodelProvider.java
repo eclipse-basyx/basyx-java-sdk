@@ -343,8 +343,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 					}
 				}
 
-				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> getConnectorFactory().create(endpoint)).map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m))
-						.collect(Collectors.toList());
+				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> getConnectorFactory().create(endpoint)).map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m)).collect(Collectors.toList());
 				submodels.addAll(remoteSms);
 			}
 		}

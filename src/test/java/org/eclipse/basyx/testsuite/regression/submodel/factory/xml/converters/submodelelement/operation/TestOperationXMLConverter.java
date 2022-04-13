@@ -40,6 +40,7 @@ import org.junit.Test;
 
 /**
  * This class tests {@link OperationXMLConverter}
+ * 
  * @author haque
  *
  */
@@ -54,6 +55,6 @@ public class TestOperationXMLConverter {
 		assertEquals(idShort, parsedOperation.getIdShort());
 		assertEquals(new ArrayList<OperationVariable>(), parsedOperation.getInputVariables());
 		assertEquals(new ArrayList<OperationVariable>(), parsedOperation.getOutputVariables());
-		assertEquals(new ArrayList<OperationVariable>(), parsedOperation.getInOutputVariables());		
+		assertEquals(new ArrayList<OperationVariable>(), parsedOperation.getInOutputVariables());
 	}
 }

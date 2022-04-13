@@ -88,7 +88,6 @@ public abstract class TestDirectory {
 		String result = registry.lookup(elem1);
 		assertEquals(endpoint1, result);
 
-
 		// Retrieve and check the second AAS
 		result = registry.lookup(elem2);
 		assertEquals(endpoint2, result);

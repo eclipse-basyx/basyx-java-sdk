@@ -58,18 +58,21 @@ import org.xml.sax.SAXException;
  * <code> {@literal <a><b>v</b></a> => {a={b=v}}}<br></code><br>
  * 
  * -Text Node with Attributes<br>
- * <code> {@literal <a b="v1" c="v2">v3</a> => {ele :{#text:v3,b:v1, c:v2}}}</code> <br>
+ * <code> {@literal <a b="v1" c=
+ * "v2">v3</a> => {ele :{#text:v3,b:v1, c:v2}}}</code> <br>
  * <br>
  * 
  * -Multiple Text Nodes<br>
  * <code>{@literal <a><b>v1</b><b>v2</b></a> => {a={b=[v1,v2]}}}<br></code><br>
  * 
  * -Multiple Text Nodes with Attributes <br>
- * <code> {@literal <a><b d="v3" e="v5">v1</b><b d="v4" e="v6">v2</b></a> => {a={b=[{#text=v1, d=v3, e=v5}, {#text=v2, d=v4, e=v6}]}}}</code><br>
+ * <code> {@literal <a><b d="v3" e="v5">v1</b><b d="v4" e=
+ * "v6">v2</b></a> => {a={b=[{#text=v1, d=v3, e=v5}, {#text=v2, d=v4, e=v6}]}}}</code><br>
  * <br>
  * 
  * -Element Node Attributes<br>
- * <code> {@literal <a c="v1" d="v2"><b>v3</b></a> => {a={b=v3}, c=v1, d=v2}}</code><br>
+ * <code> {@literal <a c="v1" d=
+ * "v2"><b>v3</b></a> => {a={b=v3}, c=v1, d=v2}}</code><br>
  * <br>
  * 
  * @author kannoth
@@ -82,13 +85,13 @@ public class XmlParser {
 	/**
 	 * Parses the XML string content and returns the nested LinkedHashMap
 	 * 
-	 * @param xmlContent - String content of the xml file
+	 * @param xmlContent
+	 *            - String content of the xml file
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public static Map<String, Object> buildXmlMap(String xmlContent)
-			throws ParserConfigurationException, SAXException, IOException {
+	public static Map<String, Object> buildXmlMap(String xmlContent) throws ParserConfigurationException, SAXException, IOException {
 
 		Map<String, Object> retMap = new LinkedHashMap<>();
 		// Getting rid of the white spaces between the tags in order to avoid creation
@@ -119,7 +122,8 @@ public class XmlParser {
 	 * Traverse through the given DOM Node and build nested map representing the DOM
 	 * tree.
 	 * 
-	 * @param parentNode - Node from which the traversal should be initiated.
+	 * @param parentNode
+	 *            - Node from which the traversal should be initiated.
 	 * @return
 	 */
 	private static Object traverseDomTree(Node parentNode) {
@@ -176,7 +180,8 @@ public class XmlParser {
 	/**
 	 * Creates a Map of with element's text and attributes combined
 	 * 
-	 * @param nodeAttrs - Text node of interest
+	 * @param nodeAttrs
+	 *            - Text node of interest
 	 * @return
 	 */
 	private static Map<String, Object> makeAttrMapForTxtNode(Node node) {
@@ -198,9 +203,11 @@ public class XmlParser {
 	 * Appends the attributes of the Element node to the given map. Useful for
 	 * nested Element nodes.
 	 * 
-	 * @param eleMap - Nested map corresponding to an element node where the
-	 *               attributes needs to be appended.
-	 * @param node   - Element node of interest
+	 * @param eleMap
+	 *            - Nested map corresponding to an element node where the attributes
+	 *            needs to be appended.
+	 * @param node
+	 *            - Element node of interest
 	 * @return
 	 */
 	private static Map<String, Object> makeAttrMapForEleNode(Map<String, Object> eleMap, Node node) {
@@ -218,9 +225,12 @@ public class XmlParser {
 	/**
 	 * Updates the nested Map until created with new element.
 	 * 
-	 * @param map      - Map which is created until
-	 * @param nodeName - Node name of interest
-	 * @param leafNode - Leaf object that to be added
+	 * @param map
+	 *            - Map which is created until
+	 * @param nodeName
+	 *            - Node name of interest
+	 * @param leafNode
+	 *            - Leaf object that to be added
 	 */
 	@SuppressWarnings("unchecked")
 	private static void updateNestedMap(Map<String, Object> map, String nodeName, Object leafNode) {
@@ -250,7 +260,8 @@ public class XmlParser {
 	/**
 	 * Makes the given NodeList iterable
 	 * 
-	 * @param nodeList - NodeList to be made iterable
+	 * @param nodeList
+	 *            - NodeList to be made iterable
 	 * @return
 	 */
 	private static Iterable<Node> iterableNodeMap(final NodeList nodeList) {
@@ -276,7 +287,8 @@ public class XmlParser {
 	/**
 	 * Makes the given NamedNodeMap iterable
 	 * 
-	 * @param namedNodeMap - NamedNodeMap to be made iterable
+	 * @param namedNodeMap
+	 *            - NamedNodeMap to be made iterable
 	 * @return
 	 */
 	private static Iterable<Node> iterableNamedNodeMap(final NamedNodeMap namedNodeMap) {

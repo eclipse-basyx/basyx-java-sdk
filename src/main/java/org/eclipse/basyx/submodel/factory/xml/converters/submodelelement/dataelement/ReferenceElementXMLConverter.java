@@ -35,21 +35,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Parses &lt;aas:referenceElement&gt; and builds the ReferenceElement object from it <br>
+ * Parses &lt;aas:referenceElement&gt; and builds the ReferenceElement object
+ * from it <br>
  * Builds &lt;aas:referenceElement&gt; from a given ReferenceElement object
  * 
  * @author conradi
  *
  */
 public class ReferenceElementXMLConverter extends SubmodelElementXMLConverter {
-		
+
 	public static final String REFERENCE_ELEMENT = "aas:referenceElement";
 
-	
 	/**
 	 * Parses a Map containing the content of XML tag &lt;aas:referenceElement&gt;
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:referenceElement&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag &lt;aas:referenceElement&gt;
 	 * @return the parsed ReferenceElement
 	 */
 	@SuppressWarnings("unchecked")
@@ -59,28 +60,28 @@ public class ReferenceElementXMLConverter extends SubmodelElementXMLConverter {
 		populateSubmodelElement(xmlObject, refElement);
 		return refElement;
 	}
-	
-	
-	
-	
+
 	/**
 	 * Builds the &lt;aas:referenceElement&gt; XML tag for a ReferenceElement
 	 * 
-	 * @param document the XML document
-	 * @param refElem the IReferenceElement to build the XML for
-	 * @return the &lt;aas:referenceElement&gt; XML tag for the given ReferenceElement
+	 * @param document
+	 *            the XML document
+	 * @param refElem
+	 *            the IReferenceElement to build the XML for
+	 * @return the &lt;aas:referenceElement&gt; XML tag for the given
+	 *         ReferenceElement
 	 */
 	public static Element buildReferenceElement(Document document, IReferenceElement refElem) {
 		Element refElemRoot = document.createElement(REFERENCE_ELEMENT);
-		
+
 		populateSubmodelElement(document, refElemRoot, refElem);
 
 		IReference value = refElem.getValue();
-		if(value != null) {
+		if (value != null) {
 			Element derivedFromRoot = document.createElement(VALUE);
-			derivedFromRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, value)); 
+			derivedFromRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, value));
 			refElemRoot.appendChild(derivedFromRoot);
-		}		
+		}
 		return refElemRoot;
 	}
 }

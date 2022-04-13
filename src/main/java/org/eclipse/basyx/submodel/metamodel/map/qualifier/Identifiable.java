@@ -55,9 +55,10 @@ public class Identifiable extends Referable implements IIdentifiable {
 		// The globally unique identification of an element. (Identificator)
 		put(IDENTIFICATION, new Identifier());
 	}
-	
+
 	/**
 	 * Constructor with mandatory attribute
+	 * 
 	 * @param idShort
 	 * @param identification
 	 */
@@ -90,32 +91,31 @@ public class Identifiable extends Referable implements IIdentifiable {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Identifiable.class, map);
 		}
-		
+
 		Identifiable ret = new Identifiable();
 		ret.setMap(map);
 		ret.setElementType(type);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> map) {
-		return Referable.isValid(map) &&
-				map.containsKey(Identifiable.IDENTIFICATION) &&
-				Identifier.isValid((Map<String, Object>)map.get(Identifiable.IDENTIFICATION));
+		return Referable.isValid(map) && map.containsKey(Identifiable.IDENTIFICATION) && Identifier.isValid((Map<String, Object>) map.get(Identifiable.IDENTIFICATION));
 	}
-	
+
 	/**
-	 * Creates an Identifiable object from a map
-	 * Without checking mandatory attributes present
+	 * Creates an Identifiable object from a map Without checking mandatory
+	 * attributes present
+	 * 
 	 * @param map
 	 * @param type
 	 * @return
@@ -124,7 +124,7 @@ public class Identifiable extends Referable implements IIdentifiable {
 		if (map == null) {
 			return null;
 		}
-		
+
 		Identifiable ret = new Identifiable();
 		ret.setMap(map);
 		ret.setElementType(type);

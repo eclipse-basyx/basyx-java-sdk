@@ -47,8 +47,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests createAsFacade and isValid of {@link Fax} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link Fax} for their correctness
  * 
  * @author haque
  *
@@ -59,7 +58,7 @@ public class TestFax {
 	public static Property typeOfFax = new Property(Fax.TYPEOFFAXID, ValueType.String);
 
 	private Map<String, Object> faxMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void buildFax() {
 		faxNumber.setValue(new LangStrings(new LangString("DE", "0631123456")));
@@ -80,14 +79,14 @@ public class TestFax {
 		assertEquals(typeOfFax, faxFromMap.getTypeOfFaxNumber());
 		assertEquals(IDSHORT, faxFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		faxMap.remove(Referable.IDSHORT);
 		Fax.createAsFacade(faxMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionFaxNumber() {
 		List<ISubmodelElement> newElements = new ArrayList<ISubmodelElement>();
 		newElements.add(typeOfFax);

@@ -33,25 +33,24 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests constructor, setter and getter of {@link HasKind} for their
- * correctness
+ * Tests constructor, setter and getter of {@link HasKind} for their correctness
  * 
  * @author haque
  *
  */
 public class TestHasKind {
 	private static final ModelingKind MODELING_KIND = ModelingKind.INSTANCE;
-	
+
 	private HasKind hasKind;
-	
+
 	@Before
 	public void buildHasKind() {
 		hasKind = new HasKind(MODELING_KIND);
 	}
-	
+
 	@Test
 	public void testConstructor() {
-		assertEquals(hasKind.getKind(), MODELING_KIND); 
+		assertEquals(hasKind.getKind(), MODELING_KIND);
 	}
 
 	@Test
@@ -60,7 +59,7 @@ public class TestHasKind {
 		hasKind.setKind(newModelingKind);
 		assertEquals(newModelingKind, hasKind.getKind());
 	}
-	
+
 	@Test
 	public void testSetModelingKindOfNull() {
 		// Explicitly set null

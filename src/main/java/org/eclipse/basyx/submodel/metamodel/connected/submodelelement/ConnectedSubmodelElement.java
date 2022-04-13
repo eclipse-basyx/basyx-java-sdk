@@ -47,18 +47,19 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
  * "Connected" implementation of SubmodelElement
+ * 
  * @author rajashek
  *
  */
 public abstract class ConnectedSubmodelElement extends ConnectedElement implements ISubmodelElement {
 	public ConnectedSubmodelElement(VABElementProxy proxy) {
-		super(proxy);		
+		super(proxy);
 	}
 
 	protected KeyElements getKeyElement() {
 		return KeyElements.SUBMODELELEMENT;
 	}
-	
+
 	@Override
 	public String getIdShort() {
 		return Referable.createAsFacade(getElem(), getKeyElement()).getIdShort();
@@ -97,7 +98,7 @@ public abstract class ConnectedSubmodelElement extends ConnectedElement implemen
 		return this.getKind();
 
 	}
-	
+
 	@Override
 	public ModelingKind getKind() {
 		return HasKind.createAsFacade(getElem()).getKind();
@@ -113,18 +114,18 @@ public abstract class ConnectedSubmodelElement extends ConnectedElement implemen
 	public Collection<IEmbeddedDataSpecification> getEmbeddedDataSpecifications() {
 		return HasDataSpecification.createAsFacade(getElem()).getEmbeddedDataSpecifications();
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public String getModelType() {
 		return (String) ((Map<String, Object>) getElem().get(ModelType.MODELTYPE)).get(ModelType.NAME);
 	}
-	
+
 	@Override
 	public IReference getReference() {
 		return Referable.createAsFacade(getElem(), getKeyElement()).getReference();
 	}
-	
+
 	@Override
 	public void setValue(Object value) {
 		getProxy().setValue(MultiSubmodelElementProvider.VALUE, value);

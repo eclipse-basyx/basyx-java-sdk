@@ -69,9 +69,7 @@ public class TestConnectedProperty {
 		Property propertyMeta = new Property("testIdShort", ValueType.String);
 		propertyMeta.setValue(null);
 		Map<String, Object> destroyType = TypeDestroyer.destroyType(propertyMeta);
-		prop = new ConnectedProperty(
-				new VABConnectionManagerStub(new SubmodelElementProvider(new VABMapProvider(destroyType)))
-						.connectToVABElement(""));
+		prop = new ConnectedProperty(new VABConnectionManagerStub(new SubmodelElementProvider(new VABMapProvider(destroyType))).connectToVABElement(""));
 		prop.setValue("content");
 		assertEquals("content", prop.getValue());
 	}

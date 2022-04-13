@@ -41,7 +41,8 @@ public interface IAASAggregatorAASXUpload extends IAASAggregator {
 	/**
 	 * Uploads an AASX in the AAS Aggregator
 	 * 
-	 * @param aasxStream stream of the given AASX
+	 * @param aasxStream
+	 *            stream of the given AASX
 	 */
 	public void uploadAASX(InputStream aasxStream);
 }

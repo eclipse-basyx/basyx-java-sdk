@@ -27,9 +27,9 @@ package org.eclipse.basyx.submodel.metamodel.api.dataspecification;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
- * DataSpecification containing a DataSpecificationContent
- * Difference to the IDataSpecification:
- * It is not identifiable, but has a reference to an identifiable DataSpecification template
+ * DataSpecification containing a DataSpecificationContent Difference to the
+ * IDataSpecification: It is not identifiable, but has a reference to an
+ * identifiable DataSpecification template
  * 
  * @author espen
  *

@@ -30,8 +30,7 @@ import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.junit.Test;
 
 /**
- * Tests constructor and getter of {@link ModelType} for their
- * correctness
+ * Tests constructor and getter of {@link ModelType} for their correctness
  * 
  * @author haque
  *

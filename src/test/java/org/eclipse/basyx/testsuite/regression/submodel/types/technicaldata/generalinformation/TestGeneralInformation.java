@@ -62,9 +62,9 @@ public class TestGeneralInformation {
 	public static Property partNumber = new Property(GeneralInformation.MANUFACTURERPARTNUMBERID, ValueType.String);
 	public static Property orderCode = new Property(GeneralInformation.MANUFACTURERORDERCODEID, ValueType.String);
 	public static File image = new File("image/jpg");
-	
+
 	private Map<String, Object> InfoMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void init() {
 		manufacturerName.setValue("Example Company");
@@ -75,7 +75,7 @@ public class TestGeneralInformation {
 		orderCode.setValue("EEA-EX-200-S/47-Q3");
 		image.setIdShort(GeneralInformation.PRODUCTIMAGEPREFIX + "01");
 		image.setValue("/aasx/TechnicalData/ ProdFromTop.jpg");
-		
+
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(manufacturerName);
 		elements.add(manufacturerLogo);
@@ -83,12 +83,12 @@ public class TestGeneralInformation {
 		elements.add(partNumber);
 		elements.add(orderCode);
 		elements.add(image);
-		
+
 		InfoMap.put(Referable.IDSHORT, GeneralInformation.IDSHORT);
 		InfoMap.put(HasSemantics.SEMANTICID, GeneralInformation.SEMANTICID);
 		InfoMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		GeneralInformation infoFromMap = GeneralInformation.createAsFacade(InfoMap);
@@ -101,41 +101,41 @@ public class TestGeneralInformation {
 		assertEquals(orderCode, infoFromMap.getManufacturerOrderCode());
 		assertEquals(GeneralInformation.IDSHORT, infoFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		InfoMap.remove(Referable.IDSHORT);
 		GeneralInformation.createAsFacade(InfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionName() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)InfoMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) InfoMap.get(Property.VALUE);
 		elements.remove(manufacturerName);
 		GeneralInformation.createAsFacade(InfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionDesignation() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)InfoMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) InfoMap.get(Property.VALUE);
 		elements.remove(designation);
 		GeneralInformation.createAsFacade(InfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionPartNumber() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)InfoMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) InfoMap.get(Property.VALUE);
 		elements.remove(partNumber);
 		GeneralInformation.createAsFacade(InfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionOrderCode() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)InfoMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) InfoMap.get(Property.VALUE);
 		elements.remove(orderCode);
 		GeneralInformation.createAsFacade(InfoMap);
 	}

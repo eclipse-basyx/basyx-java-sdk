@@ -41,13 +41,13 @@ import org.junit.Test;
  */
 public class TestModelUrn {
 	private static final String rawURN = "testRawUrn";
-	
+
 	@Test
 	public void testConstructor1() {
 		ModelUrn modelUrn = new ModelUrn(rawURN);
 		assertEquals(rawURN, modelUrn.getURN());
 	}
-	
+
 	@Test
 	public void testConstructor2() {
 		String legalEntity = "testLegalEntity";
@@ -57,13 +57,13 @@ public class TestModelUrn {
 		String revision = "5";
 		String elementId = "testId";
 		String elementInstance = "testInstance";
-		
+
 		ModelUrn modelUrn = new ModelUrn(legalEntity, subUnit, subModel, version, revision, elementId, elementInstance);
-		String appendedString = "urn:" + legalEntity + ":" + subUnit + ":" + subModel + ":" + version + ":" + revision + ":" + elementId + "#"+ elementInstance;
+		String appendedString = "urn:" + legalEntity + ":" + subUnit + ":" + subModel + ":" + version + ":" + revision + ":" + elementId + "#" + elementInstance;
 		assertEquals(appendedString, modelUrn.getURN());
 		assertEquals(IdentifierType.IRI, modelUrn.getIdType());
 	}
-	
+
 	@Test
 	public void testAppend() {
 		String suffix = "testSuffix";

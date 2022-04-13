@@ -84,8 +84,7 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 		connectorProvider.addMapping("", provider);
 
 		// Create connection manager using the dummy
-		ConnectedAssetAdministrationShellManager manager = new ConnectedAssetAdministrationShellManager(registry,
-				connectorProvider);
+		ConnectedAssetAdministrationShellManager manager = new ConnectedAssetAdministrationShellManager(registry, connectorProvider);
 
 		// Create ConnectedAssetAdministrationShell
 		connectedAAS = manager.retrieveAAS(AASID);

@@ -44,12 +44,12 @@ public class ConnectedRelationshipElement extends ConnectedSubmodelElement imple
 	public ConnectedRelationshipElement(VABElementProxy proxy) {
 		super(proxy);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.RELATIONSHIPELEMENT;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public RelationshipElementValue getValue() {

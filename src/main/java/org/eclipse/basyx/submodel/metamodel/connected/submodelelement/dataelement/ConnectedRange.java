@@ -37,6 +37,7 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
  * "Connected" implementation of IRange
+ * 
  * @author conradi
  *
  */
@@ -72,11 +73,11 @@ public class ConnectedRange extends ConnectedDataElement implements IRange {
 	public RangeValue getValue() {
 		return new RangeValue(getMin(), getMax());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
-		if(RangeValue.isRangeValue(value)) {
+		if (RangeValue.isRangeValue(value)) {
 			RangeValue rangeValue = RangeValue.createAsFacade((Map<String, Object>) value);
 			setValue(rangeValue);
 		} else {
@@ -94,11 +95,8 @@ public class ConnectedRange extends ConnectedDataElement implements IRange {
 		Object minRaw = rangeValue.getMin();
 		Object maxRaw = rangeValue.getMax();
 
-		RangeValue prepared = new RangeValue(
-				ValueTypeHelper.prepareForSerialization(minRaw),
-				ValueTypeHelper.prepareForSerialization(maxRaw)
-			);
-				
+		RangeValue prepared = new RangeValue(ValueTypeHelper.prepareForSerialization(minRaw), ValueTypeHelper.prepareForSerialization(maxRaw));
+
 		getProxy().setValue(MultiSubmodelElementProvider.VALUE, prepared);
 	}
 }

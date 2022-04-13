@@ -36,16 +36,11 @@ import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnumHe
  *
  */
 public enum ValueType implements StandardizedLiteralEnum {
-	Int8("byte"), Int16("short"), Int32("int"), Int64("long"),
-	UInt8("unsignedByte"), UInt16("unsignedShort"), UInt32("unsignedInt"), UInt64("unsignedLong"),
-	String("string"), LangString("langString"),
-	AnyURI("anyuri"), Base64Binary("base64Binary"), HexBinary("hexBinary"), NOTATION("notation"), ENTITY("entity"), ID("id"), IDREF("idref"),
-	Integer("integer"), NonPositiveInteger("nonPositiveInteger"), NonNegativeInteger("nonNegativeInteger"), PositiveInteger("positiveInteger"), NegativeInteger("negativeInteger"),
-	Double("double"), Float("float"), Boolean("boolean"),
-	Duration("duration"), DayTimeDuration("dayTimeDuration"), YearMonthDuration("yearMonthDuration"),
-	DateTime("dateTime"), DateTimeStamp("dateTimeStamp"), GDay("gDay"), GMonth("gMonth"), GMonthDay("gMonthDay"), GYear("gYear"), GYearMonth("gYearMonth"),
-	QName("qName"),
-	None("none"), AnyType("anyType"), AnySimpleType("anySimpleType");
+	Int8("byte"), Int16("short"), Int32("int"), Int64("long"), UInt8("unsignedByte"), UInt16("unsignedShort"), UInt32("unsignedInt"), UInt64("unsignedLong"), String("string"), LangString("langString"), AnyURI("anyuri"), Base64Binary(
+			"base64Binary"), HexBinary("hexBinary"), NOTATION("notation"), ENTITY("entity"), ID("id"), IDREF("idref"), Integer("integer"), NonPositiveInteger("nonPositiveInteger"), NonNegativeInteger("nonNegativeInteger"), PositiveInteger(
+					"positiveInteger"), NegativeInteger("negativeInteger"), Double("double"), Float("float"), Boolean("boolean"), Duration("duration"), DayTimeDuration("dayTimeDuration"), YearMonthDuration("yearMonthDuration"), DateTime(
+							"dateTime"), DateTimeStamp(
+									"dateTimeStamp"), GDay("gDay"), GMonth("gMonth"), GMonthDay("gMonthDay"), GYear("gYear"), GYearMonth("gYearMonth"), QName("qName"), None("none"), AnyType("anyType"), AnySimpleType("anySimpleType");
 
 	private String standardizedLiteral;
 

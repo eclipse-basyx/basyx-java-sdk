@@ -45,8 +45,7 @@ import org.junit.Test;
  *
  */
 public class TestVABBaSyxTCP extends TestProvider {
-	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory_BaSyxNative(),
-			new BaSyxConnectorFactory());
+	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory_BaSyxNative(), new BaSyxConnectorFactory());
 
 	@Rule
 	public VABTCPServerResource res = new VABTCPServerResource(new VABMapProvider(new SimpleVABElement()));

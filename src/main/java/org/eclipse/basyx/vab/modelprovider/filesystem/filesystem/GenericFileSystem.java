@@ -80,15 +80,12 @@ public class GenericFileSystem implements FileSystem {
 
 		// Use try to ensure that close is called
 		try (Stream<Path> directory = Files.list(getPath(path))) {
-			files.addAll(directory.filter(Files::isRegularFile)
-					.map(p -> new File(restoreCase(p.toString().replace("\\", "/")), FileType.DATA)).collect(Collectors.toList()));
+			files.addAll(directory.filter(Files::isRegularFile).map(p -> new File(restoreCase(p.toString().replace("\\", "/")), FileType.DATA)).collect(Collectors.toList()));
 		}
 
 		// Use try to ensure that close is called
 		try (Stream<Path> directory = Files.list(getPath(path))) {
-			files.addAll(directory.filter(Files::isDirectory)
-					.map(p -> new File(restoreCase(p.toString().replace("\\", "/")), FileType.DIRECTORY))
-					.collect(Collectors.toList()));
+			files.addAll(directory.filter(Files::isDirectory).map(p -> new File(restoreCase(p.toString().replace("\\", "/")), FileType.DIRECTORY)).collect(Collectors.toList()));
 		}
 
 		return files;
@@ -100,27 +97,27 @@ public class GenericFileSystem implements FileSystem {
 		try {
 			Files.walk(getPath(path)).sorted(Comparator.reverseOrder()).map(p -> p.toFile()).forEach(f -> f.delete());
 		} catch (NoSuchFileException e) {
-			//Do nothing if the File to delete doesn't exist
+			// Do nothing if the File to delete doesn't exist
 		}
 	}
-	
+
 	@Override
 	public FileType getType(String path) {
 		path = toLowerCase(path);
-		
-		if(!Files.exists(getPath(path)))
+
+		if (!Files.exists(getPath(path)))
 			return null;
-		
-		if(Files.isDirectory(getPath(path)))
+
+		if (Files.isDirectory(getPath(path)))
 			return FileType.DIRECTORY;
-		
+
 		return FileType.DATA;
 	}
 
 	private Path getPath(String path) {
 		return FileSystems.getDefault().getPath(path);
 	}
-	
+
 	/**
 	 * Replaces each capital character by (_small character) ([A-Z] by _[a-z]) and
 	 * each _ by __
@@ -139,7 +136,7 @@ public class GenericFileSystem implements FileSystem {
 
 		while (m.find())
 			m.appendReplacement(result, m.group(1).toUpperCase());
-		
+
 		m.appendTail(result);
 
 		return result.toString();

@@ -48,14 +48,14 @@ public class TestIdentifiable {
 	private static final String ID_SHORT_STRING = "testIdShort";
 	private static final LangStrings DESCRIPTION = new LangStrings("Eng", "test");
 	private static final IdentifierType ID_TYPE = IdentifierType.CUSTOM;
-	
+
 	private Identifiable identifiable;
-	
+
 	@Before
 	public void buildIdentifiable() {
 		identifiable = new Identifiable(VERSION, REVISION, ID_SHORT_STRING, CATE_STRING, DESCRIPTION, ID_TYPE, ID_SHORT_STRING);
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		assertEquals(ID_SHORT_STRING, identifiable.getIdShort());
@@ -63,7 +63,7 @@ public class TestIdentifiable {
 		assertEquals(new AdministrativeInformation(VERSION, REVISION), identifiable.getAdministration());
 		assertEquals(new Identifier(ID_TYPE, ID_SHORT_STRING), identifiable.getIdentification());
 	}
-	
+
 	@Test
 	public void testSetAdministration() {
 		String newVersion = "2.0";
@@ -72,7 +72,7 @@ public class TestIdentifiable {
 		identifiable.setAdministration(information);
 		assertEquals(information, identifiable.getAdministration());
 	}
-	
+
 	@Test
 	public void testSetIdentification() {
 		IdentifierType idType = IdentifierType.IRI;

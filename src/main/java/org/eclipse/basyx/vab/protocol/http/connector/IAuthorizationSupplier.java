@@ -27,7 +27,8 @@ package org.eclipse.basyx.vab.protocol.http.connector;
 import java.util.Optional;
 
 /**
- * Interface for a supplier of values that can be placed in the HTTP Authorization request header.
+ * Interface for a supplier of values that can be placed in the HTTP
+ * Authorization request header.
  *
  * @author pneuschwander
  */
@@ -35,9 +36,11 @@ import java.util.Optional;
 public interface IAuthorizationSupplier {
 
 	/**
-	 * Might provide a value that can be placed in the HTTP Authorization request header.
+	 * Might provide a value that can be placed in the HTTP Authorization request
+	 * header.
 	 *
-	 * @return Optional that is either empty or contains a non-blank String that can be placed in the HTTP Authorization request header
+	 * @return Optional that is either empty or contains a non-blank String that can
+	 *         be placed in the HTTP Authorization request header
 	 */
 	Optional<String> getAuthorization();
 }

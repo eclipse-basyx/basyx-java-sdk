@@ -66,9 +66,9 @@ public class FileSystemProvider implements IModelProvider {
 	private final GSONTools tools = new GSONTools(new DefaultTypeFactory());
 
 	/**
-	 * Constructor which takes a file system and a root directory
-	 * Removes the last '/' from the passed root directory if it exists
-	 * Creates the root directory folder
+	 * Constructor which takes a file system and a root directory Removes the last
+	 * '/' from the passed root directory if it exists Creates the root directory
+	 * folder
 	 */
 	public FileSystemProvider(FileSystem fileSystem, String rootDir) throws ProviderException {
 		this.fileSystem = fileSystem;
@@ -89,8 +89,7 @@ public class FileSystemProvider implements IModelProvider {
 	 * Same constructor as the above one, only gets an additional boolean argument
 	 * doEmptyDirectory which specifies whether to empty the root directory or not
 	 */
-	public FileSystemProvider(FileSystem fileSystem, String rootDir, Map<String, Object> VABelement,
-			boolean doEmptyDirectory) throws ProviderException {
+	public FileSystemProvider(FileSystem fileSystem, String rootDir, Map<String, Object> VABelement, boolean doEmptyDirectory) throws ProviderException {
 		this.fileSystem = fileSystem;
 		this.rootDir = unifyPath(rootDir);
 
@@ -102,7 +101,8 @@ public class FileSystemProvider implements IModelProvider {
 
 	/**
 	 * Removes the first and last character from a String if it is a "/"
-	 * @throws MalformedRequestException 
+	 * 
+	 * @throws MalformedRequestException
 	 */
 	private String unifyPath(String path) throws MalformedRequestException {
 		VABPathTools.checkPathForNull(path);
@@ -128,7 +128,8 @@ public class FileSystemProvider implements IModelProvider {
 		path = path.equals("") ? rootDir + "/" + metaFileName : rootDir + "/" + path + "/" + metaFileName;
 		if (fileSystem.getType(path) == FileType.DATA) {
 			Object deserialized = loadAndDeserialize(path);
-			// Especially for "[]", deserialization can not differentiate between lists and sets
+			// Especially for "[]", deserialization can not differentiate between lists and
+			// sets
 			if (deserialized instanceof HashSet) {
 				return (HashSet<String>) deserialized;
 			} else if (deserialized instanceof Collection) {
@@ -180,9 +181,9 @@ public class FileSystemProvider implements IModelProvider {
 		try {
 			directoryFiles = fileSystem.readDirectory(fullPath);
 		} catch (IOException e) {
-			throw new ProviderException("Path \"" + path + "\" could not be read."); 
+			throw new ProviderException("Path \"" + path + "\" could not be read.");
 		}
-		
+
 		removeMetaFile(directoryFiles);
 
 		for (File file : directoryFiles) {
@@ -218,8 +219,8 @@ public class FileSystemProvider implements IModelProvider {
 	}
 
 	/**
-	 * Adds collection to the __meta file present in directoryPath
-	 * Works whether "/" is at the end of path or not
+	 * Adds collection to the __meta file present in directoryPath Works whether "/"
+	 * is at the end of path or not
 	 */
 	private void addCollectionToMetaFile(String directoryPath, String collectionName) throws ProviderException {
 		HashSet<String> collections = readMetaFile(directoryPath);
@@ -234,9 +235,9 @@ public class FileSystemProvider implements IModelProvider {
 	}
 
 	/**
-	 * Serializes and writes the object in the path specified. The path is relative to the RootDir
-	 * If the write folder is not present, it is created
-	 * If the object is an array or a collection, a collection is written in a folder
+	 * Serializes and writes the object in the path specified. The path is relative
+	 * to the RootDir If the write folder is not present, it is created If the
+	 * object is an array or a collection, a collection is written in a folder
 	 */
 	@SuppressWarnings("unchecked")
 	private void writeObject(String path, Object o) throws ProviderException {
@@ -274,7 +275,7 @@ public class FileSystemProvider implements IModelProvider {
 			serializeAndSave(fullPath, o);
 		}
 	}
-	
+
 	private void createDirectory(String path) throws ProviderException {
 		try {
 			fileSystem.createDirectory(path);
@@ -282,7 +283,7 @@ public class FileSystemProvider implements IModelProvider {
 			throw new ProviderException("Directory \"" + path + "\" could not be created.");
 		}
 	}
-	
+
 	private void deleteDirectory(String path) throws ProviderException {
 		try {
 			fileSystem.deleteDirectory(path);
@@ -290,7 +291,7 @@ public class FileSystemProvider implements IModelProvider {
 			throw new ProviderException("Directory \"" + path + "\" could not be deleted.");
 		}
 	}
-	
+
 	private void deleteFile(String path) throws ProviderException {
 		try {
 			fileSystem.deleteFile(path);
@@ -301,14 +302,14 @@ public class FileSystemProvider implements IModelProvider {
 
 	/**
 	 * Mirrors a Map<String, Object> folder structure in the specified relative path
-	 * Works whether "/" is at the end of path or not
-	 * Does not create the directory "path"
+	 * Works whether "/" is at the end of path or not Does not create the directory
+	 * "path"
 	 */
 	@SuppressWarnings("unchecked")
 	private void fromMapToDirectory(String path, Map<String, Object> map) throws ProviderException {
 		path = unifyPath(path);
 		String fullPath = rootDir + "/" + path;
-		
+
 		createDirectory(fullPath);
 
 		for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -356,7 +357,7 @@ public class FileSystemProvider implements IModelProvider {
 		String fullDirPath = rootDir + "/" + directory;
 
 		if (fileSystem.getType(fullDirPath) == FileType.DIRECTORY) {
-			
+
 			List<File> directoryFiles;
 			try {
 				directoryFiles = fileSystem.readDirectory(fullDirPath);
@@ -385,8 +386,7 @@ public class FileSystemProvider implements IModelProvider {
 				} else if (fileName.matches(regexCollectionElem)) {
 					// We wanted to read an element of a collection. The element does not exist,
 					// throw an Invalid List Reference Exception
-					throw new ResourceNotFoundException("The specified list element \"" +
-							fileName.substring(collectionElemPrefix.length()) + "\" does not exist.");
+					throw new ResourceNotFoundException("The specified list element \"" + fileName.substring(collectionElemPrefix.length()) + "\" does not exist.");
 				}
 			}
 		}
@@ -394,8 +394,8 @@ public class FileSystemProvider implements IModelProvider {
 	}
 
 	/**
-	 * Sets the file, folder, or collection at the specified path to newValue
-	 * Only works if the types match (i.e. file ??? file, folder ??? folder, etc...)
+	 * Sets the file, folder, or collection at the specified path to newValue Only
+	 * works if the types match (i.e. file ??? file, folder ??? folder, etc...)
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -412,8 +412,7 @@ public class FileSystemProvider implements IModelProvider {
 			if (!(newValue instanceof Map) && !(newValue instanceof Collection<?>)) {
 				serializeAndSave(fullPath, newValue);
 			} else {
-				throw new MalformedRequestException("The single value at \"" + path + 
-						"\" can not be replaced with a Map or Collection");
+				throw new MalformedRequestException("The single value at \"" + path + "\" can not be replaced with a Map or Collection");
 			}
 		} else if (type == FileType.DIRECTORY) {
 			if ((collections == null || !collections.contains(fileName)) && newValue instanceof Map) {
@@ -429,8 +428,8 @@ public class FileSystemProvider implements IModelProvider {
 	}
 
 	/**
-	 * Creates newEntity at the specified path
-	 * If a collection exists at the specified path, add newEntity to it IF newEntity is not a collection
+	 * Creates newEntity at the specified path If a collection exists at the
+	 * specified path, add newEntity to it IF newEntity is not a collection
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -438,12 +437,11 @@ public class FileSystemProvider implements IModelProvider {
 		path = unifyPath(path);
 		String parentPath = VABPathTools.getParentPath(path);
 		String fileName = VABPathTools.getLastElement(path);
-		
-		
-		if(fileSystem.getType(rootDir + "/" + parentPath) == null) {
+
+		if (fileSystem.getType(rootDir + "/" + parentPath) == null) {
 			throw new ResourceNotFoundException("Parent-path for \"" + path + "\" does not exist.");
 		}
-		
+
 		String fullPath = rootDir + "/" + path;
 		FileType type = fileSystem.getType(fullPath);
 
@@ -474,8 +472,7 @@ public class FileSystemProvider implements IModelProvider {
 					// If the new Object is a Collection, don't add it to the existing one
 					serializeAndSave(constructCollectionRefPath(fullPath, max + 1), newEntity);
 				} else {
-					throw new MalformedRequestException("The given newEntity is a Collection "
-							+ "and can therefore not be added to the existing Collection \"" + path + "\".");
+					throw new MalformedRequestException("The given newEntity is a Collection " + "and can therefore not be added to the existing Collection \"" + path + "\".");
 				}
 
 				references.add(max + 1);
@@ -495,9 +492,9 @@ public class FileSystemProvider implements IModelProvider {
 	}
 
 	/**
-	 * Deletes the Object, folder or collection at the specified path
-	 * If it is a collection, remove its name from the meta file of
-	 * the folder that contains the collection
+	 * Deletes the Object, folder or collection at the specified path If it is a
+	 * collection, remove its name from the meta file of the folder that contains
+	 * the collection
 	 */
 	@Override
 	public synchronized void deleteValue(String path) throws ProviderException {
@@ -535,9 +532,8 @@ public class FileSystemProvider implements IModelProvider {
 	}
 
 	/**
-	 * Deletes the Object or Map that is equal to obj from the collection
-	 * in the specified path
-	 * Otherwise, throw a ResourceNotFoundException
+	 * Deletes the Object or Map that is equal to obj from the collection in the
+	 * specified path Otherwise, throw a ResourceNotFoundException
 	 */
 	@Override
 	public void deleteValue(String path, Object obj) throws ProviderException {

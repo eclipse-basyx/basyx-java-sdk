@@ -44,8 +44,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests createAsFacade and isValid of {@link GuidelineSpecificProperties} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link GuidelineSpecificProperties} for
+ * their correctness
  * 
  * @author haque
  *
@@ -54,23 +54,23 @@ public class TestGuidelineSpecificProperties {
 	public static final String IDSHORT = "GuidelineSpecificProperties01";
 	public static Property conformityDeclaration = new Property(GuidelineSpecificProperties.GUIDELINEFORCONFORMITYDECLARATIONID, ValueType.String);
 	public static Property arbitrary = new Property("arbitraryId", ValueType.String);
-	
+
 	private Map<String, Object> guidelineMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void buildGuidelineSpecificProperties() {
 		conformityDeclaration.setValue("test Declaration");
 		arbitrary.setValue("0173-1#07-DAA603#004");
-		
+
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(conformityDeclaration);
 		elements.add(arbitrary);
-		
+
 		guidelineMap.put(Referable.IDSHORT, IDSHORT);
 		guidelineMap.put(HasSemantics.SEMANTICID, GuidelineSpecificProperties.SEMANTICID);
 		guidelineMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		GuidelineSpecificProperties guidelineFromMap = GuidelineSpecificProperties.createAsFacade(guidelineMap);
@@ -79,25 +79,25 @@ public class TestGuidelineSpecificProperties {
 		assertEquals(Collections.singletonList(arbitrary), guidelineFromMap.getArbitrary());
 		assertEquals(IDSHORT, guidelineFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		guidelineMap.remove(Referable.IDSHORT);
 		GuidelineSpecificProperties.createAsFacade(guidelineMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = MetamodelConstructionException.class)
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionArbitrary() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)guidelineMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) guidelineMap.get(Property.VALUE);
 		elements.remove(arbitrary);
 		GuidelineSpecificProperties.createAsFacade(guidelineMap);
 	}
 
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionDeclaration() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)guidelineMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) guidelineMap.get(Property.VALUE);
 		elements.remove(conformityDeclaration);
 		GuidelineSpecificProperties.createAsFacade(guidelineMap);
 	}

@@ -4,8 +4,8 @@ package org.eclipse.basyx.extensions.aas.directory.tagged.api;
 import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnum;
 
 /**
- * Enum that implements the {@link StandardizedLiteralEnum} interface.
- * Used to specify which type of tag is processed.
+ * Enum that implements the {@link StandardizedLiteralEnum} interface. Used to
+ * specify which type of tag is processed.
  * 
  * @author msiebert
  *

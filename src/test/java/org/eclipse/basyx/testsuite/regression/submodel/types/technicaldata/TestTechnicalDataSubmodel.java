@@ -67,10 +67,10 @@ public class TestTechnicalDataSubmodel {
 	public static ProductClassifications productClassifications = new ProductClassifications(TechnicalDataSubmodel.PRODUCTCLASSIFICATIONSID);
 	public static TechnicalProperties technicalProperties = new TechnicalProperties(TechnicalDataSubmodel.TECHNICALPROPERTIESID);
 	public static FurtherInformation furtherInformation = new FurtherInformation(new Property(FurtherInformation.VALIDDATEID, ValueType.DateTime));
-	
+
 	public static Identifier identifier = new Identifier(IdentifierType.IRI, "http://admin-shell.io/ZVEI/TechnicalData/Submodel/1/1");
 	private Map<String, Object> submodelMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void buildFax() {
 		TestGeneralInformation.manufacturerName.setValue("Example Company");
@@ -83,7 +83,7 @@ public class TestTechnicalDataSubmodel {
 		elements.add(furtherInformation);
 		elements.add(productClassifications);
 		elements.add(technicalProperties);
-		
+
 		submodelMap.put(Referable.IDSHORT, TechnicalDataSubmodel.SUBMODELID);
 		submodelMap.put(HasSemantics.SEMANTICID, TechnicalDataSubmodel.SEMANTICID);
 		submodelMap.put(Submodel.SUBMODELELEMENT, elements);
@@ -101,31 +101,31 @@ public class TestTechnicalDataSubmodel {
 		assertEquals(TechnicalDataSubmodel.SUBMODELID, submodelFromMap.getIdShort());
 		assertEquals(identifier, submodelFromMap.getIdentification());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		submodelMap.remove(Referable.IDSHORT);
 		TechnicalDataSubmodel.createAsFacade(submodelMap);
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdentifier() {
 		submodelMap.remove(Identifiable.IDENTIFICATION);
 		TechnicalDataSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionGeneralInfo() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(generalInformation);
 		TechnicalDataSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionTechnicalProp() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(technicalProperties);
 		TechnicalDataSubmodel.createAsFacade(submodelMap);
 	}

@@ -66,8 +66,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests if the ConnectedSubmodelElementFactory
- * handles all ISubmodelElement Objects correctly.
+ * Tests if the ConnectedSubmodelElementFactory handles all ISubmodelElement
+ * Objects correctly.
  * 
  * @author conradi
  *
@@ -84,42 +84,41 @@ public class TestConnectedSubmodelElementFactory {
 	private static final String CAPABILITY_ID = "CapabilityId";
 	private static final String OPERATION_ID = "OperationId";
 	private static final String RELELEMENT_ID = "RelElementId";
-	private static final String SMELEMCOLLECTION_ID = "SmElemCollectionId";	
-	
+	private static final String SMELEMCOLLECTION_ID = "SmElemCollectionId";
+
 	VABElementProxy proxy;
-	
+
 	@Before
 	public void build() {
-		
+
 		Map<String, Object> dataElements = buildDataElements();
-		
+
 		Map<String, Object> operations = buildOperations();
-		
+
 		Map<String, Object> submodelElements = buildSubmodelElements();
-		
+
 		submodelElements.putAll(dataElements);
 		submodelElements.putAll(operations);
-		
-		
+
 		Map<String, Object> values = new LinkedHashMap<>();
-		
+
 		values.put(Submodel.SUBMODELELEMENT, submodelElements);
-		
-		proxy = new VABElementProxy("/" + SubmodelProvider.SUBMODEL,
-				new SubmodelProvider(new TypeDestroyingProvider(new VABLambdaProvider(values))));
+
+		proxy = new VABElementProxy("/" + SubmodelProvider.SUBMODEL, new SubmodelProvider(new TypeDestroyingProvider(new VABLambdaProvider(values))));
 	}
-	
+
 	/**
 	 * Builds a Map containing an Object of every IDataElement
+	 * 
 	 * @return A Map ID->IDataElement
 	 */
 	private Map<String, Object> buildDataElements() {
 		Map<String, Object> ret = new LinkedHashMap<>();
-		
+
 		Property property = new Property();
 		property.setIdShort(PROPERTY_ID);
 		ret.put(PROPERTY_ID, property);
-		
+
 		Blob blob = new Blob();
 		blob.setIdShort(BLOB_ID);
 		ret.put(BLOB_ID, blob);
@@ -145,6 +144,7 @@ public class TestConnectedSubmodelElementFactory {
 
 	/**
 	 * Builds a Map containing an Object of every IOperation
+	 * 
 	 * @return A Map ID->IOperation
 	 */
 	private Map<String, Object> buildOperations() {
@@ -153,17 +153,18 @@ public class TestConnectedSubmodelElementFactory {
 		Operation operation = new Operation();
 		operation.setIdShort(OPERATION_ID);
 		ret.put(OPERATION_ID, operation);
-		
+
 		return ret;
 	}
-	
+
 	/**
 	 * Builds a Map containing an Object of every IOperation
+	 * 
 	 * @return A Map ID->IOperation
 	 */
 	private Map<String, Object> buildSubmodelElements() {
 		Map<String, Object> ret = new LinkedHashMap<>();
-		
+
 		BasicEvent basicEvent = new BasicEvent();
 		basicEvent.setIdShort(BASICEVENT_ID);
 		ret.put(BASICEVENT_ID, basicEvent);
@@ -171,53 +172,47 @@ public class TestConnectedSubmodelElementFactory {
 		Capability capability = new Capability();
 		capability.setIdShort(CAPABILITY_ID);
 		ret.put(CAPABILITY_ID, capability);
-		
+
 		RelationshipElement relElement = new RelationshipElement();
 		relElement.setIdShort(RELELEMENT_ID);
 		ret.put(RELELEMENT_ID, relElement);
-		
+
 		SubmodelElementCollection smElemCollection = new SubmodelElementCollection();
 		smElemCollection.setIdShort(SMELEMCOLLECTION_ID);
 		ret.put(SMELEMCOLLECTION_ID, smElemCollection);
-		
+
 		return ret;
 	}
-	
+
 	/**
 	 * Tests if getProperties() returns the correct value
 	 */
 	@Test
 	public void testGetProperties() {
-		Map<String, IProperty> properties =
-				ConnectedSubmodelElementFactory.getProperties(
-						proxy, MultiSubmodelElementProvider.ELEMENTS, MultiSubmodelElementProvider.ELEMENTS);
-		
+		Map<String, IProperty> properties = ConnectedSubmodelElementFactory.getProperties(proxy, MultiSubmodelElementProvider.ELEMENTS, MultiSubmodelElementProvider.ELEMENTS);
+
 		assertEquals(1, properties.size());
 		assertTrue(properties.get(PROPERTY_ID) instanceof ConnectedProperty);
 	}
-	
+
 	/**
 	 * Tests if getOperations() returns the correct value
 	 */
 	@Test
 	public void testGetOperations() {
-		Map<String, IOperation> operations =
-				ConnectedSubmodelElementFactory.getOperations(
-						proxy, MultiSubmodelElementProvider.ELEMENTS, MultiSubmodelElementProvider.ELEMENTS);
-		
+		Map<String, IOperation> operations = ConnectedSubmodelElementFactory.getOperations(proxy, MultiSubmodelElementProvider.ELEMENTS, MultiSubmodelElementProvider.ELEMENTS);
+
 		assertEquals(1, operations.size());
 		assertTrue(operations.get(OPERATION_ID) instanceof ConnectedOperation);
 	}
-	
+
 	/**
 	 * Tests if getSubmodelElements() returns the correct value
 	 */
 	@Test
 	public void testGetSubmodelElements() {
-		Map<String, ISubmodelElement> submodelElements =
-				ConnectedSubmodelElementFactory.getConnectedSubmodelElements(
-						proxy, Submodel.SUBMODELELEMENT, Submodel.SUBMODELELEMENT);
-		
+		Map<String, ISubmodelElement> submodelElements = ConnectedSubmodelElementFactory.getConnectedSubmodelElements(proxy, Submodel.SUBMODELELEMENT, Submodel.SUBMODELELEMENT);
+
 		assertEquals(11, submodelElements.size());
 		assertTrue(submodelElements.get(PROPERTY_ID) instanceof ConnectedProperty);
 		assertTrue(submodelElements.get(BLOB_ID) instanceof ConnectedBlob);
@@ -231,5 +226,5 @@ public class TestConnectedSubmodelElementFactory {
 		assertTrue(submodelElements.get(RELELEMENT_ID) instanceof ConnectedRelationshipElement);
 		assertTrue(submodelElements.get(SMELEMCOLLECTION_ID) instanceof ConnectedSubmodelElementCollection);
 	}
-	
+
 }

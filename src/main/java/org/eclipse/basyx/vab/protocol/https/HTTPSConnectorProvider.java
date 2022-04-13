@@ -30,8 +30,9 @@ import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
 
 /**
- * An HTTPS Connector provider class
- * which uses a HTTPSConnector in domain having self signed certificate
+ * An HTTPS Connector provider class which uses a HTTPSConnector in domain
+ * having self signed certificate
+ * 
  * @author haque
  *
  */

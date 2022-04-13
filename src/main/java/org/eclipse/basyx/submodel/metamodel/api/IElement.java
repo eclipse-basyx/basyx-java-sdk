@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.api;
 
-
 /**
  * Base interface for all AAS elements
  * 

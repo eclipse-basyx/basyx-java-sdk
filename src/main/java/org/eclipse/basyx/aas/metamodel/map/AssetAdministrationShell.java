@@ -92,9 +92,10 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 	public AssetAdministrationShell() {
 		this(null, null, new Asset(), new HashSet<Submodel>(), new HashSet<IConceptDictionary>(), new HashSet<IView>());
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param identification
 	 * @param asset
@@ -105,11 +106,10 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 		setIdShort(idShort);
 	}
 
-	public AssetAdministrationShell(Reference derivedFrom, Security security, Asset asset,
-			Collection<Submodel> submodels, Collection<IConceptDictionary> dictionaries, Collection<IView> views) {
+	public AssetAdministrationShell(Reference derivedFrom, Security security, Asset asset, Collection<Submodel> submodels, Collection<IConceptDictionary> dictionaries, Collection<IView> views) {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
-		
+
 		// Add qualifiers
 		putAll(new Identifiable());
 		putAll(new HasDataSpecification());
@@ -138,30 +138,28 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(AssetAdministrationShell.class, map);
 		}
-					
+
 		if (!map.containsKey(SUBMODELS)) {
 			map.put(SUBMODELS, new ArrayList<>());
 		}
 
 		AssetAdministrationShell ret = new AssetAdministrationShell();
 		ret.setMap(map);
-		return ret;	
+		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> map) {
-		return Identifiable.isValid(map) &&
-				map.containsKey(AssetAdministrationShell.ASSET) &&
-				Asset.isValid((Map<String, Object>)map.get(AssetAdministrationShell.ASSET));
+		return Identifiable.isValid(map) && map.containsKey(AssetAdministrationShell.ASSET) && Asset.isValid((Map<String, Object>) map.get(AssetAdministrationShell.ASSET));
 	}
 
 	@Override
@@ -275,8 +273,7 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<IConceptDictionary> getConceptDictionary() {
-		Collection<Map<String, Object>> coll = (Collection<Map<String, Object>>) get(
-				AssetAdministrationShell.CONCEPTDICTIONARY);
+		Collection<Map<String, Object>> coll = (Collection<Map<String, Object>>) get(AssetAdministrationShell.CONCEPTDICTIONARY);
 		return coll.stream().map(ConceptDictionary::createAsFacade).collect(Collectors.toSet());
 	}
 
@@ -324,10 +321,10 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 		addSubmodelReferences(submodel);
 	}
 
-
 	@Override
 	public void removeSubmodel(IIdentifier id) {
-		// Currently not implemented since future of Submodel References in AAS is not clear
+		// Currently not implemented since future of Submodel References in AAS is not
+		// clear
 		throw new FeatureNotImplementedException();
 	}
 
@@ -368,18 +365,20 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 	private KeyElements getKeyElement() {
 		return KeyElements.ASSETADMINISTRATIONSHELL;
 	}
-	
+
 	/**
-	 * Set reference of current AAS to each Submodel of a collection
-	 * as a parent reference
+	 * Set reference of current AAS to each Submodel of a collection as a parent
+	 * reference
 	 * 
-	 * @param submodels collection of Submodels
+	 * @param submodels
+	 *            collection of Submodels
 	 */
 	private void setSubmodelParent(Collection<Submodel> submodels) {
 		for (Submodel submodel : submodels) {
 			submodel.setParent(getReference());
 		}
 	}
+
 	@Override
 	public IReference getReference() {
 		return Identifiable.createAsFacade(this, getKeyElement()).getReference();

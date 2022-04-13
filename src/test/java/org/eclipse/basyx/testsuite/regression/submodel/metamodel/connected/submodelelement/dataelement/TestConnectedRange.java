@@ -41,20 +41,20 @@ import org.junit.Test;
  *
  */
 public class TestConnectedRange {
-	
+
 	ConnectedRange connectedRange;
 	Range range;
-	
+
 	@Before
 	public void build() {
 		range = new Range(ValueType.Integer, new Integer(1), new Integer(10));
 		range.setIdShort("testIdShort");
-		
+
 		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(range);
 
 		connectedRange = new ConnectedRange(elementProxy);
 	}
-	
+
 	/**
 	 * Tests if getValueType() returns the correct value
 	 */
@@ -62,7 +62,7 @@ public class TestConnectedRange {
 	public void testGetValueType() {
 		assertEquals(range.getValueType(), connectedRange.getValueType());
 	}
-	
+
 	/**
 	 * Tests if getMin() returns the correct value
 	 */
@@ -70,7 +70,7 @@ public class TestConnectedRange {
 	public void testGetMin() {
 		assertEquals(range.getMin(), connectedRange.getMin());
 	}
-	
+
 	/**
 	 * Tests if getMax() returns the correct value
 	 */
@@ -78,7 +78,7 @@ public class TestConnectedRange {
 	public void testGetMax() {
 		assertEquals(range.getMax(), connectedRange.getMax());
 	}
-	
+
 	/**
 	 * Tests if getValue() returns the correct value
 	 */
@@ -88,29 +88,29 @@ public class TestConnectedRange {
 		assertEquals(range.getMin(), rv.getMin());
 		assertEquals(range.getMax(), rv.getMax());
 	}
-	
+
 	/**
 	 * Tests if setValue() sets the correct value.
 	 */
 	@Test
 	public void testSetValue() {
 		RangeValue value = new RangeValue(2, 8);
-		
+
 		connectedRange.setValue(value);
-		
+
 		assertEquals(2, connectedRange.getMin());
 		assertEquals(8, connectedRange.getMax());
 		assertEquals(range.getValueType(), connectedRange.getValueType());
 	}
-	
+
 	@Test
 	public void setValueUpdatesValueCorrectly() {
 		triggerCachingOfSubmodelElement();
 
 		RangeValue expected = new RangeValue(10, 20);
-		
+
 		connectedRange.setValue(expected);
-		
+
 		assertEquals(expected, connectedRange.getValue());
 	}
 

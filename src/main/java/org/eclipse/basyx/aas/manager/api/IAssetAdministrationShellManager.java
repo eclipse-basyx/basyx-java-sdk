@@ -33,10 +33,9 @@ import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 
-
-
 /**
- * Technology independent interface to technology specific Asset Administration Shell (AAS) manager class. 
+ * Technology independent interface to technology specific Asset Administration
+ * Shell (AAS) manager class.
  * 
  * @author schoeffler, ziesche, kuhn
  *
@@ -46,12 +45,12 @@ public interface IAssetAdministrationShellManager {
 	 * Retrieve an AAS based on its ID
 	 */
 	public IAssetAdministrationShell retrieveAAS(IIdentifier aasId) throws Exception;
-	
+
 	/**
 	 * Retrieve all local AAS from the technology layer
 	 */
 	public Collection<IAssetAdministrationShell> retrieveAASAll();
-	
+
 	/**
 	 * Creates an AAS on a remote server
 	 * 

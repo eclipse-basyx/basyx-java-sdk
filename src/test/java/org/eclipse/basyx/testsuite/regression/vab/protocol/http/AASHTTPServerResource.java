@@ -29,7 +29,8 @@ import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.junit.rules.ExternalResource;
 
 /**
- * This class initializes Tomcat server and required servlets for all HTTP test classes in this project.
+ * This class initializes Tomcat server and required servlets for all HTTP test
+ * classes in this project.
  * 
  * @author espen
  *
@@ -43,22 +44,22 @@ public class AASHTTPServerResource extends ExternalResource {
 	 */
 	public AASHTTPServerResource(BaSyxContext context) {
 		this.context = context;
-    }
+	}
 
 	/**
 	 * Create a new AASHTTPServer before a test case runs
 	 */
 	@Override
-    protected void before() {
-    	server = new BaSyxHTTPServer(context);
+	protected void before() {
+		server = new BaSyxHTTPServer(context);
 		server.start();
-    }
+	}
 
 	/**
 	 * Shutdown the created server after a test case
 	 */
 	@Override
-    protected void after() {
+	protected void after() {
 		server.shutdown();
-    }
+	}
 }

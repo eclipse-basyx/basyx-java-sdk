@@ -40,23 +40,23 @@ import org.junit.Test;
  *
  */
 public class TestConnectedMultiLanguageProperty {
-	
+
 	ConnectedMultiLanguageProperty connectedMLP;
 	MultiLanguageProperty MLP;
-	
+
 	@Before
 	public void build() {
 		LangStrings langStrings = new LangStrings("de", "TestBeschreibung");
-		
+
 		MLP = new MultiLanguageProperty("idShort");
-		
+
 		MLP.setValue(langStrings);
-		
+
 		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(MLP);
 
 		connectedMLP = new ConnectedMultiLanguageProperty(elementProxy);
 	}
-	
+
 	/**
 	 * Tests if getValue() returns the correct value
 	 */
@@ -64,7 +64,7 @@ public class TestConnectedMultiLanguageProperty {
 	public void testGetValue() {
 		assertEquals(MLP.getValue().get("de"), connectedMLP.getValue().get("de"));
 	}
-	
+
 	/**
 	 * Tests if getValueId() returns the correct value
 	 */
@@ -72,15 +72,15 @@ public class TestConnectedMultiLanguageProperty {
 	public void testGetValueId() {
 		assertEquals(MLP.getValueId(), connectedMLP.getValueId());
 	}
-	
+
 	@Test
 	public void setValueUpdatesValueCorrectly() {
 		triggerCachingOfSubmodelElement();
-		
-		LangStrings expected = new LangStrings("en", "English Language");	
+
+		LangStrings expected = new LangStrings("en", "English Language");
 
 		connectedMLP.setValue(expected);
-		
+
 		assertEquals(expected, connectedMLP.getValue());
 	}
 

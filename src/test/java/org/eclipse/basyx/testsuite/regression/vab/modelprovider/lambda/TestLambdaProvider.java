@@ -59,14 +59,13 @@ public class TestLambdaProvider extends TestProvider {
 	@SuppressWarnings("unchecked")
 	private static LinkedHashMap<String, Object> mapElement = (LinkedHashMap<String, Object>) structureElement.get("map");
 
-	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(),
-			new ConnectorFactory() {
+	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(), new ConnectorFactory() {
 
-				@Override
-				protected IModelProvider createProvider(String addr) {
-					return buildProvider();
-				}
-			});
+		@Override
+		protected IModelProvider createProvider(String addr) {
+			return buildProvider();
+		}
+	});
 
 	@Override
 	protected VABConnectionManager getConnectionManager() {
@@ -77,11 +76,13 @@ public class TestLambdaProvider extends TestProvider {
 	private static IModelProvider buildProvider() {
 		// Create primitive lambda elements
 		LinkedHashMap<String, Object> primitives = (LinkedHashMap<String, Object>) rootElement.get("primitives");
-		// Has no hidden setter (==null), so value should be completely replaced when set
+		// Has no hidden setter (==null), so value should be completely replaced when
+		// set
 		primitives.put("integer", VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
 			return 123;
 		}, null));
-		// Has a hidden setter, so write access to this element changes "doubleElement", which is returned by the getter
+		// Has a hidden setter, so write access to this element changes "doubleElement",
+		// which is returned by the getter
 		primitives.put("double", VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
 			return doubleElement;
 		}, (Consumer<Object>) (newObject) -> {
@@ -114,7 +115,8 @@ public class TestLambdaProvider extends TestProvider {
 			rootElement.remove(key);
 		});
 
-		// Create first accessor for structure/map element (-> test nested lambda properties)
+		// Create first accessor for structure/map element (-> test nested lambda
+		// properties)
 		Map<String, Object> structureAccessor = VABLambdaProviderHelper.createMap((Supplier<?>) () -> {
 			return structureElement;
 		}, (Consumer<Map<String, Object>>) (map) -> {
@@ -127,7 +129,8 @@ public class TestLambdaProvider extends TestProvider {
 		});
 		// Replace actual structure property with lambda accessor
 		rootElement.put("structure", structureAccessor);
-		// Create second accessor for structure/map element (-> nested lambda properties)
+		// Create second accessor for structure/map element (-> nested lambda
+		// properties)
 		Map<String, Object> mapAccessor = VABLambdaProviderHelper.createMap((Supplier<?>) () -> {
 			return mapElement;
 		}, (Consumer<Map<String, Object>>) (map) -> {

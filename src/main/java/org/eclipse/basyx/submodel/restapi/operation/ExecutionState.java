@@ -70,7 +70,7 @@ public enum ExecutionState implements StandardizedLiteralEnum {
 	public String getStandardizedLiteral() {
 		return standardizedLiteral;
 	}
-	
+
 	@Override
 	public String toString() {
 		return standardizedLiteral;

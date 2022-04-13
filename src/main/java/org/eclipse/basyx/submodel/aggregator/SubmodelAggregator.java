@@ -68,7 +68,7 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		ISubmodelAPI submodelAPI = smApiFactory.create(submodel);
 		createSubmodel(submodelAPI);
 	}
-	
+
 	@Override
 	public void createSubmodel(ISubmodelAPI submodelAPI) {
 		smApiMap.put(submodelAPI.getSubmodel().getIdShort(), submodelAPI);

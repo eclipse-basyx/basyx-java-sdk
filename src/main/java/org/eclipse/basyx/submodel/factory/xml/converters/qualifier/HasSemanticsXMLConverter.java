@@ -34,7 +34,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Handles the conversion between an IHasSemantics object and the XML tag &lt;aas:semanticId&gt; in both directions
+ * Handles the conversion between an IHasSemantics object and the XML tag
+ * &lt;aas:semanticId&gt; in both directions
  * 
  * @author conradi
  *
@@ -42,13 +43,14 @@ import org.w3c.dom.Element;
 public class HasSemanticsXMLConverter {
 
 	public static final String SEMANTIC_ID = "aas:semanticId";
-	
 
 	/**
 	 * Populates a given HasSemantics object with the data form the given XML
 	 * 
-	 * @param xmlObject the XML map containing the &lt;aas:semanticId&gt; tag
-	 * @param hasSemantics the HasSemantics object to be populated
+	 * @param xmlObject
+	 *            the XML map containing the &lt;aas:semanticId&gt; tag
+	 * @param hasSemantics
+	 *            the HasSemantics object to be populated
 	 */
 	@SuppressWarnings("unchecked")
 	public static void populateHasSemantics(Map<String, Object> xmlObject, HasSemantics hasSemantics) {
@@ -57,23 +59,23 @@ public class HasSemanticsXMLConverter {
 			hasSemantics.setSemanticId(ReferenceXMLConverter.parseReference(xmlSemanticIDObj));
 		}
 	}
-	
-	
-	
-	
+
 	/**
 	 * Populates a given XML map with the data from a given IHasSemantics object<br>
 	 * Creates the &lt;aas:semanticId&gt; tag in the given root
 	 * 
-	 * @param document the XML document
-	 * @param root the XML root Element to be populated
-	 * @param hasSemantics the IHasSemantics object to be converted to XML
+	 * @param document
+	 *            the XML document
+	 * @param root
+	 *            the XML root Element to be populated
+	 * @param hasSemantics
+	 *            the IHasSemantics object to be converted to XML
 	 */
 	public static void populateHasSemanticsXML(Document document, Element root, IHasSemantics hasSemantics) {
 		IReference semanticId = hasSemantics.getSemanticId();
-		if(semanticId != null) {
+		if (semanticId != null) {
 			Element semanticIdRoot = document.createElement(SEMANTIC_ID);
-			semanticIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, semanticId)); 
+			semanticIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, semanticId));
 			root.appendChild(semanticIdRoot);
 		}
 	}

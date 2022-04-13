@@ -46,37 +46,38 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
  *
  */
 public class Entity extends SubmodelElement implements IEntity {
-	
+
 	public static final String MODELTYPE = "Entity";
 	public static final String STATEMENT = "statement";
 	public static final String ENTITY_TYPE = "entityType";
 	public static final String ASSET = "asset";
-	
+
 	public Entity() {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 * @param entityType
 	 */
 	public Entity(String idShort, EntityType entityType) {
 		super(idShort);
 		setEntityType(entityType);
-		
+
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	public Entity(EntityType entityType, Collection<ISubmodelElement> statements, IReference asset) {
 		this();
 		setEntityType(entityType);
 		setStatements(statements);
 		setAsset(asset);
 	}
-	
+
 	public void setStatements(Collection<ISubmodelElement> statements) {
 		put(STATEMENT, statements);
 	}
@@ -91,33 +92,35 @@ public class Entity extends SubmodelElement implements IEntity {
 
 	public static boolean isEntity(Map<String, Object> map) {
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained (fallback)
+		// Either model type is set or the element type specific attributes are
+		// contained (fallback)
 		return MODELTYPE.equals(modelType) || (modelType == null && map.containsKey(Entity.STATEMENT));
 	}
 
 	/**
 	 * Creates an Entity object from a map
 	 * 
-	 * @param obj an Entity object as raw map
+	 * @param obj
+	 *            an Entity object as raw map
 	 * @return an Entity object, that behaves like a facade for the given map
 	 */
 	public static Entity createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Entity.class, obj);
 		}
-		
+
 		Entity facade = new Entity();
 		facade.setMap(obj);
 		return facade;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
@@ -146,7 +149,7 @@ public class Entity extends SubmodelElement implements IEntity {
 	public IReference getAsset() {
 		return Reference.createAsFacade((Map<String, Object>) get(ASSET));
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.ENTITY;
@@ -156,16 +159,15 @@ public class Entity extends SubmodelElement implements IEntity {
 	public EntityValue getValue() {
 		return new EntityValue(getStatements(), getAsset());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
-		if(EntityValue.isEntityValue(value)) {
+		if (EntityValue.isEntityValue(value)) {
 			EntityValue ev = EntityValue.createAsFacade((Map<String, Object>) value);
 			put(Entity.STATEMENT, ev.getStatement());
 			put(Entity.ASSET, ev.getAsset());
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Given Object is not an EntityValue");
 		}
 	}

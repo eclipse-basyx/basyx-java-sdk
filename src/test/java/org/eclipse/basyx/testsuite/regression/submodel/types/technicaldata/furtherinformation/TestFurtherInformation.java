@@ -58,7 +58,7 @@ public class TestFurtherInformation {
 	public static MultiLanguageProperty statement = new MultiLanguageProperty(FurtherInformation.TEXTSTATEMENTPREFIX + "01");
 	public static Property validDate = new Property(FurtherInformation.VALIDDATEID, ValueType.DateTime);
 	private Map<String, Object> furtherInfoMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void init() {
 		statement.setValue(new LangStrings(new LangString("DE", "test statement")));
@@ -70,7 +70,7 @@ public class TestFurtherInformation {
 		furtherInfoMap.put(HasSemantics.SEMANTICID, FurtherInformation.SEMANTICID);
 		furtherInfoMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		FurtherInformation infoFromMap = FurtherInformation.createAsFacade(furtherInfoMap);
@@ -79,14 +79,14 @@ public class TestFurtherInformation {
 		assertEquals(validDate, infoFromMap.getValidDate());
 		assertEquals(FurtherInformation.IDSHORT, infoFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		furtherInfoMap.remove(Referable.IDSHORT);
 		FurtherInformation.createAsFacade(furtherInfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionValidDate() {
 		List<ISubmodelElement> newElements = new ArrayList<ISubmodelElement>();
 		newElements.add(statement);

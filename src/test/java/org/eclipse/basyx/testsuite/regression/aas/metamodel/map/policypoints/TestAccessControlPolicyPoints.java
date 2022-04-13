@@ -35,42 +35,41 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests constructor, setter and getter of {@link AccessControlPolicyPoints} for their
- * correctness
+ * Tests constructor, setter and getter of {@link AccessControlPolicyPoints} for
+ * their correctness
  * 
  * @author haque
  *
  */
 public class TestAccessControlPolicyPoints {
 	private AccessControlPolicyPoints points;
-	
-	
+
 	@Before
 	public void buildObject() {
 		points = new AccessControlPolicyPoints();
 	}
-	
+
 	@Test
 	public void testSetPolicyAdministrationPoint() {
 		PolicyAdministrationPoint policyAdministrationPoint = new PolicyAdministrationPoint();
 		points.setPolicyAdministrationPoint(policyAdministrationPoint);
 		assertEquals(policyAdministrationPoint, points.getPolicyAdministrationPoint());
 	}
-	
+
 	@Test
 	public void testPolicyDecisionPoint() {
 		PolicyDecisionPoint policyDecisionPoint = new PolicyDecisionPoint();
 		points.setPolicyDecisionPoint(policyDecisionPoint);
 		assertEquals(policyDecisionPoint, points.getPolicyDecisionPoint());
 	}
-	
+
 	@Test
 	public void testPolicyEnforcementPoint() {
 		PolicyEnforcementPoint policyEnforcementPoint = new PolicyEnforcementPoint();
 		points.setPolicyEnforcementPoint(policyEnforcementPoint);
 		assertEquals(policyEnforcementPoint, points.getPolicyEnforcementPoint());
 	}
-	
+
 	@Test
 	public void testPolicyInformationPoints() {
 		PolicyInformationPoints policyInformationPoints = new PolicyInformationPoints();

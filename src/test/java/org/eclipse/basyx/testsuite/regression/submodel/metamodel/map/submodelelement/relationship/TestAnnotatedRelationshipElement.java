@@ -43,7 +43,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests constructor, getter and setter of {@link AnnotatedRelationshipElement} for correctness
+ * Tests constructor, getter and setter of {@link AnnotatedRelationshipElement}
+ * for correctness
  * 
  * @author conradi
  *
@@ -51,9 +52,9 @@ import org.junit.Test;
 public class TestAnnotatedRelationshipElement {
 	private static final Reference FIRST = new Reference(new Key(KeyElements.ASSET, true, "firstValue", IdentifierType.IRI));
 	private static final Reference SECOND = new Reference(new Identifier(IdentifierType.CUSTOM, "secondId"), KeyElements.BLOB, false);
-	
+
 	private AnnotatedRelationshipElement element;
-	
+
 	@Before
 	public void buildElement() {
 		element = new AnnotatedRelationshipElement("testId", FIRST, SECOND);
@@ -61,20 +62,20 @@ public class TestAnnotatedRelationshipElement {
 		List<IDataElement> annotations = new ArrayList<>();
 		annotations.add(property);
 		element.setAnnotation(annotations);
-	} 
-	
+	}
+
 	@Test
 	public void testConstructor() {
 		assertEquals(FIRST, element.getFirst());
 		assertEquals(SECOND, element.getSecond());
-	} 
-	
+	}
+
 	@Test
 	public void testSetFirst() {
 		Reference newFirst = new Reference(new Key(KeyElements.CAPABILITY, false, "newFirst", IdentifierType.IRI));
 		element.setFirst(newFirst);
 		assertEquals(newFirst, element.getFirst());
-	} 
+	}
 
 	@Test
 	public void testSetSecond() {
@@ -82,21 +83,21 @@ public class TestAnnotatedRelationshipElement {
 		element.setSecond(newSecond);
 		assertEquals(newSecond, element.getSecond());
 	}
-	
+
 	@Test
 	public void testGetValue() {
 		RelationshipElementValue value = element.getValue();
 		assertEquals(FIRST.getKeys().get(0).getValue(), value.getFirst().getKeys().get(0).getValue());
 		assertEquals(SECOND.getKeys().get(0).getValue(), value.getSecond().getKeys().get(0).getValue());
 	}
-	
+
 	@Test
 	public void testGetAnnotations() {
 		Collection<IDataElement> annotations = element.getValue().getAnnotations();
 		assertEquals(1, annotations.size());
-		
+
 		// Check the element
-		for (IDataElement element: annotations) {
+		for (IDataElement element : annotations) {
 			assertEquals("PropertyId", element.getIdShort());
 		}
 	}

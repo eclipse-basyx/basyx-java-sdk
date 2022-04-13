@@ -38,9 +38,8 @@ import javax.ws.rs.client.ClientBuilder;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 
 /**
- * A Factory class containing methods creating an HTTPS client
- * with no verification and validation for self signed SSL
- * and other helper methods
+ * A Factory class containing methods creating an HTTPS client with no
+ * verification and validation for self signed SSL and other helper methods
  * 
  * @author haque
  *
@@ -55,9 +54,9 @@ public class JerseyHttpsClientFactory {
 	 * @throws KeyManagementException
 	 * @throws NoSuchAlgorithmException
 	 */
-    public static Client getJerseyHTTPSClientWithoutValidation() throws KeyManagementException, NoSuchAlgorithmException {
+	public static Client getJerseyHTTPSClientWithoutValidation() throws KeyManagementException, NoSuchAlgorithmException {
 		return getJerseyHTTPSClient(new NonVerifyingHostnameVerifier());
-    }
+	}
 
 	/**
 	 * Returns an HTTPS client
@@ -70,30 +69,28 @@ public class JerseyHttpsClientFactory {
 		return getJerseyHTTPSClient(new DefaultHostnameVerifier());
 	}
 
-
 	private static Client getJerseyHTTPSClient(HostnameVerifier hostnameVerifier) throws KeyManagementException, NoSuchAlgorithmException {
 		SSLContext sslContext = getSslContext(PROTOCOL);
 		return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(hostnameVerifier).build();
 	}
 
-    /**
-     * Retrieves an SSL Context
-     * with given protocol
-     * @param protocol
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws KeyManagementException
-     */
-    private static SSLContext getSslContext(String protocol) throws NoSuchAlgorithmException,
-                                                     KeyManagementException {
-        SSLContext sslContext = SSLContext.getInstance(protocol);
+	/**
+	 * Retrieves an SSL Context with given protocol
+	 * 
+	 * @param protocol
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
+	 */
+	private static SSLContext getSslContext(String protocol) throws NoSuchAlgorithmException, KeyManagementException {
+		SSLContext sslContext = SSLContext.getInstance(protocol);
 
-        KeyManager[] keyManagers = null;
-        TrustManager[] trustManager = {new DefaultTrustManager()};
-        SecureRandom secureRandom = new SecureRandom();
+		KeyManager[] keyManagers = null;
+		TrustManager[] trustManager = { new DefaultTrustManager() };
+		SecureRandom secureRandom = new SecureRandom();
 
-        sslContext.init(keyManagers, trustManager, secureRandom);
+		sslContext.init(keyManagers, trustManager, secureRandom);
 
-        return sslContext;
-    }
+		return sslContext;
+	}
 }

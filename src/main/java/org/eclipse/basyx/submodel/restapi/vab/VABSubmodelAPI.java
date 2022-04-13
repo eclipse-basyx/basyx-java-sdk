@@ -102,7 +102,6 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 		getElementProvider().deleteValue(SubmodelAPIHelper.getSubmodelElementPath(idShortPath));
 	}
 
-
 	@Override
 	public Collection<IOperation> getOperations() {
 		return getSubmodelElements().stream().filter(e -> e instanceof IOperation).map(e -> (IOperation) e).collect(Collectors.toList());
@@ -111,8 +110,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<ISubmodelElement> getSubmodelElements() {
-		Collection<Map<String, Object>> elements = (Collection<Map<String, Object>>) getElementProvider()
-				.getValue(SubmodelAPIHelper.getSubmodelElementsPath());
+		Collection<Map<String, Object>> elements = (Collection<Map<String, Object>>) getElementProvider().getValue(SubmodelAPIHelper.getSubmodelElementsPath());
 		return elements.stream().map(SubmodelElement::createAsFacade).collect(Collectors.toList());
 	}
 
@@ -136,17 +134,15 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	public Object invokeOperation(String idShortPath, Object... params) {
 		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementSyncInvokePath(idShortPath), params);
 	}
-	
-	
+
 	@Override
 	public Object invokeAsync(String idShortPath, Object... params) {
 		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementAsyncInvokePath(idShortPath), params);
 	}
-	
+
 	@Override
 	public Object getOperationResult(String idShortPath, String requestId) {
 		return getElementProvider().getValue(SubmodelAPIHelper.getSubmodelElementResultValuePath(idShortPath, requestId));
 	}
-
 
 }

@@ -97,7 +97,8 @@ public class TestAASAggregatorProxy extends AASAggregatorSuite {
 		assertEquals(expectedPropValue, connectedProp.getValue());
 
 		// Test feedthrough of INVOKE
-		// Use short form of invoke with operation variable matching and no parameters (empty object array)
+		// Use short form of invoke with operation variable matching and no parameters
+		// (empty object array)
 		assertTrue((boolean) ((IOperation) sm.getSubmodelElement(op.getIdShort())).invokeSimple(new Object[0]));
 
 		// Test feedthrough of DELETE

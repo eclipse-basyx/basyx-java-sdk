@@ -45,22 +45,22 @@ import org.junit.Test;
  *
  */
 public class TestConnectedReferenceElement {
-	
+
 	ConnectedReferenceElement connectedRefElem;
 	ReferenceElement refElem;
-	
+
 	@Before
 	public void build() {
-		
+
 		Reference ref = new Reference(new Key(KeyElements.BLOB, true, "", IdentifierType.CUSTOM));
-		
+
 		refElem = new ReferenceElement(ref);
-		
+
 		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(refElem);
 
 		connectedRefElem = new ConnectedReferenceElement(elementProxy);
 	}
-	
+
 	/**
 	 * Tests if getValue() returns the correct value
 	 */
@@ -76,7 +76,7 @@ public class TestConnectedReferenceElement {
 		IReference expected = new Reference(new Key(KeyElements.ASSET, true, "asset", IdentifierType.CUSTOM));
 
 		connectedRefElem.setValue(expected);
-		
+
 		assertEquals(expected, connectedRefElem.getValue());
 	}
 

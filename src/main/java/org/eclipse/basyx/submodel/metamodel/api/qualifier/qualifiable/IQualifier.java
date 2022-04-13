@@ -41,6 +41,6 @@ public interface IQualifier extends IHasSemantics, IConstraint {
 	public Object getValue();
 
 	public IReference getValueId();
-	
-	public ValueType  getValueType();
+
+	public ValueType getValueType();
 }

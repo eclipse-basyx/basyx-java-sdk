@@ -66,7 +66,7 @@ import org.junit.Test;
  */
 public class TestAssetAdministrationShell extends AssetAdministrationShellSuite {
 	private static final Reference REFERENCE = new Reference(new Key(KeyElements.ASSET, true, "testValue", IdentifierType.IRI));
-	
+
 	private AssetAdministrationShell shell;
 
 	/**
@@ -86,14 +86,14 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 	public void testGetSubmodel() throws Exception {
 		// Overwritten because getting submodels on local AAS is not supported
 	}
-	
+
 	@Test
 	public void testSetDataSpecificationReferences() {
 		Collection<IReference> refs = Collections.singleton(REFERENCE);
 		shell.setDataSpecificationReferences(refs);
 		assertEquals(refs, shell.getDataSpecificationReferences());
 	}
-	
+
 	@Test
 	public void testSetEmbeddedDataSpecifications() {
 		EmbeddedDataSpecification embeddedDataSpecification = new EmbeddedDataSpecification();
@@ -101,20 +101,20 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		shell.setEmbeddedDataSpecifications(specifications);
 		assertEquals(specifications, shell.getEmbeddedDataSpecifications());
 	}
-	
+
 	@Test
 	public void testSecurity() {
 		Security security = new Security();
 		shell.setSecurity(security);
 		assertEquals(security, shell.getSecurity());
-	} 
-	
+	}
+
 	@Test
 	public void testSetParent() {
 		shell.setParent(REFERENCE);
 		assertEquals(REFERENCE, shell.getParent());
 	}
-	
+
 	@Test
 	public void testAddConceptDescription() {
 		IdentifierType idType = IdentifierType.IRI;
@@ -130,7 +130,7 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		dictionaries.add(dictionary);
 		assertEquals(dictionaries, shell.getConceptDictionary());
 	}
-	
+
 	@Test
 	public void testSetSubmodels() {
 		// Create submodels
@@ -143,7 +143,7 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		Property prop2 = new Property("prop2Id", ValueType.String);
 		prop2.setValue("testProperty2");
 		subModel2.addSubmodelElement(prop2);
-		
+
 		// create a collection of descriptors and add the above descriptors
 		Collection<Submodel> submodels = new ArrayList<Submodel>();
 		submodels.add(subModel1);
@@ -165,5 +165,5 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		assertTrue(smReferences.contains(expected1));
 		assertTrue(smReferences.contains(expected2));
 		assertEquals(2, smReferences.size());
-	} 
+	}
 }

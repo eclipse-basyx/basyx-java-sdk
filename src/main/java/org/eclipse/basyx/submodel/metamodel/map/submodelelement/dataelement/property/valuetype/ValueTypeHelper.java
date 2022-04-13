@@ -35,7 +35,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
-
 /**
  * Provides utility functions for
  * {@link org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType
@@ -56,7 +55,7 @@ public class ValueTypeHelper {
 			typeMap.put(t.toString(), t);
 		}
 	}
-	
+
 	// Strings required for meta-model conformant valueType format
 	private static final String TYPE_NAME = "name";
 	private static final String TYPE_OBJECT = "dataObjectType";
@@ -83,16 +82,16 @@ public class ValueTypeHelper {
 	 */
 	public static ValueType getType(Object obj) {
 		ValueType objectType;
-		
+
 		if (obj == null) {
 			objectType = ValueType.None;
 		} else {
 			Class<?> c = obj.getClass();
-			if(c == byte.class || c == Byte.class) {
+			if (c == byte.class || c == Byte.class) {
 				objectType = ValueType.Int8;
-			}else if(c == short.class || c == Short.class) {
+			} else if (c == short.class || c == Short.class) {
 				objectType = ValueType.Int16;
-			}else if (c == int.class || c == Integer.class) {
+			} else if (c == int.class || c == Integer.class) {
 				objectType = ValueType.Integer;
 			} else if (c == long.class || c == Long.class) {
 				objectType = ValueType.Int64;
@@ -138,107 +137,127 @@ public class ValueTypeHelper {
 	 */
 	public static Object getJavaObject(Object value, ValueType objType) {
 		Object target = null;
-		if(objType != null) {
-			switch(objType) {
+		if (objType != null) {
+			switch (objType) {
 			case Int8:
-				if(((String)value).isEmpty()){
+				if (((String) value).isEmpty()) {
 					target = new Byte("NaN");
-				}else {
-					target = new Byte((String)value);
+				} else {
+					target = new Byte((String) value);
 				}
 				break;
-			case Int16: case UInt8:
-				if(((String)value).isEmpty()){
+			case Int16:
+			case UInt8:
+				if (((String) value).isEmpty()) {
 					target = new Short("NaN");
-				}else {
-					target = new Short((String)value);
+				} else {
+					target = new Short((String) value);
 				}
 				break;
-			case Int32: case UInt16:
-				if(((String)value).isEmpty()){
+			case Int32:
+			case UInt16:
+				if (((String) value).isEmpty()) {
 					target = new Integer("NaN");
-				}else {
-					target = new Integer((String)value);
+				} else {
+					target = new Integer((String) value);
 				}
 				break;
-			case Int64: case UInt32:
-				if(((String)value).isEmpty()){
+			case Int64:
+			case UInt32:
+				if (((String) value).isEmpty()) {
 					target = new Long("NaN");
-				}else {
-					target = new Long((String)value);
+				} else {
+					target = new Long((String) value);
 				}
 				break;
 			case UInt64:
-				if(((String)value).isEmpty()){
+				if (((String) value).isEmpty()) {
 					target = new BigInteger("NaN");
-				}else {
-					target = new BigInteger((String)value);
+				} else {
+					target = new BigInteger((String) value);
 				}
 				break;
 			case Double:
-				if(((String)value).isEmpty()){
+				if (((String) value).isEmpty()) {
 					target = new Double("NaN");
-				}else {
-					target = new Double((String)value);
+				} else {
+					target = new Double((String) value);
 				}
 				break;
 			case Float:
-				if(((String)value).isEmpty()){
+				if (((String) value).isEmpty()) {
 					target = new Float("NaN");
-				}else {
-					target =  new Float((String)value);
+				} else {
+					target = new Float((String) value);
 				}
 				break;
 			case Boolean:
-				target =  new Boolean((String)value);
+				target = new Boolean((String) value);
 				break;
-			case AnySimpleType: case String: case LangString: case AnyURI: case Base64Binary: case HexBinary: case NOTATION: case ENTITY: case ID: case IDREF:
+			case AnySimpleType:
+			case String:
+			case LangString:
+			case AnyURI:
+			case Base64Binary:
+			case HexBinary:
+			case NOTATION:
+			case ENTITY:
+			case ID:
+			case IDREF:
 				target = (String) value;
 				break;
-			case Duration:		case DayTimeDuration:
-				target = Duration.parse((String)value);
+			case Duration:
+			case DayTimeDuration:
+				target = Duration.parse((String) value);
 				break;
 			case YearMonthDuration:
-				target = Period.parse((String)value);
+				target = Period.parse((String) value);
 				break;
-			case DateTime: case DateTimeStamp: case GDay: case GMonth: case GMonthDay: case GYear: case GYearMonth:
+			case DateTime:
+			case DateTimeStamp:
+			case GDay:
+			case GMonth:
+			case GMonthDay:
+			case GYear:
+			case GYearMonth:
 				try {
-					target = DatatypeFactory.newInstance().newXMLGregorianCalendar((String)value);
+					target = DatatypeFactory.newInstance().newXMLGregorianCalendar((String) value);
 					break;
 				} catch (DatatypeConfigurationException e) {
 					e.printStackTrace();
 					throw new RuntimeException("Could not create DatatypeFactory for XMLGregorianCaldner handling");
-				} 
+				}
 			case QName:
-				target = QName.valueOf((String)value);
+				target = QName.valueOf((String) value);
 				break;
 			default:
 				target = value;
 				break;
 			}
 			return target;
-		}else {
+		} else {
 			return null;
 		}
-		
-		
+
 	}
 
 	/**
 	 * Convert an object which has special types (Duration, period, Qname, Date) to
-	 * String object Used by Property.set() or ConnectedProperty.set(), prepare for the serialization
+	 * String object Used by Property.set() or ConnectedProperty.set(), prepare for
+	 * the serialization
 	 * 
-	 * @param value - the target object
+	 * @param value
+	 *            - the target object
 	 * @return
 	 */
 	public static Object prepareForSerialization(Object value) {
-		if(value != null) {
+		if (value != null) {
 			Class<?> c = value.getClass();
 			if (c == Duration.class || c == Period.class || c == QName.class || value instanceof XMLGregorianCalendar) {
 				return value.toString();
 			}
 		}
-			return value;
+		return value;
 
 	}
 

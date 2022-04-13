@@ -41,7 +41,7 @@ public class TestSubmodelElementIdShortBlacklist {
 	@Test
 	public void testIsBlacklisted() {
 		String allowed[] = { "test", "values", "invocations" };
-		
+
 		for (String s : SubmodelElementIdShortBlacklist.BLACKLIST) {
 			assertTrue(s + " was incorrectly allowed", SubmodelElementIdShortBlacklist.isBlacklisted(s));
 		}

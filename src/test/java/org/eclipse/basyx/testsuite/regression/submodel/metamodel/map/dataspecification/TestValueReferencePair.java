@@ -45,31 +45,31 @@ import org.junit.Test;
 public class TestValueReferencePair {
 	private static final String VALUE = "testValue";
 	private static final IReference VALUE_ID = new Reference(new Key(KeyElements.ASSET, true, "testValue", IdentifierType.IRDI));
-	
+
 	private ValueReferencePair valueReferencePair;
-	
+
 	@Before
 	public void buildValueReferencePair() {
 		valueReferencePair = new ValueReferencePair(VALUE, VALUE_ID);
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		assertEquals(VALUE, valueReferencePair.getValue());
 		assertEquals(VALUE_ID, valueReferencePair.getValueId());
-	} 
-	
+	}
+
 	@Test
 	public void testSetValue() {
 		String newValue = "testValue1";
 		valueReferencePair.setValue(newValue);
 		assertEquals(newValue, valueReferencePair.getValue());
-	} 
-	
+	}
+
 	@Test
 	public void testSetValueId() {
 		IReference newValueId = new Reference(new Key(KeyElements.BLOB, false, "testValueNew", IdentifierType.IRI));
 		valueReferencePair.setValueId(newValueId);
 		assertEquals(newValueId, valueReferencePair.getValueId());
-	} 
+	}
 }

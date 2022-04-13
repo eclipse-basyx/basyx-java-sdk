@@ -33,5 +33,5 @@ package org.eclipse.basyx.submodel.observer;
  *
  */
 public interface IObserver {
-	
+
 }

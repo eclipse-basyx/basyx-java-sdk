@@ -47,8 +47,7 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 
 /**
- * Tests createAsFacade and isValid of {@link Markings} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link Markings} for their correctness
  * 
  * @author haque
  *
@@ -59,7 +58,7 @@ public class TestMarkings {
 	public static Marking marking;
 
 	private Map<String, Object> markingsMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void initMarkings() {
 		TestMarking.markingFile.setIdShort(Marking.MARKINGFILEID);
@@ -68,12 +67,12 @@ public class TestMarkings {
 		marking.setParent(new Reference(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, IDSHORT, IdentifierType.IRDI)));
 		markings = new ArrayList<Marking>();
 		markings.add(marking);
-		
+
 		markingsMap.put(Referable.IDSHORT, IDSHORT);
 		markingsMap.put(Property.VALUE, markings);
 		markingsMap.put(HasSemantics.SEMANTICID, Markings.SEMANTICID);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		Markings markingsFromMap = Markings.createAsFacade(markingsMap);
@@ -81,20 +80,20 @@ public class TestMarkings {
 		assertEquals(markings, markingsFromMap.getMarking());
 		assertEquals(IDSHORT, markingsFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		markingsMap.remove(Referable.IDSHORT);
 		Markings.createAsFacade(markingsMap);
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionNullMarkings() {
 		markingsMap.remove(Property.VALUE);
 		Markings.createAsFacade(markingsMap);
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionEmptyMarkings() {
 		markingsMap.put(Property.VALUE, new ArrayList<Marking>());
 		Markings.createAsFacade(markingsMap);

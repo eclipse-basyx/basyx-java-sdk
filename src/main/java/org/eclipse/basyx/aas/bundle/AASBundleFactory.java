@@ -60,8 +60,7 @@ public class AASBundleFactory {
 	 * @param assets
 	 * @return
 	 */
-	public Set<AASBundle> create(Collection<? extends IAssetAdministrationShell> shells,
-			Collection<? extends ISubmodel> submodels, Collection<? extends IAsset> assets) {
+	public Set<AASBundle> create(Collection<? extends IAssetAdministrationShell> shells, Collection<? extends ISubmodel> submodels, Collection<? extends IAsset> assets) {
 		Set<AASBundle> bundles = new HashSet<>();
 
 		for (IAssetAdministrationShell shell : shells) {
@@ -104,8 +103,7 @@ public class AASBundleFactory {
 	 * @param shell
 	 * @return
 	 */
-	private Set<ISubmodel> retrieveSubmodelsForAAS(Collection<? extends ISubmodel> submodels,
-			IAssetAdministrationShell shell) {
+	private Set<ISubmodel> retrieveSubmodelsForAAS(Collection<? extends ISubmodel> submodels, IAssetAdministrationShell shell) {
 		Set<ISubmodel> currentSM = new HashSet<>();
 
 		for (IReference submodelRef : shell.getSubmodelReferences()) {
@@ -130,8 +128,7 @@ public class AASBundleFactory {
 	 * @return
 	 * @throws ResourceNotFoundException
 	 */
-	private <T extends IIdentifiable> T getByReference(IReference ref, Collection<T> identifiable)
-			throws ResourceNotFoundException {
+	private <T extends IIdentifiable> T getByReference(IReference ref, Collection<T> identifiable) throws ResourceNotFoundException {
 		IKey lastKey = null;
 		// It may be that only one key fits to the Submodel contained in the XML
 		for (IKey key : ref.getKeys()) {

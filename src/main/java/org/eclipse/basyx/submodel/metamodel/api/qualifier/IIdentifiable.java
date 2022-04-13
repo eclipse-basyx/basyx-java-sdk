@@ -33,14 +33,14 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  *
  */
 
-public interface IIdentifiable  extends IReferable {
+public interface IIdentifiable extends IReferable {
 	/**
 	 * Gets the administrative information of an identifiable element.
 	 * 
 	 * @return
 	 */
 	public IAdministrativeInformation getAdministration();
-	
+
 	/**
 	 * Gets theglobally unique identification of the element.
 	 * 

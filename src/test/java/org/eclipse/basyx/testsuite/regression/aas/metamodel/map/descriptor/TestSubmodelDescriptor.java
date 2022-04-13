@@ -59,7 +59,7 @@ public class TestSubmodelDescriptor extends ModelDescriptorTestSuite {
 	private static final String HTTP_ENDPOINT = "testEnd/submodel";
 	private static final String ID_SHORT_STRING = "testIdShort";
 	private static final Identifier IDENTIFIER = new Identifier(ID_TYPE, ID_SHORT_STRING);
-	
+
 	@Test
 	public void testConstructor1() {
 		ModelingKind modelingKind = ModelingKind.INSTANCE;
@@ -77,13 +77,13 @@ public class TestSubmodelDescriptor extends ModelDescriptorTestSuite {
 		Qualifiable qualifiable = new Qualifiable(formula);
 		HasDataSpecification hasDataSpecification = new HasDataSpecification(new ArrayList<>(), Collections.singleton(reference));
 		Submodel subModel = new Submodel(hasSemantics, identifiable, qualifiable, hasDataSpecification, hasKind);
-		
+
 		SubmodelDescriptor descriptor = new SubmodelDescriptor(subModel, HTTP_ENDPOINT);
 		assertEquals(HTTP_ENDPOINT, descriptor.getFirstEndpoint());
 		assertEquals(ID_SHORT_STRING, descriptor.getIdShort());
 		assertEquals(IDENTIFIER, descriptor.getIdentifier());
 	}
-	
+
 	@Test
 	public void testConstructor2() {
 		SubmodelDescriptor descriptor = new SubmodelDescriptor(ID_SHORT_STRING, IDENTIFIER, HTTP_ENDPOINT);

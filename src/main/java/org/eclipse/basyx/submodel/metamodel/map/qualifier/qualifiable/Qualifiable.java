@@ -45,7 +45,8 @@ public class Qualifiable extends VABModelMap<Object> implements IQualifiable {
 	/**
 	 * Constructor
 	 */
-	public Qualifiable() {}
+	public Qualifiable() {
+	}
 
 	/**
 	 * Constructor

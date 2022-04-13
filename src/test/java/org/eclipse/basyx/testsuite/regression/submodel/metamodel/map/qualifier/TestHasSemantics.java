@@ -48,19 +48,19 @@ public class TestHasSemantics {
 	private static final IdentifierType ID_TYPE = IdentifierType.CUSTOM;
 	private static final Identifier IDENTIFIER = new Identifier(ID_TYPE, VALUE);
 	private static final Reference REFERENCE = new Reference(IDENTIFIER, KEY_ELEMENTS, IS_LOCAL);
-	
+
 	private HasSemantics semantics;
-	
+
 	@Before
 	public void buildHasSemantics() {
 		semantics = new HasSemantics(REFERENCE);
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		assertEquals(REFERENCE, semantics.getSemanticId());
 	}
-	
+
 	@Test
 	public void testSetSemanticID() {
 		IdentifierType identifierType = IdentifierType.IRDI;

@@ -51,20 +51,21 @@ import org.junit.Test;
  *
  */
 public class TestProductClassifications {
-	public static ProductClassificationItem productClassificationItem = new ProductClassificationItem(ProductClassifications.PRODUCTCLASSIFICATIONITEMPREFIX + "01", TestProductClassificationItem.classificationSystem, TestProductClassificationItem.productClass);
-	
+	public static ProductClassificationItem productClassificationItem = new ProductClassificationItem(ProductClassifications.PRODUCTCLASSIFICATIONITEMPREFIX + "01", TestProductClassificationItem.classificationSystem,
+			TestProductClassificationItem.productClass);
+
 	private Map<String, Object> classificationMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void init() {
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(productClassificationItem);
-		
+
 		classificationMap.put(Referable.IDSHORT, ProductClassifications.IDSHORT);
 		classificationMap.put(HasSemantics.SEMANTICID, ProductClassifications.SEMANTICID);
 		classificationMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		ProductClassifications classificationFromMap = ProductClassifications.createAsFacade(classificationMap);
@@ -72,8 +73,8 @@ public class TestProductClassifications {
 		assertEquals(ProductClassifications.IDSHORT, classificationFromMap.getIdShort());
 		assertEquals(Collections.singletonList(productClassificationItem), classificationFromMap.getProductClassificationItems());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		classificationMap.remove(Referable.IDSHORT);
 		ProductClassifications.createAsFacade(classificationMap);

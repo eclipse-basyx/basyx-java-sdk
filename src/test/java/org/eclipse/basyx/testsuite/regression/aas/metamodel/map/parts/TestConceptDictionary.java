@@ -56,9 +56,9 @@ import org.junit.Test;
 public class TestConceptDictionary {
 	private static final Reference REFERENCE = new Reference(new Identifier(IdentifierType.CUSTOM, "testValue"), KeyElements.ASSET, false);
 	private static final Reference REFERENCE2 = new Reference(new Identifier(IdentifierType.IRDI, "testNewId"), KeyElements.ASSET, true);
-	
+
 	private ConceptDictionary dictionary;
-	
+
 	@Before
 	public void buildConceptDictionary() {
 		List<IReference> refs = new ArrayList<>();
@@ -66,40 +66,40 @@ public class TestConceptDictionary {
 		dictionary = new ConceptDictionary("testIdShort");
 		dictionary.setConceptDescriptionReferences(refs);
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		assertEquals(Collections.singleton(REFERENCE), dictionary.getConceptDescriptionReferences());
 		assertEquals(new ArrayList<IConceptDescription>(), dictionary.getConceptDescriptions());
 	}
-	
+
 	@Test
 	public void testSetIdShort() {
 		String newIdString = "newId";
 		dictionary.setIdShort(newIdString);
 		assertEquals(newIdString, dictionary.getIdShort());
 	}
-	
+
 	@Test
 	public void testSetCategory() {
 		String newCategoryString = "newCategory";
 		dictionary.setCategory(newCategoryString);
 		assertEquals(newCategoryString, dictionary.getCategory());
 	}
-	
+
 	@Test
 	public void testSetDescription() {
 		LangStrings newDescriptionString = new LangStrings("DE", "newTest");
 		dictionary.setDescription(newDescriptionString);
 		assertEquals(newDescriptionString, dictionary.getDescription());
 	}
-	
+
 	@Test
 	public void testSetParent() {
 		dictionary.setParent(REFERENCE2);
 		assertEquals(REFERENCE2, dictionary.getParent());
 	}
-	
+
 	@Test
 	public void testSetConceptDescriptionReferences() {
 		Collection<IReference> references = new HashSet<IReference>();
@@ -108,7 +108,7 @@ public class TestConceptDictionary {
 		dictionary.setConceptDescriptionReferences(references);
 		assertEquals(references, dictionary.getConceptDescriptionReferences());
 	}
-	
+
 	@Test
 	public void testSetConceptDescriptions() {
 		ConceptDescription description1 = new ConceptDescription("testIdShort1", new Identifier(IdentifierType.IRDI, "testIdShort1"));
@@ -120,8 +120,8 @@ public class TestConceptDictionary {
 		descriptions.add(description2);
 		dictionary.setConceptDescriptions(descriptions);
 		assertEquals(descriptions, dictionary.getConceptDescriptions());
-	} 
-	
+	}
+
 	@Test
 	public void testAddConceptDescription() {
 		IdentifierType idType = IdentifierType.IRI;

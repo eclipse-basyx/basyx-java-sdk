@@ -31,9 +31,6 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
-
-
-
 /**
  * BaSys registry interface
  * 
@@ -41,9 +38,9 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  *
  */
 public interface IAASRegistry {
-	
+
 	/**
-	 * Register AAS descriptor in registry, delete old registration 
+	 * Register AAS descriptor in registry, delete old registration
 	 */
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException;
 
@@ -56,12 +53,12 @@ public interface IAASRegistry {
 	 * Delete AAS descriptor from registry
 	 */
 	public void delete(IIdentifier aasId) throws ProviderException;
-	
+
 	/**
 	 * Delete SM descriptor from registry
 	 */
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException;
-	
+
 	/**
 	 * Lookup AAS
 	 */
@@ -97,4 +94,3 @@ public interface IAASRegistry {
 	public SubmodelDescriptor lookupSubmodel(IIdentifier aasId, IIdentifier smId) throws ProviderException;
 
 }
-

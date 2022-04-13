@@ -33,14 +33,14 @@ package org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement;
  */
 public interface IBlob extends IDataElement {
 	/**
-	 * Gets the value of the Blob instance of a blob data element.
-	 * The returned value is Base64 encoded.
+	 * Gets the value of the Blob instance of a blob data element. The returned
+	 * value is Base64 encoded.
 	 * 
 	 * @return
 	 */
 	@Override
 	public String getValue();
-	
+
 	/**
 	 * Sets a Base64 encoded value of the BLOB instance of a blob data element.
 	 * 

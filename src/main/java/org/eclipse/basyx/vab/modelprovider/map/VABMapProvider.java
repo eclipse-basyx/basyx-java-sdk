@@ -29,8 +29,6 @@ import java.util.Map;
 import org.eclipse.basyx.vab.modelprovider.generic.IVABElementHandler;
 import org.eclipse.basyx.vab.modelprovider.generic.VABModelProvider;
 
-
-
 /**
  * A simple VAB model provider based on a LinkedHashMap.
  * 

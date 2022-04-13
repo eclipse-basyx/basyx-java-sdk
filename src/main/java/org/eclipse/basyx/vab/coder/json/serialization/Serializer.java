@@ -36,7 +36,6 @@ public interface Serializer {
 	 */
 	public String serialize(Object value);
 
-	
 	/**
 	 * Deserialize a primitive or complex value from JSON object
 	 */

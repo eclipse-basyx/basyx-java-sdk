@@ -32,7 +32,6 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.rang
 import org.junit.Before;
 import org.junit.Test;
 
-
 /**
  * Test for Range
  * 
@@ -44,20 +43,20 @@ public class TestRange {
 	private static final int MIN = 0;
 	private static final int MAX = 10;
 	private Range range;
-	
+
 	@Before
 	public void buildRange() {
 		range = new Range(ValueType.Integer, MIN, MAX);
 	}
-	
+
 	@Test
 	public void testGetValue() {
 		assertEquals(MIN, range.getMin());
 		assertEquals(MAX, range.getMax());
-		
+
 		RangeValue value = range.getValue();
 		assertEquals(MIN, value.getMin());
 		assertEquals(MAX, value.getMax());
-	} 
-	
+	}
+
 }

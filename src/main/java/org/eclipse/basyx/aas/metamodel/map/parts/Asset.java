@@ -76,9 +76,10 @@ public class Asset extends VABModelMap<Object> implements IAsset {
 		// Default values
 		setAssetKind(AssetKind.INSTANCE);
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param identification
 	 * @param kind
@@ -113,24 +114,23 @@ public class Asset extends VABModelMap<Object> implements IAsset {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Asset.class, map);
 		}
-		
+
 		Asset ret = new Asset();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
-		return Identifiable.isValid(map) && 
-				map.containsKey(Asset.KIND);
+		return Identifiable.isValid(map) && map.containsKey(Asset.KIND);
 	}
 
 	@Override
@@ -191,6 +191,7 @@ public class Asset extends VABModelMap<Object> implements IAsset {
 	public void setAssetIdentificationModel(IReference submodel) {
 		put(Asset.ASSETIDENTIFICATIONMODEL, submodel);
 	}
+
 	@Override
 	public String getIdShort() {
 		return Referable.createAsFacade(this, getKeyElement()).getIdShort();
@@ -236,7 +237,7 @@ public class Asset extends VABModelMap<Object> implements IAsset {
 	public void setBillOfMaterial(Reference reference) {
 		put(Asset.BILLOFMATERIAL, reference);
 	}
-	
+
 	private KeyElements getKeyElement() {
 		return KeyElements.ASSET;
 	}

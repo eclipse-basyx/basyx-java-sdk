@@ -32,10 +32,11 @@ import org.eclipse.basyx.extensions.aas.aggregator.aasxupload.AASAggregatorAASXU
 
 /**
  * Tests AAS Aggragator with AASX upload functionality
+ * 
  * @author haque
  *
  */
-public class TestAASAggregatorAASXUpload extends TestAASAggregatorAASXUploadSuite{
+public class TestAASAggregatorAASXUpload extends TestAASAggregatorAASXUploadSuite {
 	@Override
 	protected IAASAggregator getAggregator() {
 		return new AASAggregatorAASXUpload(new AASAggregator());

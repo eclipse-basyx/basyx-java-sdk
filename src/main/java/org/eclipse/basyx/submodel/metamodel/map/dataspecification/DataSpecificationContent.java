@@ -35,7 +35,8 @@ public class DataSpecificationContent extends VABModelMap<Object> implements IDa
 	 * 
 	 * @param map
 	 *            a DataSpecificationContent object as raw map
-	 * @return a DataSpecificationContent object, that behaves like a facade for the given map
+	 * @return a DataSpecificationContent object, that behaves like a facade for the
+	 *         given map
 	 */
 	public static DataSpecificationContent createAsFacade(Map<String, Object> map) {
 		if (map == null) {

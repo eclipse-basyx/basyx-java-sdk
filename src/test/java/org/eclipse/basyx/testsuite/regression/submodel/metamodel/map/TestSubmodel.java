@@ -67,11 +67,11 @@ public class TestSubmodel extends TestSubmodelSuite {
 		IIdentifier identifier = new ModelUrn("testId");
 		Submodel submodel = new Submodel("smIdShort", identifier);
 		submodel.addSubmodelElement(prop);
-		
+
 		// Create expected parent of the element for assertion
 		Reference expectedParent = new Reference(new Key(KeyElements.SUBMODEL, true, identifier.getId(), identifier.getIdType()));
 		assertEquals(expectedParent, prop.getParent());
-	} 
+	}
 
 	/**
 	 * Tests if a Submodel containing a list for SUBMODELELEMENT is correctly
@@ -82,7 +82,7 @@ public class TestSubmodel extends TestSubmodelSuite {
 	public void testCreateAsFacadePropertyList() {
 		// Create test property
 		String propId = "testProp";
-		
+
 		Property expected = new Property(5);
 		expected.setIdShort(propId);
 
@@ -101,7 +101,7 @@ public class TestSubmodel extends TestSubmodelSuite {
 	protected ISubmodel getSubmodel() {
 		return submodel;
 	}
-	
+
 	@Test(expected = IdShortDuplicationException.class)
 	public void checkForExceptionWithDuplicateIdShortInSubmodel() {
 		Map<String, Object> faultySubmodel = createSubmodelWithDuplicateIdShortProperties();
@@ -111,18 +111,18 @@ public class TestSubmodel extends TestSubmodelSuite {
 
 	private Map<String, Object> createSubmodelWithDuplicateIdShortProperties() {
 		String duplicateIdShort = "testProp";
-		
+
 		Property property1 = new Property(duplicateIdShort, 5);
 		Property property2 = new Property(duplicateIdShort, 7);
-		
+
 		Collection<Map<String, Object>> collection = Arrays.asList(property1, property2);
-		
+
 		String idShort = "submodelIdShort";
-		
+
 		Submodel submodel = new Submodel(idShort, new Identifier(IdentifierType.IRI, idShort));
-		
+
 		submodel.put(Submodel.SUBMODELELEMENT, collection);
-		
+
 		return submodel;
 	}
 }

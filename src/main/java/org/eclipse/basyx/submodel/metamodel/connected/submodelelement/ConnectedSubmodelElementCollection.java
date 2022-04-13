@@ -80,36 +80,39 @@ public class ConnectedSubmodelElementCollection extends ConnectedSubmodelElement
 	public Map<String, IOperation> getOperations() {
 		return ConnectedSubmodelElementFactory.getOperations(getProxy(), Property.VALUE, "");
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.SUBMODELELEMENTCOLLECTION;
 	}
-	
+
 	/**
 	 * Get submodel element by given id
+	 * 
 	 * @param id
 	 * @return specific submodel element
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public ISubmodelElement getSubmodelElement(String id) {
-		Map<String, Object> node =(Map<String, Object>) getProxy().getValue(id);
+		Map<String, Object> node = (Map<String, Object>) getProxy().getValue(id);
 		ISubmodelElement element = ConnectedSubmodelElementFactory.getConnectedSubmodelElement(getProxy(), "", id, node);
-		return element;			
+		return element;
 	}
 
 	/**
 	 * Delete a submodel element by given id
+	 * 
 	 * @param id
 	 */
 	@Override
 	public void deleteSubmodelElement(String id) {
 		getProxy().deleteValue(id);
 	}
-	
+
 	/**
 	 * adds a submodel element to the collection
+	 * 
 	 * @param element
 	 */
 	@SuppressWarnings("unchecked")
@@ -125,7 +128,7 @@ public class ConnectedSubmodelElementCollection extends ConnectedSubmodelElement
 				return;
 			}
 		}
-		
+
 		getProxy().setValue(element.getIdShort(), element);
 	}
 

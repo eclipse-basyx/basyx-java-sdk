@@ -66,5 +66,4 @@ public class AuthorizedConnectedAASManager extends ConnectedAssetAdministrationS
 		super(new AuthorizedAASRegistryProxy(registryUrl, authorizationSupplier), new HTTPSConnectorProvider(authorizationSupplier));
 	}
 
-
 }

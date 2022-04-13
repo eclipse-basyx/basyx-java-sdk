@@ -193,10 +193,8 @@ public class VABPathToolsTest {
 
 	@Test
 	public void testIsOperationPath() {
-		String[] positive = { "submodelElements/id/invoke", "submodelElements/id/invoke/",
-				"operations/id/invoke", "operations/id/invoke/", "operations/test", "elem/operations/id" };
-		String[] negative = { "", "/submodelElementsX/", "/myoperations/", "/submodelElementsFake/",
-				"/submodelElementsFake/operationX/", "submodelElements/id/" };
+		String[] positive = { "submodelElements/id/invoke", "submodelElements/id/invoke/", "operations/id/invoke", "operations/id/invoke/", "operations/test", "elem/operations/id" };
+		String[] negative = { "", "/submodelElementsX/", "/myoperations/", "/submodelElementsFake/", "/submodelElementsFake/operationX/", "submodelElements/id/" };
 		for (String test : positive) {
 			assertTrue(test, VABPathTools.isOperationInvokationPath(test));
 		}
@@ -205,7 +203,7 @@ public class VABPathToolsTest {
 		}
 		assertFalse(VABPathTools.isOperationInvokationPath(null));
 	}
-	
+
 	@Test
 	public void testStripInvokeFromPath() {
 		assertEquals("id", VABPathTools.stripInvokeFromPath("id/invoke"));
@@ -214,7 +212,7 @@ public class VABPathToolsTest {
 		assertEquals("id/value", VABPathTools.stripInvokeFromPath("id/value"));
 		assertEquals("", VABPathTools.stripInvokeFromPath(""));
 	}
-	
+
 	@Test
 	public void testStripFromPath() {
 		assertEquals("id", VABPathTools.stripFromPath("id/invoke", "invoke"));
@@ -224,14 +222,13 @@ public class VABPathToolsTest {
 		assertEquals("id", VABPathTools.stripFromPath("id/value", "value"));
 		assertEquals("", VABPathTools.stripFromPath("", ""));
 	}
-	
+
 	@Test
 	public void testGetPathFromURL() {
-		
-		String[] urls = {"http://localhost:8080/test/elem.aasx", "http://localhost/test/elem.aasx",
-				"basyx://127.0.0.1:4000//http://localhost:8080/test/elem.aasx", "/test/elem.aasx", "test/elem.aasx"};
-		
-		for(String url: urls) {
+
+		String[] urls = { "http://localhost:8080/test/elem.aasx", "http://localhost/test/elem.aasx", "basyx://127.0.0.1:4000//http://localhost:8080/test/elem.aasx", "/test/elem.aasx", "test/elem.aasx" };
+
+		for (String url : urls) {
 			assertEquals("/test/elem.aasx", VABPathTools.getPathFromURL(url));
 		}
 	}
@@ -239,10 +236,7 @@ public class VABPathToolsTest {
 	@Test
 	public void testHarmonizePathWithSuffix() {
 		String expected = "http://localhost:8080/server/subserver/suffix";
-		String[] toTest = { expected, 
-							"http://localhost:8080/server/subserver/suffix/", 
-							"http://localhost:8080/server/subserver/", 
-				"http://localhost:8080/server/subserver", };
+		String[] toTest = { expected, "http://localhost:8080/server/subserver/suffix/", "http://localhost:8080/server/subserver/", "http://localhost:8080/server/subserver", };
 
 		for (String t : toTest) {
 			String harmonized = VABPathTools.harmonizePathWithSuffix(t, "suffix");

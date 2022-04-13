@@ -34,7 +34,7 @@ public class InMemoryFile {
 
 	private byte[] fileContent;
 	private String path;
-	
+
 	public InMemoryFile(byte[] fileContent, String path) {
 		this.fileContent = fileContent;
 		this.path = path;

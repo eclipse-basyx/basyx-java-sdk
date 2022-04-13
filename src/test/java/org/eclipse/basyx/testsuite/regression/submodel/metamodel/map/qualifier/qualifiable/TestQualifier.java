@@ -53,14 +53,14 @@ public class TestQualifier {
 	private static final IdentifierType ID_TYPE = IdentifierType.CUSTOM;
 	private static final Identifier IDENTIFIER = new Identifier(ID_TYPE, VALUE);
 	private static final Reference VALUE_ID = new Reference(IDENTIFIER, KEY_ELEMENTS, IS_LOCAL);
-	
+
 	private Qualifier qualifier;
-	
+
 	@Before
 	public void buildQualifier() {
-		qualifier = new Qualifier(TYPE, VALUE, VALUE_TYPE, VALUE_ID);	
+		qualifier = new Qualifier(TYPE, VALUE, VALUE_TYPE, VALUE_ID);
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		assertEquals(TYPE, qualifier.getType());
@@ -68,35 +68,35 @@ public class TestQualifier {
 		assertEquals(ValueTypeHelper.fromName(VALUE_TYPE), qualifier.getValueType());
 		assertEquals(VALUE_ID, qualifier.getValueId());
 	}
-	
+
 	@Test
 	public void testSetType() {
 		String newTypeString = "newType";
 		qualifier.setType(newTypeString);
 		assertEquals(newTypeString, qualifier.getType());
 	}
-	
+
 	@Test
 	public void testSetValue() {
 		String newValueString = "newValue";
 		qualifier.setValue(newValueString);
 		assertEquals(newValueString, qualifier.getValue());
 	}
-	
+
 	@Test
 	public void testSetValueId() {
 		Reference reference = new Reference(new Identifier(IdentifierType.IRI, "newId"), KeyElements.BLOB, true);
 		qualifier.setValueId(reference);
 		assertEquals(reference, qualifier.getValueId());
 	}
-	
+
 	@Test
 	public void testSetValueType() {
 		ValueType newValueTypeString = ValueType.AnyType;
 		qualifier.setValueType(newValueTypeString);
 		assertEquals(newValueTypeString, qualifier.getValueType());
 	}
-	
+
 	// Tests if the valueType is correctly converted to a string
 	@Test
 	public void testSetValueCorrectValueType() {
@@ -111,11 +111,11 @@ public class TestQualifier {
 		qualifier.setSemanticId(reference);
 		assertEquals(reference, qualifier.getSemanticId());
 	}
-	
+
 	@SuppressWarnings("unchecked")
-    @Test
-    public void testModelType() {
-	    LinkedHashMap<String, Object> modelType = (LinkedHashMap<String, Object>)qualifier.get(ModelType.MODELTYPE);
-        assertEquals(Qualifier.MODELTYPE, modelType.get(ModelType.NAME));
-    }
+	@Test
+	public void testModelType() {
+		LinkedHashMap<String, Object> modelType = (LinkedHashMap<String, Object>) qualifier.get(ModelType.MODELTYPE);
+		assertEquals(Qualifier.MODELTYPE, modelType.get(ModelType.NAME));
+	}
 }

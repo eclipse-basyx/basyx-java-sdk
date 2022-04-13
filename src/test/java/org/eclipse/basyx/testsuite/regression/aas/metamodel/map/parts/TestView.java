@@ -43,8 +43,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests constructor, setter and getter of {@link View} for their
- * correctness
+ * Tests constructor, setter and getter of {@link View} for their correctness
  * 
  * @author haque
  *
@@ -52,10 +51,10 @@ import org.junit.Test;
 public class TestView {
 	private static final Reference REFERENCE = new Reference(new Identifier(IdentifierType.CUSTOM, "testValue"), KeyElements.ASSET, false);
 	private static final Reference REFERENCE2 = new Reference(new Identifier(IdentifierType.IRDI, "testNewId"), KeyElements.ASSET, true);
-	
+
 	private View view;
 	private Collection<IReference> references;
-	
+
 	@Before
 	public void buildConceptDictionary() {
 		view = new View("testIdShort");
@@ -64,30 +63,30 @@ public class TestView {
 		references.add(REFERENCE);
 		references.add(REFERENCE2);
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		assertEquals(Collections.singleton(REFERENCE), view.getContainedElement());
 	}
-	
+
 	@Test
 	public void testSetContainedElement() {
 		view.setContainedElement(references);
 		assertEquals(references, view.getContainedElement());
 	}
-	
+
 	@Test
 	public void testSetSemanticID() {
 		view.setSemanticId(REFERENCE);
 		assertEquals(REFERENCE, view.getSemanticId());
 	}
-	
+
 	@Test
 	public void testSetDataSpecificationReferences() {
 		view.setDataSpecificationReferences(references);
 		assertEquals(references, view.getDataSpecificationReferences());
 	}
-	
+
 	@Test
 	public void testSetEmbeddedDataSpecifications() {
 		EmbeddedDataSpecification embeddedDataSpecification = new EmbeddedDataSpecification();
@@ -95,28 +94,28 @@ public class TestView {
 		view.setEmbeddedDataSpecifications(specifications);
 		assertEquals(specifications, view.getEmbeddedDataSpecifications());
 	}
-	
+
 	@Test
 	public void testSetIdShort() {
 		String newIdString = "newId";
 		view.setIdShort(newIdString);
 		assertEquals(newIdString, view.getIdShort());
 	}
-	
+
 	@Test
 	public void testSetCategory() {
 		String newCategoryString = "newCategory";
 		view.setCategory(newCategoryString);
 		assertEquals(newCategoryString, view.getCategory());
 	}
-	
+
 	@Test
 	public void testSetDescription() {
 		LangStrings newDescriptionString = new LangStrings("DE", "newTest");
 		view.setDescription(newDescriptionString);
 		assertEquals(newDescriptionString, view.getDescription());
 	}
-	
+
 	@Test
 	public void testSetParent() {
 		view.setParent(REFERENCE2);

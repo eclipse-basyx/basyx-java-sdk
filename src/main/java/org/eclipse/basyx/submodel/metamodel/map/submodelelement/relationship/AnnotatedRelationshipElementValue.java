@@ -67,27 +67,26 @@ public class AnnotatedRelationshipElementValue extends RelationshipElementValue 
 		facade.setMap(obj);
 		return facade;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static boolean isAnnotatedRelationshipElementValue(Object value) {
-		if(!RelationshipElementValue.isRelationshipElementValue(value)) {
+		if (!RelationshipElementValue.isRelationshipElementValue(value)) {
 			return false;
 		} else {
 			Map<String, Object> map = (Map<String, Object>) value;
 			return Reference.isReference(map.get(AnnotatedRelationshipElement.ANNOTATIONS));
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Collection<IDataElement> getAnnotations() {
 		Collection<IDataElement> list = new ArrayList<>();
-		
+
 		// Feed all Elements in ANNOTATIONS through the SubmodelElementFacadeFactory
 		// then collect them in a List<IDataElement>
-		((Collection<Map<String, Object>>) get(AnnotatedRelationshipElement.ANNOTATIONS)).stream()
-		.map(m -> SubmodelElementFacadeFactory.createSubmodelElement(m))
-		.filter(e -> e instanceof IDataElement).forEach(e -> list.add((IDataElement)e));
-		
+		((Collection<Map<String, Object>>) get(AnnotatedRelationshipElement.ANNOTATIONS)).stream().map(m -> SubmodelElementFacadeFactory.createSubmodelElement(m)).filter(e -> e instanceof IDataElement)
+				.forEach(e -> list.add((IDataElement) e));
+
 		return list;
 	}
 

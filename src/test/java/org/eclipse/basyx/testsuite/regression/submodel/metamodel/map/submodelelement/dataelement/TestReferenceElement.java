@@ -45,24 +45,24 @@ import org.junit.Test;
  */
 public class TestReferenceElement {
 	private static final Reference REFERENCE = new Reference(new Key(KeyElements.ASSET, true, "testValue", IdentifierType.IRI));
-	
+
 	private ReferenceElement referenceElement;
-	
+
 	@Before
 	public void buildReferenceElement() {
 		referenceElement = new ReferenceElement(REFERENCE);
-	} 
-	
+	}
+
 	@Test
 	public void testConstructor() {
 		assertEquals(REFERENCE, referenceElement.getValue());
 		assertEquals(ReferenceElement.MODELTYPE, referenceElement.getModelType());
-	} 
-	
+	}
+
 	@Test
 	public void testSetValue() {
 		Reference newReference = new Reference(new Identifier(IdentifierType.IRI, "testId"), KeyElements.ASSET, true);
 		referenceElement.setValue(newReference);
 		assertEquals(newReference, referenceElement.getValue());
-	} 
+	}
 }

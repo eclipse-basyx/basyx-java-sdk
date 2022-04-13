@@ -33,36 +33,39 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**
  * Helper class for Submodel API
- 
+ * 
  * @author haque
  */
 public class SubmodelAPIHelper {
-	
+
 	/**
 	 * Retrieves base access path for Submodel API
+	 * 
 	 * @return
 	 */
 	public static String getSubmodelPath() {
 		return "";
 	}
-	
+
 	/**
 	 * Retrieves base access path for submodel element
+	 * 
 	 * @return
 	 */
 	public static String getSubmodelElementsPath() {
 		return Submodel.SUBMODELELEMENT;
 	}
-	
+
 	/**
 	 * Retrieves access path for given element
+	 * 
 	 * @param idShortPath
 	 * @return
 	 */
 	public static String getSubmodelElementPath(String idShortPath) {
-		return VABPathTools.concatenatePaths(MultiSubmodelElementProvider.ELEMENTS, idShortPath); 
+		return VABPathTools.concatenatePaths(MultiSubmodelElementProvider.ELEMENTS, idShortPath);
 	}
-	
+
 	/**
 	 * Retrieves access path for async invocation of element's operation
 	 * 
@@ -72,7 +75,7 @@ public class SubmodelAPIHelper {
 	public static String getSubmodelElementAsyncInvokePath(String idShortPath) {
 		return VABPathTools.concatenatePaths(getSubmodelElementPath(idShortPath), Operation.INVOKE + OperationProvider.ASYNC);
 	}
-	
+
 	/**
 	 * Retrieves access path for synchroenous invocation of element's operation
 	 * 
@@ -92,9 +95,10 @@ public class SubmodelAPIHelper {
 	public static String getSubmodelElementValuePath(String idShortPath) {
 		return VABPathTools.concatenatePaths(getSubmodelElementPath(idShortPath), Property.VALUE);
 	}
-	
+
 	/**
 	 * Retrieves access path for Element operation's result by request id
+	 * 
 	 * @param idShortPath
 	 * @param requestId
 	 * @return

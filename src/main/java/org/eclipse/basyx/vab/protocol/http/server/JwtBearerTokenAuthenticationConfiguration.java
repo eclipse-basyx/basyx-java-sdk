@@ -31,7 +31,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 
 /**
- * Configuration for a Resource Server to support JWT Bearer Tokens for authentication.
+ * Configuration for a Resource Server to support JWT Bearer Tokens for
+ * authentication.
  *
  * @author pneuschwander
  */
@@ -48,11 +49,15 @@ public class JwtBearerTokenAuthenticationConfiguration {
 	}
 
 	/**
-	 * Provides configuration for a Resource Server to support JWT Bearer Tokens for authentication.
+	 * Provides configuration for a Resource Server to support JWT Bearer Tokens for
+	 * authentication.
 	 *
-	 * @param issuerUri   URI addressing the Token Issuer / Authorization Server
-	 * @param jwkSetUri   URI addressing the JWK Set to be used to decode and validate JWTs
-	 * @param requiredAud Audience the JWT has to contain in order to be accepted
+	 * @param issuerUri
+	 *            URI addressing the Token Issuer / Authorization Server
+	 * @param jwkSetUri
+	 *            URI addressing the JWK Set to be used to decode and validate JWTs
+	 * @param requiredAud
+	 *            Audience the JWT has to contain in order to be accepted
 	 */
 	public static JwtBearerTokenAuthenticationConfiguration of(final String issuerUri, final String jwkSetUri, @Nullable final String requiredAud) {
 		if (!isValidIssuerUri(issuerUri)) {
@@ -61,7 +66,7 @@ public class JwtBearerTokenAuthenticationConfiguration {
 		if (!isValidJwkSetUri(jwkSetUri)) {
 			throw new IllegalArgumentException("invalid jwkSetUri");
 		}
-		if(requiredAud != null && !isValidRequiredAudience(requiredAud)){
+		if (requiredAud != null && !isValidRequiredAudience(requiredAud)) {
 			throw new IllegalArgumentException("invalid requiredAud");
 		}
 		return new JwtBearerTokenAuthenticationConfiguration(issuerUri, jwkSetUri, requiredAud);
@@ -103,8 +108,10 @@ public class JwtBearerTokenAuthenticationConfiguration {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (!(o instanceof JwtBearerTokenAuthenticationConfiguration)) return false;
+		if (this == o)
+			return true;
+		if (!(o instanceof JwtBearerTokenAuthenticationConfiguration))
+			return false;
 		final JwtBearerTokenAuthenticationConfiguration that = (JwtBearerTokenAuthenticationConfiguration) o;
 		return Objects.equals(getIssuerUri(), that.getIssuerUri()) && Objects.equals(getJwkSetUri(), that.getJwkSetUri()) && Objects.equals(getRequiredAud(), that.getRequiredAud());
 	}

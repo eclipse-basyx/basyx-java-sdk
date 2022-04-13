@@ -33,8 +33,7 @@ import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.IHasKind;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IQualifiable;
 
 /**
- * A submodel defines a specific aspect of the asset represented by the
- * AAS.<br>
+ * A submodel defines a specific aspect of the asset represented by the AAS.<br>
  * <br>
  * A submodel is used to structure the digital representation and technical
  * functionality of an Administration Shell into distinguishable parts. Each
@@ -46,12 +45,13 @@ import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IQualifiab
  *
  */
 public interface ISubmodel extends IElement, IHasSemantics, IIdentifiable, IQualifiable, IHasDataSpecification, IHasKind, IElementContainer {
-	
+
 	/**
-	 * Gets a {@literal Map<IdShort, smElement.getValue() >} containing the values of all submodelElements
+	 * Gets a {@literal Map<IdShort, smElement.getValue() >} containing the values
+	 * of all submodelElements
 	 * 
 	 * @return a Map with the values of all submodelElements
 	 */
 	public Map<String, Object> getValues();
-	
+
 }

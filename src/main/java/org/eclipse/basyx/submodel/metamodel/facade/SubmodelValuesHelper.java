@@ -37,5 +37,5 @@ package org.eclipse.basyx.submodel.metamodel.facade;
  */
 @Deprecated
 public class SubmodelValuesHelper extends ElementContainerValuesHelper {
-	
+
 }

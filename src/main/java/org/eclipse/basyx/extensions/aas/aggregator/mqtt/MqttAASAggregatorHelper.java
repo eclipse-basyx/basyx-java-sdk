@@ -25,7 +25,8 @@
 package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
 /**
- * A helper class containing string constants of topics used by the AASAggregator. 
+ * A helper class containing string constants of topics used by the
+ * AASAggregator.
  * 
  * @author danish
  *

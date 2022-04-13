@@ -32,27 +32,30 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**
  * API helper for AAS Aggregator
+ * 
  * @author haque
  *
  */
 public class AASAggregatorAPIHelper {
 	public static final String AAS_SUFFIX = "aas";
-	
+
 	public static String getAggregatorPath() {
 		return AASAggregatorProvider.PREFIX;
 	}
-	
+
 	/**
 	 * Retrieves access path for creating, updating, deleting single AAS
+	 * 
 	 * @param aasId
 	 * @return
 	 */
 	public static String getAASEntryPath(IIdentifier aasId) {
 		return VABPathTools.concatenatePaths(getAggregatorPath(), VABPathTools.encodePathElement(aasId.getId()));
 	}
-	
+
 	/**
 	 * Retrieves access path for getting single AAS
+	 * 
 	 * @param aasId
 	 * @return
 	 */

@@ -121,7 +121,7 @@ public class VABBaSyxTCPInterface<ModelProvider extends IModelProvider> extends 
 				logger.debug("Exception in BASYX_GET", e);
 				// Catch Exceptions from JSONProvider
 				// No further action here, as the current version
-				// of the TCP-Mapping states, that always Statuscode 0x00 
+				// of the TCP-Mapping states, that always Statuscode 0x00
 				// should be returned with Exceptions encoded in returned String
 			}
 
@@ -149,7 +149,7 @@ public class VABBaSyxTCPInterface<ModelProvider extends IModelProvider> extends 
 				logger.debug("Exception in BASYX_SET", e);
 				// Catch Exceptions from JSONProvider
 				// No further action here, as the current version
-				// of the TCP-Mapping states, that always Statuscode 0x00 
+				// of the TCP-Mapping states, that always Statuscode 0x00
 				// should be returned with Exceptions encoded in returned String
 			}
 
@@ -175,7 +175,7 @@ public class VABBaSyxTCPInterface<ModelProvider extends IModelProvider> extends 
 				logger.debug("Exception in BASYX_CREATE", e);
 				// Catch Exceptions from JSONProvider
 				// No further action here, as the current version
-				// of the TCP-Mapping states, that always Statuscode 0x00 
+				// of the TCP-Mapping states, that always Statuscode 0x00
 				// should be returned with Exceptions encoded in returned String
 			}
 
@@ -210,7 +210,7 @@ public class VABBaSyxTCPInterface<ModelProvider extends IModelProvider> extends 
 				logger.debug("Exception in BASYX_DELETE", e);
 				// Catch Exceptions from JSONProvider
 				// No further action here, as the current version
-				// of the TCP-Mapping states, that always Statuscode 0x00 
+				// of the TCP-Mapping states, that always Statuscode 0x00
 				// should be returned with Exceptions encoded in returned String
 			}
 
@@ -235,7 +235,7 @@ public class VABBaSyxTCPInterface<ModelProvider extends IModelProvider> extends 
 				logger.debug("Exception in BASYX_INVOKE", e);
 				// Catch Exceptions from JSONProvider
 				// No further action here, as the current version
-				// of the TCP-Mapping states, that always Statuscode 0x00 
+				// of the TCP-Mapping states, that always Statuscode 0x00
 				// should be returned with Exceptions encoded in returned String
 			}
 

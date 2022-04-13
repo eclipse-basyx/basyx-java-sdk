@@ -47,21 +47,19 @@ import org.junit.Test;
  *
  */
 public class TestConnectedRelationshipElement {
-	
+
 	ConnectedRelationshipElement connectedRelElem;
 	RelationshipElement relElem;
-	
+
 	@Before
 	public void build() {
-		
+
 		Reference ref1 = new Reference(new Key(KeyElements.BLOB, true, "1", IdentifierType.CUSTOM));
 		Reference ref2 = new Reference(new Key(KeyElements.FILE, false, "2", IdentifierType.IRDI));
-		
+
 		relElem = new RelationshipElement("testId", ref1, ref2);
-		
-		
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(relElem))));
+
+		VABConnectionManagerStub manager = new VABConnectionManagerStub(new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(relElem))));
 
 		connectedRelElem = new ConnectedRelationshipElement(manager.connectToVABElement(""));
 	}

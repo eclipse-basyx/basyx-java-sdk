@@ -43,7 +43,8 @@ public class HasSemantics extends VABModelMap<Object> implements IHasSemantics {
 	/**
 	 * Constructor
 	 */
-	public HasSemantics() {}
+	public HasSemantics() {
+	}
 
 	/**
 	 * Constructor

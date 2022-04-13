@@ -38,20 +38,25 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Parses &lt;aas:multiLanguageProperty&gt; and builds the MultiLanguageProperty object from it <br>
- * Builds &lt;aas:multiLanguageProperty&gt; from a given MultiLanguageProperty object
+ * Parses &lt;aas:multiLanguageProperty&gt; and builds the MultiLanguageProperty
+ * object from it <br>
+ * Builds &lt;aas:multiLanguageProperty&gt; from a given MultiLanguageProperty
+ * object
  * 
  * @author conradi
  *
  */
 public class MultiLanguagePropertyXMLConverter extends SubmodelElementXMLConverter {
-	
+
 	public static final String MULTI_LANGUAGE_PROPERTY = "aas:multiLanguageProperty";
-	
+
 	/**
-	 * Parses a Map containing the content of XML tag &lt;aas:multiLanguageProperty&gt;
+	 * Parses a Map containing the content of XML tag
+	 * &lt;aas:multiLanguageProperty&gt;
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:multiLanguageProperty&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag
+	 *            &lt;aas:multiLanguageProperty&gt;
 	 * @return the parsed MultiLanguageProperty
 	 */
 	@SuppressWarnings("unchecked")
@@ -65,30 +70,32 @@ public class MultiLanguagePropertyXMLConverter extends SubmodelElementXMLConvert
 		return mLProperty;
 	}
 
-
-	
 	/**
-	 * Builds the &lt;aas:multiLanguageProperty&gt; XML tag for a MultiLanguageProperty
+	 * Builds the &lt;aas:multiLanguageProperty&gt; XML tag for a
+	 * MultiLanguageProperty
 	 * 
-	 * @param document the XML document
-	 * @param mLProperty the IMultiLanguageProperty to build the XML for
-	 * @return the &lt;aas:multiLanguageProperty&gt; XML tag for the given MultiLanguageProperty
+	 * @param document
+	 *            the XML document
+	 * @param mLProperty
+	 *            the IMultiLanguageProperty to build the XML for
+	 * @return the &lt;aas:multiLanguageProperty&gt; XML tag for the given
+	 *         MultiLanguageProperty
 	 */
 	public static Element buildMultiLanguageProperty(Document document, IMultiLanguageProperty mLProperty) {
 		Element mLPropertyRoot = document.createElement(MULTI_LANGUAGE_PROPERTY);
 		populateSubmodelElement(document, mLPropertyRoot, mLProperty);
-		
+
 		IReference valueId = mLProperty.getValueId();
-		if(valueId != null) {
+		if (valueId != null) {
 			Element valueIdRoot = document.createElement(VALUE_ID);
-			valueIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, valueId)); 
+			valueIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, valueId));
 			mLPropertyRoot.appendChild(valueIdRoot);
-		}	
-		
+		}
+
 		Element valueRoot = document.createElement(VALUE);
 		LangStringsXMLConverter.buildLangStringsXML(document, valueRoot, mLProperty.getValue());
 		mLPropertyRoot.appendChild(valueRoot);
-		
+
 		return mLPropertyRoot;
 	}
 }

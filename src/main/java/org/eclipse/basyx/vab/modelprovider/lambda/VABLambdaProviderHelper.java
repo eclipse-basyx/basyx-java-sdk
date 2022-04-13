@@ -69,8 +69,7 @@ public class VABLambdaProviderHelper {
 	 *            Method used to remove a key from the map
 	 * @return
 	 */
-	public static Map<String, Object> createMap(Supplier<?> get, Consumer<?> set, BiConsumer<String, Object> insert,
-			Consumer<Object> removeObject, Consumer<String> removeKey) {
+	public static Map<String, Object> createMap(Supplier<?> get, Consumer<?> set, BiConsumer<String, Object> insert, Consumer<Object> removeObject, Consumer<String> removeKey) {
 		Map<String, Object> value = new LinkedHashMap<>();
 		value.put(VABLambdaHandler.VALUE_GET_SUFFIX, get);
 		value.put(VABLambdaHandler.VALUE_SET_SUFFIX, set);
@@ -95,8 +94,7 @@ public class VABLambdaProviderHelper {
 	 *            Method used to remove a key from the map
 	 * @return
 	 */
-	public static Map<String, Object> createCollection(Supplier<?> get, Consumer<?> set, Consumer<Object> insert,
-			Consumer<Object> removeObject, Consumer<String> removeKey) {
+	public static Map<String, Object> createCollection(Supplier<?> get, Consumer<?> set, Consumer<Object> insert, Consumer<Object> removeObject, Consumer<String> removeKey) {
 		Map<String, Object> value = new LinkedHashMap<>();
 		value.put(VABLambdaHandler.VALUE_GET_SUFFIX, get);
 		value.put(VABLambdaHandler.VALUE_SET_SUFFIX, set);

@@ -61,9 +61,9 @@ import io.netty.handler.codec.http.HttpMethod;
  *
  */
 public class HTTPConnector implements IBaSyxConnector {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(HTTPConnector.class);
-	
+
 	private String address;
 	private String mediaType;
 	@Nullable
@@ -98,7 +98,7 @@ public class HTTPConnector implements IBaSyxConnector {
 		this.address = address;
 		this.mediaType = mediaType;
 		this.authorizationSupplier = authorizationSupplier;
-		
+
 		// Create client
 		client = ClientBuilder.newClient();
 
@@ -175,7 +175,7 @@ public class HTTPConnector implements IBaSyxConnector {
 		return request;
 	}
 
-	private Optional<String> getAuthorization(){
+	private Optional<String> getAuthorization() {
 		return Optional.ofNullable(authorizationSupplier).flatMap(IAuthorizationSupplier::getAuthorization);
 	}
 
@@ -195,7 +195,7 @@ public class HTTPConnector implements IBaSyxConnector {
 
 		return part1 + "/" + part2;
 	}
-	
+
 	/**
 	 * Perform a HTTP get request
 	 * 
@@ -315,33 +315,35 @@ public class HTTPConnector implements IBaSyxConnector {
 	}
 
 	private ProviderException handleProcessingException(HttpMethod method, Response rsp) {
-		if(rsp == null) {
+		if (rsp == null) {
 			return ExceptionToHTTPCodeMapper.mapToException(404, buildMessageString(method.name(), null));
 		}
-		
+
 		int statusCode = getStatusCode(rsp);
 		String responseJson = rsp.readEntity(String.class);
-		
+
 		Result result = buildResultFromJSON(responseJson);
-		
+
 		List<Message> messages = result.getMessages();
 		messages.add(new Message(MessageType.Exception, buildMessageString(method.name(), result)));
-		
-		ProviderException e = ExceptionToHTTPCodeMapper.mapToException(statusCode,  result.getMessages());
+
+		ProviderException e = ExceptionToHTTPCodeMapper.mapToException(statusCode, result.getMessages());
 		return e;
 	}
-	
+
 	/**
 	 * Get status code from HTTP Response
+	 * 
 	 * @param rsp
 	 * @return
 	 */
 	private int getStatusCode(Response rsp) {
 		return rsp != null ? rsp.getStatus() : 0;
 	}
-	
+
 	/**
 	 * Returns true if the response is succeeded
+	 * 
 	 * @param rsp
 	 * @return
 	 */
@@ -350,19 +352,22 @@ public class HTTPConnector implements IBaSyxConnector {
 	}
 
 	/**
-	 * Get string representation of endpoint for given path for debugging. 
-	 * @param path Requested path
+	 * Get string representation of endpoint for given path for debugging.
+	 * 
+	 * @param path
+	 *            Requested path
 	 * @return String representing requested endpoint
 	 */
 	@Override
 	public String getEndpointRepresentation(String path) {
 		return VABPathTools.concatenatePaths(address, path);
 	}
-	
+
 	/**
 	 * Builds a Result object from the json response
 	 * 
-	 * @param json The json response
+	 * @param json
+	 *            The json response
 	 * @return Result
 	 */
 	@SuppressWarnings("unchecked")
@@ -371,30 +376,32 @@ public class HTTPConnector implements IBaSyxConnector {
 		Map<String, Object> map = gson.fromJson(json, Map.class);
 		return Result.createAsFacade(map);
 	}
-	
+
 	/**
 	 * Builds the text for the message about the failed HTTP Request
 	 * 
-	 * @param methodName the HTTP method that failed
-	 * @param result the Messages returned by the server if any
+	 * @param methodName
+	 *            the HTTP method that failed
+	 * @param result
+	 *            the Messages returned by the server if any
 	 * @return the message text
 	 */
 	private String buildMessageString(String methodName, Result result) {
 		String message = "[HTTP " + methodName + "] Failed to request " + this.address + " with mediatype " + this.mediaType;
-		
-		if(result == null) {
+
+		if (result == null) {
 			return message;
 		}
-		
+
 		String text = "";
-		if(result.getMessages().size() > 0) {
+		if (result.getMessages().size() > 0) {
 			text = result.getMessages().get(0).getText();
 		}
-		
-		if(!text.isEmpty()) {
+
+		if (!text.isEmpty()) {
 			message += ". \"" + text + "\"";
 		}
-		
+
 		return message;
 	}
 }

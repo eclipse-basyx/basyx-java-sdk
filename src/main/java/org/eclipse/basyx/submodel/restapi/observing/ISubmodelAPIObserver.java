@@ -37,24 +37,29 @@ public interface ISubmodelAPIObserver extends IObserver {
 	/**
 	 * Is called when a SubmodelElement is added
 	 * 
-	 * @param idShortPath the idShortPath of the added element
-	 * @param newValue the value of the new element
+	 * @param idShortPath
+	 *            the idShortPath of the added element
+	 * @param newValue
+	 *            the value of the new element
 	 */
 	public void elementAdded(String idShortPath, Object newValue);
-	
+
 	/**
 	 * Is called when a SubmodelElement is deleted
 	 * 
-	 * @param idShortPath the idShortPath of the deleted element
+	 * @param idShortPath
+	 *            the idShortPath of the deleted element
 	 */
 	public void elementDeleted(String idShortPath);
-	
+
 	/**
 	 * Is called when a SubmodelElement is updated
 	 * 
-	 * @param idShortPath the idShortPath of the updated element
-	 * @param newValue the new value of the updated element
+	 * @param idShortPath
+	 *            the idShortPath of the updated element
+	 * @param newValue
+	 *            the new value of the updated element
 	 */
 	public void elementUpdated(String idShortPath, Object newValue);
-	
+
 }

@@ -37,8 +37,6 @@ import org.eclipse.basyx.vab.protocol.basyx.server.VABBaSyxTCPInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * BaSyx connector class
  * 
@@ -46,32 +44,31 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class BaSyxConnector implements IBaSyxConnector {
-	
+
 	private Logger logger = LoggerFactory.getLogger(BaSyxConnector.class);
 	private InetSocketAddress serverSocketAddress;
 	private SocketChannel channelToProvider;
-	
-	
+
 	/**
-	 * Constructor that creates a connection. 
+	 * Constructor that creates a connection.
 	 * 
 	 * This constructor connects to port at name.
 	 */
 	public BaSyxConnector(String hostName, int port) {
 		// Base constructor
 		super();
-		
+
 		// Exception handling
 		try {
 			// Resolve address
-			InetAddress       serverIPAddress     = InetAddress.getByName(hostName);
+			InetAddress serverIPAddress = InetAddress.getByName(hostName);
 			serverSocketAddress = new InetSocketAddress(serverIPAddress, port);
 		} catch (IOException e) {
 			// Print stack trace
 			logger.error("Exception in BaSyxConnector", e);
 		}
 	}
-	
+
 	/**
 	 * Close connection
 	 */
@@ -120,10 +117,11 @@ public class BaSyxConnector implements IBaSyxConnector {
 			// Return received data
 
 			// Result check
-			if ((rxFrame == null) || (rxFrame.length < 2)) return null;
+			if ((rxFrame == null) || (rxFrame.length < 2))
+				return null;
 
 			// - FIXME: Check result on position 0
-			
+
 			// Extract response
 			int jsonResultLen = CoderTools.getInt32(rxFrame, 1);
 			String jsonResult = new String(rxFrame, 1 + 4, jsonResultLen);
@@ -141,8 +139,7 @@ public class BaSyxConnector implements IBaSyxConnector {
 		// Indicate error
 		return null;
 	}
-	
-	
+
 	/**
 	 * Read a number of bytes
 	 */
@@ -161,8 +158,7 @@ public class BaSyxConnector implements IBaSyxConnector {
 			logger.error("Exception in readBytes", e);
 		}
 	}
-	
-	
+
 	/**
 	 * Invoke a BaSys get operation via HTTP
 	 */
@@ -175,7 +171,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Invoke a Basys Set operation. Sets or overrides existing property, operation
 	 * or event.
@@ -192,7 +187,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Invoke a BaSys Create operation
 	 */
@@ -205,7 +199,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Invoke a Basys invoke operation.
 	 */
@@ -219,7 +212,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 
 	}
 
-	
 	/**
 	 * Invoke a Basys delete operation. Deletes any resource under the given path
 	 * 
@@ -235,7 +227,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Invoke a Basys delete operation. Deletes an entry from a map or collection by
 	 * the given key
@@ -252,7 +243,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Create non-parameterized call that can be used as an argument to the
 	 * invokeBaSyx function
@@ -275,7 +265,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return call;
 	}
 
-	
 	/**
 	 * Create parameterized byte call that can be used as an argument to the
 	 * invokeBaSyx function
@@ -304,8 +293,10 @@ public class BaSyxConnector implements IBaSyxConnector {
 	}
 
 	/**
-	 * Get string representation of endpoint for given path for debugging. 
-	 * @param path Requested path
+	 * Get string representation of endpoint for given path for debugging.
+	 * 
+	 * @param path
+	 *            Requested path
 	 * @return String representing requested endpoint
 	 */
 	@Override

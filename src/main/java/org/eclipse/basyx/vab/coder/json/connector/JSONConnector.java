@@ -40,7 +40,6 @@ import org.eclipse.basyx.vab.protocol.api.IBaSyxConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Connector Class responsible for serializing parameters and de-serializing
  * results. It verifies the results, removes the message header and returns the
@@ -53,26 +52,22 @@ public class JSONConnector implements IModelProvider {
 
 	private static final Logger LOGGER_DEFAULT = LoggerFactory.getLogger(JSONConnector.class);
 	private static final Logger LOGGER_COMMUNICATION = LoggerFactory.getLogger(LOGGER_DEFAULT.getName() + ".MALFORMED");
-	
-	
+
 	/**
 	 * Reference to Connector backend
 	 */
 	protected IBaSyxConnector provider = null;
-	
-	
+
 	/**
 	 * Reference to serializer / deserializer
 	 */
 	protected GSONTools serializer = null;
-	
-	
+
 	/**
 	 * Handle meta protocol in JSON String
-	 * */
+	 */
 	protected IMetaProtocolHandler metaProtocolHandler = null;
-	
-	
+
 	/**
 	 * Constructor
 	 * 
@@ -81,15 +76,14 @@ public class JSONConnector implements IModelProvider {
 	public JSONConnector(IBaSyxConnector provider) {
 		// Store provider backend
 		this.provider = provider;
-		
+
 		// Create the meta protocal handler
 		this.metaProtocolHandler = new MetaprotocolHandler();
-		
+
 		// Create GSON serializer
 		serializer = new GSONTools(new DefaultTypeFactory());
 	}
 
-	
 	/**
 	 * Constructor that accepts specific factory for serializer
 	 * 
@@ -98,12 +92,10 @@ public class JSONConnector implements IModelProvider {
 	public JSONConnector(IBaSyxConnector provider, GSONToolsFactory factory) {
 		// Store provider backend
 		this.provider = provider;
-		
+
 		// Create GSON serializer
 		serializer = new GSONTools(factory);
 	}
-
-	
 
 	@Override
 	public Object getValue(String path) throws ProviderException {
@@ -142,7 +134,7 @@ public class JSONConnector implements IModelProvider {
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
 		VABPathTools.checkPathForNull(path);
-		
+
 		// Serialize value Object
 		String jsonString = serializer.serialize(newEntity);
 

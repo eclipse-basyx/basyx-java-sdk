@@ -30,26 +30,33 @@ import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
  * Interface for an observer of {@link ObservableAASAggregator}
+ * 
  * @author haque
  *
  */
 public interface IAASAggregatorObserver extends IObserver {
-	
+
 	/**
 	 * Is called when an AAS is created
-	 * @param aasId id of the created AAS
+	 * 
+	 * @param aasId
+	 *            id of the created AAS
 	 */
 	public void aasCreated(String aasId);
-	
+
 	/**
 	 * Is called when an AAS is updated
-	 * @param aasId id of the updated AAS
+	 * 
+	 * @param aasId
+	 *            id of the updated AAS
 	 */
 	public void aasUpdated(String aasId);
-	
+
 	/**
 	 * Is called when an AAS is deleted
-	 * @param aasId id of the deleted AAS
+	 * 
+	 * @param aasId
+	 *            id of the deleted AAS
 	 */
 	public void aasDeleted(String aasId);
 }

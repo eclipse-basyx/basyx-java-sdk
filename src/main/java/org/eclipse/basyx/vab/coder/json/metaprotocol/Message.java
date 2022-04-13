@@ -34,7 +34,7 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public class Message extends LinkedHashMap<String, Object> {
-	
+
 	public static final String MESSAGETYPE = "messageType";
 	public static final String CODE = "code";
 	public static final String TEXT = "text";
@@ -42,13 +42,13 @@ public class Message extends LinkedHashMap<String, Object> {
 	public Message(MessageType messageType, String text) {
 		this(messageType, null, text);
 	}
-	
+
 	public Message(MessageType messageType, String code, String text) {
 		put(MESSAGETYPE, messageType.getId());
 		put(CODE, code);
 		put(TEXT, text);
 	}
-	
+
 	public static Message createAsFacade(Map<String, Object> map) {
 		MessageType type = MessageType.getById(((Number) map.get(MESSAGETYPE)).intValue());
 		String code = (String) map.get(CODE);
@@ -59,6 +59,7 @@ public class Message extends LinkedHashMap<String, Object> {
 	public String getText() {
 		return (String) get(TEXT);
 	}
+
 	public String getCode() {
 		return (String) get(CODE);
 	}
@@ -66,7 +67,7 @@ public class Message extends LinkedHashMap<String, Object> {
 	public MessageType getMessageType() {
 		return MessageType.getById((int) get(MESSAGETYPE));
 	}
-	
+
 	@Override
 	public String toString() {
 		String code = getCode();

@@ -63,7 +63,7 @@ public class ConnectedProperty extends ConnectedDataElement implements IProperty
 	protected <T> T retrieveObject() {
 		return (T) getProxy().getValue(Property.VALUE);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.PROPERTY;
@@ -71,10 +71,10 @@ public class ConnectedProperty extends ConnectedDataElement implements IProperty
 
 	@Override
 	public Object getValue() {
-		Object value =  retrieveObject();
-		if(value instanceof String) {
+		Object value = retrieveObject();
+		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
-		}else {
+		} else {
 			return value;
 		}
 	}

@@ -56,65 +56,65 @@ import org.w3c.dom.Element;
  */
 public class MetamodelToXMLConverter {
 	public static final String AASENV = "aas:aasenv";
-	
+
 	/**
 	 * Builds the XML for the given aasEnv
 	 * 
 	 * @param aasEnv
-	 * @param result a Result object to write the XML to e.g. ResultStream
+	 * @param result
+	 *            a Result object to write the XML to e.g. ResultStream
 	 * @throws TransformerException
 	 * @throws ParserConfigurationException
 	 */
-	public static void convertToXML(AasEnv aasEnv, Result result)
-			throws TransformerException, ParserConfigurationException {
-		convertToXML(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(),
-				aasEnv.getSubmodels(), result);
+	public static void convertToXML(AasEnv aasEnv, Result result) throws TransformerException, ParserConfigurationException {
+		convertToXML(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(), aasEnv.getSubmodels(), result);
 	}
 
 	/**
 	 * Builds the XML for the given metamodel Objects
 	 * 
-	 * @param aasList                the AASs to build the XML for
-	 * @param assetList              the Assets to build the XML for
-	 * @param conceptDescriptionList the ConceptDescriptions to build the XML for
-	 * @param submodelList           the Submodels to build the XML for
-	 * @param result                 a Result object to write the XML to e.g.
-	 *                               ResultStream
+	 * @param aasList
+	 *            the AASs to build the XML for
+	 * @param assetList
+	 *            the Assets to build the XML for
+	 * @param conceptDescriptionList
+	 *            the ConceptDescriptions to build the XML for
+	 * @param submodelList
+	 *            the Submodels to build the XML for
+	 * @param result
+	 *            a Result object to write the XML to e.g. ResultStream
 	 * @throws TransformerException
 	 * @throws ParserConfigurationException
 	 */
-	public static void convertToXML(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, 
-			Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Result result)
-					throws TransformerException, ParserConfigurationException {
-		
+	public static void convertToXML(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Result result)
+			throws TransformerException, ParserConfigurationException {
+
 		Document document = createEmptyDocument();
-		
-		//creating the root tag <aas:aasenv>
+
+		// creating the root tag <aas:aasenv>
 		Element root = document.createElement(AASENV);
-		
-		//creating the Header information
+
+		// creating the Header information
 		root.setAttribute("xmlns:aas", "http://www.admin-shell.io/aas/2/0");
 		root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
 		root.setAttribute("xmlns:IEC61360", "http://www.admin-shell.io/IEC61360/2/0");
 		root.setAttribute("xsi:schemaLocation", "http://www.admin-shell.io/aas/2/0 AAS.xsd http://www.admin-shell.io/IEC61360/2/0 IEC61360.xsd");
 		document.appendChild(root);
 
-		
 		Element buildAssetadminsroot = AssetAdministrationShellXMLConverter.buildAssetAdministrationShellsXML(document, aasList);
 		root.appendChild(buildAssetadminsroot);
-		
+
 		Element assetsObj = AssetXMLConverter.buildAssetsXML(document, assetList);
 		root.appendChild(assetsObj);
 
 		Element subModelsroot = SubmodelXMLConverter.buildSubmodelsXML(document, submodelList);
 		root.appendChild(subModelsroot);
-		
+
 		Element conceptDescriptionObj = ConceptDescriptionXMLConverter.buildConceptDescriptionsXML(document, conceptDescriptionList);
 		root.appendChild(conceptDescriptionObj);
-		
-		
-		//create the xml file
-		//transform the DOM Object to an XML File
+
+		// create the xml file
+		// transform the DOM Object to an XML File
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");

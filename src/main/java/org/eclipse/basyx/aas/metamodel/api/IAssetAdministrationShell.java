@@ -111,7 +111,6 @@ public interface IAssetAdministrationShell extends IElement, IIdentifiable, IHas
 	 */
 	public IReference getAssetReference();
 
-
 	/**
 	 * Gets the views associated with the AAS. <br>
 	 * If needed stakeholder specific views can be defined on the elements of the

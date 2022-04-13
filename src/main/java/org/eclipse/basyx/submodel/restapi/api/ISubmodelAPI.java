@@ -58,7 +58,7 @@ public interface ISubmodelAPI {
 	 * 
 	 * @param idShortPath
 	 *            the idShort path to the submodelElement
-	 * @param  elem
+	 * @param elem
 	 *            the submodelElement to be added
 	 */
 	public void addSubmodelElement(String idShortPath, ISubmodelElement elem);
@@ -79,7 +79,6 @@ public interface ISubmodelAPI {
 	 *            the idShort path to the submodelElement, which is to be removed
 	 */
 	public void deleteSubmodelElement(String idShortPath);
-
 
 	/**
 	 * Helper function for quick access of operations
@@ -114,7 +113,6 @@ public interface ISubmodelAPI {
 	 */
 	public Object getSubmodelElementValue(String idShortPath);
 
-
 	/**
 	 * Invokes an operation
 	 * 
@@ -126,22 +124,21 @@ public interface ISubmodelAPI {
 	 */
 	public Object invokeOperation(String idShortPath, Object... params);
 
-	
 	/**
 	 * Invoke an operation asynchronously
 	 * 
 	 * @param idShortPath
-	 * 			the idShort path to the operation
+	 *            the idShort path to the operation
 	 * @param params
-	 * 			to be passed to the operation
+	 *            to be passed to the operation
 	 * @return the requestId of the invocation
 	 */
 	public Object invokeAsync(String idShortPath, Object... params);
-	
+
 	/**
 	 * Gets the result of an asynchronously invoked operation
 	 * 
-	 * @param idShort 
+	 * @param idShort
 	 *            of the operation
 	 * @param requestId
 	 *            the requestId of the invocation

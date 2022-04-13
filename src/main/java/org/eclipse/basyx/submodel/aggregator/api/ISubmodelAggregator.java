@@ -90,7 +90,7 @@ public interface ISubmodelAggregator {
 	 *            the Submodel to be created
 	 */
 	public void createSubmodel(Submodel submodel);
-	
+
 	/**
 	 * Creates a new Submodel using an API
 	 * 
@@ -98,7 +98,7 @@ public interface ISubmodelAggregator {
 	 *            the Submodel API to be added
 	 */
 	public void createSubmodel(ISubmodelAPI submodelAPI);
-	
+
 	/**
 	 * Updates a specific Submodel
 	 * 

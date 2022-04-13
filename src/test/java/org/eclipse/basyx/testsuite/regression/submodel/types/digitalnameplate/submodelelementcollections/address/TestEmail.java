@@ -47,8 +47,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests createAsFacade and isValid of {@link Email} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link Email} for their correctness
  * 
  * @author haque
  *
@@ -61,7 +60,7 @@ public class TestEmail {
 	public static MultiLanguageProperty typeOfPublicKey = new MultiLanguageProperty(Email.TYPEOFPUBLICKEYID);
 
 	private Map<String, Object> emailMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void buildFax() {
 		emailAddress.setValue("test@muster-ag.de");
@@ -77,7 +76,7 @@ public class TestEmail {
 		emailMap.put(HasSemantics.SEMANTICID, Email.SEMANTICID);
 		emailMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		Email emailFromMap = Email.createAsFacade(emailMap);
@@ -88,14 +87,14 @@ public class TestEmail {
 		assertEquals(typeOfPublicKey, emailFromMap.getTypeOfPublicKey());
 		assertEquals(IDSHORT, emailFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		emailMap.remove(Referable.IDSHORT);
 		Email.createAsFacade(emailMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionEmailAddress() {
 		List<ISubmodelElement> newElements = new ArrayList<ISubmodelElement>();
 		newElements.add(typeOfEmailAddress);

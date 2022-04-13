@@ -29,8 +29,7 @@ import java.util.List;
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 
 /**
- * Used to indicate by a ModelProvider,
- * that a given request was malformed. <br>
+ * Used to indicate by a ModelProvider, that a given request was malformed. <br>
  * e.g. an invalid path or a invalid JSON.
  * 
  * @author conradi
@@ -38,24 +37,22 @@ import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
  */
 public class MalformedRequestException extends ProviderException {
 
-	
 	/**
 	 * Version information for serialized instances
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
 	/**
 	 * Constructor
 	 */
 	public MalformedRequestException(String msg) {
 		super(msg);
 	}
-	
+
 	public MalformedRequestException(Exception e) {
 		super(e);
 	}
-	
+
 	public MalformedRequestException(List<Message> msgs) {
 		super(msgs);
 	}

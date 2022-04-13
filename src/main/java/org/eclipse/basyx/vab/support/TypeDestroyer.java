@@ -40,7 +40,7 @@ import java.util.Set;
  *
  */
 public class TypeDestroyer {
-	
+
 	/**
 	 * Removes type information of all objects within the map, i.e. every subclass
 	 * of LinkedHashMap is reduced to LinkedHashMap
@@ -52,10 +52,10 @@ public class TypeDestroyer {
 	public static Map<String, Object> destroyType(Map<String, Object> map) {
 		return (Map<String, Object>) handle(map);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static Object handle(Object o) {
-		if(o instanceof Map) {
+		if (o instanceof Map) {
 			return handleMap((Map<String, Object>) o);
 		} else if (o instanceof Set) {
 			return handleSet((Set<Object>) o);
@@ -65,7 +65,7 @@ public class TypeDestroyer {
 			return o;
 		}
 	}
-	
+
 	private static List<Object> handleSet(Set<Object> set) {
 		List<Object> ret = new ArrayList<>();
 		for (Object o : set) {

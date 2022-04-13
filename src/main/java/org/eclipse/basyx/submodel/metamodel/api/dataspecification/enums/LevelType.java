@@ -28,14 +28,15 @@ import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnum;
 import org.eclipse.basyx.submodel.metamodel.enumhelper.StandardizedLiteralEnumHelper;
 
 /**
- * Possible level types as defined in DAAS for IEC61360 data specification templates
+ * Possible level types as defined in DAAS for IEC61360 data specification
+ * templates
  * 
  * @author espen
  *
  */
 public enum LevelType implements StandardizedLiteralEnum {
 	MIN("Min"), MAX("Max"), NOM("Nom"), TYP("Typ");
-	
+
 	private String standardizedLiteral;
 
 	private LevelType(String standardizedLiteral) {

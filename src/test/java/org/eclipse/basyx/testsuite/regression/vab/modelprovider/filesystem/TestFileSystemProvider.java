@@ -44,9 +44,9 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class TestFileSystemProvider extends TestProvider {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(TestFileSystemProvider.class);
-	
+
 	private VABConnectionManager connManager;
 
 	@Override

@@ -40,7 +40,7 @@ public class ConnectedDataElement extends ConnectedSubmodelElement implements ID
 	public ConnectedDataElement(VABElementProxy proxy) {
 		super(proxy);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.DATAELEMENT;

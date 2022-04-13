@@ -49,7 +49,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Integration test for a registry. All registry provider implementations have to pass these tests.
+ * Integration test for a registry. All registry provider implementations have
+ * to pass these tests.
  * 
  * @author espen
  * 
@@ -73,6 +74,7 @@ public abstract class TestRegistryProviderSuite {
 	protected String smEndpoint2 = "http://www.registrytest.de/aas01/aas/submodels/" + smIdShort2 + "/submodel";
 	protected Asset asset1;
 	protected Asset asset2;
+
 	/**
 	 * Getter for the tested registry provider. Tests for actual registry provider
 	 * have to realize this method.
@@ -95,12 +97,12 @@ public abstract class TestRegistryProviderSuite {
 		AASDescriptor aasDesc1 = new AASDescriptor(aasIdShort1, aasId1, asset1, aasEndpoint1);
 		aasDesc1.addSubmodelDescriptor(new SubmodelDescriptor(smIdShort1, smId1, smEndpoint1));
 		AASDescriptor aasDesc2 = new AASDescriptor(aasIdShort2, aasId2, asset2, aasEndpoint2);
-		
+
 		// Register Asset Administration Shells
 		proxy.register(aasDesc1);
 		proxy.register(aasDesc2);
 	}
-	
+
 	/**
 	 * Remove registry entries after each test
 	 */
@@ -128,7 +130,6 @@ public abstract class TestRegistryProviderSuite {
 		validateDescriptor1(descriptor);
 	}
 
-
 	/**
 	 * Tests getting all entries from the registry and validates the result.
 	 */
@@ -148,8 +149,8 @@ public abstract class TestRegistryProviderSuite {
 	}
 
 	/**
-	 * Checks, if the given descriptor is valid. Should contain the values of the first descriptor
-	 * as given by the test setup
+	 * Checks, if the given descriptor is valid. Should contain the values of the
+	 * first descriptor as given by the test setup
 	 */
 	protected void validateDescriptor1(AASDescriptor descriptor) {
 		assertEquals(aasId1.getId(), descriptor.getIdentifier().getId());
@@ -167,8 +168,8 @@ public abstract class TestRegistryProviderSuite {
 	}
 
 	/**
-	 * Checks, if the given descriptor is valid. Should contain the values of the second descriptor
-	 * as given by the test setup
+	 * Checks, if the given descriptor is valid. Should contain the values of the
+	 * second descriptor as given by the test setup
 	 */
 	protected void validateDescriptor2(AASDescriptor descriptor) {
 		assertEquals(aasId2.getId(), descriptor.getIdentifier().getId());
@@ -222,9 +223,9 @@ public abstract class TestRegistryProviderSuite {
 		// After the setup, both AAS should have been inserted to the registry
 		assertNotNull(proxy.lookupAAS(aasId1));
 		assertNotNull(proxy.lookupAAS(aasId2));
-		
+
 		proxy.delete(aasId2);
-		
+
 		// After aas2 has been deleted, only aas1 should be registered
 		assertNotNull(proxy.lookupAAS(aasId1));
 		try {
@@ -342,7 +343,7 @@ public abstract class TestRegistryProviderSuite {
 		assertNotNull(aasDesc.getSubmodelDescriptorFromIdShort(smIdShort1));
 		assertNull(aasDesc.getSubmodelDescriptorFromIdShort(smIdShort2));
 	}
-	
+
 	@Test(expected = ResourceNotFoundException.class)
 	public void testRegisterSubmodelToNotExistingAAS() {
 		proxy.register(new Identifier(IdentifierType.CUSTOM, "nonExistent"), new SubmodelDescriptor(smIdShort1, smId1, smEndpoint1));

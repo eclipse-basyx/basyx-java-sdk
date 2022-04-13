@@ -55,33 +55,31 @@ public class TestSubmodelElementMapCollectionConverter {
 
 	private static final String ID_SHORT = "testElement";
 
-
 	@Test
 	public void testMapToSM() {
 		Submodel sm = getSM();
-		
+
 		// Replace the smElement Map with a Collection
 		sm.put(Submodel.SUBMODELELEMENT, sm.getSubmodelElements().values());
-		
+
 		// Make a Map from the SM, as if it was transferred over the VAB
 		Map<String, Object> map = TypeDestroyer.destroyType(sm);
-		
-		
+
 		sm = SubmodelElementMapCollectionConverter.mapToSM(map);
-		
+
 		assertTrue(sm.get(Submodel.SUBMODELELEMENT) instanceof Map<?, ?>);
-		
+
 		assertNotNull(sm.getSubmodelElements().get(ID_SHORT));
 		assertTrue(sm.getSubmodelElements().get(ID_SHORT) instanceof Property);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSMToMap() {
 		Submodel sm = getSM();
-		
+
 		Map<String, Object> map = SubmodelElementMapCollectionConverter.smToMap(sm);
-		
+
 		assertTrue(map.get(Submodel.SUBMODELELEMENT) instanceof Collection<?>);
 		assertEquals(1, ((Collection<ISubmodelElement>) map.get(Submodel.SUBMODELELEMENT)).size());
 	}
@@ -89,7 +87,7 @@ public class TestSubmodelElementMapCollectionConverter {
 	@Test
 	public void entityStatementContainingSMCConverted() {
 		Entity entity = createTestEntityWithSMCAsStatement();
-		
+
 		Map<String, Object> convertedEntity = SubmodelElementMapCollectionConverter.smElementToMap(entity);
 
 		assertEntityCorrectlyConverted(convertedEntity);
@@ -122,10 +120,9 @@ public class TestSubmodelElementMapCollectionConverter {
 	private Submodel getSM() {
 		Submodel sm = new Submodel("submodelIdShort", new ModelUrn("submodelUrn"));
 		Property property = new Property(ID_SHORT, ValueType.String);
-		
+
 		sm.addSubmodelElement(property);
 		return sm;
 	}
-	
-	
+
 }

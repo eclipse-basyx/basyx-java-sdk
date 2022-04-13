@@ -30,8 +30,6 @@ import java.util.Map;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.registry.api.IVABRegistryService;
 
-
-
 /**
  * Implement a in memory directory
  * 
@@ -40,39 +38,32 @@ import org.eclipse.basyx.vab.registry.api.IVABRegistryService;
  */
 public class VABInMemoryRegistry implements IVABRegistryService {
 
-	
 	/**
 	 * Map that stores key/value mappings
 	 */
 	protected Map<String, Object> keyToValue = new LinkedHashMap<>();
-	
-	
-		
-	
+
 	/**
 	 * Default constructor
 	 */
 	public VABInMemoryRegistry() {
 		// Do nothing
 	}
-	
-	
+
 	/**
 	 * Constructor that accepts initial entries
 	 */
 	public VABInMemoryRegistry(Map<String, String> addedValues) {
 		keyToValue.putAll(addedValues);
 	}
-	
-	
-	
+
 	/**
 	 * Add a mapping to directory
 	 */
 	@Override
 	public IVABRegistryService addMapping(String key, String value) {
 		keyToValue.put(key, value);
-		
+
 		// Return 'this' instance
 		return this;
 	}
@@ -83,7 +74,7 @@ public class VABInMemoryRegistry implements IVABRegistryService {
 	public void addMappings(Map<String, String> mappings) {
 		keyToValue.putAll(mappings);
 	}
-	
+
 	/**
 	 * Remove a mapping from directory
 	 */
@@ -91,13 +82,13 @@ public class VABInMemoryRegistry implements IVABRegistryService {
 	public void removeMapping(String key) {
 		keyToValue.remove(key);
 	}
-	
+
 	/**
 	 * Lookup method
 	 */
 	@Override
 	public String lookup(String id) {
-		if(keyToValue.containsKey(id)) {
+		if (keyToValue.containsKey(id)) {
 			return (String) keyToValue.get(id);
 		} else {
 			throw new ResourceNotFoundException("No entry exists for key " + id);

@@ -30,12 +30,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Generic implementation of an Observable.
- * This class contains all common operations an Observable is supposed to do.
- * Java generics is used to specify which type of Observable is required
+ * Generic implementation of an Observable. This class contains all common
+ * operations an Observable is supposed to do. Java generics is used to specify
+ * which type of Observable is required
+ * 
  * @author haque
  *
- * @param <T> can be Observers which extends IObserver
+ * @param <T>
+ *            can be Observers which extends IObserver
  */
 public class Observable<T extends IObserver> {
 
@@ -44,16 +46,18 @@ public class Observable<T extends IObserver> {
 	/**
 	 * Adds an observer to the subscriber list
 	 * 
-	 * @param observer the observer to be added
+	 * @param observer
+	 *            the observer to be added
 	 */
 	public void addObserver(T observer) {
 		observers.add(observer);
 	}
-	
+
 	/**
 	 * Removes an observer from the subscriber list
 	 * 
-	 * @param observer the observer to be removed
+	 * @param observer
+	 *            the observer to be removed
 	 * @return true if the observer was found and removed; false otherwise
 	 */
 	public boolean removeObserver(T observer) {

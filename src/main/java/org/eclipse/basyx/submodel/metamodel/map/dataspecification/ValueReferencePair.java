@@ -37,8 +37,9 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
 /**
- * The map implementation for a value reference pair within a value list of the DataSpecificationIEC61360.
- * Each value has a global unique id defining its semantic.
+ * The map implementation for a value reference pair within a value list of the
+ * DataSpecificationIEC61360. Each value has a global unique id defining its
+ * semantic.
  * 
  * @author espen
  *
@@ -50,7 +51,8 @@ public class ValueReferencePair extends VABModelMap<Object> implements IValueRef
 	/**
 	 * Constructor
 	 */
-	public ValueReferencePair() {}
+	public ValueReferencePair() {
+	}
 
 	/**
 	 * Constructs a reference based on an {@link IIdentifiable} and additional
@@ -69,33 +71,31 @@ public class ValueReferencePair extends VABModelMap<Object> implements IValueRef
 	 * 
 	 * @param map
 	 *            a ValueReferencePair object as raw map
-	 * @return a ValueReferencePair object, that behaves like a facade for the given map
+	 * @return a ValueReferencePair object, that behaves like a facade for the given
+	 *         map
 	 */
 	public static ValueReferencePair createAsFacade(Map<String, Object> map) {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(ValueReferencePair.class, map);
 		}
-		
+
 		ValueReferencePair ret = new ValueReferencePair();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> map) {
-		return map != null &&
-				map.containsKey(VALUE) && 
-				map.containsKey(VALUEID) &&
-				Reference.isValid((Map<String, Object>)map.get(VALUEID));
+		return map != null && map.containsKey(VALUE) && map.containsKey(VALUEID) && Reference.isValid((Map<String, Object>) map.get(VALUEID));
 	}
 
 	@Override

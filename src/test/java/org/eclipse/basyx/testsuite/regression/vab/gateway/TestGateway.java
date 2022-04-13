@@ -75,7 +75,7 @@ public class TestGateway {
 
 		// Create tcp gateway using DelegatingModelProvider
 		basyxGateway = new BaSyxTCPServer<>(new DelegatingModelProvider(gatewayMapper), 6999);
-		
+
 		// Create a http gateway using DelegatingModelProvider
 		DelegatingModelProvider httpGWProvider = new DelegatingModelProvider(gatewayMapper);
 		BaSyxContext context = new BaSyxContext("", "", "localhost", 5123);

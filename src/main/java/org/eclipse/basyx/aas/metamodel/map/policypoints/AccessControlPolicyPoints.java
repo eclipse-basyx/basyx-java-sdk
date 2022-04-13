@@ -44,7 +44,8 @@ public class AccessControlPolicyPoints extends VABModelMap<Object> implements IA
 	/**
 	 * Constructor
 	 */
-	public AccessControlPolicyPoints() {}
+	public AccessControlPolicyPoints() {
+	}
 
 	/**
 	 * Creates a DataSpecificationIEC61360 object from a map

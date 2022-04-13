@@ -66,7 +66,7 @@ public class TestConnectedSubmodelElementCollection {
 
 	ConnectedSubmodelElementCollection prop;
 
-	@Before 
+	@Before
 	public void build() {
 		// Create PropertySingleValued containing the collection
 		Property propertyMeta = new Property(4);
@@ -99,10 +99,11 @@ public class TestConnectedSubmodelElementCollection {
 		sm.addSubmodelElement(complex);
 
 		Map<String, Object> destroyType = TypeDestroyer.destroyType(sm);
-		// Create a dummy connection manager containing the created ContainerProperty map
-		// The model is wrapped in the corresponding ModelProvider that implements the API access
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelProvider(new VABLambdaProvider(destroyType)));
+		// Create a dummy connection manager containing the created ContainerProperty
+		// map
+		// The model is wrapped in the corresponding ModelProvider that implements the
+		// API access
+		VABConnectionManagerStub manager = new VABConnectionManagerStub(new SubmodelProvider(new VABLambdaProvider(destroyType)));
 
 		// Retrieve the ConnectedContainerProperty
 		prop = new ConnectedSubmodelElementCollection(manager.connectToVABElement("").getDeepProxy("/submodel/submodelElements/" + complex.getIdShort()));
@@ -145,21 +146,20 @@ public class TestConnectedSubmodelElementCollection {
 		// Check operation invocation
 		assertEquals(5, sum.invokeSimple(2, 3));
 	}
-	
+
 	@Test
 	public void testSetValue() {
 		Property property = new Property("testProperty");
 		property.setIdShort(PROP);
-		
-		
+
 		Collection<ISubmodelElement> newValue = new ArrayList<>();
 		newValue.add(property);
-		
+
 		prop.setValue(newValue);
-		
+
 		Map<String, ISubmodelElement> value = prop.getSubmodelElements();
 		IProperty property2 = (IProperty) value.get(PROP);
-		
+
 		assertEquals("testProperty", property2.getValue());
 	}
 
@@ -168,13 +168,13 @@ public class TestConnectedSubmodelElementCollection {
 		ISubmodelElement element = prop.getSubmodelElement(PROP);
 		assertEquals(PROP, element.getIdShort());
 	}
-	
+
 	@Test(expected = ResourceNotFoundException.class)
 	public void testDeleteSubmodelElement() {
 		prop.deleteSubmodelElement(PROP);
 		prop.getSubmodelElement(PROP);
 	}
-	
+
 	@Test
 	public void testAddSubmodelElement() {
 		String newId = "abc";
@@ -184,21 +184,21 @@ public class TestConnectedSubmodelElementCollection {
 		ISubmodelElement element = prop.getSubmodelElement(newId);
 		assertEquals(newId, element.getIdShort());
 	}
-	
+
 	@Test
 	public void testGetValues() {
 		Map<String, Object> values = prop.getValues();
 		assertEquals(1, values.size());
 		assertTrue(values.containsKey(PROP));
 		assertEquals(4, values.get(PROP));
-		
+
 		String newKey = "newKey";
 		String newValue = "newValue";
-		
+
 		Property newProp = new Property(newKey, newValue);
 		newProp.setValueType(ValueType.String);
 		prop.addSubmodelElement(newProp);
-		
+
 		values = prop.getValues();
 		assertEquals(2, values.size());
 		assertTrue(values.containsKey(newKey));

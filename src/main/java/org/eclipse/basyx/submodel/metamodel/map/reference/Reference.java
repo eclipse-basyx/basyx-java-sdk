@@ -85,7 +85,8 @@ public class Reference extends VABModelMap<Object> implements IReference {
 
 	/**
 	 * 
-	 * @param keys Unique reference in its name space.
+	 * @param keys
+	 *            Unique reference in its name space.
 	 */
 	public Reference(List<IKey> keys) {
 		setKeys(keys);
@@ -111,25 +112,25 @@ public class Reference extends VABModelMap<Object> implements IReference {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Reference.class, map);
 		}
-		
+
 		Reference ret = new Reference();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> map) {
 		if (map != null && map.containsKey(Reference.KEY)) {
-			Collection<Map<String, Object>> keysCollection = (Collection<Map<String, Object>>)map.get(Reference.KEY);
+			Collection<Map<String, Object>> keysCollection = (Collection<Map<String, Object>>) map.get(Reference.KEY);
 			for (Map<String, Object> key : keysCollection) {
 				if (!Key.isValid(key)) {
 					return false;
@@ -139,10 +140,10 @@ public class Reference extends VABModelMap<Object> implements IReference {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Creates a Reference object from a map
-	 * without checking mandatory attributes present
+	 * Creates a Reference object from a map without checking mandatory attributes
+	 * present
 	 * 
 	 * @param map
 	 *            a Reference object as raw map
@@ -152,24 +153,24 @@ public class Reference extends VABModelMap<Object> implements IReference {
 		if (map == null) {
 			return null;
 		}
-		
+
 		Reference ret = new Reference();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static boolean isReference(Object value) {
-		if(!(value instanceof Map<?, ?>)) {
+		if (!(value instanceof Map<?, ?>)) {
 			return false;
 		}
-		
+
 		Map<String, Object> map = (Map<String, Object>) value;
-		
-		if(!(map.get(KEY) instanceof Collection<?>)) {
+
+		if (!(map.get(KEY) instanceof Collection<?>)) {
 			return false;
 		}
-		
+
 		return ((Collection<?>) map.get(KEY)).stream().allMatch(Key::isKey);
 	}
 

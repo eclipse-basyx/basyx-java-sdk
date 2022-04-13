@@ -36,6 +36,7 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
  * "Connected" implementation of IMultiLanguageProperty
+ * 
  * @author conradi
  *
  */
@@ -48,7 +49,7 @@ public class ConnectedMultiLanguageProperty extends ConnectedDataElement impleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public LangStrings getValue() {
-		return LangStrings.createAsFacade((Collection<Map<String, Object>>) super.getValue()) ;
+		return LangStrings.createAsFacade((Collection<Map<String, Object>>) super.getValue());
 	}
 
 	@Override

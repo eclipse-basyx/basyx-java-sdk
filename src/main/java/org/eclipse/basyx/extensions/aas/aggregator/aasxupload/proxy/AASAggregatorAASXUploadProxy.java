@@ -37,24 +37,25 @@ import org.eclipse.basyx.vab.protocol.http.helper.HTTPUploadHelper;
 
 /**
  * Proxy AASAggregator with the support of uploading AASX
+ * 
  * @author haque
  *
  */
 public class AASAggregatorAASXUploadProxy extends AASAggregatorProxy implements IAASAggregatorAASXUpload {
 	private String aasAggregatorUrl;
-	
+
 	public AASAggregatorAASXUploadProxy(String url) {
 		super(url);
 		this.aasAggregatorUrl = url;
 	}
 
 	@Override
-    public void uploadAASX(InputStream aasxStream) {
+	public void uploadAASX(InputStream aasxStream) {
 		String uploadUrl = VABPathTools.append(aasAggregatorUrl, AASAggregatorAASXUploadProvider.AASX_PATH);
 		try {
-			HTTPUploadHelper.uploadHTTPPost(aasxStream, uploadUrl);	
+			HTTPUploadHelper.uploadHTTPPost(aasxStream, uploadUrl);
 		} catch (Exception e) {
-            throw new MalformedRequestException("invalid request to aasx path without valid aasx input stream");
-        }
-    }
+			throw new MalformedRequestException("invalid request to aasx path without valid aasx input stream");
+		}
+	}
 }

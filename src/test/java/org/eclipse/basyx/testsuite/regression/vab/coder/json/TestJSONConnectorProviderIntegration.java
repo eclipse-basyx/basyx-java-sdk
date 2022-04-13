@@ -42,29 +42,29 @@ import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
  */
 public class TestJSONConnectorProviderIntegration extends TestProvider {
 
-	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(),
-			new ConnectorFactory() {
+	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(), new ConnectorFactory() {
 
-				@Override
-				protected IModelProvider createProvider(String addr) {
+		@Override
+		protected IModelProvider createProvider(String addr) {
 
-					// BACKEND
-					// Creates a new VABMapProvider which manages a data model as defined in
-					// SimpleVABElement.
-					VABMapProvider modelprovider = new VABMapProvider(new SimpleVABElement());
+			// BACKEND
+			// Creates a new VABMapProvider which manages a data model as defined in
+			// SimpleVABElement.
+			VABMapProvider modelprovider = new VABMapProvider(new SimpleVABElement());
 
-					// We stack the JSONProvider on top of the model to handle serialization and exceptions
-					JSONProvider<VABMapProvider> provider = new JSONProvider<VABMapProvider>(modelprovider);
+			// We stack the JSONProvider on top of the model to handle serialization and
+			// exceptions
+			JSONProvider<VABMapProvider> provider = new JSONProvider<VABMapProvider>(modelprovider);
 
-					// FRONTEND
-					// We stack the JSONConnector on top of the JSONProvider to handle de-serialization and response
-					// verification
-					JSONConnector connector = new JSONConnector(
-							new IBasyxConnectorFacade<VABMapProvider>(provider));
+			// FRONTEND
+			// We stack the JSONConnector on top of the JSONProvider to handle
+			// de-serialization and response
+			// verification
+			JSONConnector connector = new JSONConnector(new IBasyxConnectorFacade<VABMapProvider>(provider));
 
-					return connector;
-				}
-			});
+			return connector;
+		}
+	});
 
 	@Override
 	protected VABConnectionManager getConnectionManager() {

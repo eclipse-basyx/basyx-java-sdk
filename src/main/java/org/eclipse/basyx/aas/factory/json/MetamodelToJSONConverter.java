@@ -47,8 +47,8 @@ import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
  * @author conradi
  *
  */
-public class MetamodelToJSONConverter {	
-	
+public class MetamodelToJSONConverter {
+
 	public static final String ASSET_ADMINISTRATION_SHELLS = "assetAdministrationShells";
 	public static final String SUBMODELS = "submodels";
 	public static final String ASSETS = "assets";
@@ -62,43 +62,42 @@ public class MetamodelToJSONConverter {
 	 */
 	@SuppressWarnings("unchecked")
 	public static String convertToJSON(AasEnv aasEnv) {
-		return convertToJSON((List<AssetAdministrationShell>) (List<?>) aasEnv.getAssetAdministrationShells(),
-				(List<Asset>) (List<?>) aasEnv.getAssets(),
-				(List<ConceptDescription>) (List<?>) aasEnv.getConceptDescriptions(),
+		return convertToJSON((List<AssetAdministrationShell>) (List<?>) aasEnv.getAssetAdministrationShells(), (List<Asset>) (List<?>) aasEnv.getAssets(), (List<ConceptDescription>) (List<?>) aasEnv.getConceptDescriptions(),
 				(List<Submodel>) (List<?>) aasEnv.getSubmodels());
 	}
 
 	/**
-	 * Builds the JSON for the given metamodel Objects.
-	 * Not required parameters can be null.
+	 * Builds the JSON for the given metamodel Objects. Not required parameters can
+	 * be null.
 	 * 
-	 * @param aasList the AASs to build the JSON for
-	 * @param assetList the Assets to build the JSON for
-	 * @param conceptDescriptionList the ConceptDescriptions to build the JSON for
-	 * @param submodelList the Submodels to build the JSON for
+	 * @param aasList
+	 *            the AASs to build the JSON for
+	 * @param assetList
+	 *            the Assets to build the JSON for
+	 * @param conceptDescriptionList
+	 *            the ConceptDescriptions to build the JSON for
+	 * @param submodelList
+	 *            the Submodels to build the JSON for
 	 */
-	public static String convertToJSON(Collection<AssetAdministrationShell> aasList, Collection<Asset> assetList,
-			Collection<ConceptDescription> conceptDescriptionList, Collection<Submodel> submodelList) {
-		
+	public static String convertToJSON(Collection<AssetAdministrationShell> aasList, Collection<Asset> assetList, Collection<ConceptDescription> conceptDescriptionList, Collection<Submodel> submodelList) {
+
 		List<Object> smMapList = submodelsToMapList(submodelList);
-		
+
 		Map<String, Object> root = new LinkedHashMap<>();
-		
+
 		root.put(ASSET_ADMINISTRATION_SHELLS, aasList == null ? new ArrayList<AssetAdministrationShell>() : aasList);
 		root.put(SUBMODELS, smMapList);
-		root.put(ASSETS, assetList==null ? new ArrayList<Asset>() : assetList);
-		root.put(CONCEPT_DESCRIPTIONS,
-				conceptDescriptionList == null ? new ArrayList<ConceptDescription>() : conceptDescriptionList);
-		
+		root.put(ASSETS, assetList == null ? new ArrayList<Asset>() : assetList);
+		root.put(CONCEPT_DESCRIPTIONS, conceptDescriptionList == null ? new ArrayList<ConceptDescription>() : conceptDescriptionList);
+
 		return new GSONTools(new DefaultTypeFactory()).serialize(root);
 	}
 
 	private static List<Object> submodelsToMapList(Collection<Submodel> submodelList) {
 		if (submodelList != null) {
-			return submodelList.stream().map(sm -> SubmodelElementMapCollectionConverter.smToMap(sm))
-					.collect(Collectors.toList());
+			return submodelList.stream().map(sm -> SubmodelElementMapCollectionConverter.smToMap(sm)).collect(Collectors.toList());
 		} else {
 			return Collections.emptyList();
 		}
-	}	
+	}
 }

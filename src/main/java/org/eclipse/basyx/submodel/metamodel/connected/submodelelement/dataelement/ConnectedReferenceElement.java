@@ -35,12 +35,13 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
  * "Connected" implementation of IReferenceElement
+ * 
  * @author rajashek
  *
  */
 public class ConnectedReferenceElement extends ConnectedDataElement implements IReferenceElement {
 	public ConnectedReferenceElement(VABElementProxy proxy) {
-		super(proxy);		
+		super(proxy);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -48,7 +49,7 @@ public class ConnectedReferenceElement extends ConnectedDataElement implements I
 	public IReference getValue() {
 		return Reference.createAsFacade((Map<String, Object>) super.getValue());
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.REFERENCEELEMENT;

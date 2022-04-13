@@ -44,7 +44,6 @@ import org.eclipse.basyx.submodel.metamodel.map.qualifier.haskind.HasKind;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifiable;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
-
 /**
  * SubmodelElement as defined in "Details of the Asset Administration Shell"
  * 
@@ -62,36 +61,39 @@ public class SubmodelElement extends VABModelMap<Object> implements ISubmodelEle
 
 	/**
 	 * Constructor with only mandatory attribute
+	 * 
 	 * @param idShort
 	 */
 	protected SubmodelElement(String idShort) {
 		this();
 		setIdShort(idShort);
 	}
-	
+
 	/**
 	 * Creates a SubmodelElement object from a map
 	 * 
-	 * @param obj a SubmodelElement object as raw map
-	 * @return a SubmodelElement object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a SubmodelElement object as raw map
+	 * @return a SubmodelElement object, that behaves like a facade for the given
+	 *         map
 	 */
 	public static SubmodelElement createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
-			throw new MetamodelConstructionException(SubmodelElement.class, obj);	
+			throw new MetamodelConstructionException(SubmodelElement.class, obj);
 		}
 
 		SubmodelElement ret = new SubmodelElement();
 		ret.setMap(obj);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
@@ -212,12 +214,12 @@ public class SubmodelElement extends VABModelMap<Object> implements ISubmodelEle
 	public IReference getReference() {
 		return Referable.createAsFacade(this, getKeyElement()).getReference();
 	}
-	
+
 	@Override
 	public Object getValue() {
 		throw new UnsupportedOperationException("getValue is only possible in specific Element");
 	}
-	
+
 	@Override
 	public void setValue(Object value) {
 		throw new UnsupportedOperationException("setValue is only possible in specific Element");

@@ -33,8 +33,8 @@ import org.eclipse.basyx.submodel.factory.xml.converters.submodelelement.Submode
 import org.eclipse.basyx.submodel.factory.xml.converters.submodelelement.operation.OperationXMLConverter;
 
 /**
- * This class contains workarounds needed to be able to load .xml
- * files produced by the AASXPackageExplorer in BaSyx.
+ * This class contains workarounds needed to be able to load .xml files produced
+ * by the AASXPackageExplorer in BaSyx.
  * 
  * @author conradi
  *
@@ -44,14 +44,15 @@ public class AASXPackageExplorerCompatibilityHandler {
 	/**
 	 * This function makes sure the operation vars are in the correct map.
 	 * AASXPackageExplorer uses multiple e.g. &lt;aas:inputVariable&gt; tags instead
-	 * of a single &lt;aas:inputVariable&gt; with multiple &lt;aas:operationVariable&gt; tags within
+	 * of a single &lt;aas:inputVariable&gt; with multiple
+	 * &lt;aas:operationVariable&gt; tags within
 	 * 
 	 * @param xmlObject
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> prepareOperationVariableMap(Object xmlObject) {
-		if(xmlObject == null) {
+		if (xmlObject == null) {
 			return null;
 		} else if (isValidMap(xmlObject)) {
 			return (Map<String, Object>) xmlObject;
@@ -109,17 +110,16 @@ public class AASXPackageExplorerCompatibilityHandler {
 	private static RuntimeException createUnexpectedObjectRuntimeException(Object xmlObject) {
 		return new RuntimeException("Unexpected object: " + xmlObject);
 	}
-	
-	
+
 	/**
-	 * The AASXPackageExplorer uses "Template" instead of "Type" AssetKind
-	 * This converts "Template" to "Type"
+	 * The AASXPackageExplorer uses "Template" instead of "Type" AssetKind This
+	 * converts "Template" to "Type"
 	 * 
 	 * @param assetKind
 	 * @return
 	 */
 	public static String convertAssetKind(String assetKind) {
-		if(isTemplateAssetKind(assetKind)) {
+		if (isTemplateAssetKind(assetKind)) {
 			assetKind = AssetKind.TYPE.toString();
 		}
 
@@ -129,5 +129,5 @@ public class AASXPackageExplorerCompatibilityHandler {
 	private static boolean isTemplateAssetKind(String assetKind) {
 		return assetKind.toLowerCase().equals("template");
 	}
-	
+
 }

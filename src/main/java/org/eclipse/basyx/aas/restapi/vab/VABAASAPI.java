@@ -73,7 +73,7 @@ public class VABAASAPI implements IAASAPI {
 	public void addSubmodel(IReference submodel) {
 		provider.createValue(AASAPIHelper.getSubmodelsPath(), submodel);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void removeSubmodel(String id) {

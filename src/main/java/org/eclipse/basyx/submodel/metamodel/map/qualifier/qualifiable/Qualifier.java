@@ -61,9 +61,10 @@ public class Qualifier extends Constraint implements IQualifier {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	/**
 	 * Constructor accepting mandatory attributes
+	 * 
 	 * @param type
 	 * @param valueType
 	 */
@@ -72,7 +73,7 @@ public class Qualifier extends Constraint implements IQualifier {
 	}
 
 	public Qualifier(String type, String value, String valueType, Reference valueId) {
-		put(TYPE,type);
+		put(TYPE, type);
 		put(VALUE, ValueTypeHelper.prepareForSerialization(value));
 		put(VALUEID, valueId);
 		put(VALUETYPE, valueType);
@@ -90,25 +91,23 @@ public class Qualifier extends Constraint implements IQualifier {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Qualifier.class, map);
 		}
-		
+
 		Qualifier ret = new Qualifier();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
-		return map != null &&
-				map.containsKey(TYPE) &&
-				map.containsKey(VALUETYPE);
+		return map != null && map.containsKey(TYPE) && map.containsKey(VALUETYPE);
 	}
 
 	public void setType(String obj) {
@@ -123,7 +122,7 @@ public class Qualifier extends Constraint implements IQualifier {
 	public void setValue(Object obj) {
 		put(Qualifier.VALUE, ValueTypeHelper.prepareForSerialization(obj));
 		// Value type is only set if it is not set before
-		if(getValueType() == null) {
+		if (getValueType() == null) {
 			put(Qualifier.VALUETYPE, ValueTypeHelper.getType(obj).toString());
 		}
 	}
@@ -131,9 +130,9 @@ public class Qualifier extends Constraint implements IQualifier {
 	@Override
 	public Object getValue() {
 		Object value = get(Qualifier.VALUE);
-		if(value instanceof String) {
+		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
-		}else {
+		} else {
 			return value;
 		}
 	}
@@ -141,7 +140,7 @@ public class Qualifier extends Constraint implements IQualifier {
 	public void setValueId(IReference obj) {
 		put(Qualifier.VALUEID, obj);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public IReference getValueId() {
@@ -151,7 +150,7 @@ public class Qualifier extends Constraint implements IQualifier {
 	public void setValueType(ValueType obj) {
 		put(Qualifier.VALUETYPE, obj.toString());
 	}
-	
+
 	@Override
 	public ValueType getValueType() {
 		return ValueTypeHelper.readTypeDef(get(Qualifier.VALUETYPE));

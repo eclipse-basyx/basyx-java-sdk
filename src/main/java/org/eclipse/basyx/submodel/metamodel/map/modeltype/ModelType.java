@@ -70,7 +70,8 @@ public class ModelType extends VABModelMap<Object> {
 
 	@SuppressWarnings("unchecked")
 	public String getName() {
-		if(get(ModelType.MODELTYPE) == null) return null;
+		if (get(ModelType.MODELTYPE) == null)
+			return null;
 		return (String) ((Map<String, Object>) get(ModelType.MODELTYPE)).get(ModelType.NAME);
 	}
 

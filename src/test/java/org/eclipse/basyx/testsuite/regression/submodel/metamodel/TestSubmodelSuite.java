@@ -92,7 +92,6 @@ public abstract class TestSubmodelSuite {
 	private final String MULTI_LANG_PROP_ID = "multi_lang_prop_id";
 	private final String REFERENCE_ELEMENT_ID = "reference_element_id";
 	private final String PROPERTY_ID2 = "property_id2";
-	
 
 	private final static Reference testSemanticIdRef = new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "testVal", IdentifierType.CUSTOM));
 
@@ -139,7 +138,6 @@ public abstract class TestSubmodelSuite {
 		assertEquals(100, prop.getValue());
 	}
 
-
 	@Test
 	public void saveAndLoadPropertyTest() throws Exception {
 		ISubmodel submodel = getSubmodel();
@@ -166,7 +164,6 @@ public abstract class TestSubmodelSuite {
 		for (ISubmodelElement element : testDataElements.values()) {
 			submodel.addSubmodelElement(element);
 		}
-
 
 		// Get sample SubmodelElements and save them into Submodel
 		Map<String, ISubmodelElement> testSMElements = getTestSubmodelElements();
@@ -301,6 +298,7 @@ public abstract class TestSubmodelSuite {
 
 		return ret;
 	}
+
 	/**
 	 * Generates test ISubmodelElements
 	 */
@@ -315,7 +313,6 @@ public abstract class TestSubmodelSuite {
 		Property contained = new Property(PROPERTY_CONTAINED_ID, true);
 		values.add(contained);
 
-
 		smECollection.setValue(values);
 		ret.put(smECollection.getIdShort(), smECollection);
 
@@ -325,7 +322,7 @@ public abstract class TestSubmodelSuite {
 
 		Reference first = new Reference(new Key(KeyElements.BASICEVENT, true, "testFirst", IdentifierType.CUSTOM));
 		Reference second = new Reference(new Key(KeyElements.BASICEVENT, true, "testSecond", IdentifierType.CUSTOM));
-		
+
 		RelationshipElement relElement = new RelationshipElement(RELATIONSHIP_ELEM_ID, first, second);
 		ret.put(relElement.getIdShort(), relElement);
 
@@ -335,23 +332,23 @@ public abstract class TestSubmodelSuite {
 		annotations.add(annotationProperty);
 		annotatedRelElement.setAnnotation(annotations);
 		ret.put(annotatedRelElement.getIdShort(), annotatedRelElement);
-		
+
 		Property property = new Property(PROPERTY_ID2, ValueType.AnySimpleType);
 		ret.put(property.getIdShort(), property);
-		
+
 		Range range = new Range(RANGE_ID, ValueType.Integer);
 		range.setValue(new RangeValue(-100, +100));
 		ret.put(range.getIdShort(), range);
-		
+
 		File file = new File("text/plain");
 		file.setIdShort(FILE_ID);
 		file.setValue("fileUrl");
 		ret.put(file.getIdShort(), file);
-		
+
 		MultiLanguageProperty languageProperty = new MultiLanguageProperty(MULTI_LANG_PROP_ID);
 		languageProperty.setValue(new LangStrings(new LangString("en-en", "TestDescription")));
 		ret.put(languageProperty.getIdShort(), languageProperty);
-		
+
 		ReferenceElement referenceElement = new ReferenceElement(REFERENCE_ELEMENT_ID, first);
 		ret.put(referenceElement.getIdShort(), referenceElement);
 
@@ -394,7 +391,6 @@ public abstract class TestSubmodelSuite {
 		assertNotNull(actualCollection);
 
 		Collection<ISubmodelElement> elements = actualCollection.getSubmodelElements().values();
-
 
 		// Check for correct Type
 		assertEquals(1, elements.size());

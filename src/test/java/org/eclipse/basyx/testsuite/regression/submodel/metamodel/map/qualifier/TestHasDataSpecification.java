@@ -40,8 +40,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests constructor, setter and getter of {@link HasDataSpecification} for their
- * correctness
+ * Tests constructor, setter and getter of {@link HasDataSpecification} for
+ * their correctness
  * 
  * @author haque
  *
@@ -53,20 +53,20 @@ public class TestHasDataSpecification {
 	private static final IdentifierType ID_TYPE = IdentifierType.CUSTOM;
 	private static final Identifier IDENTIFIER = new Identifier(ID_TYPE, VALUE);
 	private static final Reference REFERENCE = new Reference(IDENTIFIER, KEY_ELEMENTS, IS_LOCAL);
-	
+
 	private HasDataSpecification specification;
-	
+
 	@Before
 	public void buildHasDataSpecification() {
 		specification = new HasDataSpecification(new ArrayList<>(), Collections.singleton(REFERENCE));
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		Collection<IReference> references = Collections.singleton(REFERENCE);
 		assertEquals(references, specification.getDataSpecificationReferences());
 	}
-	
+
 	@Test
 	public void testSetDataSpecificationReferences() {
 		IdentifierType identifierType = IdentifierType.IRDI;
@@ -76,7 +76,7 @@ public class TestHasDataSpecification {
 		boolean isLocal = true;
 		Reference reference = new Reference(identifier, keyElements, isLocal);
 		Collection<IReference> references = Collections.singleton(reference);
-		
+
 		specification.setDataSpecificationReferences(references);
 		assertEquals(references, specification.getDataSpecificationReferences());
 	}

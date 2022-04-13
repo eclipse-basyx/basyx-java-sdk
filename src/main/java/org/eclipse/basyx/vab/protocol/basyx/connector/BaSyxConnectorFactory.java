@@ -30,7 +30,6 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
 
-
 /**
  * A connector provider for TCP/BaSyx protocol
  * 
@@ -39,7 +38,6 @@ import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
  */
 public class BaSyxConnectorFactory extends ConnectorFactory {
 
-	
 	/**
 	 * Create the provider
 	 */
@@ -54,7 +52,7 @@ public class BaSyxConnectorFactory extends ConnectorFactory {
 
 		// Create connector, connect
 		IModelProvider provider = new JSONConnector(new BaSyxConnector(hostName, hostPort));
-		
+
 		// Create a proxy, if necessary
 		String path = address.replaceFirst(hostName + ":" + hostPort, "");
 		if (!path.isEmpty() && !path.equals("/")) {

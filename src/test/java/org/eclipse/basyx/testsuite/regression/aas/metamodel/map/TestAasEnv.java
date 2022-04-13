@@ -46,7 +46,6 @@ import org.junit.Test;
 
 public class TestAasEnv {
 
-	
 	@Test
 	public void testAssetsGetSet() {
 		AasEnv env = new AasEnv();
@@ -64,7 +63,7 @@ public class TestAasEnv {
 		env.setAssetAdministrationShells(Arrays.asList(aas));
 		assertEquals(aas, env.getAssetAdministrationShells().toArray()[0]);
 	}
-	
+
 	@Test
 	public void testConceptDescriptionsGetSet() {
 		AasEnv env = new AasEnv();
@@ -73,7 +72,7 @@ public class TestAasEnv {
 		env.setConceptDescriptions(Arrays.asList(conceptDescriptions));
 		assertEquals(conceptDescriptions, env.getConceptDescriptions().toArray()[0]);
 	}
-	
+
 	@Test
 	public void testSubmodelsGetSet() {
 		AasEnv env = new AasEnv();
@@ -82,7 +81,7 @@ public class TestAasEnv {
 		env.setSubmodels(Arrays.asList(submodels));
 		assertEquals(submodels, env.getSubmodels().toArray()[0]);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		Map<String, Object> asset = new LinkedHashMap<>();
@@ -90,41 +89,39 @@ public class TestAasEnv {
 		asset.put(Referable.IDSHORT, "TestAsset");
 		asset.put(Asset.KIND, AssetKind.INSTANCE);
 		asset.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRI, "testAssetIdShort"));
-		
+
 		Map<String, Object> assetAdministrationShell = new LinkedHashMap<>();
 		assetAdministrationShell.put(ModelType.MODELTYPE, AssetAdministrationShell.MODELTYPE);
 		assetAdministrationShell.put(Referable.IDSHORT, "TestAssetAdministrationShell");
 		assetAdministrationShell.put(AssetAdministrationShell.ASSET, asset);
 		assetAdministrationShell.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRI, "testAASIdShort"));
-		
-		
+
 		Map<String, Object> submodel = new LinkedHashMap<>();
 		submodel.put(ModelType.MODELTYPE, Submodel.MODELTYPE);
 		submodel.put(Referable.IDSHORT, "TestSubmodel");
 		submodel.put(Submodel.SUBMODELELEMENT, new ArrayList<Object>());
 		submodel.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRI, "testSubmodelIdShort"));
-		
+
 		Map<String, Object> conceptDescription = new LinkedHashMap<>();
 		conceptDescription.put(ModelType.MODELTYPE, ConceptDescription.MODELTYPE);
 		conceptDescription.put(Referable.IDSHORT, "TestConceptDescription");
 		conceptDescription.put(Identifiable.IDENTIFICATION, new Identifier(IdentifierType.IRI, "testConceptDesIdShort"));
-		
-		
+
 		Map<String, Object> aasEnvAsMap = new LinkedHashMap<>();
 		aasEnvAsMap.put(AasEnv.ASSETS, Arrays.asList(asset));
 		aasEnvAsMap.put(AasEnv.ASSETADMINISTRATIONSHELLS, Arrays.asList(assetAdministrationShell));
 		aasEnvAsMap.put(AasEnv.SUBMODELS, Arrays.asList(submodel));
 		aasEnvAsMap.put(AasEnv.CONCEPTDESCRIPTIONS, Arrays.asList(conceptDescription));
-		
+
 		AasEnv aasEnv = AasEnv.createAsFacade(aasEnvAsMap);
-		
-		Asset assetObj = (Asset)aasEnv.getAssets().toArray()[0];
+
+		Asset assetObj = (Asset) aasEnv.getAssets().toArray()[0];
 		assertEquals(assetObj.getIdShort(), asset.get(Referable.IDSHORT));
-		AssetAdministrationShell assetAdministrationShellObj = (AssetAdministrationShell)aasEnv.getAssetAdministrationShells().toArray()[0];
+		AssetAdministrationShell assetAdministrationShellObj = (AssetAdministrationShell) aasEnv.getAssetAdministrationShells().toArray()[0];
 		assertEquals(assetAdministrationShellObj.getIdShort(), assetAdministrationShell.get(Referable.IDSHORT));
-		Submodel submodelObj = (Submodel)aasEnv.getSubmodels().toArray()[0];
+		Submodel submodelObj = (Submodel) aasEnv.getSubmodels().toArray()[0];
 		assertEquals(submodelObj.getIdShort(), submodel.get(Referable.IDSHORT));
-		ConceptDescription conceptDescriptionObj = (ConceptDescription)aasEnv.getConceptDescriptions().toArray()[0];
+		ConceptDescription conceptDescriptionObj = (ConceptDescription) aasEnv.getConceptDescriptions().toArray()[0];
 		assertEquals(conceptDescriptionObj.getIdShort(), conceptDescription.get(Referable.IDSHORT));
 	}
 }

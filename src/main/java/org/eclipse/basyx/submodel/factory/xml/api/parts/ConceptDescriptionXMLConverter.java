@@ -62,8 +62,9 @@ public class ConceptDescriptionXMLConverter {
 	 * Parses &lt;aas:conceptDescriptions&gt; and builds the IConceptDescription
 	 * objects from it
 	 * 
-	 * @param xmlObject a Map containing the content of the XML tag
-	 *                  &lt;aas:conceptDescriptions&gt;
+	 * @param xmlObject
+	 *            a Map containing the content of the XML tag
+	 *            &lt;aas:conceptDescriptions&gt;
 	 * @return a List of IConceptDescription objects parsed form the given XML Map
 	 */
 	public static List<IConceptDescription> parseConceptDescriptions(Map<String, Object> xmlObject) {
@@ -77,10 +78,8 @@ public class ConceptDescriptionXMLConverter {
 		for (Map<String, Object> xmlConceptDescription : xmlConceptDescriptionList) {
 			ConceptDescription conceptDescription = new ConceptDescription();
 
-			IdentifiableXMLConverter.populateIdentifiable(xmlConceptDescription,
-					Identifiable.createAsFacadeNonStrict(conceptDescription, KeyElements.CONCEPTDESCRIPTION));
-			HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlConceptDescription,
-					HasDataSpecification.createAsFacade(conceptDescription));
+			IdentifiableXMLConverter.populateIdentifiable(xmlConceptDescription, Identifiable.createAsFacadeNonStrict(conceptDescription, KeyElements.CONCEPTDESCRIPTION));
+			HasDataSpecificationXMLConverter.populateHasDataSpecification(xmlConceptDescription, HasDataSpecification.createAsFacade(conceptDescription));
 
 			Collection<Reference> handleIsCaseOf = parseIsCaseOfRefs(xmlConceptDescription);
 			conceptDescription.setIsCaseOf(handleIsCaseOf);
@@ -94,7 +93,8 @@ public class ConceptDescriptionXMLConverter {
 	/**
 	 * Parses &lt;aas:isCaseOf&gt; and builds a Reference object from it
 	 * 
-	 * @param xmlObject a Map containing the XML tag &lt;aas:isCaseOf&gt;
+	 * @param xmlObject
+	 *            a Map containing the XML tag &lt;aas:isCaseOf&gt;
 	 * @return a Reference object parsed form the given XML Map
 	 */
 	private static Collection<Reference> parseIsCaseOfRefs(Map<String, Object> xmlObject) {
@@ -110,14 +110,14 @@ public class ConceptDescriptionXMLConverter {
 	 * Builds &lt;aas:conceptDescriptions&gt; from a given Collection of
 	 * IConceptDescription objects
 	 * 
-	 * @param document            the XML document
-	 * @param conceptDescriptions a Collection of IConceptDescription objects to
-	 *                            build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param conceptDescriptions
+	 *            a Collection of IConceptDescription objects to build the XML for
 	 * @return the &lt;aas:conceptDescriptions&gt; XML tag for the given
 	 *         IConceptDescription objects
 	 */
-	public static Element buildConceptDescriptionsXML(Document document,
-			Collection<IConceptDescription> conceptDescriptions) {
+	public static Element buildConceptDescriptionsXML(Document document, Collection<IConceptDescription> conceptDescriptions) {
 		Element root = document.createElement(CONCEPT_DESCRIPTIONS);
 
 		List<Element> xmlConceptDescriptionList = new ArrayList<Element>();
@@ -125,8 +125,7 @@ public class ConceptDescriptionXMLConverter {
 			Element conceptDescriptionRoot = document.createElement(CONCEPT_DESCRIPTION);
 
 			IdentifiableXMLConverter.populateIdentifiableXML(document, conceptDescriptionRoot, conceptDescription);
-			HasDataSpecificationXMLConverter.populateHasDataSpecificationXML(document, conceptDescriptionRoot,
-					conceptDescription);
+			HasDataSpecificationXMLConverter.populateHasDataSpecificationXML(document, conceptDescriptionRoot, conceptDescription);
 			buildIsCaseOf(document, conceptDescriptionRoot, conceptDescription);
 			xmlConceptDescriptionList.add(conceptDescriptionRoot);
 
@@ -141,13 +140,14 @@ public class ConceptDescriptionXMLConverter {
 	/**
 	 * Builds &lt;aas:isCaseOf&gt; from a given IConceptDescription object
 	 * 
-	 * @param document              the XML document
-	 * @param xmlConceptDescription the XML tag to be populated
-	 * @param conceptDescription    the IConceptDescription object to build the XML
-	 *                              for
+	 * @param document
+	 *            the XML document
+	 * @param xmlConceptDescription
+	 *            the XML tag to be populated
+	 * @param conceptDescription
+	 *            the IConceptDescription object to build the XML for
 	 */
-	private static void buildIsCaseOf(Document document, Element xmlConceptDescription,
-			IConceptDescription conceptDescription) {
+	private static void buildIsCaseOf(Document document, Element xmlConceptDescription, IConceptDescription conceptDescription) {
 		Collection<IReference> references = conceptDescription.getIsCaseOf();
 		Element xmlIsCaseOf = document.createElement(IS_CASE_OF);
 

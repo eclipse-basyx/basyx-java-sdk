@@ -40,15 +40,15 @@ import org.w3c.dom.Element;
  * @author conradi
  *
  */
-public class FileXMLConverter extends SubmodelElementXMLConverter{
+public class FileXMLConverter extends SubmodelElementXMLConverter {
 
 	public static final String FILE = "aas:file";
-	
-	
+
 	/**
 	 * Parses a Map containing the content of XML tag &lt;aas:file&gt;
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:file&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag &lt;aas:file&gt;
 	 * @return the parsed File
 	 */
 	public static File parseFile(Map<String, Object> xmlObject) {
@@ -58,35 +58,34 @@ public class FileXMLConverter extends SubmodelElementXMLConverter{
 		populateSubmodelElement(xmlObject, file);
 		return file;
 	}
-	
-	
-	
-	
+
 	/**
 	 * Builds the &lt;aas:file&gt; XML tag for a File
 	 * 
-	 * @param document the XML document
-	 * @param file the IFile to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param file
+	 *            the IFile to build the XML for
 	 * @return the &lt;aas:file&gt; XML tag for the given File
 	 */
 	public static Element buildFile(Document document, IFile file) {
 		Element fileRoot = document.createElement(FILE);
-		
+
 		populateSubmodelElement(document, fileRoot, file);
-		
+
 		String mimeType = file.getMimeType();
 		String value = file.getValue();
-		if(mimeType != null) {
+		if (mimeType != null) {
 			Element mimeTypeRoot = document.createElement(MIME_TYPE);
 			mimeTypeRoot.appendChild(document.createTextNode(mimeType));
 			fileRoot.appendChild(mimeTypeRoot);
 		}
-		if(value != null) {
+		if (value != null) {
 			Element valueRoot = document.createElement(VALUE);
 			valueRoot.appendChild(document.createTextNode(value));
 			fileRoot.appendChild(valueRoot);
 		}
-		
+
 		return fileRoot;
 	}
 }

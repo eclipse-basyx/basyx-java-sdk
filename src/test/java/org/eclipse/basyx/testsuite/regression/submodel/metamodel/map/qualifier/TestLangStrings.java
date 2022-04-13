@@ -49,31 +49,31 @@ public class TestLangStrings {
 	private static final String LANGUAGE2 = "Deu";
 	private static final String TEXT1 = "test";
 	private static final String TEXT2 = "test2";
-	
+
 	@Test
 	public void testConstructor1() {
 		LangStrings langStrings = new LangStrings(LANGUAGE1, TEXT1);
 		String textString = langStrings.get(LANGUAGE1);
 		assertEquals(TEXT1, textString);
 	}
-	
+
 	@Test
 	public void testConstructor2() {
 		LangString langString1 = new LangString(LANGUAGE1, TEXT1);
 		LangString langString2 = new LangString(LANGUAGE2, TEXT2);
-		
+
 		Collection<LangString> listsCollection = new ArrayList<>();
 		listsCollection.add(langString1);
 		listsCollection.add(langString2);
-		
+
 		LangStrings langStrings = new LangStrings(listsCollection);
 		String textString1 = langStrings.get(LANGUAGE1);
 		assertEquals(TEXT1, textString1);
-		
+
 		String textString2 = langStrings.get(LANGUAGE2);
 		assertEquals(TEXT2, textString2);
 	}
-	
+
 	@Test
 	public void testConstructor3() {
 		LangString langString = new LangString(LANGUAGE1, TEXT1);
@@ -81,56 +81,56 @@ public class TestLangStrings {
 		String textString = langStrings.get(LANGUAGE1);
 		assertEquals(TEXT1, textString);
 	}
-	
+
 	@Test
 	public void testAdd() {
 		LangStrings langStrings = new LangStrings(LANGUAGE1, TEXT1);
-		
+
 		langStrings.add(new LangString(LANGUAGE2, TEXT2));
 		assertEquals(TEXT2, langStrings.get(LANGUAGE2));
 	}
-	
+
 	@Test
 	public void testGetLanguages() {
 		LangStrings langStrings = new LangStrings(LANGUAGE1, TEXT1);
 		langStrings.add(new LangString(LANGUAGE2, TEXT2));
-		
+
 		Set<String> languageSet = new HashSet<String>();
 		languageSet.add(LANGUAGE1);
 		languageSet.add(LANGUAGE2);
 		assertEquals(languageSet, langStrings.getLanguages());
 	}
-	
+
 	@Test
 	public void testIsLangStrings() {
 		LangStrings langStrings = new LangStrings(LANGUAGE1, TEXT1);
-		
+
 		assertTrue(LangStrings.isLangStrings(langStrings));
-		
+
 		LangString langString = new LangString(LANGUAGE1, TEXT1);
 		langString.put("language", null);
-		
+
 		langStrings.add(langString);
-		
+
 		assertFalse(LangStrings.isLangStrings(langStrings));
 	}
-	
+
 	@Test
 	public void testFromStringPairs() {
-	    LangStrings langStrings = LangStrings.fromStringPairs(LANGUAGE1, TEXT1, LANGUAGE2, TEXT2);
-	    assertEquals(2, langStrings.getLanguages().size());
-	    assertEquals(TEXT1, langStrings.get(LANGUAGE1));
-	    assertEquals(TEXT2, langStrings.get(LANGUAGE2));
+		LangStrings langStrings = LangStrings.fromStringPairs(LANGUAGE1, TEXT1, LANGUAGE2, TEXT2);
+		assertEquals(2, langStrings.getLanguages().size());
+		assertEquals(TEXT1, langStrings.get(LANGUAGE1));
+		assertEquals(TEXT2, langStrings.get(LANGUAGE2));
 	}
-	
+
 	@Test
-    public void testFromStringPairsWithEmptyInput() {
-        LangStrings langStrings = LangStrings.fromStringPairs();
-        assertEquals(0, langStrings.getLanguages().size());
-    }
-	
+	public void testFromStringPairsWithEmptyInput() {
+		LangStrings langStrings = LangStrings.fromStringPairs();
+		assertEquals(0, langStrings.getLanguages().size());
+	}
+
 	@Test(expected = IllegalArgumentException.class)
-    public void testFromStringPairsWithOddNumber() {
-        LangStrings.fromStringPairs(LANGUAGE1);
-    }
+	public void testFromStringPairsWithOddNumber() {
+		LangStrings.fromStringPairs(LANGUAGE1);
+	}
 }

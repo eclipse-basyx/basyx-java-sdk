@@ -67,12 +67,12 @@ public class VABLambdaHandler extends VABMapHandler {
 		Object child = null;
 		try {
 			child = getElementProperty(element, propertyName);
-		} catch (ResourceNotFoundException e) {}
+		} catch (ResourceNotFoundException e) {
+		}
 		if (hasHiddenSetter(child)) {
 			((Consumer<Object>) ((Map<String, Object>) child).get(VALUE_SET_SUFFIX)).accept(newValue);
 		} else if (hasHiddenInserter(element) && (resolveSingle(element) instanceof Map<?, ?>)) {
-			((BiConsumer<String, Object>) ((Map<String, Object>) element).get(VALUE_INSERT_SUFFIX)).accept(propertyName,
-					newValue);
+			((BiConsumer<String, Object>) ((Map<String, Object>) element).get(VALUE_INSERT_SUFFIX)).accept(propertyName, newValue);
 		} else {
 			super.setModelPropertyValue(resolveSingle(element), propertyName, newValue);
 		}

@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

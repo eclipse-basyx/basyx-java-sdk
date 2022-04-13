@@ -52,32 +52,26 @@ public class AsyncOperationHandler {
 	/**
 	 * Invokes an Operation with an invocation request
 	 */
-	public static void invokeAsync(Operation operation, String operationId, InvocationRequest request,
-			Collection<IOperationVariable> outputArguments) {
+	public static void invokeAsync(Operation operation, String operationId, InvocationRequest request, Collection<IOperationVariable> outputArguments) {
 		String requestId = request.getRequestId();
 		Collection<IOperationVariable> inOutArguments = request.getInOutArguments();
 		Object[] parameters = request.unwrapInputParameters();
-		invokeAsync(operation, operationId, requestId, parameters, inOutArguments, outputArguments,
-				request.getTimeout());
+		invokeAsync(operation, operationId, requestId, parameters, inOutArguments, outputArguments, request.getTimeout());
 	}
 
 	/**
 	 * Invokes an Operation without an invocation request
 	 */
-	public static void invokeAsync(Operation operation, String operationId, String requestId, Object[] inputs,
-			Collection<IOperationVariable> outputArguments, int timeout) {
+	public static void invokeAsync(Operation operation, String operationId, String requestId, Object[] inputs, Collection<IOperationVariable> outputArguments, int timeout) {
 		invokeAsync(operation, operationId, requestId, inputs, new ArrayList<>(), outputArguments, timeout);
 	}
 
 	/**
 	 * Invokes an Operation and returns its requestId
 	 */
-	private static void invokeAsync(Operation operation, String operationId, String requestId, Object[] inputs,
-			Collection<IOperationVariable> inOutArguments,
-			Collection<IOperationVariable> outputArguments, int timeout) {
+	private static void invokeAsync(Operation operation, String operationId, String requestId, Object[] inputs, Collection<IOperationVariable> inOutArguments, Collection<IOperationVariable> outputArguments, int timeout) {
 		synchronized (responses) {
-			InvocationResponse response = new InvocationResponse(requestId, inOutArguments, outputArguments,
-					ExecutionState.INITIATED);
+			InvocationResponse response = new InvocationResponse(requestId, inOutArguments, outputArguments, ExecutionState.INITIATED);
 
 			responses.put(requestId, response);
 			responseOperationMap.put(requestId, operationId);
@@ -112,55 +106,51 @@ public class AsyncOperationHandler {
 					});
 		}
 	}
-	
+
 	/**
 	 * Function for scheduling a timeout function with completable futures
 	 */
 	private static CompletableFuture<Void> setTimeout(int timeout, String requestId) {
 		CompletableFuture<Void> result = new CompletableFuture<>();
-		delayer.schedule(
-				() -> result.completeExceptionally(
-						new OperationExecutionTimeoutException("Request " + requestId + " timed out")),
-				timeout, TimeUnit.MILLISECONDS);
+		delayer.schedule(() -> result.completeExceptionally(new OperationExecutionTimeoutException("Request " + requestId + " timed out")), timeout, TimeUnit.MILLISECONDS);
 		return result;
 	}
 
 	/**
 	 * Gets the result of an invocation
 	 * 
-	 * @param operationId the id of the requested Operation
-	 * @param requestId the id of the request
+	 * @param operationId
+	 *            the id of the requested Operation
+	 * @param requestId
+	 *            the id of the request
 	 * @return the result of the Operation or a Message that it is not yet finished
 	 */
 	public static Object retrieveResult(String requestId, String operationId) {
 		// Remove the Invocation if it is finished and its result was retrieved
 		synchronized (responses) {
 			if (!responses.containsKey(requestId)) {
-				throw new ResourceNotFoundException(
-						"RequestId '" + requestId + "' not found for operation '" + operationId + "'.");
+				throw new ResourceNotFoundException("RequestId '" + requestId + "' not found for operation '" + operationId + "'.");
 			}
-		
+
 			String validOperationId = responseOperationMap.get(requestId);
 			if (!operationId.equals(validOperationId)) {
-				throw new ResourceNotFoundException(
-						"RequestId '" + requestId + "' does not belong to Operation '" + operationId + "'");
+				throw new ResourceNotFoundException("RequestId '" + requestId + "' does not belong to Operation '" + operationId + "'");
 			}
 
 			InvocationResponse response = responses.get(requestId);
-			if (ExecutionState.COMPLETED == response.getExecutionState()
-					|| ExecutionState.TIMEOUT == response.getExecutionState()
-					|| ExecutionState.FAILED == response.getExecutionState()) {
+			if (ExecutionState.COMPLETED == response.getExecutionState() || ExecutionState.TIMEOUT == response.getExecutionState() || ExecutionState.FAILED == response.getExecutionState()) {
 				responses.remove(requestId);
 				responseOperationMap.remove(requestId);
 			}
 			return response;
 		}
 	}
-	
+
 	/**
 	 * Checks if a given requestId exists
 	 * 
-	 * @param requestId the id to be checked
+	 * @param requestId
+	 *            the id to be checked
 	 * @return if the id exists
 	 */
 	public static boolean hasRequestId(String requestId) {

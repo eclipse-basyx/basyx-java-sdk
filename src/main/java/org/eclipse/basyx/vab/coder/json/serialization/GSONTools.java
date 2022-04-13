@@ -66,9 +66,9 @@ import com.google.gson.JsonPrimitive;
  *
  */
 public class GSONTools implements Serializer {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(GSONTools.class);
-	
+
 	// Used string constants
 	public static final String OPERATION = "operation";
 	public static final String LAMBDA = "lambda";
@@ -85,14 +85,14 @@ public class GSONTools implements Serializer {
 	 * Type factory
 	 */
 	protected GSONToolsFactory toolsFactory = null;
-	
+
 	/**
 	 * Flag to remove null values from serialized JSON
 	 */
 	private boolean removeNull = true;
-	
+
 	/**
-	 * Flag to remove empty arrays from serialized JSON 
+	 * Flag to remove empty arrays from serialized JSON
 	 */
 	private boolean removeEmpty = false;
 
@@ -103,7 +103,7 @@ public class GSONTools implements Serializer {
 		// Store factory reference
 		toolsFactory = factory;
 	}
-	
+
 	/**
 	 * Constructor
 	 */
@@ -202,7 +202,7 @@ public class GSONTools implements Serializer {
 				return primitive.getAsDouble();
 			} else {
 				// Get value as Big integer
-				BigInteger tmp= primitive.getAsBigInteger();
+				BigInteger tmp = primitive.getAsBigInteger();
 				if (BigInteger.valueOf(Integer.MAX_VALUE).compareTo(tmp) >= 0 && BigInteger.valueOf(Integer.MIN_VALUE).compareTo(tmp) <= 0) {
 					// convert to int
 					return primitive.getAsInt();
@@ -221,7 +221,6 @@ public class GSONTools implements Serializer {
 			return primitive.getAsString();
 		}
 	}
-
 
 	/**
 	 * Serializes either string, number or boolean to a JsonPrimitive
@@ -286,18 +285,18 @@ public class GSONTools implements Serializer {
 		for (Entry<String, Object> entry : map.entrySet()) {
 			Object value = entry.getValue();
 			// Remove empty list if removeEmpty flag is on
-            if (!removeEmpty || !(value instanceof Collection<?> && ((Collection<?>)value).isEmpty())) {
-            	obj.add(entry.getKey(), serializeObject(value));
-        	}
+			if (!removeEmpty || !(value instanceof Collection<?> && ((Collection<?>) value).isEmpty())) {
+				obj.add(entry.getKey(), serializeObject(value));
+			}
 		}
 		return obj;
 	}
 
 	/**
 	 * Deserializes a JsonArray to a Collection<br>
-	 * Remark: internally, a List will be used for deserialization & it is assumed, that
-	 * the order in the json equals the correct intended order for the list.
-	 * => The ordering will be preserved in the returned collection
+	 * Remark: internally, a List will be used for deserialization & it is assumed,
+	 * that the order in the json equals the correct intended order for the list. =>
+	 * The ordering will be preserved in the returned collection
 	 * 
 	 * @param array
 	 * @return
@@ -317,11 +316,7 @@ public class GSONTools implements Serializer {
 	 * @return
 	 */
 	private boolean isFunction(Object value) {
-		return (value instanceof Supplier<?>) 
-				|| (value instanceof Function<?, ?>) 
-				|| (value instanceof Consumer<?>)
-				|| (value instanceof BiConsumer<?, ?> 
-				|| (value instanceof Runnable));
+		return (value instanceof Supplier<?>) || (value instanceof Function<?, ?>) || (value instanceof Consumer<?>) || (value instanceof BiConsumer<?, ?> || (value instanceof Runnable));
 	}
 
 	/**
@@ -357,7 +352,7 @@ public class GSONTools implements Serializer {
 		Object result = null;
 		byte[] data = Base64.getDecoder().decode(s);
 		InputStream byteStream = new ByteArrayInputStream(data);
-		
+
 		try (ObjectInputStream stream = new ObjectInputStream(byteStream)) {
 			result = stream.readObject();
 		} catch (IOException | ClassNotFoundException e) {

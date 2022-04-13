@@ -53,7 +53,7 @@ public class TestAASLambdaPropertyHelper {
 		AASLambdaPropertyHelper.setLambdaValue(temperature, () -> testValue, v -> {
 			testValue = (double) v;
 		});
-		
+
 		// Wrap in provider
 		SubmodelElementProvider provider = new SubmodelElementProvider(new VABLambdaProvider(temperature));
 		ConnectedProperty connectedProperty = new ConnectedProperty(new VABElementProxy("", provider));
@@ -61,11 +61,11 @@ public class TestAASLambdaPropertyHelper {
 		// Check correct property type
 		ValueType expectedType = ValueType.Double;
 		assertEquals(expectedType, connectedProperty.getValueType());
-		
+
 		// Check value is correctly retrievable by property
 		testValue = 10;
 		assertEquals(testValue, connectedProperty.getValue());
-		
+
 		// Check value is correctly written by property
 		double expectedValue = 2.1;
 		connectedProperty.setValue(expectedValue);

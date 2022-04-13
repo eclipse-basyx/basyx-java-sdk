@@ -41,38 +41,42 @@ import org.apache.http.impl.client.HttpClients;
 
 /**
  * Helper class to achieve http post multipart/form-data upload
+ * 
  * @author haque
  *
  */
 public class HTTPUploadHelper {
-	
+
 	/**
 	 * Uploads the given stream to the given API URL
+	 * 
 	 * @param stream
 	 * @param url
-	 * @throws IOException 
-	 * @throws ClientProtocolException 
+	 * @throws IOException
+	 * @throws ClientProtocolException
 	 */
 	public static void uploadHTTPPost(InputStream stream, String url) throws ClientProtocolException, IOException {
 		CloseableHttpClient httpClient = getDefautlHTTPClient();
 		HttpPost uploadPost = getUploadHTTPPost(stream, url);
 		executeUploadHTTPPost(httpClient, uploadPost);
 	}
-	
+
 	/**
 	 * Executes the client with multipart entity as a post file
+	 * 
 	 * @param httpClient
 	 * @param uploadFile
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
-	private static void executeUploadHTTPPost(CloseableHttpClient httpClient, HttpPost uploadFile) throws ClientProtocolException, IOException {	
+	private static void executeUploadHTTPPost(CloseableHttpClient httpClient, HttpPost uploadFile) throws ClientProtocolException, IOException {
 		CloseableHttpResponse response = httpClient.execute(uploadFile);
 		response.close();
 	}
 
 	/**
 	 * Gets a default HTTP client
+	 * 
 	 * @return
 	 * @throws FileNotFoundException
 	 */
@@ -80,9 +84,10 @@ public class HTTPUploadHelper {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		return httpClient;
 	}
-	
+
 	/**
 	 * Gets HTTP post with a multipart entity
+	 * 
 	 * @param stream
 	 * @param url
 	 * @return
@@ -91,13 +96,8 @@ public class HTTPUploadHelper {
 	private static HttpPost getUploadHTTPPost(InputStream stream, String url) throws FileNotFoundException {
 		HttpPost uploadFile = new HttpPost(url);
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-		
-		builder.addBinaryBody(
-		    "file",
-		    stream,
-		    ContentType.MULTIPART_FORM_DATA,
-		    ""
-		);
+
+		builder.addBinaryBody("file", stream, ContentType.MULTIPART_FORM_DATA, "");
 
 		HttpEntity multipart = builder.build();
 		uploadFile.setEntity(multipart);

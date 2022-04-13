@@ -28,7 +28,5 @@ package org.eclipse.basyx.vab.protocol.opcua.types;
  * Available message security modes for OPC UA connections.
  */
 public enum MessageSecurityMode {
-    None,
-    Sign,
-    SignAndEncrypt
+	None, Sign, SignAndEncrypt
 }

@@ -38,29 +38,35 @@ import java.util.Set;
  */
 public class LangStrings extends HashSet<LangString> {
 	private static final long serialVersionUID = 1L;
-	
-	public LangStrings() {}
-	
+
+	public LangStrings() {
+	}
+
 	/**
 	 * Constructor taking a language and a description in that language
-	 * @param language 
+	 * 
+	 * @param language
 	 * @param description
 	 */
 	public LangStrings(String language, String description) {
 		add(new LangString(language, description));
 	}
-	
+
 	/**
 	 * Constructor taking a single LangString
-	 * @param langString single LangString to add
+	 * 
+	 * @param langString
+	 *            single LangString to add
 	 */
 	public LangStrings(LangString langString) {
 		add(langString);
 	}
-	
+
 	/**
 	 * Constructor taking a collection of LangString
-	 * @param langStrings collection of LangString to add
+	 * 
+	 * @param langStrings
+	 *            collection of LangString to add
 	 */
 	public LangStrings(Collection<LangString> langStrings) {
 		if (langStrings != null) {
@@ -69,13 +75,13 @@ public class LangStrings extends HashSet<LangString> {
 			});
 		}
 	}
-	
+
 	/**
 	 * Creates a LangStrings object from a collection of map
 	 * 
-	 * @param maps a LangStrings object as raw collection of map
-	 * @return a LangStrings object, that behaves like a facade for
-	 *         the given map
+	 * @param maps
+	 *            a LangStrings object as raw collection of map
+	 * @return a LangStrings object, that behaves like a facade for the given map
 	 */
 	public static LangStrings createAsFacade(Collection<Map<String, Object>> maps) {
 		if (maps == null) {
@@ -89,30 +95,34 @@ public class LangStrings extends HashSet<LangString> {
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * QoL method which creates a <code>LangStrings</code> with the specified strings. The strings must
-	 * be given in pairs, such that the first string is the language code and the second is the text.
+	 * QoL method which creates a <code>LangStrings</code> with the specified
+	 * strings. The strings must be given in pairs, such that the first string is
+	 * the language code and the second is the text.
 	 * 
 	 * <p>
 	 * Examples:
 	 * 
 	 * <pre>
-	 * {@code
-	 * // Creates a LangStrings with two languages: 
-	 * LangStrings ls1 = LangStrings.fromStringPairs("en", "Manual", "de", "Betriebsanleitung");
+	 * {
+	 * 	&#64;code
+	 * 	// Creates a LangStrings with two languages:
+	 * 	LangStrings ls1 = LangStrings.fromStringPairs("en", "Manual", "de", "Betriebsanleitung");
 	 * 
-	 * // Throws an exception:
-	 * LangStrings ls2 = LangStrings.fromStringPairs("en");
+	 * 	// Throws an exception:
+	 * 	LangStrings ls2 = LangStrings.fromStringPairs("en");
 	 * }
 	 * </pre>
 	 * 
-	 * @param strings A even-numbered set of strings where every pair of two strings describes one
-	 *                LangString.
+	 * @param strings
+	 *            A even-numbered set of strings where every pair of two strings
+	 *            describes one LangString.
 	 * 
 	 * @return A new instance of <code>LangStrings</code>.
 	 * 
-	 * @throws IllegalArgumentException if <code>strings</code> contains an odd number of elements.
+	 * @throws IllegalArgumentException
+	 *             if <code>strings</code> contains an odd number of elements.
 	 */
 	public static LangStrings fromStringPairs(String... strings) {
 		if ((strings.length % 2) == 1) {
@@ -125,15 +135,15 @@ public class LangStrings extends HashSet<LangString> {
 		}
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static boolean isLangStrings(Object value) {
-		if(!(value instanceof Collection<?>)) {
+		if (!(value instanceof Collection<?>)) {
 			return false;
 		}
-		
+
 		Collection<Map<String, Object>> collection = (Collection<Map<String, Object>>) value;
-		
+
 		return collection.stream().allMatch(LangString::isLangString);
 	}
 
@@ -141,18 +151,18 @@ public class LangStrings extends HashSet<LangString> {
 	 * 
 	 * @param language
 	 * @return The String for the specified language or <br>
-	 * an empty String if no matching LangString is found
+	 *         an empty String if no matching LangString is found
 	 */
 	public String get(String language) {
 		for (LangString langString : this) {
 			String currLanguage = langString.getLanguage();
-			if(currLanguage == null ? language == null : currLanguage.equalsIgnoreCase(language)) {
+			if (currLanguage == null ? language == null : currLanguage.equalsIgnoreCase(language)) {
 				return langString.getDescription();
 			}
 		}
 		return "";
 	}
-	
+
 	/**
 	 * @return A Set of Strings containing all languages of this LangStrings Object
 	 */

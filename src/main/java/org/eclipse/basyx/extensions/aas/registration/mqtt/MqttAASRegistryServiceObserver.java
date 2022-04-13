@@ -34,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation variant for the AASRegistryServiceObserver that triggers MQTT events for
- * different operations on the registry. 
+ * Implementation variant for the AASRegistryServiceObserver that triggers MQTT
+ * events for different operations on the registry.
  * 
  * @author haque
  *
@@ -45,9 +45,11 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
-	 *  
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
+	 * 
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId) throws MqttException {
@@ -59,10 +61,14 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer with a
 	 * custom mqtt client persistence
 	 * 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param clientId unique client identifier
-	 * @param mqttPersistence custom mqtt persistence strategy
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param clientId
+	 *            unique client identifier
+	 * @param mqttPersistence
+	 *            custom mqtt persistence strategy
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, MqttClientPersistence mqttPersistence) throws MqttException {
@@ -71,38 +77,47 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 	}
 
 	/**
-	 * Constructor for creating an MqttClient with authentication and a custom persistence strategy
+	 * Constructor for creating an MqttClient with authentication and a custom
+	 * persistence strategy
 	 *
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param pw password for authentication with broker
-	 * @param mqttPersistence custom mqtt persistence strategy
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
+	 * @param mqttPersistence
+	 *            custom mqtt persistence strategy
 	 */
-	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw,
-			MqttClientPersistence mqttPersistence) throws MqttException {
+	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence mqttPersistence) throws MqttException {
 		super(serverEndpoint, clientId, user, pw, mqttPersistence);
 	}
 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
-	 *  
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param pw password for authentication with broker
+	 * 
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
-	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw)
-			throws MqttException {
+	public MqttAASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		super(serverEndpoint, clientId, user, pw);
 		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + serverEndpoint);
 	}
-	
+
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
-	 *  
-	 * @param client already configured client
+	 * 
+	 * @param client
+	 *            already configured client
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryServiceObserver(MqttClient client) throws MqttException {

@@ -64,16 +64,18 @@ public interface IElementContainer {
 	 * @return
 	 */
 	public Map<String, IOperation> getOperations();
-	
+
 	/**
 	 * Gets a submodel element by name
+	 * 
 	 * @param id
 	 * @return submodel element
 	 */
 	ISubmodelElement getSubmodelElement(String id);
-	
+
 	/**
 	 * Deletes a submodel element by name
+	 * 
 	 * @param id
 	 */
 	void deleteSubmodelElement(String id);

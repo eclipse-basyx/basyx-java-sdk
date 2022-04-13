@@ -51,21 +51,22 @@ import org.junit.Test;
  */
 public class TestAssetSpecificProperties {
 	public static final String IDSHORT = "AssetSpecificProperties";
-	public static GuidelineSpecificProperties guidelineSpecificProperties = new GuidelineSpecificProperties(TestGuidelineSpecificProperties.IDSHORT, TestGuidelineSpecificProperties.conformityDeclaration, Collections.singletonList(TestGuidelineSpecificProperties.arbitrary));
-	
+	public static GuidelineSpecificProperties guidelineSpecificProperties = new GuidelineSpecificProperties(TestGuidelineSpecificProperties.IDSHORT, TestGuidelineSpecificProperties.conformityDeclaration,
+			Collections.singletonList(TestGuidelineSpecificProperties.arbitrary));
+
 	private Map<String, Object> assetMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void buildAssetSpecificProperties() {
-		
+
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(guidelineSpecificProperties);
-		
+
 		assetMap.put(Referable.IDSHORT, IDSHORT);
 		assetMap.put(HasSemantics.SEMANTICID, AssetSpecificProperties.SEMANTICID);
 		assetMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		AssetSpecificProperties assetFromMap = AssetSpecificProperties.createAsFacade(assetMap);
@@ -73,17 +74,17 @@ public class TestAssetSpecificProperties {
 		assertEquals(Collections.singletonList(guidelineSpecificProperties), assetFromMap.getGuidelineSpecificProperties());
 		assertEquals(IDSHORT, assetFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		assetMap.remove(Referable.IDSHORT);
 		AssetSpecificProperties.createAsFacade(assetMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = MetamodelConstructionException.class)
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionGuideline() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)assetMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) assetMap.get(Property.VALUE);
 		elements.remove(guidelineSpecificProperties);
 		AssetSpecificProperties.createAsFacade(assetMap);
 	}

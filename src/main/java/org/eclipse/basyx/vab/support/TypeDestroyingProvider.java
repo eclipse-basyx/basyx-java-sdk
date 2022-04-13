@@ -37,11 +37,11 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 public class TypeDestroyingProvider implements IModelProvider {
 
 	private IModelProvider provider;
-	
+
 	public TypeDestroyingProvider(IModelProvider provider) {
 		this.provider = provider;
 	}
-	
+
 	@Override
 	public Object getValue(String path) throws ProviderException {
 		return TypeDestroyer.handle(provider.getValue(path));

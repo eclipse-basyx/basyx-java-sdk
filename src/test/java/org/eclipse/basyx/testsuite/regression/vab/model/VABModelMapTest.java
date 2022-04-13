@@ -50,7 +50,7 @@ public class VABModelMapTest {
 		VABModelMap<Object> map = new VABModelMap<>();
 		map.putPath("a/b/c", 12);
 		map.putPath("a/b/d", 13);
-		
+
 		// Build expected output
 		Map<String, Object> b = new LinkedHashMap<>();
 		b.put("c", 12);
@@ -58,7 +58,7 @@ public class VABModelMapTest {
 
 		Map<String, Object> a = new LinkedHashMap<>();
 		a.put("b", b);
-		
+
 		Map<String, Object> root = new LinkedHashMap<>();
 		root.put("a", a);
 

@@ -40,7 +40,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operat
  *
  */
 public class AsyncOperationHelper {
-	
+
 	public static final String ASYNC_OP_ID = "asyncOperation";
 	public static Collection<OperationVariable> IN;
 	protected static Collection<OperationVariable> OUT;
@@ -48,7 +48,7 @@ public class AsyncOperationHelper {
 
 	private Object waitObject = new Object();
 	private boolean shouldWait = true;
-	
+
 	public AsyncOperationHelper() {
 		IN = new ArrayList<OperationVariable>();
 		OUT = new ArrayList<OperationVariable>();
@@ -62,9 +62,9 @@ public class AsyncOperationHelper {
 		asyncOut.setKind(ModelingKind.TEMPLATE);
 		OUT.add(new OperationVariable(asyncOut));
 	}
-	
+
 	private final Function<Object[], Object> ASYNC_FUNC = (Function<Object[], Object>) v -> {
-		int result = (int)v[0] + (int)v[1];
+		int result = (int) v[0] + (int) v[1];
 		synchronized (waitObject) {
 			while (shouldWait) {
 				try {
@@ -75,7 +75,7 @@ public class AsyncOperationHelper {
 		}
 		return result;
 	};
-	
+
 	private final Function<Object[], Object> ASYNC_EXCEPTION_FUNC = (Function<Object[], Object>) v -> {
 		NullPointerException ex = new NullPointerException();
 		synchronized (waitObject) {
@@ -88,7 +88,7 @@ public class AsyncOperationHelper {
 		}
 		throw ex;
 	};
-	
+
 	public Operation getAsyncOperation() {
 		shouldWait = true;
 		Operation op = new Operation(ASYNC_FUNC);
@@ -97,25 +97,25 @@ public class AsyncOperationHelper {
 		op.setOutputVariables(OUT);
 		return op;
 	}
-	
+
 	public Operation getAsyncExceptionOperation() {
 		shouldWait = true;
 		Operation op = new Operation(ASYNC_EXCEPTION_FUNC);
 		op.setIdShort(ASYNC_EXCEPTION_OP_ID);
 		return op;
 	}
-	
+
 	public void releaseWaitingOperation() {
 		shouldWait = false;
 		synchronized (waitObject) {
 			waitObject.notifyAll();
 		}
-		
+
 		// Give the Operation a bit of time to finish
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 		}
 	}
-	
+
 }

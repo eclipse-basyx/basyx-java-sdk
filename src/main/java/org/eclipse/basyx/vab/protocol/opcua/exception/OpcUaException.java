@@ -30,24 +30,25 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  * Generic wrapper type for exceptions from the underlying client library.
  *
  * <p>
- * User code can catch this exception type to handle all OPC UA related exceptions uniformly. If
- * more fine-grained handling of different failure modes is required, calling code must inspect the
- * cause through {@link #getCause()} and deal with exception types of the underlying library.
+ * User code can catch this exception type to handle all OPC UA related
+ * exceptions uniformly. If more fine-grained handling of different failure
+ * modes is required, calling code must inspect the cause through
+ * {@link #getCause()} and deal with exception types of the underlying library.
  */
 public class OpcUaException extends ProviderException {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public OpcUaException(String msg) {
-        super(msg);
-    }
+	public OpcUaException(String msg) {
+		super(msg);
+	}
 
-    public OpcUaException(Throwable cause) {
-        super(cause);
-    }
+	public OpcUaException(Throwable cause) {
+		super(cause);
+	}
 
-    public OpcUaException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public OpcUaException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
 }

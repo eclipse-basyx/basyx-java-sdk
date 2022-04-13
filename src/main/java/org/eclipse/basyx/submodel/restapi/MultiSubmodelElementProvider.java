@@ -38,7 +38,8 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
- * Provider that handles container properties. Container properties can contain other submodel elements.
+ * Provider that handles container properties. Container properties can contain
+ * other submodel elements.
  *
  * @author espen, conradi
  *
@@ -48,7 +49,8 @@ public class MultiSubmodelElementProvider implements IModelProvider {
 	public static final String ELEMENTS = "submodelElements";
 	public static final String VALUE = "value";
 
-	// The VAB model provider containing the submodelElements this SubmodelElementProvider is based on
+	// The VAB model provider containing the submodelElements this
+	// SubmodelElementProvider is based on
 	// Assumed to be a map that maps idShorts to the submodel elements
 	private IModelProvider modelProvider;
 
@@ -67,7 +69,8 @@ public class MultiSubmodelElementProvider implements IModelProvider {
 		Object elements = modelProvider.getValue("");
 		Map<String, Map<String, Object>> all = (Map<String, Map<String, Object>>) elements;
 
-		// Feed all ELements through their Providers, in case someting needs to be done to them (e.g. smElemCollections)
+		// Feed all ELements through their Providers, in case someting needs to be done
+		// to them (e.g. smElemCollections)
 		return all.entrySet().stream().map(e -> (Map<String, Object>) getSingleElement(ELEMENTS + "/" + e.getKey())).collect(Collectors.toList());
 	}
 
@@ -98,12 +101,12 @@ public class MultiSubmodelElementProvider implements IModelProvider {
 	public Object getValue(String path) throws ProviderException {
 		String[] pathElements = VABPathTools.splitPath(path);
 		String qualifier = pathElements[0];
-		
-		if(!qualifier.equals(ELEMENTS)) {
+
+		if (!qualifier.equals(ELEMENTS)) {
 			// No other qualifier in a submodel element container can be directly accessed
 			throw new MalformedRequestException("Given path '" + path + "' does not start with /submodelElements");
 		}
-		
+
 		if (pathElements.length == 1) {
 			// returns all elements
 			return getElementsList();
@@ -124,7 +127,7 @@ public class MultiSubmodelElementProvider implements IModelProvider {
 
 		IModelProvider elementProxy = getElementProxy(pathElements);
 		String subPath = VABPathTools.buildPath(pathElements, 2);
-		
+
 		new SubmodelElementProvider(elementProxy).setValue(subPath, newValue);
 	}
 
@@ -134,12 +137,11 @@ public class MultiSubmodelElementProvider implements IModelProvider {
 		String[] pathElements = VABPathTools.splitPath(path);
 		String qualifier = pathElements[0];
 		String subPath = VABPathTools.buildPath(pathElements, 2);
-		
 
 		if (!qualifier.equals(ELEMENTS)) {
 			throw new MalformedRequestException("Given path '" + path + "' does not start with /submodelElements");
 		}
-		
+
 		// Check if the passed element is a SubmodelElementCollection. If yes, the value
 		// of the "value" key needs to be handled
 		if (SubmodelElementCollection.isSubmodelElementCollection((Map<String, Object>) newEntity)) {
@@ -166,15 +168,15 @@ public class MultiSubmodelElementProvider implements IModelProvider {
 		String qualifier = pathElements[0];
 		String subPath;
 		IModelProvider elementProvider;
-		
+
 		if (!qualifier.equals(ELEMENTS)) {
 			throw new MalformedRequestException("Given path '" + path + "' does not start with /submodelElements");
 		}
 
 		// If the first Element is a Collection, use its Provider
-		if(pathElements.length > 2) {
+		if (pathElements.length > 2) {
 			IModelProvider elementProxy = getElementProxy(pathElements);
-			elementProvider = new SubmodelElementProvider(elementProxy); 
+			elementProvider = new SubmodelElementProvider(elementProxy);
 			subPath = VABPathTools.buildPath(pathElements, 2);
 		} else {
 			elementProvider = modelProvider;
@@ -199,7 +201,7 @@ public class MultiSubmodelElementProvider implements IModelProvider {
 		if (!qualifier.equals(ELEMENTS)) {
 			throw new MalformedRequestException("Given path '" + path + "' does not start with /submodelElements");
 		}
-		
+
 		IModelProvider elementProxy = getElementProxy(pathElements);
 		return new SubmodelElementProvider(elementProxy).invokeOperation(subPath, parameters);
 	}

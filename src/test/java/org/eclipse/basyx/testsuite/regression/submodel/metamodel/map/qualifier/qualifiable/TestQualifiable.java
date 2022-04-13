@@ -49,27 +49,27 @@ import org.junit.Test;
 public class TestQualifiable {
 	private static final Formula FORMULA1 = new Formula(Collections.singleton(new Reference(new Key(KeyElements.BLOB, true, "TestValue", IdentifierType.IRI))));
 	private static final Formula FORMULA2 = new Formula(Collections.singleton(new Reference(new Key(KeyElements.ANNOTATEDRELATIONSHIPELEMENT, true, "TestValue2", IdentifierType.IRDI))));
-	
+
 	@Test
 	public void testConstructor1() {
 		Qualifiable qualifiable = new Qualifiable(FORMULA1);
 		assertEquals(Collections.singleton(FORMULA1), qualifiable.getQualifiers());
 	}
-	
+
 	@Test
 	public void testConstructor2() {
 		Collection<Constraint> constraints = new HashSet<Constraint>();
 		constraints.add(FORMULA1);
 		constraints.add(FORMULA2);
-		
+
 		Qualifiable qualifiable = new Qualifiable(constraints);
 		assertEquals(constraints, qualifiable.getQualifiers());
 	}
-	
+
 	@Test
 	public void testSetQualifier() {
 		Qualifiable qualifiable = new Qualifiable(FORMULA1);
-		
+
 		qualifiable.setQualifiers(Collections.singleton(FORMULA2));
 		assertEquals(Collections.singleton(FORMULA2), qualifiable.getQualifiers());
 	}

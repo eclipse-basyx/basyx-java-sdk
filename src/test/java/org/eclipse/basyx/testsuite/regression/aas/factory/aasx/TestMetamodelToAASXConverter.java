@@ -135,8 +135,7 @@ public class TestMetamodelToAASXConverter {
 	}
 
 	@Test
-	public void testBuildAASX() throws IOException, TransformerException, ParserConfigurationException,
-			InvalidFormatException, SAXException {
+	public void testBuildAASX() throws IOException, TransformerException, ParserConfigurationException, InvalidFormatException, SAXException {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
@@ -144,8 +143,7 @@ public class TestMetamodelToAASXConverter {
 	}
 
 	@Test
-	public void testFilePathsAreCorrectlyChanged() throws IOException, TransformerException,
-			ParserConfigurationException, InvalidFormatException, SAXException {
+	public void testFilePathsAreCorrectlyChanged() throws IOException, TransformerException, ParserConfigurationException, InvalidFormatException, SAXException {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
@@ -197,8 +195,7 @@ public class TestMetamodelToAASXConverter {
 		assertEquals("<?xml", new String(buf));
 	}
 
-	private Set<AASBundle> deserializeAASX(ByteArrayOutputStream byteStream)
-			throws IOException, InvalidFormatException, ParserConfigurationException, SAXException {
+	private Set<AASBundle> deserializeAASX(ByteArrayOutputStream byteStream) throws IOException, InvalidFormatException, ParserConfigurationException, SAXException {
 		InputStream in = new ByteArrayInputStream(byteStream.toByteArray());
 
 		AASXToMetamodelConverter aasxDeserializer = new AASXToMetamodelConverter(in);
@@ -212,8 +209,7 @@ public class TestMetamodelToAASXConverter {
 		ISubmodel deserializedSm1 = extractSubmodelFromSubmodelSet(deserializedSubmodels, sm1.getIdentification());
 		ISubmodel deserializedSm2 = extractSubmodelFromSubmodelSet(deserializedSubmodels, sm2.getIdentification());
 
-		ISubmodelElementCollection deserializedCollection = (ISubmodelElementCollection) deserializedSm1
-				.getSubmodelElement(COLLECTION_ID_SHORT);
+		ISubmodelElementCollection deserializedCollection = (ISubmodelElementCollection) deserializedSm1.getSubmodelElement(COLLECTION_ID_SHORT);
 
 		IFile deserializedFile1 = (IFile) deserializedSm1.getSubmodelElement(FILE_ID_SHORT_1);
 		IFile deserializedFile2 = (IFile) deserializedCollection.getSubmodelElement(FILE_ID_SHORT_2);

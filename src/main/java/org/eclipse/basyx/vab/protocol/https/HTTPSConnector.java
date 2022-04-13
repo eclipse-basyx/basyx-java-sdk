@@ -33,35 +33,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An HTTPS Connector class which can be used
- * for creating an HTTPS Client with self signed SSL certificate
- * and communicating in REST 
+ * An HTTPS Connector class which can be used for creating an HTTPS Client with
+ * self signed SSL certificate and communicating in REST
  * 
  * @author haque
  *
  */
 public class HTTPSConnector extends HTTPConnector {
 	private static Logger logger = LoggerFactory.getLogger(HTTPSConnector.class);
-	
+
 	/**
 	 * Initiates an HTTPSConnector with given address
+	 * 
 	 * @param address
 	 */
 	public HTTPSConnector(String address) {
 		super(address);
 		setHttpsClientWithValidation();
 	}
-	
+
 	/**
 	 * Initiates an HTTPSConnector with given address and media type
+	 * 
 	 * @param address
 	 * @param mediaType
 	 */
-	public HTTPSConnector(String address, String mediaType) { 
+	public HTTPSConnector(String address, String mediaType) {
 		super(address, mediaType);
 		setHttpsClientWithValidation();
 	}
-	
+
 	public HTTPSConnector(String address, IAuthorizationSupplier authorizationSupplier) {
 		super(address, authorizationSupplier);
 		setHttpsClientWithValidation();

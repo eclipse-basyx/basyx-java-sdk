@@ -38,8 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation variant for the AASRegistryService that triggers MQTT events for
- * different operations on the registry. Has to be based on a backend
+ * Implementation variant for the AASRegistryService that triggers MQTT events
+ * for different operations on the registry. Has to be based on a backend
  * implementation of the IAASRegistryService to forward its method calls.
  * 
  * @author haque
@@ -50,13 +50,16 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 
 	// The underlying AASRegistryService
 	protected IAASRegistry observedRegistryService;
-	
+
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASRegistryService
 	 * 
-	 * @param observedRegistryService the underlying registry service 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
+	 * @param observedRegistryService
+	 *            the underlying registry service
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryService(IAASRegistry observedRegistryService, String serverEndpoint, String clientId) throws MqttException {
@@ -68,25 +71,31 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASRegistryService
 	 * 
-	 * @param observedRegistryService the underlying registry service 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param pw password for authentication with broker
+	 * @param observedRegistryService
+	 *            the underlying registry service
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
-	public MqttAASRegistryService(IAASRegistry observedRegistryService, String serverEndpoint, String clientId, String user, char[] pw)
-			throws MqttException {
+	public MqttAASRegistryService(IAASRegistry observedRegistryService, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		super(serverEndpoint, clientId, user, pw);
 		logger.info("Create new MQTT AAS Registry Service for endpoint " + serverEndpoint);
 		this.observedRegistryService = observedRegistryService;
 	}
-	
+
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASRegistryService
 	 * 
-	 * @param observedRegistryService the underlying registry service 
-	 * @param client already configured client
+	 * @param observedRegistryService
+	 *            the underlying registry service
+	 * @param client
+	 *            already configured client
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryService(IAASRegistry observedRegistryService, MqttClient client) throws MqttException {
@@ -95,11 +104,10 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 		this.observedRegistryService = observedRegistryService;
 	}
 
-	
 	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
 		this.observedRegistryService.register(deviceAASDescriptor);
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERAAS, deviceAASDescriptor.getIdentifier().getId());	
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERAAS, deviceAASDescriptor.getIdentifier().getId());
 	}
 
 	@Override

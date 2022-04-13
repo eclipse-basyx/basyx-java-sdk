@@ -42,19 +42,20 @@ import org.junit.Test;
  */
 public class TestOperationVariable {
 	private static final Property PROPERTY = new Property("testIdShort", "testOpVariable");
-	
+
 	private OperationVariable operationVariable;
+
 	@Before
 	public void buildOperationVariable() {
 		PROPERTY.setKind(ModelingKind.TEMPLATE);
 		operationVariable = new OperationVariable(PROPERTY);
-	} 
-	
+	}
+
 	@Test
 	public void testConstructor() {
 		assertEquals(PROPERTY, operationVariable.getValue());
-	} 
-	
+	}
+
 	@Test
 	public void testSetValue() {
 		Property property = new Property("testIdShort", ValueType.String);
@@ -62,9 +63,10 @@ public class TestOperationVariable {
 		operationVariable.setValue(property);
 		assertEquals(property, operationVariable.getValue());
 	}
-	
+
 	@Test
-	// TODO: Change with 1.0 Release when ModelingKind.Template is obligatory for OperationVariables
+	// TODO: Change with 1.0 Release when ModelingKind.Template is obligatory for
+	// OperationVariables
 	public void testSetValueChangedModelingKind() {
 		Property property = new Property("testIdShort", ValueType.String);
 		property.setKind(ModelingKind.INSTANCE);

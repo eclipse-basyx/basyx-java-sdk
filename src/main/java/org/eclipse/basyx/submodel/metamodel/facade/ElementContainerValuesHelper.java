@@ -43,20 +43,21 @@ public class ElementContainerValuesHelper {
 	/**
 	 * Gets the Values from a {@link IElementContainer}
 	 * 
-	 * @param container the {@link IElementContainer} to get the values from.
+	 * @param container
+	 *            the {@link IElementContainer} to get the values from.
 	 * @return A Map mapping idShort to the value of the SubmodelElement
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> getSubmodelValue(IElementContainer container) {
 		Map<String, ISubmodelElement> elements = container.getSubmodelElements();
-		
+
 		return (Map<String, Object>) handleValue(elements.values());
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	private static Object handleValue(Object value) {
-		// Check if it is a collection but not a LangStrings (is internally also a Collection)
+		// Check if it is a collection but not a LangStrings (is internally also a
+		// Collection)
 		if (value instanceof Collection<?> && !(value instanceof LangStrings)) {
 			return handleValueCollection((Collection<ISubmodelElement>) value);
 		} else {
@@ -65,10 +66,9 @@ public class ElementContainerValuesHelper {
 		}
 	}
 
-
 	private static Map<String, Object> handleValueCollection(Collection<ISubmodelElement> collection) {
 		Map<String, Object> ret = new LinkedHashMap<>();
-		for(ISubmodelElement element: collection) {
+		for (ISubmodelElement element : collection) {
 			try {
 				ret.put(element.getIdShort(), handleValue(element.getValue()));
 			} catch (UnsupportedOperationException e) {
@@ -78,5 +78,5 @@ public class ElementContainerValuesHelper {
 		}
 		return ret;
 	}
-	
+
 }

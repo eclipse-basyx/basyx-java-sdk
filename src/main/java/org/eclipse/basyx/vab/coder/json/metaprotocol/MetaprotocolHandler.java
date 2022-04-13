@@ -38,7 +38,7 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 	 * Reference to serializer / deserializer
 	 */
 	protected GSONTools serializer = null;
-	
+
 	/**
 	 * Constructor that create the serializer
 	 * 
@@ -47,41 +47,40 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 		// Create GSON serializer
 		serializer = new GSONTools(new DefaultTypeFactory());
 	}
-	
+
 	/**
 	 * Constructor that accepts specific factory for serializer
+	 * 
 	 * @param factory
 	 */
 	public MetaprotocolHandler(GSONToolsFactory factory) {
 		// Create GSON serializer
 		serializer = new GSONTools(factory);
 	}
-	
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object deserialize(String message) throws ProviderException {
 
 		// First get the GSON object from the JSON string
 		Object gsonObj = serializer.deserialize(message);
-		
+
 		// Then interpret and verify the result object
 		Object result = null;
 
 		// If it is a map, see if it does contain an exception
 		if (gsonObj instanceof Map) {
 			Map<String, Object> responseMap = (Map<String, Object>) gsonObj;
-				
+
 			// Handle meta information and exceptions
 			result = handleResult(responseMap);
 		} else {
 			// Otherwise, return directly.
 			result = gsonObj;
 		}
-        return result;
+		return result;
 	}
-	
-	
+
 	/**
 	 * Verify the Result and try to extract the entity if available. Process
 	 * information of "success", "entityType" and "messages"
@@ -103,7 +102,7 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 		if (messages == null) {
 			throw new ProviderException("Unknown error occured: Success entry is indicating an error but no message was attached");
 		}
-		
+
 		Map<String, Object> first = messages.iterator().next(); // assumes an Exception always comes with a message
 
 		// Get the code of the exception message
@@ -114,19 +113,20 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 
 		throw getExceptionFromCode(code, text);
 	}
-	
+
 	/**
 	 * Creates a ProviderException from a String received form the Server<br>
 	 * The String has to be formated e.g. "ResourceNotFoundException: Requested Item
 	 * was not found"
 	 * 
-	 * @param code - code of the exception message
+	 * @param code
+	 *            - code of the exception message
 	 * @return the matching ProviderException
 	 */
 	public static ProviderException getExceptionFromCode(String code, String text) {
 
 		int exceptionCode = Integer.parseInt(code);
-		
+
 		// return exception based on code
 		return ExceptionToHTTPCodeMapper.mapToException(exceptionCode, text);
 	}

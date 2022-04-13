@@ -32,18 +32,15 @@ package org.eclipse.basyx.vab.registry.api;
  */
 public interface IVABRegistryService {
 
-	
 	/**
 	 * Add a mapping to directory
 	 */
 	public IVABRegistryService addMapping(String key, String value);
 
-	
 	/**
 	 * Remove a mapping from directory
 	 */
 	public void removeMapping(String key);
-	
 
 	/**
 	 * Lookup method maps key "id" to value

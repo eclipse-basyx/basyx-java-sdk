@@ -40,7 +40,7 @@ public class TestIdShortValidator {
 
 	@Test
 	public void testValidator() {
-		String[] accepted = {"abc", "AbC"};
+		String[] accepted = { "abc", "AbC" };
 		String[] notAccepted = { ":", " test", "1Test", "äTest", null, "" };
 
 		for (String s : accepted) {

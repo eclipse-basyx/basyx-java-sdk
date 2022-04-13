@@ -69,21 +69,18 @@ public class TestAASBundleHelper {
 
 	private static final String AAS_ID = "TestAAS";
 	private static final String SM_ID = "TestSM";
-	
-	
+
 	private AASAggregatorProxy aggregator;
 	private List<AASBundle> bundles;
 	private AASAggregatorProvider provider;
-	
-	
-	
+
 	@Before
 	public void init() {
 		provider = new AASAggregatorProvider(new AASAggregator());
 		aggregator = new AASAggregatorProxy(new VABElementProxy("", provider));
-		bundles = new ArrayList<>();		
+		bundles = new ArrayList<>();
 	}
-	
+
 	/**
 	 * This test tests whether the endpoint of a submodel contains the prefix
 	 * "/shells". It register an aas-bundle in the registry, then retrieves a
@@ -97,78 +94,72 @@ public class TestAASBundleHelper {
 		InMemoryRegistry registry = new InMemoryRegistry();
 		String serverPath = "http://localhost:4001/aasServer/";
 		AASBundleHelper.register(registry, bundles, serverPath);
-		
+
 		Identifier smIdentifier = new Identifier(IdentifierType.CUSTOM, SM_ID);
 		Identifier aasIdentifier = new Identifier(IdentifierType.CUSTOM, AAS_ID);
 		SubmodelDescriptor smDescriptor = registry.lookupSubmodel(aasIdentifier, smIdentifier);
 		String actualEndpoint = smDescriptor.getFirstEndpoint();
-		
+
 		String expectedEndpoint = VABPathTools.concatenatePaths(serverPath, AASAggregatorProvider.PREFIX, AAS_ID, MultiSubmodelProvider.SUBMODELS_PREFIX, SM_ID, SubmodelProvider.SUBMODEL);
 		assertEquals(expectedEndpoint, actualEndpoint);
 	}
-	
-	
-	
-	
+
 	/**
-	 * This test loads an AAS and its two Submodels into the Aggregator,
-	 * runs the integration with AAS and Submodels with the same IDs, but different content,
-	 * checks if integration does NOT replace the models in the Aggregator. 
+	 * This test loads an AAS and its two Submodels into the Aggregator, runs the
+	 * integration with AAS and Submodels with the same IDs, but different content,
+	 * checks if integration does NOT replace the models in the Aggregator.
 	 */
 	@Test
 	public void testIntegrationOfExistingAASAndSM() {
 		AASBundle bundle = getTestBundle();
 		bundles.add(bundle);
-		
+
 		// Load AAS and SM AASAggregator
 		AssetAdministrationShell aas = (AssetAdministrationShell) bundle.getAAS();
 		Set<ISubmodel> submodels = bundle.getSubmodels();
 		Submodel sm = (Submodel) submodels.iterator().next();
 		pushAAS(aas);
 		pushSubmodel(sm, aas.getIdentification());
-		
+
 		assertFalse(AASBundleHelper.integrate(aggregator, bundles));
 		checkAggregatorContent();
 	}
-	
+
 	/**
-	 * This test loads an AAS into the Aggregator,
-	 * runs the integration with the AAS and a SM,
-	 * checks if both is present in Aggregator afterwards. 
+	 * This test loads an AAS into the Aggregator, runs the integration with the AAS
+	 * and a SM, checks if both is present in Aggregator afterwards.
 	 */
 	@Test
 	public void testIntegrationOfExistingAASAndNonexistingSM() {
 		AASBundle bundle = getTestBundle();
 		bundles.add(bundle);
-		
+
 		// Load only AAS into AASAggregator
 		AssetAdministrationShell aas = (AssetAdministrationShell) bundle.getAAS();
 		pushAAS(aas);
-		
+
 		assertTrue(AASBundleHelper.integrate(aggregator, bundles));
 		checkAggregatorContent();
 	}
-	
+
 	/**
-	 * This test loads nothing into the Aggregator,
-	 * runs the integration with the AAS and a SM,
-	 * checks if both is present in Aggregator afterwards. 
+	 * This test loads nothing into the Aggregator, runs the integration with the
+	 * AAS and a SM, checks if both is present in Aggregator afterwards.
 	 */
 	@Test
 	public void testIntegrationOfNonexistingAASAndSM() {
 		AASBundle bundle = getTestBundle();
 		bundles.add(bundle);
-		
+
 		assertTrue(AASBundleHelper.integrate(aggregator, bundles));
 		checkAggregatorContent();
 	}
-	
+
 	/**
-	 * This test loads nothing into the Aggregator,
-	 * runs the integration with the AAS and a SM,
-	 * checks if both is present in Aggregator afterwards. Furthermore,
-	 * the AASAggregator has a registry for registering and resolving potential
-	 * submodels.
+	 * This test loads nothing into the Aggregator, runs the integration with the
+	 * AAS and a SM, checks if both is present in Aggregator afterwards.
+	 * Furthermore, the AASAggregator has a registry for registering and resolving
+	 * potential submodels.
 	 */
 	@Test
 	public void testIntegrationOfNonexistingAASAndSMWithRegistry() {
@@ -188,21 +179,20 @@ public class TestAASBundleHelper {
 		IAssetAdministrationShell aas = aggregator.getAAS(new Identifier(IdentifierType.CUSTOM, AAS_ID));
 		assertEquals(AAS_ID, aas.getIdShort());
 		IModelProvider provider = aggregator.getAASProvider(new Identifier(IdentifierType.CUSTOM, AAS_ID));
-		
-		Submodel sm = SubmodelElementMapCollectionConverter.mapToSM(
-				(Map<String, Object>) provider.getValue("/aas/submodels/" + SM_ID + "/" + SubmodelProvider.SUBMODEL));
-		
+
+		Submodel sm = SubmodelElementMapCollectionConverter.mapToSM((Map<String, Object>) provider.getValue("/aas/submodels/" + SM_ID + "/" + SubmodelProvider.SUBMODEL));
+
 		assertEquals(SM_ID, sm.getIdentification().getId());
 	}
-	
+
 	private void pushAAS(AssetAdministrationShell aas) {
 		aggregator.createAAS(aas);
 	}
-	
+
 	private void pushSubmodel(Submodel sm, IIdentifier aasIdentifier) {
 		provider.setValue("/" + AASAggregatorProvider.PREFIX + "/" + aasIdentifier.getId() + "/aas/submodels/" + sm.getIdShort(), sm);
 	}
-	
+
 	private AASBundle getTestBundle() {
 		Submodel sm = new Submodel();
 		sm.setIdShort(SM_ID);

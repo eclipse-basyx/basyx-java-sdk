@@ -29,8 +29,9 @@ import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
 import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
 
 /**
- * A registry servlet based on an InMemory Registry. The servlet therefore provides an implementation
- * for the IAASRegistryService interface without a permanent storage capability.
+ * A registry servlet based on an InMemory Registry. The servlet therefore
+ * provides an implementation for the IAASRegistryService interface without a
+ * permanent storage capability.
  * 
  * @author espen
  */
@@ -45,4 +46,3 @@ public class AASRegistryServlet extends VABHTTPInterface<AASRegistryModelProvide
 
 	}
 }
-

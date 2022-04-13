@@ -44,12 +44,12 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
  *
  */
 public class MapUpdate {
-	
+
 	@SuppressWarnings("unchecked")
 	public static void test(VABConnectionManager connManager) {
 		// Connect to VAB element with ID "urn:fhg:es.iese:vab:1:1:simplevabelement"
 		VABElementProxy connVABElement = connManager.connectToVABElement("urn:fhg:es.iese:vab:1:1:simplevabelement");
-		
+
 		// Set primitives
 		connVABElement.setValue("primitives/integer", 12);
 		connVABElement.setValue("primitives/double", 1.2d);
@@ -69,43 +69,45 @@ public class MapUpdate {
 		connVABElement.setValue("primitives/integer", 123);
 		connVABElement.setValue("primitives/double", 3.14d);
 		connVABElement.setValue("primitives/string", "TestValue");
-		
+
 		// Update serializable function
-		connVABElement.setValue("operations/serializable",
-				(Function<Object[], Object> & Serializable) (param) -> {
-					return (int) param[0] - (int) param[1];
-				});
+		connVABElement.setValue("operations/serializable", (Function<Object[], Object> & Serializable) (param) -> {
+			return (int) param[0] - (int) param[1];
+		});
 		// Read back
 		Object serializableFunction = connVABElement.getValue("operations/serializable");
 		// Test
 		Function<Object[], Object> testFunction = (Function<Object[], Object>) serializableFunction;
 		assertEquals(-1, testFunction.apply(new Object[] { 2, 3 }));
 		// Revert
-		connVABElement.setValue("operations/serializable",
-				(Function<Object[], Object> & Serializable) (param) -> {
-					return (int) param[0] + (int) param[1];
-				});
-		
+		connVABElement.setValue("operations/serializable", (Function<Object[], Object> & Serializable) (param) -> {
+			return (int) param[0] + (int) param[1];
+		});
+
 		// Test non-existing parent element
 		try {
 			connVABElement.createValue("unkown/newElement", 5);
 			fail();
-		} catch (ResourceNotFoundException e) {}
+		} catch (ResourceNotFoundException e) {
+		}
 		try {
 			connVABElement.getValue("unknown/newElement");
 			fail();
-		} catch (ResourceNotFoundException e) {}
-		
+		} catch (ResourceNotFoundException e) {
+		}
+
 		// Test updating a non-existing element
 		try {
 			connVABElement.setValue("newElement", 10);
 			fail();
-		} catch (ResourceNotFoundException e) {}
+		} catch (ResourceNotFoundException e) {
+		}
 		try {
 			connVABElement.getValue("newElement");
 			fail();
-		} catch (ResourceNotFoundException e) {}
-		
+		} catch (ResourceNotFoundException e) {
+		}
+
 		// Test updating an existing null-element
 		connVABElement.setValue("special/null", true);
 		Object bool = connVABElement.getValue("special/null");
@@ -115,13 +117,14 @@ public class MapUpdate {
 		try {
 			connVABElement.setValue(null, "");
 			fail();
-		} catch (MalformedRequestException e) {}
+		} catch (MalformedRequestException e) {
+		}
 	}
 
 	public static void testPushAll(VABConnectionManager connManager) {
 		// Connect to VAB element with ID "urn:fhg:es.iese:vab:1:1:simplevabelement"
 		VABElementProxy connVABElement = connManager.connectToVABElement("urn:fhg:es.iese:vab:1:1:simplevabelement");
-	
+
 		// Push whole map via null-Path - should throw exception
 		// - create object
 		LinkedHashMap<String, Object> newMap = new LinkedHashMap<>();
@@ -130,8 +133,9 @@ public class MapUpdate {
 		try {
 			connVABElement.setValue(null, newMap);
 			fail();
-		} catch (MalformedRequestException e) {}
-	
+		} catch (MalformedRequestException e) {
+		}
+
 		// Push whole map via ""-Path
 		// - create object
 		LinkedHashMap<String, Object> newMap2 = new LinkedHashMap<>();
@@ -143,10 +147,12 @@ public class MapUpdate {
 		try {
 			connVABElement.getValue("testKey");
 			fail();
-		} catch (ResourceNotFoundException e) {}
+		} catch (ResourceNotFoundException e) {
+		}
 		try {
 			connVABElement.getValue("primitives/integer");
 			fail();
-		} catch (ResourceNotFoundException e) {}
+		} catch (ResourceNotFoundException e) {
+		}
 	}
 }

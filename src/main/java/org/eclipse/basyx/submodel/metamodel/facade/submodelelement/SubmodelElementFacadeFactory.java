@@ -52,7 +52,8 @@ public class SubmodelElementFacadeFactory {
 	/**
 	 * Takes a Map and creates the corresponding SubmodelElement as facade
 	 * 
-	 * @param submodelElement a Map containing the information of a SubmodelElement
+	 * @param submodelElement
+	 *            a Map containing the information of a SubmodelElement
 	 * @return the actual of the given SubmodelElement map created as facade
 	 */
 	public static ISubmodelElement createSubmodelElement(Map<String, Object> submodelElement) {
@@ -87,5 +88,4 @@ public class SubmodelElementFacadeFactory {
 		}
 	}
 
-	
 }

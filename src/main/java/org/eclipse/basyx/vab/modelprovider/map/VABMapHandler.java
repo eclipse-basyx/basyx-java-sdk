@@ -45,7 +45,7 @@ public class VABMapHandler implements IVABElementHandler {
 		if (element instanceof Map<?, ?>) {
 			Map<?, ?> map = (Map<?, ?>) element;
 
-			//check if requested property exists in map
+			// check if requested property exists in map
 			if (!map.containsKey(propertyName)) {
 				throw new ResourceNotFoundException("Property \"" + propertyName + "\" does not exist.");
 			}
@@ -87,7 +87,7 @@ public class VABMapHandler implements IVABElementHandler {
 		if (element instanceof Map) {
 			Map<String, Object> map = (Map<String, Object>) element;
 			// check if requested property exists in map
-			if(!map.containsKey(propertyName)) {
+			if (!map.containsKey(propertyName)) {
 				throw new ResourceNotFoundException("Property \"" + propertyName + "\" does not exist. Therefore it can not be deleted.");
 			}
 			map.remove(propertyName);

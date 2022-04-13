@@ -23,7 +23,6 @@
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 
-
 package org.eclipse.basyx.aas.factory.aasx;
 
 import java.net.MalformedURLException;

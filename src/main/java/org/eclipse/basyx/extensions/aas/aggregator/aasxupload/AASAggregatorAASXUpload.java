@@ -43,14 +43,15 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
- * An implementation of the IAASAggregatorAASXUpload interface using maps internally
- * with the support of AASX upload via {@link InputStream}
+ * An implementation of the IAASAggregatorAASXUpload interface using maps
+ * internally with the support of AASX upload via {@link InputStream}
  * 
  * @author haque
  *
  */
 public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 	private IAASAggregator aggregator;
+
 	/**
 	 * Constructs default AAS Aggregator with AASX upload
 	 */
@@ -59,15 +60,15 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 	}
 
 	@Override
-    public void uploadAASX(InputStream aasxStream) {
-        try {
-            AASXToMetamodelConverter converter = new AASXToMetamodelConverter(aasxStream);
-            Set<AASBundle> bundles = converter.retrieveAASBundles();
-            AASBundleHelper.integrate(this, bundles);
-        } catch (Exception e) {
-            throw new MalformedRequestException("invalid request to aasx path without valid aasx input stream");
-        }
-    }
+	public void uploadAASX(InputStream aasxStream) {
+		try {
+			AASXToMetamodelConverter converter = new AASXToMetamodelConverter(aasxStream);
+			Set<AASBundle> bundles = converter.retrieveAASBundles();
+			AASBundleHelper.integrate(this, bundles);
+		} catch (Exception e) {
+			throw new MalformedRequestException("invalid request to aasx path without valid aasx input stream");
+		}
+	}
 
 	@Override
 	public Collection<IAssetAdministrationShell> getAASList() {

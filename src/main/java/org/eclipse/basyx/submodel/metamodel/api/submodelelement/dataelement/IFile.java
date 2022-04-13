@@ -40,7 +40,7 @@ public interface IFile extends IDataElement {
 	 */
 	@Override
 	public String getValue();
-	
+
 	/**
 	 * Sets path and name of the referenced file (with file extension). The path can
 	 * be absolute or relative.

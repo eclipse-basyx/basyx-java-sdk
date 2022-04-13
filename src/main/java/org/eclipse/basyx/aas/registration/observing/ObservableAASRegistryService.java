@@ -36,13 +36,13 @@ import org.eclipse.basyx.submodel.observer.Observable;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
 /**
-*
-* Implementation of {@link IAASRegistry} that calls back registered {@link IAASRegistryServiceObserver}
-* when changes on Registry occur
-*
-* @author haque
-*
-*/
+ *
+ * Implementation of {@link IAASRegistry} that calls back registered
+ * {@link IAASRegistryServiceObserver} when changes on Registry occur
+ *
+ * @author haque
+ *
+ */
 public class ObservableAASRegistryService extends Observable<IAASRegistryServiceObserver> implements IAASRegistry {
 
 	private IAASRegistry aasRegistry;
@@ -93,5 +93,5 @@ public class ObservableAASRegistryService extends Observable<IAASRegistryService
 	public SubmodelDescriptor lookupSubmodel(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		return aasRegistry.lookupSubmodel(aasId, smId);
 	}
-	
+
 }

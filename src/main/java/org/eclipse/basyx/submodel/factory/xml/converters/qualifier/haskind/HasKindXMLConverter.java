@@ -36,21 +36,23 @@ import org.w3c.dom.Element;
 import com.google.common.base.Strings;
 
 /**
- * Handles the conversion between an IHasKind object and the XML tag &lt;aas:kind&gt; in both directions
+ * Handles the conversion between an IHasKind object and the XML tag
+ * &lt;aas:kind&gt; in both directions
  * 
  * @author conradi
  *
  */
 public class HasKindXMLConverter {
-	
+
 	public static final String KIND = "aas:kind";
-	
-	
+
 	/**
 	 * Populates a given HasKind object with the data form the given XML
 	 * 
-	 * @param xmlObject the XML map containing the &lt;aas:kind&gt; tag
-	 * @param hasKind the HasKind object to be populated
+	 * @param xmlObject
+	 *            the XML map containing the &lt;aas:kind&gt; tag
+	 * @param hasKind
+	 *            the HasKind object to be populated
 	 */
 	public static void populateHasKind(Map<String, Object> xmlObject, HasKind hasKind) {
 		String hasKindValue = XMLHelper.getString(xmlObject.get(KIND));
@@ -62,15 +64,17 @@ public class HasKindXMLConverter {
 			hasKind.setKind(ModelingKind.fromString(hasKindValue));
 		}
 	}
-	
-	
+
 	/**
 	 * Populates a given XML map with the data from a given IHasKind object<br>
 	 * Creates the &lt;aas:kind&gt; tag in the given root
 	 * 
-	 * @param document the XML document
-	 * @param root the XML root Element to be populated
-	 * @param hasKind the IHasKind object to be converted to XML
+	 * @param document
+	 *            the XML document
+	 * @param root
+	 *            the XML root Element to be populated
+	 * @param hasKind
+	 *            the IHasKind object to be converted to XML
 	 */
 	public static void populateHasKindXML(Document document, Element root, IHasKind hasKind) {
 		if (hasKind.getKind() != null) {

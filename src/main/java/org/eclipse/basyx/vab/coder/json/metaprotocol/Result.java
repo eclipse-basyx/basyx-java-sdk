@@ -94,42 +94,37 @@ public class Result extends LinkedHashMap<String, Object> {
 	public Result(Exception e) {
 		this(false, getMessageListFromException(e));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static Result createAsFacade(Map<String, Object> map) {
 		boolean success = (Boolean) map.get(SUCCESS);
 		Object entity = map.get(ENTITY);
 		List<Message> messages = new ArrayList<>();
-		
-		for(Map<String, Object> messageMap: (List<Map<String, Object>>)map.get(MESSAGES)) {
+
+		for (Map<String, Object> messageMap : (List<Map<String, Object>>) map.get(MESSAGES)) {
 			messages.add(Message.createAsFacade(messageMap));
 		}
-		
+
 		return new Result(success, entity, messages);
 	}
 
 	private static List<Message> getMessageListFromException(Exception e) {
 
 		List<Message> messageList = new LinkedList<Message>();
-		
 
 		// Translate the exception to code
 		if (e instanceof ProviderException) {
 			String code = new Integer(ExceptionToHTTPCodeMapper.mapFromException((ProviderException) e)).toString();
-			Message message = new Message(MessageType.Exception, code,
-					e.getClass().getSimpleName() + ": " + e.getMessage());
+			Message message = new Message(MessageType.Exception, code, e.getClass().getSimpleName() + ": " + e.getMessage());
 
 			// replace with desired debugging output
 			messageList.add(message);
 		}
 
-
-
 		if (e.getCause() != null) {
 			messageList.addAll(getMessageListFromException((Exception) e.getCause()));
 		}
 
-		
 		return messageList;
 	}
 

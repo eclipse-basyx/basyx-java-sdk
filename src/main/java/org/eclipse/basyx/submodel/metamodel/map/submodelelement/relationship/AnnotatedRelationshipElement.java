@@ -37,7 +37,8 @@ import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 
 /**
  * AnnotatedRelationshipElement as defined in DAAS document <br>
- * An annotated relationship element is a relationship element that can be annotated with additional data elements.
+ * An annotated relationship element is a relationship element that can be
+ * annotated with additional data elements.
  * 
  * @author schnicke, conradi
  *
@@ -62,25 +63,21 @@ public class AnnotatedRelationshipElement extends RelationshipElement implements
 		put(ANNOTATIONS, annotations);
 	}
 
-	
 	@SuppressWarnings("unchecked")
-	private Collection<IDataElement> getAnnotations() {	
+	private Collection<IDataElement> getAnnotations() {
 		Collection<IDataElement> list = new ArrayList<>();
 		Collection<Map<String, Object>> annotations = (Collection<Map<String, Object>>) get(ANNOTATIONS);
-		
+
 		// If non mandatory element annotations does not exist, return empty list
-		if(annotations == null) {
+		if (annotations == null) {
 			return list;
 		}
-		
-		annotations.stream()
-		.map(m -> SubmodelElementFacadeFactory.createSubmodelElement(m))
-		.filter(e -> e instanceof IDataElement).forEach(e -> list.add((IDataElement)e));
-		
+
+		annotations.stream().map(m -> SubmodelElementFacadeFactory.createSubmodelElement(m)).filter(e -> e instanceof IDataElement).forEach(e -> list.add((IDataElement) e));
+
 		return list;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object obj) {

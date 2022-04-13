@@ -40,35 +40,36 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
  */
 public class ExceptionToHTTPCodeMapper {
 
-	
 	/**
 	 * Maps ProviderExceptions to HTTP-Codes
 	 * 
-	 * @param e The thrown ProviderException
+	 * @param e
+	 *            The thrown ProviderException
 	 * @return HTTP-Code
 	 */
 	public static int mapFromException(ProviderException e) {
 
 		if (e instanceof MalformedRequestException) {
 			return 400;
-		} else if(e instanceof ResourceAlreadyExistsException) {
+		} else if (e instanceof ResourceAlreadyExistsException) {
 			return 422;
-		} else if(e instanceof ResourceNotFoundException) {
+		} else if (e instanceof ResourceNotFoundException) {
 			return 404;
 		}
 		return 500;
-		
+
 	}
-	
+
 	/**
 	 * Maps HTTP-Codes to ProviderExceptions
 	 * 
-	 * @param statusCode The received HTTP-code
+	 * @param statusCode
+	 *            The received HTTP-code
 	 * @return the corresponding ProviderException
 	 */
 	public static ProviderException mapToException(int statusCode, String text) {
-		
-		switch(statusCode) {
+
+		switch (statusCode) {
 		case 400:
 			return new MalformedRequestException(text);
 		case 422:
@@ -78,18 +79,19 @@ public class ExceptionToHTTPCodeMapper {
 		default:
 			return new ProviderException(text);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Maps HTTP-Codes to ProviderExceptions
 	 * 
-	 * @param statusCode The received HTTP-code
+	 * @param statusCode
+	 *            The received HTTP-code
 	 * @return the corresponding ProviderException
 	 */
 	public static ProviderException mapToException(int statusCode, List<Message> messages) {
-		
-		switch(statusCode) {
+
+		switch (statusCode) {
 		case 400:
 			return new MalformedRequestException(messages);
 		case 422:
@@ -99,7 +101,7 @@ public class ExceptionToHTTPCodeMapper {
 		default:
 			return new ProviderException(messages);
 		}
-		
+
 	}
-	
+
 }

@@ -42,8 +42,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests constructor, setter and getter of {@link AdministrativeInformation} for their
- * correctness
+ * Tests constructor, setter and getter of {@link AdministrativeInformation} for
+ * their correctness
  * 
  * @author haque
  *
@@ -57,28 +57,28 @@ public class TestAdministrativeInformation {
 	private static final IdentifierType ID_TYPE = IdentifierType.CUSTOM;
 	private static final Identifier IDENTIFIER = new Identifier(ID_TYPE, VALUE);
 	private static final Reference REFERENCE = new Reference(IDENTIFIER, KEY_ELEMENTS, IS_LOCAL);
-	
+
 	private AdministrativeInformation information;
-	
+
 	@Before
 	public void buildAdministrativeInformation() {
 		information = new AdministrativeInformation(VERSION, REVISION);
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		assertEquals(VERSION, information.getVersion());
 		assertEquals(REVISION, information.getRevision());
 		assertEquals(new HashSet<IReference>(), information.getDataSpecificationReferences());
 	}
-	
+
 	@Test
 	public void testSetDataSpecificationReferences() {
 		Collection<IReference> references = Collections.singleton(REFERENCE);
 		information.setDataSpecificationReferences(references);
 		assertEquals(references, information.getDataSpecificationReferences());
 	}
-	
+
 	@Test
 	public void testSetVersionInformation() {
 		String newVersionString = "2.0";
@@ -87,21 +87,21 @@ public class TestAdministrativeInformation {
 		assertEquals(newVersionString, information.getVersion());
 		assertEquals(newRevisionString, information.getRevision());
 	}
-	
+
 	@Test(expected = RuntimeException.class)
 	public void testSetVersionInformationExceptionEmptyString() {
 		String newVersionString = "";
 		String newRevisionString = "2.0.1";
 		information.setVersionInformation(newVersionString, newRevisionString);
 	}
-	
+
 	@Test(expected = RuntimeException.class)
 	public void testSetVersionInformationExceptionNullString() {
 		String newVersionString = null;
 		String newRevisionString = "2.0.1";
 		information.setVersionInformation(newVersionString, newRevisionString);
 	}
-	
+
 	@Test
 	public void testSetVersionInformationNoRevision() {
 		String newVersionString = "";
@@ -110,7 +110,7 @@ public class TestAdministrativeInformation {
 		assertEquals(newVersionString, information.getVersion());
 		assertEquals(newRevisionString, information.getRevision());
 	}
-	
+
 	@Test
 	public void testSetEmbeddedDataSpecifications() {
 		EmbeddedDataSpecification embeddedDataSpecification = new EmbeddedDataSpecification();

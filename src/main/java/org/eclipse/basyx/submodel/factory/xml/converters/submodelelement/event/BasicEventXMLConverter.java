@@ -43,15 +43,15 @@ import org.w3c.dom.Element;
  *
  */
 public class BasicEventXMLConverter extends SubmodelElementXMLConverter {
-	
+
 	public static final String BASIC_EVENT = "aas:basicEvent";
 	public static final String OBSERVED = "aas:observed";
-	
 
 	/**
 	 * Parses a Map containing the content of XML tag &lt;aas:basicEvent&gt;
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:basicEvent&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag &lt;aas:basicEvent&gt;
 	 * @return the parsed BasicEvent
 	 */
 	@SuppressWarnings("unchecked")
@@ -62,29 +62,28 @@ public class BasicEventXMLConverter extends SubmodelElementXMLConverter {
 		populateSubmodelElement(xmlObject, basicEvent);
 		return basicEvent;
 	}
-	
-	
-	
-	
+
 	/**
 	 * Builds the &lt;aas:basicEvent&gt; XML tag for a BasicEvent
 	 * 
-	 * @param document the XML document
-	 * @param basicEvent the IBasicEvent to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param basicEvent
+	 *            the IBasicEvent to build the XML for
 	 * @return the &lt;aas:basicEvent&gt; XML tag for the given BasicEvent
 	 */
 	public static Element buildBasicEvent(Document document, IBasicEvent basicEvent) {
 		Element basicEventRoot = document.createElement(BASIC_EVENT);
-		
+
 		populateSubmodelElement(document, basicEventRoot, basicEvent);
-		
+
 		IReference observed = basicEvent.getObserved();
-		if(observed != null) {
+		if (observed != null) {
 			Element observedRoot = document.createElement(OBSERVED);
 			observedRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, observed));
 			basicEventRoot.appendChild(observedRoot);
 		}
-		
+
 		return basicEventRoot;
 	}
 }

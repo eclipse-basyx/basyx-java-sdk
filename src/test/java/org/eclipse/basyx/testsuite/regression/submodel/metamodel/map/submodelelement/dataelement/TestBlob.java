@@ -48,12 +48,12 @@ public class TestBlob {
 	protected String testString = "NEW!";
 	protected byte[] testBytes = testString.getBytes(StandardCharsets.UTF_8);
 	protected String testBase64 = Base64.getEncoder().encodeToString(testBytes);
-	
+
 	@Before
 	public void build() {
 		blob = new Blob("testIdShort", "mimeType");
 	}
-	
+
 	/**
 	 * Tests if getMimeType() returns the correct value
 	 */
@@ -80,7 +80,7 @@ public class TestBlob {
 		assertArrayEquals(testBytes, blob.getByteArrayValue());
 		assertEquals(testBase64, blob.getValue());
 	}
-	
+
 	/**
 	 * Tests if setUTF8 sets the correct value
 	 */

@@ -43,7 +43,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 public class Blob extends DataElement implements IBlob {
 	public static final String MIMETYPE = "mimeType";
 	public static final String MODELTYPE = "Blob";
-	
+
 	/**
 	 * Creates an empty Blob object
 	 */
@@ -51,9 +51,10 @@ public class Blob extends DataElement implements IBlob {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 * @param mimeType
 	 */
@@ -79,46 +80,47 @@ public class Blob extends DataElement implements IBlob {
 		setByteArrayValue(value);
 		setMimeType(mimeType);
 	}
-	
+
 	/**
 	 * Creates a Blob object from a map
 	 * 
-	 * @param obj a Blob object as raw map
+	 * @param obj
+	 *            a Blob object as raw map
 	 * @return a Blob object, that behaves like a facade for the given map
 	 */
 	public static Blob createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Blob.class, obj);
 		}
-		
+
 		Blob facade = new Blob();
 		facade.setMap(obj);
 		return facade;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
 		return DataElement.isValid(obj) && obj.containsKey(Blob.MIMETYPE);
 	}
-	
+
 	/**
 	 * Returns true if the given submodel element map is recognized as a blob
 	 */
 	public static boolean isBlob(Map<String, Object> map) {
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained (fallback)
+		// Either model type is set or the element type specific attributes are
+		// contained (fallback)
 		// Note: Fallback is ambiguous - File has exactly the same attributes
 		// => would need value parsing in order to be able to differentiate
-		return MODELTYPE.equals(modelType)
-				|| (modelType == null && (map.containsKey(Property.VALUE) && map.containsKey(MIMETYPE)));
+		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(Property.VALUE) && map.containsKey(MIMETYPE)));
 	}
 
 	@Override
@@ -138,11 +140,11 @@ public class Blob extends DataElement implements IBlob {
 		}
 		return (String) get(Property.VALUE);
 	}
-	
+
 	@Override
 	public byte[] getByteArrayValue() {
 		String value = getValue();
-		if ( value != null ) {
+		if (value != null) {
 			return Base64.getDecoder().decode(value);
 		} else {
 			return null;
@@ -168,7 +170,7 @@ public class Blob extends DataElement implements IBlob {
 	public String getMimeType() {
 		return (String) get(Blob.MIMETYPE);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.BLOB;

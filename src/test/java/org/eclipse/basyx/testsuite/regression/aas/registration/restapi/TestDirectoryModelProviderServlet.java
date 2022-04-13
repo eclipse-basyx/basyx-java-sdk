@@ -39,13 +39,11 @@ import org.junit.Rule;
  */
 public class TestDirectoryModelProviderServlet extends TestRegistryProviderSuite {
 	/**
-	 * Makes sure Tomcat Server is started after before each test case
-	 * Initializes a new directory provider servlet
+	 * Makes sure Tomcat Server is started after before each test case Initializes a
+	 * new directory provider servlet
 	 */
 	@Rule
-	public AASHTTPServerResource res = new AASHTTPServerResource(
-			new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir"))
-					.addServletMapping("/Testsuite/directory/*", new AASRegistryServlet()));
+	public AASHTTPServerResource res = new AASHTTPServerResource(new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir")).addServletMapping("/Testsuite/directory/*", new AASRegistryServlet()));
 
 	@Override
 	protected IAASRegistry getRegistryService() {

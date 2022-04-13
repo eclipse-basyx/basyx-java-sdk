@@ -47,7 +47,7 @@ public abstract class ModelDescriptorTestSuite {
 	private ModelDescriptor descriptor;
 
 	public abstract ModelDescriptor retrieveModelDescriptor();
-	
+
 	@Test
 	public void testAddEndpoint() {
 		addEndpoints();
@@ -55,7 +55,7 @@ public abstract class ModelDescriptorTestSuite {
 		assertTrue(endpoints.stream().anyMatch(x -> x.get(AssetAdministrationShell.ADDRESS) != null && x.get(AssetAdministrationShell.ADDRESS).equals(TESTENDPOINT)));
 		assertTrue(endpoints.stream().anyMatch(x -> x.get(AssetAdministrationShell.ADDRESS) != null && x.get(AssetAdministrationShell.ADDRESS).equals(TESTENDPOINT2)));
 	}
-	
+
 	@Test
 	public void testRemoveEndpoint() {
 		addEndpoints();
@@ -63,7 +63,7 @@ public abstract class ModelDescriptorTestSuite {
 		Collection<Map<String, Object>> endpoints = descriptor.getEndpoints();
 		assertTrue(endpoints.stream().noneMatch(x -> x.get(AssetAdministrationShell.ADDRESS) != null && x.get(AssetAdministrationShell.ADDRESS).equals(TESTENDPOINT)));
 	}
-	
+
 	private void addEndpoints() {
 		descriptor = retrieveModelDescriptor();
 		descriptor.addEndpoint(TESTENDPOINT);

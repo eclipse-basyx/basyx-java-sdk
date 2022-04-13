@@ -38,8 +38,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Parses &lt;aas:annotatedRelationshipElement&gt; and builds an AnnotatedRelationshipElement object from it <br>
- * Builds &lt;aas:annotatedRelationshipElement&gt; from a given AnnotatedRelationshipElement
+ * Parses &lt;aas:annotatedRelationshipElement&gt; and builds an
+ * AnnotatedRelationshipElement object from it <br>
+ * Builds &lt;aas:annotatedRelationshipElement&gt; from a given
+ * AnnotatedRelationshipElement
  * 
  * @author conradi
  *
@@ -51,59 +53,61 @@ public class AnnotatedRelationshipElementXMLConverter {
 	/**
 	 * Builds a AnnotatedRelationshipElement object from the given XML
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:annotatedRelationshipElement&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag
+	 *            &lt;aas:annotatedRelationshipElement&gt;
 	 * @return the parsed AnnotatedRelationshipElement
 	 */
 	@SuppressWarnings("unchecked")
 	public static AnnotatedRelationshipElement parseAnnotatedRelationshipElement(Map<String, Object> xmlObject) {
 		AnnotatedRelationshipElement annotatedElement = new AnnotatedRelationshipElement();
-		
+
 		RelationshipElementXMLConverter.populateRelationshipElement(xmlObject, annotatedElement);
-		
+
 		Map<String, Object> xmlAnnotations = (Map<String, Object>) xmlObject.get(ANNOTATIONS);
 		List<Map<String, Object>> xmlDataElements = XMLHelper.getList(xmlAnnotations.get(SubmodelElementCollectionXMLConverter.DATA_ELEMENT));
-		
-		
+
 		List<IDataElement> dataElements = new ArrayList<>();
-		for(Map<String, Object> element: xmlDataElements) {
+		for (Map<String, Object> element : xmlDataElements) {
 			ISubmodelElement smElement = SubmodelElementCollectionXMLConverter.getSubmodelElement(element);
-			
+
 			// Check if all Elements contained in <aas:annotations> is an IDataElement
-			if(smElement instanceof IDataElement) {
+			if (smElement instanceof IDataElement) {
 				dataElements.add((IDataElement) smElement);
 			} else {
 				throw new RuntimeException("AnnotatedRelationshipElement '" + annotatedElement.getIdShort() + "' can only contain IDataElement as annotation");
 			}
 		}
-		
+
 		annotatedElement.setAnnotation(dataElements);
 		return annotatedElement;
 	}
-	
-	
-	
-	
+
 	/**
-	 * Builds the &lt;aas:annotatedRelationshipElement&gt; XML tag for a AnnotatedRelationshipElement
+	 * Builds the &lt;aas:annotatedRelationshipElement&gt; XML tag for a
+	 * AnnotatedRelationshipElement
 	 * 
-	 * @param document the XML document
-	 * @param annotatedElement the IAnnotatedRelationshipElement to build the XML for
-	 * @return the &lt;aas:annotatedRelationshipElement&gt; XML tag for the given AnnotatedRelationshipElement
+	 * @param document
+	 *            the XML document
+	 * @param annotatedElement
+	 *            the IAnnotatedRelationshipElement to build the XML for
+	 * @return the &lt;aas:annotatedRelationshipElement&gt; XML tag for the given
+	 *         AnnotatedRelationshipElement
 	 */
 	public static Element buildAnnotatedRelationshipElement(Document document, IAnnotatedRelationshipElement annotatedElement) {
 		Element root = document.createElement(ANNOTATED_RELATIONSHIP_ELEMENT);
 		RelationshipElementXMLConverter.populateRelationshipElement(document, root, annotatedElement);
-		
+
 		Element annotationsRoot = document.createElement(ANNOTATIONS);
 		root.appendChild(annotationsRoot);
-		
-		for(IDataElement dataElement: annotatedElement.getValue().getAnnotations()) {
+
+		for (IDataElement dataElement : annotatedElement.getValue().getAnnotations()) {
 			Element dataElementRoot = document.createElement(SubmodelElementCollectionXMLConverter.DATA_ELEMENT);
 			Element dataElementContent = SubmodelElementCollectionXMLConverter.buildSubmodelElement(document, dataElement);
 			dataElementRoot.appendChild(dataElementContent);
 			annotationsRoot.appendChild(dataElementRoot);
 		}
-		
+
 		return root;
 	}
 

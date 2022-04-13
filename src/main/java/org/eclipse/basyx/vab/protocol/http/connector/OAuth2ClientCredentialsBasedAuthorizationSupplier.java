@@ -49,13 +49,19 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 
 /**
- * Supplier for Bearer Token based HTTP Authorization request header values utilizing
- * the OAuth2 Client Credentials Grant Flow and JSON Web Tokens.
+ * Supplier for Bearer Token based HTTP Authorization request header values
+ * utilizing the OAuth2 Client Credentials Grant Flow and JSON Web Tokens.
  *
  * @author pneuschwander
- * @see <a href="https://tools.ietf.org/html/rfc6749#section-4.4">https://tools.ietf.org/html/rfc6749#section-4.4 (OAuth2 Client Credentials Grant)</a>
- * @see <a href="https://tools.ietf.org/html/rfc7519">https://tools.ietf.org/html/rfc7519 (JSON Web Token (JWT))</a>
- * @see <a href="https://tools.ietf.org/html/rfc6750">https://tools.ietf.org/html/rfc6750 (Bearer Token Usage)</a>
+ * @see <a href=
+ *      "https://tools.ietf.org/html/rfc6749#section-4.4">https://tools.ietf.org/html/rfc6749#section-4.4
+ *      (OAuth2 Client Credentials Grant)</a>
+ * @see <a href=
+ *      "https://tools.ietf.org/html/rfc7519">https://tools.ietf.org/html/rfc7519
+ *      (JSON Web Token (JWT))</a>
+ * @see <a href=
+ *      "https://tools.ietf.org/html/rfc6750">https://tools.ietf.org/html/rfc6750
+ *      (Bearer Token Usage)</a>
  */
 public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAuthorizationSupplier {
 	private static final Logger logger = LoggerFactory.getLogger(OAuth2ClientCredentialsBasedAuthorizationSupplier.class);
@@ -69,19 +75,23 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 	private final AtomicReference<JWT> cachedAccessTokenReference;
 
 	/**
-	 * Provides supplier for Bearer Token based HTTP Authorization request header values utilizing
-	 * the OAuth2 Client Credentials Grant Flow and JSON Web Tokens.
+	 * Provides supplier for Bearer Token based HTTP Authorization request header
+	 * values utilizing the OAuth2 Client Credentials Grant Flow and JSON Web
+	 * Tokens.
 	 *
-	 * @param tokenEndpoint The address of the tokenEndpoint of the Authorization Server
-	 * @param clientId      The client identifier issued to the client during the registration process
-	 * @param clientSecret  The client secret
-	 * @param scopes        Set of scopes to be requested from the Authorization Server
+	 * @param tokenEndpoint
+	 *            The address of the tokenEndpoint of the Authorization Server
+	 * @param clientId
+	 *            The client identifier issued to the client during the registration
+	 *            process
+	 * @param clientSecret
+	 *            The client secret
+	 * @param scopes
+	 *            Set of scopes to be requested from the Authorization Server
 	 */
 	public OAuth2ClientCredentialsBasedAuthorizationSupplier(final String tokenEndpoint, final String clientId, final String clientSecret, final Set<String> scopes) {
 		this.client = ClientBuilder.newClient();
-		this.client.register(HttpAuthenticationFeature.basicBuilder()
-				.credentials(clientId, clientSecret)
-				.build());
+		this.client.register(HttpAuthenticationFeature.basicBuilder().credentials(clientId, clientSecret).build());
 		this.jsonParser = new JsonParser();
 		this.tokenEndpoint = tokenEndpoint;
 		this.scopes = new HashSet<>(scopes);
@@ -90,9 +100,7 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 
 	@Override
 	public Optional<String> getAuthorization() {
-		return Optional.ofNullable(this.getAccessToken())
-				.map(JWT::getParsedString)
-				.map(str -> BEARER_TOKEN_PREFIX + str);
+		return Optional.ofNullable(this.getAccessToken()).map(JWT::getParsedString).map(str -> BEARER_TOKEN_PREFIX + str);
 	}
 
 	@Nullable
@@ -144,14 +152,7 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 	}
 
 	private Response requestToken() {
-		return this.client.target(this.tokenEndpoint).request()
-				.post(
-						Entity.form(
-								new Form()
-										.param("grant_type", "client_credentials")
-										.param("scope", String.join(SCOPE_DELIMITER, this.scopes))
-						)
-				);
+		return this.client.target(this.tokenEndpoint).request().post(Entity.form(new Form().param("grant_type", "client_credentials").param("scope", String.join(SCOPE_DELIMITER, this.scopes))));
 	}
 
 	private String getAccessTokenFromResponse(final Response response) {

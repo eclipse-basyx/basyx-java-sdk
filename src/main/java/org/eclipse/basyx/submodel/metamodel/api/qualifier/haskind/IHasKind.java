@@ -29,12 +29,12 @@ package org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind;
  * 
  * @author rajashek
  *
-*/
+ */
 public interface IHasKind {
 	public default ModelingKind getKind() {
 		return getModelingKind();
 	}
-	
+
 	/**
 	 * @deprecated Please use {@link #getKind()} instead.
 	 */

@@ -50,17 +50,17 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
  */
 @Deprecated
 public class MqttSubmodelAPI implements ISubmodelAPI {
-	
+
 	// The underlying SubmodelAPI
 	protected ObservableSubmodelAPI observedAPI;
-	
-	private MqttSubmodelAPIObserver observer;
 
+	private MqttSubmodelAPIObserver observer;
 
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
 	 * 
-	 * @param observedAPI The underlying submodelAPI
+	 * @param observedAPI
+	 *            The underlying submodelAPI
 	 * @throws MqttException
 	 */
 	public MqttSubmodelAPI(ISubmodelAPI observedAPI, String serverEndpoint, String clientId) throws MqttException {
@@ -79,11 +79,11 @@ public class MqttSubmodelAPI implements ISubmodelAPI {
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
 	 * 
-	 * @param observedAPI The underlying submodelAPI
+	 * @param observedAPI
+	 *            The underlying submodelAPI
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAPI(ISubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw)
-			throws MqttException {
+	public MqttSubmodelAPI(ISubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		this(observedAPI, serverEndpoint, clientId, user, pw, new MqttDefaultFilePersistence());
 	}
 
@@ -98,9 +98,11 @@ public class MqttSubmodelAPI implements ISubmodelAPI {
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI.
 	 * 
-	 * @param observedAPI The underlying submodelAPI
-	 * @param client      An already connected mqtt client
-	 * @throws MqttException 
+	 * @param observedAPI
+	 *            The underlying submodelAPI
+	 * @param client
+	 *            An already connected mqtt client
+	 * @throws MqttException
 	 */
 	public MqttSubmodelAPI(ISubmodelAPI observedAPI, MqttClient client) throws MqttException {
 		this.observedAPI = new ObservableSubmodelAPI(observedAPI);
@@ -108,7 +110,8 @@ public class MqttSubmodelAPI implements ISubmodelAPI {
 	}
 
 	/**
-	 * Adds a submodel element to the filter whitelist. Can also be a path for nested submodel elements.
+	 * Adds a submodel element to the filter whitelist. Can also be a path for
+	 * nested submodel elements.
 	 * 
 	 * @param shortId
 	 */
@@ -198,7 +201,7 @@ public class MqttSubmodelAPI implements ISubmodelAPI {
 	public Object getOperationResult(String idShort, String requestId) {
 		return observedAPI.getOperationResult(idShort, requestId);
 	}
-	
+
 	public static String getCombinedMessage(String aasId, String submodelId, String elementPart) {
 		elementPart = VABPathTools.stripSlashes(elementPart);
 		return "(" + aasId + "," + submodelId + "," + elementPart + ")";

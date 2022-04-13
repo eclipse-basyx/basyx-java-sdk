@@ -37,21 +37,21 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOpera
  *
  */
 public interface ISubmodelElementCollection extends ISubmodelElement, IElementContainer {
-	
+
 	/**
 	 * Gets if the collection is ordered or unordered
 	 * 
 	 * @return
 	 */
 	public boolean isOrdered();
-	
+
 	/**
 	 * Gets if the collection allows duplicates
 	 * 
 	 * @return
 	 */
 	public boolean isAllowDuplicates();
-	
+
 	/**
 	 * Gets all the elements contained in the collection
 	 * 
@@ -75,9 +75,10 @@ public interface ISubmodelElementCollection extends ISubmodelElement, IElementCo
 	 */
 	@Override
 	public Map<String, IOperation> getOperations();
-	
+
 	/**
-	 * Gets a {@literal Map<IdShort, smElement.getValue() >} containing the values of all submodelElements
+	 * Gets a {@literal Map<IdShort, smElement.getValue() >} containing the values
+	 * of all submodelElements
 	 * 
 	 * @return a Map with the values of all submodelElements
 	 */

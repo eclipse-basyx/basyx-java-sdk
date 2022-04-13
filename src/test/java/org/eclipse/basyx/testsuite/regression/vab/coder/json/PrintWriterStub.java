@@ -34,21 +34,21 @@ import org.slf4j.LoggerFactory;
 
 /**
  * PrintWriter stub that simulates response stream
+ * 
  * @author pschorn
  *
  */
 public class PrintWriterStub extends PrintWriter {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(PrintWriterStub.class);
-	
+
 	private String acceptor;
 	private String result;
-	
-	
+
 	public PrintWriterStub(String fileName, String acceptor) throws FileNotFoundException {
 		super(fileName);
 		// TODO Auto-generated constructor stub
-		
+
 		this.acceptor = acceptor;
 	}
 
@@ -56,20 +56,20 @@ public class PrintWriterStub extends PrintWriter {
 	public void write(String stream) {
 		// check for
 		logger.trace("[TEST] Writing to output: {}", stream);
-		
+
 		if (!acceptor.equals("ignore")) {
 			assertTrue(acceptor.equals(stream));
 		}
-		
+
 		result = stream;
 	}
-	
+
 	@Override
 	public void flush() {
 		// do nothing
 		logger.trace("[TEST] Flushing..");
 	}
-	
+
 	public String getResult() {
 		return result;
 	}

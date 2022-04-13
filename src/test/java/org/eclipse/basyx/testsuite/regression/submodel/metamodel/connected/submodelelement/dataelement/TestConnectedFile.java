@@ -42,19 +42,19 @@ public class TestConnectedFile {
 
 	ConnectedFile connectedFile;
 	File file;
-	
+
 	@Before
 	public void build() {
 		file = new File();
 		file.setIdShort("testIdShort");
 		file.setValue("FILE_VALUE");
 		file.setMimeType("mimeType");
-		
+
 		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(file);
 
 		connectedFile = new ConnectedFile(elementProxy);
 	}
-	
+
 	/**
 	 * Tests if getValue() returns the correct value
 	 */
@@ -62,7 +62,7 @@ public class TestConnectedFile {
 	public void testGetValue() {
 		assertEquals(file.getValue(), connectedFile.getValue());
 	}
-	
+
 	/**
 	 * Tests if getMimeType() returns the correct value
 	 */
@@ -70,7 +70,7 @@ public class TestConnectedFile {
 	public void testGetMimeType() {
 		assertEquals(file.getMimeType(), connectedFile.getMimeType());
 	}
-	
+
 	@Test
 	public void testSetValue() {
 		String value = connectedFile.getValue();
@@ -78,20 +78,20 @@ public class TestConnectedFile {
 		connectedFile.setValue(value);
 		assertEquals(value, connectedFile.getValue());
 	}
-	
+
 	@Test
 	public void setValueUpdatesValueCorrectly() {
 		triggerCachingOfSubmodelElement();
 
 		String expected = "Test File Value";
-		
+
 		connectedFile.setValue(expected);
-		
+
 		assertEquals(expected, connectedFile.getValue());
 	}
 
 	private void triggerCachingOfSubmodelElement() {
 		connectedFile.getElem();
 	}
-	
+
 }

@@ -49,8 +49,7 @@ public class InvocationResponse extends VABModelMap<Object> {
 	private InvocationResponse() {
 	}
 
-	public InvocationResponse(String requestId, Collection<IOperationVariable> inoutArguments,
-			Collection<IOperationVariable> outputArguments, ExecutionState executionState) {
+	public InvocationResponse(String requestId, Collection<IOperationVariable> inoutArguments, Collection<IOperationVariable> outputArguments, ExecutionState executionState) {
 		put(REQUESTID, requestId);
 		put(INOUTARGUMENTS, inoutArguments);
 		put(OUTPUTARGUMENTS, outputArguments);
@@ -93,8 +92,7 @@ public class InvocationResponse extends VABModelMap<Object> {
 		return createOperationVariables(inoutMap);
 	}
 
-	private static Collection<IOperationVariable> createOperationVariables(
-			Collection<Map<String, Object>> variableMap) {
+	private static Collection<IOperationVariable> createOperationVariables(Collection<Map<String, Object>> variableMap) {
 		if (variableMap != null) {
 			return variableMap.stream().map(OperationVariable::createAsFacade).collect(Collectors.toList());
 		} else {

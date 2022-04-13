@@ -60,7 +60,6 @@ public class RecordingProvider implements IModelProvider {
 		paths.clear();
 	}
 
-
 	@Override
 	public Object getValue(String path) throws ProviderException {
 		paths.add(path);
@@ -77,19 +76,19 @@ public class RecordingProvider implements IModelProvider {
 	public void createValue(String path, Object newEntity) throws ProviderException {
 		paths.add(path);
 		if (newEntity instanceof InputStream) {
-			try  {
+			try {
 				InputStream in = (InputStream) newEntity;
 				int n = in.available();
 				byte[] bytes = new byte[n];
 				in.read(bytes, 0, n);
 				String s = new String(bytes, StandardCharsets.UTF_8);
-				wrapped.createValue(path, s);	
+				wrapped.createValue(path, s);
 			} catch (Exception e) {
 				throw new ProviderException("Cannot parse input stream");
 			}
-			
+
 		} else {
-			wrapped.createValue(path, newEntity);	
+			wrapped.createValue(path, newEntity);
 		}
 	}
 

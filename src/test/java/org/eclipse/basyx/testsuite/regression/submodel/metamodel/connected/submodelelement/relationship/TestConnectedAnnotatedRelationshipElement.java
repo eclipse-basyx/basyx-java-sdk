@@ -46,7 +46,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests if a ConnectedAnnotatedRelationshipElement can be created and used correctly
+ * Tests if a ConnectedAnnotatedRelationshipElement can be created and used
+ * correctly
  * 
  * @author conradi
  *
@@ -55,25 +56,24 @@ public class TestConnectedAnnotatedRelationshipElement {
 
 	ConnectedAnnotatedRelationshipElement connectedElement;
 	AnnotatedRelationshipElement element;
-	
+
 	@Before
 	public void build() {
 		Reference ref1 = new Reference(new Key(KeyElements.BLOB, true, "1", IdentifierType.CUSTOM));
 		Reference ref2 = new Reference(new Key(KeyElements.FILE, false, "2", IdentifierType.IRDI));
-		
+
 		Property property = new Property("PropertyId", 10);
 		List<IDataElement> annotations = new ArrayList<>();
 		annotations.add(property);
-		
+
 		element = new AnnotatedRelationshipElement("testId", ref1, ref2);
 		element.setAnnotation(annotations);
-		
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(element))));
+
+		VABConnectionManagerStub manager = new VABConnectionManagerStub(new SubmodelElementProvider(new TypeDestroyingProvider(new VABLambdaProvider(element))));
 
 		connectedElement = new ConnectedAnnotatedRelationshipElement(manager.connectToVABElement(""));
 	}
-	
+
 	/**
 	 * Tests if getValue() returns the correct value
 	 */
@@ -84,5 +84,5 @@ public class TestConnectedAnnotatedRelationshipElement {
 		assertEquals(element.getSecond(), value.getSecond());
 		assertEquals(element.getValue().getAnnotations().size(), value.getAnnotations().size());
 	}
-	
+
 }

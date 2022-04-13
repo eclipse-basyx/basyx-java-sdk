@@ -71,13 +71,13 @@ public interface IOperation extends IElement, ISubmodelElement {
 	 */
 	@Deprecated
 	public Object invoke(Object... params);
-	
+
 	/**
 	 * Invoke operation with parameters wrapped as SubmodelElements
 	 * 
 	 * 
 	 * @param elems
-	 *               Operation parameters
+	 *            Operation parameters
 	 * @return List of results
 	 */
 	public SubmodelElement[] invoke(SubmodelElement... elems);
@@ -95,18 +95,19 @@ public interface IOperation extends IElement, ISubmodelElement {
 	 * Invoke operation with given parameter asynchronously
 	 * 
 	 * @param params
-	 *               Operation parameter
+	 *            Operation parameter
 	 * @return An IAsyncInvocation
 	 */
 	public IAsyncInvocation invokeAsync(Object... params);
 
 	/**
-	 * Invoke operation with given parameter asynchronously and use a user-defined timeout
+	 * Invoke operation with given parameter asynchronously and use a user-defined
+	 * timeout
 	 * 
 	 * @param timeout
-	 *                The timeout in ms
+	 *            The timeout in ms
 	 * @param params
-	 *                Operation parameter
+	 *            Operation parameter
 	 * @return An IAsyncInvocation
 	 */
 	public IAsyncInvocation invokeAsyncWithTimeout(int timeout, Object... params);

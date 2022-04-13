@@ -29,32 +29,30 @@ import java.util.List;
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 
 /**
- * Used to indicate by a ModelProvider,
- * that a resource to be created already exists
+ * Used to indicate by a ModelProvider, that a resource to be created already
+ * exists
  * 
  * @author conradi
  *
  */
 public class ResourceAlreadyExistsException extends ProviderException {
 
-	
 	/**
 	 * Version information for serialized instances
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	
+
 	/**
 	 * Constructor
 	 */
 	public ResourceAlreadyExistsException(String msg) {
 		super(msg);
 	}
-	
+
 	public ResourceAlreadyExistsException(Exception e) {
 		super(e);
 	}
-	
+
 	public ResourceAlreadyExistsException(List<Message> msgs) {
 		super(msgs);
 	}

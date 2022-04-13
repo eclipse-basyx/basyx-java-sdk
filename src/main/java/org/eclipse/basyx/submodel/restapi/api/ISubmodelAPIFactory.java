@@ -35,13 +35,14 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 public interface ISubmodelAPIFactory {
 	/**
 	 * Return a constructed Submodel API
+	 * 
 	 * @deprecated This method is deprecated please use {@link #create(Submodel)}
 	 * 
 	 * @return
 	 */
 	@Deprecated
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel);
-	
+
 	public default ISubmodelAPI create(Submodel submodel) {
 		return getSubmodelAPI(submodel);
 	}

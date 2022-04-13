@@ -45,7 +45,7 @@ import org.junit.Test;
  *
  */
 public class TestSecurity {
-	
+
 	@Test
 	public void testSetAccessControlPolicyPoints() {
 		AccessControlPolicyPoints points = new AccessControlPolicyPoints();
@@ -53,7 +53,7 @@ public class TestSecurity {
 		security.setAccessControlPolicyPoints(points);
 		assertEquals(points, security.getAccessControlPolicyPoints());
 	}
-	
+
 	@Test
 	public void testGetRequiredCertificateExtension() {
 		Reference reference = new Reference(new Key(KeyElements.ASSET, false, "testValue", IdentifierType.IRI));
@@ -61,5 +61,5 @@ public class TestSecurity {
 		map.put(Security.REQUIREDCERTIFICATEEXTENSION, reference);
 		Security security = Security.createAsFacade(map);
 		assertEquals(reference, security.getRequiredCertificateExtension());
-	} 
+	}
 }

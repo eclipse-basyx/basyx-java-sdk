@@ -30,6 +30,7 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 
 /**
  * API helper for AAS API
+ * 
  * @author haque
  *
  */
@@ -37,14 +38,16 @@ public class AASAPIHelper {
 
 	/**
 	 * Retrieves base access path for AAS API
+	 * 
 	 * @return
 	 */
 	public static String getAASPath() {
 		return "";
 	}
-	
+
 	/**
 	 * Retrieves access path for submodels inside AAS API
+	 * 
 	 * @return
 	 */
 	public static String getSubmodelsPath() {

@@ -33,19 +33,19 @@ import org.eclipse.basyx.submodel.metamodel.connected.ConnectedElement;
 import org.eclipse.basyx.vab.support.TypeDestroyer;
 
 /**
-* Base class for all hash maps that contain VAB meta models
-* 
+ * Base class for all hash maps that contain VAB meta models
+ * 
  * Subclasses contain meta model structures for the virtual automation bus. They
-* may be copied during instantiation and when creating facades. Implementations
-* need to support this behavior.<br>
-* <br>
-* <b>Warning:</b> equals and hashcode are overwritten so that classes extending
-* maps with equal content are always seen as producting the same hashcode/being
-* equal
-* 
+ * may be copied during instantiation and when creating facades. Implementations
+ * need to support this behavior.<br>
+ * <br>
+ * <b>Warning:</b> equals and hashcode are overwritten so that classes extending
+ * maps with equal content are always seen as producting the same hashcode/being
+ * equal
+ * 
  * @author kuhn
-*
-*/
+ *
+ */
 
 public class VABModelMap<V extends Object> implements Map<String, V> {
 	protected Map<String, V> map;
@@ -194,7 +194,7 @@ public class VABModelMap<V extends Object> implements Map<String, V> {
 	public Set<Entry<String, V>> entrySet() {
 		return map.entrySet();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public int hashCode() {

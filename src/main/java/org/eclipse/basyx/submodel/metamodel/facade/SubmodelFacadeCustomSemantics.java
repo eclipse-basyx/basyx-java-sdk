@@ -42,19 +42,17 @@ import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifiabl
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 
-
-
-
-
 /**
- * Facade class that supports the development and access of sub models using IRDI (International Registration Data Identifier) semantic definitions
+ * Facade class that supports the development and access of sub models using
+ * IRDI (International Registration Data Identifier) semantic definitions
  * 
  * @author kuhn
  *
  */
 public class SubmodelFacadeCustomSemantics extends Submodel {
 	/**
-	 * Constructor without arguments - create a sub model with all meta properties empty / set to default values
+	 * Constructor without arguments - create a sub model with all meta properties
+	 * empty / set to default values
 	 */
 	public SubmodelFacadeCustomSemantics() {
 		// Create sub model
@@ -96,14 +94,10 @@ public class SubmodelFacadeCustomSemantics extends Submodel {
 	 *            Sub model revision
 	 */
 	public SubmodelFacadeCustomSemantics(String semantics, IdentifierType idType, String id, String idShort, String category, LangStrings description, Constraint constraint, HasDataSpecification dataSpecification, ModelingKind kind,
-			String version,
-			String revision) {
+			String version, String revision) {
 		// Create sub model
 		super(new HasSemantics(new Reference(Collections.singletonList(new Key(KeyElements.GLOBALREFERENCE, false, semantics, KeyType.CUSTOM)))),
-				new Identifiable(version, revision, idShort, category, description, IdentifierType.CUSTOM, id),
-				new Qualifiable(constraint), 
-				dataSpecification,
-				new HasKind(kind));
+				new Identifiable(version, revision, idShort, category, description, IdentifierType.CUSTOM, id), new Qualifiable(constraint), dataSpecification, new HasKind(kind));
 	}
 
 	/**
@@ -144,11 +138,7 @@ public class SubmodelFacadeCustomSemantics extends Submodel {
 	public SubmodelFacadeCustomSemantics(String semantics, IdentifierType idType, String id, String idShort, String category, LangStrings description, Collection<Constraint> qualifier, Constraint constraint,
 			HasDataSpecification dataSpecification, ModelingKind kind, String version, String revision) {
 		// Create sub model
-		super(new HasSemantics(new Reference(Collections.singletonList(new Key(KeyElements.GLOBALREFERENCE, false, semantics, KeyType.CUSTOM)))),
-						new Identifiable(version, revision, idShort, category, description, idType, id), 
-						new Qualifiable(qualifier), 
-						dataSpecification, 
-				new HasKind(kind));
+		super(new HasSemantics(new Reference(Collections.singletonList(new Key(KeyElements.GLOBALREFERENCE, false, semantics, KeyType.CUSTOM)))), new Identifiable(version, revision, idShort, category, description, idType, id),
+				new Qualifiable(qualifier), dataSpecification, new HasKind(kind));
 	}
 }
-

@@ -39,18 +39,17 @@ import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
 
 /**
  * HTTP Servelet superclass to enable HTTP Patch
+ * 
  * @author pschorn
  *
  */
 public abstract class BasysHTTPServlet extends HttpServlet {
 
-	
 	/**
 	 * Version of serialized instances
 	 */
 	private static final long serialVersionUID = 1L;
-	
-		
+
 	/**
 	 * Parameter map
 	 */
@@ -61,47 +60,43 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 	 */
 	protected GSONTools serializer = new GSONTools(new DefaultTypeFactory());
 
-	
-	
 	/**
-	 * Dispatch service call 
+	 * Dispatch service call
 	 */
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getMethod().equalsIgnoreCase("PATCH")){
-           doPatch(request, response);
-        } else {
-            super.service(request, response);
-        }
-    }
+		if (request.getMethod().equalsIgnoreCase("PATCH")) {
+			doPatch(request, response);
+		} else {
+			super.service(request, response);
+		}
+	}
 
-	
 	/**
-	 * Implement Patch request 
+	 * Implement Patch request
 	 */
-    protected abstract void doPatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
-    
-    
-    /**
-     * Add a servlet parameter
-     */
-    
-    public BasysHTTPServlet withParameter(String parameter, String value) {
-    	// Add parameter
-    	servletParameter.put(parameter, value);
-    	
-    	// Return this instance
-    	return this;
-    }
-    
-    
+	protected abstract void doPatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException;
+
+	/**
+	 * Add a servlet parameter
+	 */
+
+	public BasysHTTPServlet withParameter(String parameter, String value) {
+		// Add parameter
+		servletParameter.put(parameter, value);
+
+		// Return this instance
+		return this;
+	}
+
 	/**
 	 * Get init parameter of servlet
 	 */
 	@Override
 	public String getInitParameter(String name) {
 		// Check if servletParameter map contains requested parameter
-		if (servletParameter.containsKey(name)) return servletParameter.get(name);
+		if (servletParameter.containsKey(name))
+			return servletParameter.get(name);
 
 		// Call base method
 		return super.getInitParameter(name);
@@ -117,4 +112,3 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 	}
 
 }
-

@@ -61,15 +61,14 @@ public class DataSpecificationIEC61360Content extends VABModelMap<Object> implem
 	/**
 	 * Constructor
 	 */
-	public DataSpecificationIEC61360Content() {}
+	public DataSpecificationIEC61360Content() {
+	}
 
 	/**
 	 * Constructor
 	 */
-	public DataSpecificationIEC61360Content(LangStrings preferredName, LangStrings shortName, String unit,
-			IReference unitId, String sourceOfDefinition, String symbol, DataTypeIEC61360 dataType,
-			LangStrings definition, String valueFormat, Collection<IValueReferencePair> valueList, String value,
-			IReference valueId, LevelType levelType) {
+	public DataSpecificationIEC61360Content(LangStrings preferredName, LangStrings shortName, String unit, IReference unitId, String sourceOfDefinition, String symbol, DataTypeIEC61360 dataType, LangStrings definition, String valueFormat,
+			Collection<IValueReferencePair> valueList, String value, IReference valueId, LevelType levelType) {
 		// Default values
 		put(PREFERREDNAME, preferredName);
 		put(SHORTNAME, shortName);
@@ -188,7 +187,7 @@ public class DataSpecificationIEC61360Content extends VABModelMap<Object> implem
 	public Collection<IValueReferencePair> getValueList() {
 		ArrayList<IValueReferencePair> result = new ArrayList<>();
 		Object list = get(DataSpecificationIEC61360Content.VALUELIST);
-		if ( !(list instanceof Collection<?>) ) {
+		if (!(list instanceof Collection<?>)) {
 			return result;
 		}
 		for (Map<String, Object> pair : (Collection<Map<String, Object>>) list) {
@@ -213,7 +212,7 @@ public class DataSpecificationIEC61360Content extends VABModelMap<Object> implem
 	public IReference getValueId() {
 		return Reference.createAsFacade((Map<String, Object>) get(DataSpecificationIEC61360Content.VALUEID));
 	}
-	
+
 	/**
 	 * @return The level types
 	 */

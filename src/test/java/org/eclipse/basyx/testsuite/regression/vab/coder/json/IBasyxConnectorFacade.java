@@ -43,9 +43,9 @@ import org.eclipse.basyx.vab.protocol.api.IBaSyxConnector;
  *            should be VABMapProvider or stub
  */
 public class IBasyxConnectorFacade<T extends IModelProvider> implements IBaSyxConnector {
-	
+
 	JSONProvider<T> provider;
-	
+
 	public IBasyxConnectorFacade(JSONProvider<T> p) {
 		provider = p;
 	}
@@ -58,7 +58,7 @@ public class IBasyxConnectorFacade<T extends IModelProvider> implements IBaSyxCo
 	public String getValue(String path) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		provider.processBaSysGet(path, outputStream);
-		
+
 		try {
 			return outputStream.toString(StandardCharsets.UTF_8.displayName());
 		} catch (UnsupportedEncodingException e) {
@@ -74,7 +74,7 @@ public class IBasyxConnectorFacade<T extends IModelProvider> implements IBaSyxCo
 	public String setValue(String path, String newValue) throws ProviderException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		provider.processBaSysSet(path, newValue, outputStream);
-		
+
 		try {
 			return outputStream.toString(StandardCharsets.UTF_8.displayName());
 		} catch (UnsupportedEncodingException e) {
@@ -90,12 +90,12 @@ public class IBasyxConnectorFacade<T extends IModelProvider> implements IBaSyxCo
 	public String createValue(String path, String newEntity) throws ProviderException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		provider.processBaSysCreate(path, newEntity, outputStream);
-		
+
 		try {
 			return outputStream.toString(StandardCharsets.UTF_8.displayName());
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("Should not happen...");
-		}	
+		}
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class IBasyxConnectorFacade<T extends IModelProvider> implements IBaSyxCo
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		String nullParam = "null";
 		provider.processBaSysDelete(path, nullParam, outputStream);
-		
+
 		try {
 			return outputStream.toString(StandardCharsets.UTF_8.displayName());
 		} catch (UnsupportedEncodingException e) {
@@ -123,7 +123,7 @@ public class IBasyxConnectorFacade<T extends IModelProvider> implements IBaSyxCo
 	public String deleteValue(String path, String obj) throws ProviderException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		provider.processBaSysDelete(path, obj, outputStream);
-		
+
 		try {
 			return outputStream.toString(StandardCharsets.UTF_8.displayName());
 		} catch (UnsupportedEncodingException e) {
@@ -139,7 +139,7 @@ public class IBasyxConnectorFacade<T extends IModelProvider> implements IBaSyxCo
 	public String invokeOperation(String path, String jsonObject) throws ProviderException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		provider.processBaSysInvoke(path, jsonObject, outputStream);
-		
+
 		try {
 			return outputStream.toString(StandardCharsets.UTF_8.displayName());
 		} catch (UnsupportedEncodingException e) {

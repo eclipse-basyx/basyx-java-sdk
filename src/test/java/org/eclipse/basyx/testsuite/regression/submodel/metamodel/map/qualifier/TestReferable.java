@@ -47,14 +47,14 @@ public class TestReferable {
 	private static final String CATE_STRING = "testCategory";
 	private static final String ID_SHORT_STRING = "testIdShort";
 	private static final LangStrings DESCRIPTION = new LangStrings("Eng", "test");
-	
+
 	private Referable referable;
-	
+
 	@Before
 	public void buildReferable() {
 		referable = new Referable(ID_SHORT_STRING, CATE_STRING, DESCRIPTION);
 	}
-	
+
 	@Test
 	public void testConstructor() {
 		assertEquals(CATE_STRING, referable.getCategory());
@@ -62,28 +62,28 @@ public class TestReferable {
 		assertEquals(DESCRIPTION, referable.getDescription());
 		assertNull(referable.getParent());
 	}
-	
+
 	@Test
 	public void testSetIdShort() {
 		String newIdString = "newId";
 		referable.setIdShort(newIdString);
 		assertEquals(newIdString, referable.getIdShort());
 	}
-	
+
 	@Test
 	public void testSetCategory() {
 		String newCategoryString = "newCategory";
 		referable.setCategory(newCategoryString);
 		assertEquals(newCategoryString, referable.getCategory());
 	}
-	
+
 	@Test
 	public void testSetDescription() {
 		LangStrings newDescriptionString = new LangStrings("DE", "newTest");
 		referable.setDescription(newDescriptionString);
 		assertEquals(newDescriptionString, referable.getDescription());
 	}
-	
+
 	@Test
 	public void testSetParent() {
 		Reference parent = new Reference(new Identifier(IdentifierType.IRDI, "testNewId"), KeyElements.ASSET, true);

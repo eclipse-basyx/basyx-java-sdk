@@ -41,40 +41,19 @@ public enum KeyElements implements StandardizedLiteralEnum {
 	/**
 	 * Enum values of KeyElements
 	 */
-	GLOBALREFERENCE("GlobalReference"),
-	FRAGMENTREFERENCE("FragmentReference"),
-	
+	GLOBALREFERENCE("GlobalReference"), FRAGMENTREFERENCE("FragmentReference"),
+
 	/**
 	 * Enum values of ReferableElements
 	 */
-	ACCESSPERMISSIONRULE("AccessPermissionRule"),
-	ANNOTATEDRELATIONSHIPELEMENT("AnnotatedRelationshipElement"),
-	BASICEVENT("BasicEvent"),
-	BLOB("Blob"),
-	CAPABILITY("Capability"),
-	CONCEPTDICTIONARY("ConceptDictionary"),
-	DATAELEMENT("DataElement"),
-	FILE("File"),
-	ENTITY("Entity"),
-	EVENT("Event"),
-	MULTILANGUAGEPROPERTY("MultiLanguageProperty"),
-	OPERATION("Operation"),
-	PROPERTY("Property"),
-	RANGE("Range"),
-	REFERENCEELEMENT("ReferenceElement"),
-	RELATIONSHIPELEMENT("RelationshipElement"),
-	SUBMODELELEMENT("SubmodelElement"),
-	SUBMODELELEMENTCOLLECTION("SubmodelElementCollection"),
-	VIEW("View"),
-	
+	ACCESSPERMISSIONRULE("AccessPermissionRule"), ANNOTATEDRELATIONSHIPELEMENT("AnnotatedRelationshipElement"), BASICEVENT("BasicEvent"), BLOB("Blob"), CAPABILITY("Capability"), CONCEPTDICTIONARY("ConceptDictionary"), DATAELEMENT(
+			"DataElement"), FILE("File"), ENTITY("Entity"), EVENT("Event"), MULTILANGUAGEPROPERTY("MultiLanguageProperty"), OPERATION("Operation"), PROPERTY(
+					"Property"), RANGE("Range"), REFERENCEELEMENT("ReferenceElement"), RELATIONSHIPELEMENT("RelationshipElement"), SUBMODELELEMENT("SubmodelElement"), SUBMODELELEMENTCOLLECTION("SubmodelElementCollection"), VIEW("View"),
+
 	/**
 	 * Enum values of IdentifiableElements
 	 */
-	ASSET("Asset"),
-	ASSETADMINISTRATIONSHELL("AssetAdministrationShell"),
-	CONCEPTDESCRIPTION("ConceptDescription"),
-	SUBMODEL("Submodel");
-	
+	ASSET("Asset"), ASSETADMINISTRATIONSHELL("AssetAdministrationShell"), CONCEPTDESCRIPTION("ConceptDescription"), SUBMODEL("Submodel");
 
 	private String standardizedLiteral;
 

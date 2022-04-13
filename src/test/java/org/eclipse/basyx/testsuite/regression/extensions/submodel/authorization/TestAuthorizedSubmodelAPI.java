@@ -77,7 +77,6 @@ public class TestAuthorizedSubmodelAPI {
 
 	private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(AuthorizedSubmodelAPI.READ_AUTHORITY, AuthorizedSubmodelAPI.WRITE_AUTHORITY);
 
-
 	@BeforeClass
 	public static void setUpClass() throws MqttException, IOException {
 		submodel = new Submodel(SUBMODEL_IDSHORT, SUBMODEL_IDENTIFIER);

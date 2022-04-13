@@ -36,8 +36,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Parses &lt;aas:submodelElementCollection&gt; and builds the SubmodelElementCollection object from it <br>
- * Builds &lt;aas:submodelElementCollection&gt; from a given SubmodelElementCollection object
+ * Parses &lt;aas:submodelElementCollection&gt; and builds the
+ * SubmodelElementCollection object from it <br>
+ * Builds &lt;aas:submodelElementCollection&gt; from a given
+ * SubmodelElementCollection object
  * 
  * @author conradi
  *
@@ -47,12 +49,14 @@ public class SubmodelElementCollectionXMLConverter extends SubmodelElementXMLCon
 	public static final String SUBMODEL_ELEMENT_COLLECTION = "aas:submodelElementCollection";
 	public static final String ORDERED = "aas:ordered";
 	public static final String ALLOW_DUPLICATES = "aas:allowDuplicates";
-	
-	
+
 	/**
-	 * Parses a Map containing the content of XML tag &lt;aas:submodelElementCollection&gt;
+	 * Parses a Map containing the content of XML tag
+	 * &lt;aas:submodelElementCollection&gt;
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:submodelElementCollection&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag
+	 *            &lt;aas:submodelElementCollection&gt;
 	 * @return the parsed SubmodelElementCollection
 	 */
 	@SuppressWarnings("unchecked")
@@ -65,36 +69,37 @@ public class SubmodelElementCollectionXMLConverter extends SubmodelElementXMLCon
 		populateSubmodelElement(xmlObject, smElemColl);
 		return smElemColl;
 	}
-	
-	
-	
-	
+
 	/**
-	 * Builds the &lt;aas:submodelElementCollection&gt; XML tag for a SubmodelElementCollection
+	 * Builds the &lt;aas:submodelElementCollection&gt; XML tag for a
+	 * SubmodelElementCollection
 	 * 
-	 * @param document the XML document
-	 * @param smElemCollection the ISubmodelElementCollection to build the XML for
-	 * @return the &lt;aas:submodelElementCollection&gt; XML tag for the given SubmodelElementCollection
+	 * @param document
+	 *            the XML document
+	 * @param smElemCollection
+	 *            the ISubmodelElementCollection to build the XML for
+	 * @return the &lt;aas:submodelElementCollection&gt; XML tag for the given
+	 *         SubmodelElementCollection
 	 */
 	public static Element buildSubmodelElementCollection(Document document, ISubmodelElementCollection smElemCollection) {
 		Element smElemCollectionRoot = document.createElement(SUBMODEL_ELEMENT_COLLECTION);
-		
+
 		populateSubmodelElement(document, smElemCollectionRoot, smElemCollection);
-		
+
 		String isAllowedDuplicates = Boolean.toString(smElemCollection.isAllowDuplicates());
 		Element allowDuplicatesElem = document.createElement(ALLOW_DUPLICATES);
 		allowDuplicatesElem.appendChild(document.createTextNode(isAllowedDuplicates));
 		smElemCollectionRoot.appendChild(allowDuplicatesElem);
-		
+
 		String isOrdered = Boolean.toString(smElemCollection.isOrdered());
 		Element orderedElem = document.createElement(ORDERED);
 		orderedElem.appendChild(document.createTextNode(isOrdered));
 		smElemCollectionRoot.appendChild(orderedElem);
-		
+
 		Collection<ISubmodelElement> elems = smElemCollection.getSubmodelElements().values();
-		
-		//recursively build the SubmodelElements contained in the ElementCollection
-		if(elems != null) {
+
+		// recursively build the SubmodelElements contained in the ElementCollection
+		if (elems != null) {
 			Element valueRoot = document.createElement(VALUE);
 			smElemCollectionRoot.appendChild(valueRoot);
 			buildSubmodelElements(document, valueRoot, elems);

@@ -31,35 +31,46 @@ import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
  * Interface for an observer of {@link ObservableAASRegistryService}
+ * 
  * @author haque
  *
  */
 public interface IAASRegistryServiceObserver extends IObserver {
-	
+
 	/**
 	 * Is called when an AAS is registered
-	 * @param aasId id of the registered AAS
+	 * 
+	 * @param aasId
+	 *            id of the registered AAS
 	 */
 	public void aasRegistered(String aasId);
-	
+
 	/**
 	 * Is called when a submodel is registered
-	 * @param aasId id of the parent AAS
-	 * @param smId id of the registered submodel
+	 * 
+	 * @param aasId
+	 *            id of the parent AAS
+	 * @param smId
+	 *            id of the registered submodel
 	 */
 	public void submodelRegistered(IIdentifier aasId, IIdentifier smId);
-	
+
 	/**
 	 * Is called when an AAS is deleted
-	 * @param aasId id of the deleted AAS
+	 * 
+	 * @param aasId
+	 *            id of the deleted AAS
 	 */
 	public void aasDeleted(String aasId);
-	
+
 	/**
 	 * Is called when a submodel is deleted
-	 * @param aasId id of the parent AAS
-	 * @param smId id of the deleted Submodel
+	 * 
+	 * @param aasId
+	 *            id of the parent AAS
+	 * @param smId
+	 *            id of the deleted Submodel
 	 */
 	public void submodelDeleted(IIdentifier aasId, IIdentifier smId);
-	
+
 }

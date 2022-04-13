@@ -32,7 +32,8 @@ import org.eclipse.basyx.vab.model.VABModelMap;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
- * Conntected Element superclass; Extends LinkedHashMap for local caching used for c# proxy
+ * Conntected Element superclass; Extends LinkedHashMap for local caching used
+ * for c# proxy
  * 
  * @author pschorn
  *
@@ -50,7 +51,6 @@ public class ConnectedElement implements IElement {
 		super();
 		this.proxy = proxy;
 	}
-
 
 	/**
 	 * Returns a live variant of the map. Only use this if access to dynamic data is

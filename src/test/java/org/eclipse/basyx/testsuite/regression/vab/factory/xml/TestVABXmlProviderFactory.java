@@ -48,15 +48,12 @@ public class TestVABXmlProviderFactory {
 		assertEquals(provider.getValue("tags/name/"), TestXmlParser.SOME_NAME);
 		assertEquals(provider.getValue("tags/value/"), TestXmlParser.VALUEV);
 		assertEquals(provider.getValue("tags/nestedTags/attrnt"), TestXmlParser.ATTRNT_1_VAL);
-		Iterator<Object> iterator = ((Collection) provider.getValue("tags/nestedTags/nestedTag/"))
-				.iterator();
+		Iterator<Object> iterator = ((Collection) provider.getValue("tags/nestedTags/nestedTag/")).iterator();
 		assertEquals(TestXmlParser.NESTED_TAG_1, iterator.next());
 		assertEquals(TestXmlParser.NESTED_TAG_2, iterator.next());
 		assertEquals(TestXmlParser.NESTED_TAG_3, iterator.next());
 
-		iterator = ((Collection) provider
-				.getValue("tags/deeplyNestedTagParent/deeplyNestedTagsChild/deeplyNestedTagsLeaf/"))
-						.iterator();
+		iterator = ((Collection) provider.getValue("tags/deeplyNestedTagParent/deeplyNestedTagsChild/deeplyNestedTagsLeaf/")).iterator();
 		map = (Map<String, String>) (iterator.next());
 		assertEquals(map.get(TestXmlParser.TEXT), TestXmlParser.DN_TEXT_1);
 		assertEquals(map.get(TestXmlParser.ATTRDN), TestXmlParser.ATTR_1_VAL);

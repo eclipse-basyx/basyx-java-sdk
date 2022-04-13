@@ -59,8 +59,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests the capability remote submodel invocation from registry 
- * in VABMultiSubmodelProvider
+ * Tests the capability remote submodel invocation from registry in
+ * VABMultiSubmodelProvider
  * 
  * @author haque
  */
@@ -79,14 +79,13 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 	private List<BaSyxService> services = new ArrayList<>();
 
 	private MultiSubmodelProvider provider;
-	
+
 	// Creating a new AAS Registry
 	private IAASRegistry registry = new InMemoryRegistry();
 
 	@Before
 	public void init() {
-		
-		
+
 		// Create descriptors for AAS and submodels
 		String aasEndpoint = "basyx://localhost:8000/aas";
 		String remoteSmEndpoint = "basyx://localhost:8001/submodel";
@@ -98,11 +97,10 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 
 		// Register Asset Administration Shells
 		registry.register(aasDesc);
-		
 
 		// Create a VABMultiSubmodelProvider using the registry and a http connector
 		provider = new MultiSubmodelProvider(registry, new BaSyxConnectorFactory());
-		
+
 		// Create and add an AAS to the provider with same id as the AAS in the registry
 		AssetAdministrationShell aas = new AssetAdministrationShell();
 		aas.setIdShort(AASIDSHORT1);
@@ -123,7 +121,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 
 		services.forEach(b -> b.start());
 	}
-	
+
 	/**
 	 * Checks if GET is correctly forwarded by checking if the Id of the remote
 	 * submodel can be retrieved
@@ -135,7 +133,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 		Submodel sm = getRemoteSubmodel();
 		assertEquals(sm.getIdentification().getId(), REMOTESMID.getId());
 	}
-	
+
 	/**
 	 * Checks if a call to "/aas/submodels" correctly includes the remote submodels
 	 */
@@ -148,19 +146,21 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 		assertTrue(smIdShorts.contains(LOCALSMIDSHORT));
 		assertTrue(smIdShorts.size() == 2);
 	}
-	
+
 	/**
-	 * Tries to register a Submodel, not actually push it to the server and try to request all Submodels
-	 * This will result in an endless loop if not handled correctly
+	 * Tries to register a Submodel, not actually push it to the server and try to
+	 * request all Submodels This will result in an endless loop if not handled
+	 * correctly
 	 */
 	@Test
 	public void testGetRegisteredButNotExistentSM() {
-		// Create a Descriptor for a Submodel (with a local Endpoint), that is not present on the server
+		// Create a Descriptor for a Submodel (with a local Endpoint), that is not
+		// present on the server
 		SubmodelDescriptor smDescriptor = new SubmodelDescriptor("nonexist", new ModelUrn("nonexisting"), "basyx://localhost:8000/aas/submodels/nonexist");
-		
+
 		// Register this SubmodelDescriptor
 		registry.register(AASID1, smDescriptor);
-		
+
 		// Try to request all Submodels from the server
 		try {
 			provider.getValue("/aas/submodels");
@@ -184,7 +184,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 		Submodel sm = getRemoteSubmodel();
 		assertEquals(newVal, sm.getProperties().get(SimpleAASSubmodel.INTPROPIDSHORT).getValue());
 	}
-	
+
 	/**
 	 * Checks if CREATE is correctly forwarded by checking if a new property can be
 	 * created in the remote submodel
@@ -201,7 +201,7 @@ public class MultiSubmodelProviderRemoteInvocationTest {
 
 		assertTrue(getRemoteSubmodel().getProperties().containsKey(testPropIdShort));
 	}
-	
+
 	/**
 	 * Checks if DELETE is correctly forwarded by checking if a property can be
 	 * deleted in the remote submodel

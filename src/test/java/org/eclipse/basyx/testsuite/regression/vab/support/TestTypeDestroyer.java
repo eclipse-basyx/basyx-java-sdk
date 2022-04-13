@@ -37,11 +37,12 @@ import org.junit.Test;
 
 /**
  * Removes type information similar to what a communication over VAB would do
+ * 
  * @author rajashek
  *
  */
 public class TestTypeDestroyer {
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testTypeDestroyer() {

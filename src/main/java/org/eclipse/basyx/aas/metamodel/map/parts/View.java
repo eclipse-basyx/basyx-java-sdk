@@ -68,9 +68,10 @@ public class View extends VABModelMap<Object> implements IView {
 		// Default values
 		put(CONTAINEDELEMENT, new HashSet<Reference>());
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 */
 	public View(String idShort) {
@@ -99,19 +100,19 @@ public class View extends VABModelMap<Object> implements IView {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(View.class, map);
 		}
-		
+
 		View ret = new View();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
@@ -190,7 +191,7 @@ public class View extends VABModelMap<Object> implements IView {
 	public void setParent(IReference obj) {
 		Referable.createAsFacade(this, getKeyElement()).setParent(obj);
 	}
-	
+
 	private KeyElements getKeyElement() {
 		return KeyElements.VIEW;
 	}

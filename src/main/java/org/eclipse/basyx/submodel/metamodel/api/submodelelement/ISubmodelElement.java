@@ -41,9 +41,9 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
  */
 public interface ISubmodelElement extends IElement, IHasDataSpecification, IReferable, IQualifiable, IHasSemantics, IHasKind {
 	public String getModelType();
-	
+
 	public Object getValue();
-	
+
 	public void setValue(Object value);
 
 	public SubmodelElement getLocalCopy();

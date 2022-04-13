@@ -59,8 +59,7 @@ public class AASXPackageExplorerConformantHelperTest {
 		Key submodelKey = createDummySubmodelKey();
 		AssetAdministrationShell testAAS = createAASWithSingleSubmodelReferenceContainingAASKey(submodelKey);
 
-		AasEnv env = AASXPackageExplorerConformantHelper.adapt(Collections.singleton(testAAS), Collections.emptyList(),
-				Collections.emptyList(), Collections.emptyList());
+		AasEnv env = AASXPackageExplorerConformantHelper.adapt(Collections.singleton(testAAS), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
 		assertAASKeyRemovedFromSubmodelReferences(submodelKey, env);
 	}
@@ -99,30 +98,27 @@ public class AASXPackageExplorerConformantHelperTest {
 	}
 
 	private AssetAdministrationShell createDummyAAS(final String aasId) {
-		return new AssetAdministrationShell("testAASIdShort", new CustomId(aasId),
-				new Asset("testAssetIdShort", new CustomId("testAsset"), AssetKind.INSTANCE));
+		return new AssetAdministrationShell("testAASIdShort", new CustomId(aasId), new Asset("testAssetIdShort", new CustomId("testAsset"), AssetKind.INSTANCE));
 	}
 
 	private Key createDummyAASKey(IAssetAdministrationShell aas) {
 		IIdentifier identifier = aas.getIdentification();
 		return new Key(KeyElements.ASSETADMINISTRATIONSHELL, false, identifier.getId(), identifier.getIdType());
 	}
-	
+
 	@Test
 	public void checkForCrashWhenAdaptIsCalledMultipleTimes() throws IOException, TransformerException, ParserConfigurationException {
 		AssetAdministrationShell assetAdministrationShell = createDummyAAS("testAssetAdministrationShell");
-        
-		Reference submodelReference1 =  createSubmodelReference(assetAdministrationShell, createDummySubmodelKey());
+
+		Reference submodelReference1 = createSubmodelReference(assetAdministrationShell, createDummySubmodelKey());
 		Reference submodelReference2 = createSubmodelReference(assetAdministrationShell, createDummySubmodelKey());
 
 		assetAdministrationShell.addSubmodelReference(submodelReference1);
 		assetAdministrationShell.addSubmodelReference(submodelReference2);
 
 		Collection<IAssetAdministrationShell> listOfAssetAdministrationShell = Arrays.asList(assetAdministrationShell);
-        
-        AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(),
-    				Collections.emptyList(), Collections.emptyList());
-        AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(),
-				Collections.emptyList(), Collections.emptyList());
+
+		AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+		AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 	}
 }

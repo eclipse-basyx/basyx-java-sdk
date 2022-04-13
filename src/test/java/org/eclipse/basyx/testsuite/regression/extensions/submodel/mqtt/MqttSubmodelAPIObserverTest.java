@@ -56,7 +56,6 @@ import io.moquette.broker.config.IConfig;
 import io.moquette.broker.config.IResourceLoader;
 import io.moquette.broker.config.ResourceLoaderConfig;
 
-
 /**
  * Test for MqttSubmodelAPIObserver
  * 
@@ -66,7 +65,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 public class MqttSubmodelAPIObserverTest {
 	private static final String AASID = "testaasid";
 	private static final String SUBMODELID = "testsubmodelid";
-	
+
 	private static Server mqttBroker;
 	private static ObservableSubmodelAPI observableAPI;
 	private MqttTestListener listener;
@@ -86,7 +85,7 @@ public class MqttSubmodelAPIObserverTest {
 		Submodel sm = new Submodel(SUBMODELID, new Identifier(IdentifierType.CUSTOM, SUBMODELID));
 		Reference parentRef = new Reference(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID, IdentifierType.IRDI));
 		sm.setParent(parentRef);
-		
+
 		VABSubmodelAPI vabAPI = new VABSubmodelAPI(new VABMapProvider(sm));
 		observableAPI = new ObservableSubmodelAPI(vabAPI);
 		new MqttSubmodelAPIObserver(observableAPI, "tcp://localhost:1884", "testClient");
@@ -96,13 +95,13 @@ public class MqttSubmodelAPIObserverTest {
 	public static void tearDownClass() {
 		mqttBroker.stopServer();
 	}
-	
+
 	@Before
 	public void setUp() {
 		listener = new MqttTestListener();
 		mqttBroker.addInterceptHandler(listener);
 	}
-	
+
 	@After
 	public void tearDown() {
 		mqttBroker.removeInterceptHandler(listener);
@@ -110,7 +109,7 @@ public class MqttSubmodelAPIObserverTest {
 
 	@Test
 	public void testAddSubmodelElement() throws InterruptedException {
-		String elemIdShort = "testAddProp"; 
+		String elemIdShort = "testAddProp";
 		Property prop = new Property(true);
 		prop.setIdShort(elemIdShort);
 		observableAPI.addSubmodelElement(prop);
