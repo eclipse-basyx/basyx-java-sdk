@@ -402,7 +402,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 			}
 			Submodel sm = (Submodel) getSmAggregator().getSubmodelbyIdShort(smIdShort);
 			String smId = sm.getIdentification().getId();
-			aas_provider.deleteValue(SUBMODELS_PREFIX + "/" + smId);
+			aas_provider.deleteValue(SUBMODELS_PREFIX + "/" + VABPathTools.encodePathElement(smId));
 			getSmAggregator().deleteSubmodelByIdShort(smIdShort);
 		} else if (propertyPath.length() > 0) {
 			String smIdShort = pathElements[2];

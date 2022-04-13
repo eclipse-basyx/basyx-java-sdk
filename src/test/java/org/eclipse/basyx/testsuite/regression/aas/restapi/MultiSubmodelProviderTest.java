@@ -184,7 +184,7 @@ public class MultiSubmodelProviderTest {
 	@Test
 	public void createDeleteSubmodelTest() {
 		Submodel sm = new SimpleAASSubmodel("TestSM");
-		sm.setIdentification(IdentifierType.CUSTOM, "TestId");
+		sm.setIdentification(IdentifierType.CUSTOM, "http://testUrl.de");
 		proxy.setValue("/aas/submodels/" + sm.getIdShort(), sm);
 
 		getTestRunner("TestSM");
@@ -193,7 +193,7 @@ public class MultiSubmodelProviderTest {
 		ConnectedAssetAdministrationShell shell = new ConnectedAssetAdministrationShell(proxy.getDeepProxy("/aas"));
 		Collection<IReference> refs = shell.getSubmodelReferences();
 		assertEquals(2, refs.size());
-		assertEquals(sm.getReference(), refs.iterator().next());
+		assertTrue(refs.contains(sm.getReference()));
 
 		proxy.deleteValue("/aas/submodels/TestSM");
 

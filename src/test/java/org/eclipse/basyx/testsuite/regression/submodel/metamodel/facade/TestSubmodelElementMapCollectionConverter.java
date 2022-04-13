@@ -28,8 +28,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -110,7 +110,7 @@ public class TestSubmodelElementMapCollectionConverter {
 		Property prop = new Property("prop", ValueType.String);
 		smc.addSubmodelElement(prop);
 
-		List<ISubmodelElement> statements = new ArrayList<>();
+		Collection<ISubmodelElement> statements = new HashSet<>();
 		statements.add(smc);
 		entity.setStatements(statements);
 
