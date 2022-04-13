@@ -160,15 +160,15 @@ public class SubmodelElementMapCollectionConverter {
 		Map<String, Object> ret = new LinkedHashMap<>();
 		ret.putAll(smElement);
 
-		List<Map<String, Object>> statements = (List<Map<String, Object>>) smElement.get(Entity.STATEMENT);
-		List<Map<String, Object>> convertedStatements = convertStatementList(statements);
+		Collection<Map<String, Object>> statements = (Collection<Map<String, Object>>) smElement.get(Entity.STATEMENT);
+		Collection<Map<String, Object>> convertedStatements = convertStatementList(statements);
 
 		ret.put(Entity.STATEMENT, convertedStatements);
 
 		return ret;
 	}
 
-	private static List<Map<String, Object>> convertStatementList(List<Map<String, Object>> statements) {
+	private static Collection<Map<String, Object>> convertStatementList(Collection<Map<String, Object>> statements) {
 		return statements.stream().map(SubmodelElementMapCollectionConverter::smElementToMap).collect(Collectors.toList());
 	}
 
