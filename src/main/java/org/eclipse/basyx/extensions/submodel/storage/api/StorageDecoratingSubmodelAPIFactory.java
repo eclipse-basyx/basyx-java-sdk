@@ -19,7 +19,7 @@ public class StorageDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory 
 
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
-		return new StorageSubmodelAPI(apiFactory.getSubmodelAPI(submodel), entityManager, submodelElementStorageOption);
+		return new StorageSubmodelAPI(apiFactory.create(submodel), entityManager, submodelElementStorageOption);
 	}
 
 }

@@ -1,8 +1,10 @@
 package org.eclipse.basyx.extensions.submodel.storage;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
 import org.eclipse.basyx.extensions.submodel.storage.elements.StorageSubmodelElementFactory;
@@ -12,6 +14,7 @@ import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelEl
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -88,8 +91,14 @@ public class StorageSubmodelElementComponent {
 
 	private void persistStorageElementCollectionUpdate(ISubmodel submodel, String idShortPath, Object newValue) {
 		@SuppressWarnings("unchecked")
-		Collection<ISubmodelElement> collection = (Collection<ISubmodelElement>) newValue;
-		collection.forEach(element -> {
+		Collection<Map<String, Object>> collection = (Collection<Map<String, Object>>) newValue;
+		Collection<ISubmodelElement> smCollection = new ArrayList<>();
+
+		for (Map<String, Object> element : collection) {
+			smCollection.add(SubmodelElementFacadeFactory.createSubmodelElement(element));
+		}
+
+		smCollection.forEach(element -> {
 			String elementIdShortPath = VABPathTools.concatenatePaths(idShortPath, element.getIdShort());
 			if (isElementPersisted(submodel.getIdentification().getId(), elementIdShortPath)) {
 				persistStorageElementUpdate(submodel, elementIdShortPath, element.getValue());
