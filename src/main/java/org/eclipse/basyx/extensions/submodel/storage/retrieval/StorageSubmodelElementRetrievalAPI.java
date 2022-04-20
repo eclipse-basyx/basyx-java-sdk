@@ -55,7 +55,7 @@ public class StorageSubmodelElementRetrievalAPI {
 	 */
 	public boolean isSubmodelElementStored(String submodelId, String idShort) {
 		Query query = new StorageSubmodelElementQueryBuilder(entityManager).enableCount().setSubmodelId(submodelId).setElementIdShort(idShort).build();
-		return query.getFirstResult() > 0;
+		return (long) query.getSingleResult() > 0;
 	}
 
 	/**

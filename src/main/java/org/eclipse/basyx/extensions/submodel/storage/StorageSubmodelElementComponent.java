@@ -128,6 +128,7 @@ public class StorageSubmodelElementComponent {
 	}
 
 	private boolean isElementPersisted(String submodelId, String elementIdShortPath) {
+		// return false;
 		return this.retrievalAPI.isSubmodelElementStored(submodelId, elementIdShortPath);
 	}
 
@@ -136,6 +137,7 @@ public class StorageSubmodelElementComponent {
 			IStorageSubmodelElement element = createStorageSubmodelElement(idShortPath, submodelElement.getModelType(), StorageSubmodelElementComponentHelper.getModelTypeSpecial(submodelElement), operation, submodelId, newValue);
 
 			entityManager.persist(element);
+			entityManager.flush();
 			entityManager.clear();
 		}
 	}
