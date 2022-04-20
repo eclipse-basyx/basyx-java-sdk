@@ -136,6 +136,7 @@ public class StorageSubmodelElementComponent {
 			IStorageSubmodelElement element = createStorageSubmodelElement(idShortPath, submodelElement.getModelType(), StorageSubmodelElementComponentHelper.getModelTypeSpecial(submodelElement), operation, submodelId, newValue);
 
 			entityManager.persist(element);
+			entityManager.clear();
 		}
 	}
 
