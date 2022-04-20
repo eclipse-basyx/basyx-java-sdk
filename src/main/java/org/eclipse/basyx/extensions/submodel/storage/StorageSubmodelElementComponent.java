@@ -3,7 +3,6 @@ package org.eclipse.basyx.extensions.submodel.storage;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.basyx.extensions.submodel.storage.elements.IStorageSubmodelElement;
@@ -26,16 +25,19 @@ import jakarta.persistence.EntityTransaction;
 public class StorageSubmodelElementComponent {
 	private EntityManager entityManager;
 	private EntityTransaction transaction;
+	private StorageSubmodelElementRetrievalAPI retrievalAPI;
 	private String submodelElementStorageOption;
 
 	public StorageSubmodelElementComponent(EntityManager entityManager) {
 		this.entityManager = entityManager;
 		this.submodelElementStorageOption = StorageSubmodelElementStorageOptions.COMPLETE;
+		retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
 	}
 
 	public StorageSubmodelElementComponent(EntityManager entityManager, String submodelElementStorageOption) {
 		this.entityManager = entityManager;
 		this.submodelElementStorageOption = submodelElementStorageOption;
+		retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
 	}
 
 	public void beginTransaction() {
@@ -126,9 +128,7 @@ public class StorageSubmodelElementComponent {
 	}
 
 	private boolean isElementPersisted(String submodelId, String elementIdShortPath) {
-		StorageSubmodelElementRetrievalAPI retrievalAPI = new StorageSubmodelElementRetrievalAPI(entityManager);
-		List<IStorageSubmodelElement> results = retrievalAPI.getSubmodelElementHistoricValues(submodelId, elementIdShortPath);
-		return (!results.isEmpty());
+		return this.retrievalAPI.isSubmodelElementStored(submodelId, elementIdShortPath);
 	}
 
 	private void persist(ISubmodelElement submodelElement, String operation, String submodelId, String idShortPath, Object newValue) {

@@ -25,6 +25,7 @@ public class StorageSubmodelElementQueryBuilder {
 	protected EntityManager entityManager;
 	protected String submodelId;
 	protected String elementIdShortPath;
+	protected boolean countEnabled;
 	protected ArrayList<StorageSubmodelElementFilter> filterList = new ArrayList<>();
 
 	public StorageSubmodelElementQueryBuilder(EntityManager givenManager) {
@@ -74,6 +75,10 @@ public class StorageSubmodelElementQueryBuilder {
 			}
 		}
 
+		if (countEnabled) {
+			queryStringBuilder.enableCount();
+		}
+
 		return queryStringBuilder.build();
 	}
 
@@ -93,6 +98,11 @@ public class StorageSubmodelElementQueryBuilder {
 				filterList.addAll(StorageSubmodelElementFilterFactory.createAllFilters(entry));
 			}
 		}
+		return this;
+	}
+
+	public StorageSubmodelElementQueryBuilder enableCount() {
+		countEnabled = true;
 		return this;
 	}
 

@@ -50,6 +50,19 @@ public class StorageSubmodelElementRetrievalAPI {
 	 *
 	 * @param submodelId
 	 * @param idShort
+	 * @return a list of @StorageSubmodelElement with the given idShort ordered by
+	 *         their descending timestamp
+	 */
+	public boolean isSubmodelElementStored(String submodelId, String idShort) {
+		Query query = new StorageSubmodelElementQueryBuilder(entityManager).enableCount().setSubmodelId(submodelId).setElementIdShort(idShort).build();
+		return query.getFirstResult() > 0;
+	}
+
+	/**
+	 * Selects all historic StorageSumbodelElements for the given filters.
+	 *
+	 * @param submodelId
+	 * @param idShort
 	 * @param queryParameters
 	 * @return a list of @StorageSubmodelElement with the given idShort
 	 */

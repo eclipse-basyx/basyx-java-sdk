@@ -12,6 +12,8 @@ package org.eclipse.basyx.extensions.submodel.storage.elements;
 
 import java.sql.Timestamp;
 
+//import org.eclipse.persistence.annotations.Index;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,12 +21,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 
 @Entity(name = "StorageSubmodelElement")
+// @Index(name = "search_index", columnNames = { "submodelId",
+// "elementIdShortPath" })
 public class SQLStorageSubmodelElement implements IStorageSubmodelElement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private String operationId; // serial number
 	private Timestamp timestamp; // current timestamp
+	// @Index
 	private String submodelId; // corresponding submodelId
+	// @Index
 	private String elementIdShortPath; // own idShortPath
 	private String operation; // CREATE/UPDATE/DELETE
 	private String modelType; // Property, File, SubmodelCollection?

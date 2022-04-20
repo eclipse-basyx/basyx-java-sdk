@@ -21,13 +21,14 @@ public class StorageSubmodelElementQueryStringBuilder {
 	private String filterString;
 	private String order;
 	private String defaultOrder = "s.timestamp DESC, s.operationId DESC";
+	private String selector = "s";
 
 	public StorageSubmodelElementQueryStringBuilder() {
 		this.filterString = "";
 	}
 
 	public String build() {
-		String queryString = "SELECT s from StorageSubmodelElement s";
+		String queryString = "SELECT " + selector + " from StorageSubmodelElement s";
 
 		if (filterString != null) {
 			queryString += " WHERE ";
@@ -42,6 +43,11 @@ public class StorageSubmodelElementQueryStringBuilder {
 		}
 
 		return queryString;
+	}
+
+	public StorageSubmodelElementQueryStringBuilder enableCount() {
+		selector = "count(s)";
+		return this;
 	}
 
 	public StorageSubmodelElementQueryStringBuilder setSubmodelIdFilter() {
