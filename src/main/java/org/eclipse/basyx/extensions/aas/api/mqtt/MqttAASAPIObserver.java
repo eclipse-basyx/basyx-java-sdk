@@ -40,14 +40,54 @@ import org.slf4j.LoggerFactory;
  * Implementation of {@link IAASAPIObserver} Triggers MQTT events for different
  * operations on the AAS.
  * 
- * @author fried
+ * @author fried, danish
  *
  */
 public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObserver {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASAPIObserver.class);
-
-	// The underlying AASAPI
-	protected ObservableAASAPI observedAPI;
+	
+	private String aasIdShort;
+	
+	/**
+	 * Constructor for adding this MQTT extension on top of another AASAPI
+	 * 
+	 * @param client
+	 *            An already connected mqtt client
+	 * @param aasIdShort
+	 * @param observedAPI
+	 *            The underlying aasAPI
+	 * @throws MqttException
+	 */
+	public MqttAASAPIObserver(MqttClient client, String aasIdShort, ObservableAASAPI observedAPI) throws MqttException {
+		super(client);
+		
+		connectMqttClientIfRequired();
+		
+		this.aasIdShort = aasIdShort;
+		
+		observedAPI.addObserver(this);
+	}
+	
+	/**
+	 * Constructor for adding this MQTT extension on top of another aasAPI with
+	 * credentials
+	 * 
+	 * @param clientId
+	 * @param aasIdShort 
+	 * @param user 
+	 * @param password
+	 * @param serverEndpoint
+	 * @param observedAPI
+	 *            The underlying aasAPI
+	 * @throws MqttException
+	 */
+	public MqttAASAPIObserver(String clientId, String aasIdShort, String user, char[] password, String serverEndpoint, ObservableAASAPI observedAPI) throws MqttException {
+		super(serverEndpoint, clientId, user, password);
+		
+		this.aasIdShort = aasIdShort;
+		
+		observedAPI.addObserver(this);
+	}
 
 	/**
 	 * Constructor for adding this MQTT extension on top of another AASAPI
@@ -55,7 +95,10 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 * @param observedAPI
 	 *            The underlying aasAPI
 	 * @throws MqttException
+	 * 
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, ObservableAASAPI)} instead.
 	 */
+	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String serverEndpoint, String clientId) throws MqttException {
 		this(observedAPI, serverEndpoint, clientId, new MqttDefaultFilePersistence());
 	}
@@ -63,12 +106,13 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	/**
 	 * Constructor for adding this MQTT extension on top of another AASAPI with a
 	 * custom persistence strategy
+	 * 
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, ObservableAASAPI)} instead.
 	 */
+	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String brokerEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
-		super(brokerEndpoint, clientId, persistence);
+		this(new MqttClient(brokerEndpoint, clientId, persistence), getAASIdShort(observedAPI), observedAPI);
 		logger.info("Create new MQTT AASAPI for endpoint " + brokerEndpoint);
-		this.observedAPI = observedAPI;
-		observedAPI.addObserver(this);
 	}
 
 	/**
@@ -77,7 +121,10 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 * @param observedAPI
 	 *            The underlying aasAPI
 	 * @throws MqttException
+	 * 
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(String, String, String, char[], String, ObservableAASAPI)} instead.
 	 */
+	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		this(observedAPI, serverEndpoint, clientId, user, pw, new MqttDefaultFilePersistence());
 	}
@@ -85,12 +132,13 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	/**
 	 * Constructor for adding this MQTT extension on top of another AASAPI with
 	 * credentials and persistency strategy
+	 * 
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(String, String, String, char[], String, ObservableAASAPI)} instead.
 	 */
+	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
-		super(serverEndpoint, clientId, user, pw);
+		this(clientId, getAASIdShort(observedAPI), user, pw, serverEndpoint, observedAPI);
 		logger.info("Create new MQTT AASAPI for endpoint " + serverEndpoint);
-		this.observedAPI = observedAPI;
-		observedAPI.addObserver(this);
 	}
 
 	/**
@@ -101,11 +149,18 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 * @param client
 	 *            An already connected mqtt client
 	 * @throws MqttException
+	 * 
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, ObservableAASAPI)} instead.
 	 */
+	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, MqttClient client) throws MqttException {
-		super(client);
-		this.observedAPI = observedAPI;
-		observedAPI.addObserver(this);
+		this(client, getAASIdShort(observedAPI), observedAPI);
+	}
+	
+	private void connectMqttClientIfRequired() throws MqttException {
+		if(!mqttClient.isConnected()) {
+			mqttClient.connect();
+		}
 	}
 
 	@Override
@@ -113,18 +168,22 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 		for (IKey key : submodelReference.getKeys()) {
 			if (key.getType().name().equalsIgnoreCase("Submodel")) {
 				String id = key.getValue();
-				sendMqttMessage(MqttAASAPIHelper.TOPIC_ADDSUBMODEL, getCombinedMessage(observedAPI.getAAS().getIdShort(), id));
+				sendMqttMessage(MqttAASAPIHelper.TOPIC_ADDSUBMODEL, getCombinedMessage(aasIdShort, id));
 			}
 		}
 	}
 
 	@Override
 	public void submodelRemoved(String id) {
-		sendMqttMessage(MqttAASAPIHelper.TOPIC_REMOVESUBMODEL, getCombinedMessage(observedAPI.getAAS().getIdShort(), id));
+		sendMqttMessage(MqttAASAPIHelper.TOPIC_REMOVESUBMODEL, getCombinedMessage(aasIdShort, id));
 	}
 
 	public static String getCombinedMessage(String aasId, String idShort) {
 		return "(" + aasId + "," + idShort + ")";
+	}
+	
+	private static String getAASIdShort(ObservableAASAPI observedAPI) {
+		return observedAPI.getAAS().getIdShort();
 	}
 
 }
