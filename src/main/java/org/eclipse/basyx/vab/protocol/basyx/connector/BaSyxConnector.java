@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.basyx.connector;
 
@@ -22,8 +37,6 @@ import org.eclipse.basyx.vab.protocol.basyx.server.VABBaSyxTCPInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * BaSyx connector class
  * 
@@ -31,32 +44,31 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class BaSyxConnector implements IBaSyxConnector {
-	
+
 	private Logger logger = LoggerFactory.getLogger(BaSyxConnector.class);
 	private InetSocketAddress serverSocketAddress;
 	private SocketChannel channelToProvider;
-	
-	
+
 	/**
-	 * Constructor that creates a connection. 
+	 * Constructor that creates a connection.
 	 * 
 	 * This constructor connects to port at name.
 	 */
 	public BaSyxConnector(String hostName, int port) {
 		// Base constructor
 		super();
-		
+
 		// Exception handling
 		try {
 			// Resolve address
-			InetAddress       serverIPAddress     = InetAddress.getByName(hostName);
+			InetAddress serverIPAddress = InetAddress.getByName(hostName);
 			serverSocketAddress = new InetSocketAddress(serverIPAddress, port);
 		} catch (IOException e) {
 			// Print stack trace
 			logger.error("Exception in BaSyxConnector", e);
 		}
 	}
-	
+
 	/**
 	 * Close connection
 	 */
@@ -105,10 +117,11 @@ public class BaSyxConnector implements IBaSyxConnector {
 			// Return received data
 
 			// Result check
-			if ((rxFrame == null) || (rxFrame.length < 2)) return null;
+			if ((rxFrame == null) || (rxFrame.length < 2))
+				return null;
 
 			// - FIXME: Check result on position 0
-			
+
 			// Extract response
 			int jsonResultLen = CoderTools.getInt32(rxFrame, 1);
 			String jsonResult = new String(rxFrame, 1 + 4, jsonResultLen);
@@ -126,8 +139,7 @@ public class BaSyxConnector implements IBaSyxConnector {
 		// Indicate error
 		return null;
 	}
-	
-	
+
 	/**
 	 * Read a number of bytes
 	 */
@@ -146,8 +158,7 @@ public class BaSyxConnector implements IBaSyxConnector {
 			logger.error("Exception in readBytes", e);
 		}
 	}
-	
-	
+
 	/**
 	 * Invoke a BaSys get operation via HTTP
 	 */
@@ -160,7 +171,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Invoke a Basys Set operation. Sets or overrides existing property, operation
 	 * or event.
@@ -177,7 +187,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Invoke a BaSys Create operation
 	 */
@@ -190,7 +199,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Invoke a Basys invoke operation.
 	 */
@@ -204,7 +212,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 
 	}
 
-	
 	/**
 	 * Invoke a Basys delete operation. Deletes any resource under the given path
 	 * 
@@ -220,7 +227,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Invoke a Basys delete operation. Deletes an entry from a map or collection by
 	 * the given key
@@ -237,7 +243,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return invokeBaSyx(call);
 	}
 
-	
 	/**
 	 * Create non-parameterized call that can be used as an argument to the
 	 * invokeBaSyx function
@@ -260,7 +265,6 @@ public class BaSyxConnector implements IBaSyxConnector {
 		return call;
 	}
 
-	
 	/**
 	 * Create parameterized byte call that can be used as an argument to the
 	 * invokeBaSyx function
@@ -289,8 +293,10 @@ public class BaSyxConnector implements IBaSyxConnector {
 	}
 
 	/**
-	 * Get string representation of endpoint for given path for debugging. 
-	 * @param path Requested path
+	 * Get string representation of endpoint for given path for debugging.
+	 * 
+	 * @param path
+	 *            Requested path
 	 * @return String representing requested endpoint
 	 */
 	@Override

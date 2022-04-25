@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property;
 
@@ -49,7 +64,7 @@ public class Property extends DataElement implements IProperty {
 		put(Property.VALUE, null);
 		put(Property.VALUEID, null);
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
 	 * 
@@ -60,23 +75,26 @@ public class Property extends DataElement implements IProperty {
 		super(idShort);
 		setValueType(valueType);
 		setIdShort(idShort);
-		
+
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	/**
-	 * Constructor accepting an idShort and a value
-	 * The valueType is set automatically 
-	 * @param idShort the idShort for the Property
-	 * @param value the value for the Property
+	 * Constructor accepting an idShort and a value The valueType is set
+	 * automatically
+	 * 
+	 * @param idShort
+	 *            the idShort for the Property
+	 * @param value
+	 *            the value for the Property
 	 */
 	public Property(String idShort, Object value) {
 		setIdShort(idShort);
-		
+
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
-		
+
 		// Set the value for the Property
 		// set() also automatically sets the value type
 		setValue(value);
@@ -85,26 +103,27 @@ public class Property extends DataElement implements IProperty {
 	/**
 	 * Creates a Property object from a map
 	 * 
-	 * @param obj a Property object as raw map
+	 * @param obj
+	 *            a Property object as raw map
 	 * @return a Property object, that behaves like a facade for the given map
 	 */
 	public static Property createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Property.class, obj);
 		}
-		
+
 		Property facade = new Property();
 		facade.setMap(obj);
 		return facade;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
@@ -116,9 +135,9 @@ public class Property extends DataElement implements IProperty {
 	 */
 	public static boolean isProperty(Map<String, Object> map) {
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained (fallback)
-		return MODELTYPE.equals(modelType)
-				|| (modelType == null && (map.containsKey(VALUE) && map.containsKey(VALUETYPE)));
+		// Either model type is set or the element type specific attributes are
+		// contained (fallback)
+		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(VALUE) && map.containsKey(VALUETYPE)));
 	}
 
 	/**
@@ -143,23 +162,28 @@ public class Property extends DataElement implements IProperty {
 	}
 
 	/**
-	 * Overrides the orignal value type that has been determined by inspecting the given value.
-	 * Only use this method, if there is no actual value for this property (e.g. when creating templates)
+	 * Overrides the orignal value type that has been determined by inspecting the
+	 * given value. Only use this method, if there is no actual value for this
+	 * property (e.g. when creating templates)
 	 * 
 	 * @param type
-	 *             manually determined type of the value
+	 *            manually determined type of the value
 	 */
 	public void setValueType(ValueType type) {
-		if(type == null) {
+		if (type == null) {
 			throw new RuntimeException("Can not set null as valueType");
 		}
 		put(Property.VALUETYPE, type.toString());
 	}
 
 	public void setValueId(IReference ref) {
-		Reference refMap = new Reference();
-		refMap.setKeys(ref.getKeys());
-		put(Property.VALUEID, refMap);
+		if (ref != null) {
+			Reference refMap = new Reference();
+			refMap.setKeys(ref.getKeys());
+			put(Property.VALUEID, refMap);
+		} else {
+			put(Property.VALUEID, null);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -177,7 +201,6 @@ public class Property extends DataElement implements IProperty {
 		put(Property.VALUE, newValue);
 		setValueType(newType);
 	}
-
 
 	@Override
 	public ValueType getValueType() {
@@ -215,7 +238,7 @@ public class Property extends DataElement implements IProperty {
 			return value;
 		}
 	}
-	
+
 	@Override
 	public void setValue(Object value) {
 		put(Property.VALUE, ValueTypeHelper.prepareForSerialization(value));

@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.reference;
 
@@ -51,7 +66,7 @@ public class Key extends VABModelMap<Object> implements IKey {
 		put(VALUE, value);
 		put(IDTYPE, idType.toString());
 	}
-	
+
 	/**
 	 * Helper constructor to translate IdentifierType to KeyType. <br>
 	 * In the meta model KeyType inheritcs from IdentifiertType, however Java does
@@ -83,42 +98,37 @@ public class Key extends VABModelMap<Object> implements IKey {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Key.class, map);
 		}
-		
+
 		Key ret = new Key();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
-		return map != null &&
-				map.containsKey(TYPE) &&
-				map.containsKey(LOCAL) &&
-				map.containsKey(VALUE) &&
-				map.containsKey(IDTYPE);
+		return map != null && map.containsKey(TYPE) && map.containsKey(LOCAL) && map.containsKey(VALUE) && map.containsKey(IDTYPE);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static boolean isKey(Object value) {
-		if(!(value instanceof Map<?, ?>)) {
+		if (!(value instanceof Map<?, ?>)) {
 			return false;
 		}
-		
+
 		Map<String, Object> map = (Map<String, Object>) value;
-		
-		if(!(map.get(LOCAL) instanceof Boolean && map.get(VALUE) instanceof String
-				&& map.get(IDTYPE) instanceof String && map.get(TYPE) instanceof String)) {
+
+		if (!(map.get(LOCAL) instanceof Boolean && map.get(VALUE) instanceof String && map.get(IDTYPE) instanceof String && map.get(TYPE) instanceof String)) {
 			return false;
 		}
-		
+
 		try {
 			// Try to convert the Strings to Enum-Types
 			// If that fails an Exception is thrown
@@ -127,7 +137,7 @@ public class Key extends VABModelMap<Object> implements IKey {
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
-		
+
 		return true;
 	}
 

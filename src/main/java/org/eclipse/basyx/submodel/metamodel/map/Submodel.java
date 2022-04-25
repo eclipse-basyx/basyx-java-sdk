@@ -1,17 +1,32 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +47,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
-import org.eclipse.basyx.submodel.metamodel.facade.SubmodelValuesHelper;
+import org.eclipse.basyx.submodel.metamodel.facade.ElementContainerValuesHelper;
 import org.eclipse.basyx.submodel.metamodel.map.helper.ElementContainerHelper;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.AdministrativeInformation;
@@ -79,12 +94,13 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		putAll(new ModelType(MODELTYPE));
 		setModelingKind(ModelingKind.INSTANCE);
 
-		put(SUBMODELELEMENT, new HashMap<String, ISubmodelElement>());
+		put(SUBMODELELEMENT, new LinkedHashMap<String, ISubmodelElement>());
 
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 * @param identification
 	 */
@@ -94,12 +110,10 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		setIdShort(idShort);
 	}
 
-
 	/**
 	 * Constructor
 	 */
-	public Submodel(HasSemantics semantics, Identifiable identifiable, Qualifiable qualifiable,
-			HasDataSpecification specification, HasKind hasKind) {
+	public Submodel(HasSemantics semantics, Identifiable identifiable, Qualifiable qualifiable, HasDataSpecification specification, HasKind hasKind) {
 		this();
 		// Add qualifiers
 		putAll(semantics);
@@ -109,7 +123,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		putAll(hasKind);
 
 		// Attributes
-		put(SUBMODELELEMENT, new HashMap<String, ISubmodelElement>());
+		put(SUBMODELELEMENT, new LinkedHashMap<String, ISubmodelElement>());
 	}
 
 	/**
@@ -133,21 +147,21 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Submodel.class, map);
 		}
-		
+
 		if (!map.containsKey(SUBMODELELEMENT)) {
 			map.put(SUBMODELELEMENT, new ArrayList<>());
 		}
 
-		return SubmodelElementMapCollectionConverter.mapToSM(map);	
+		return SubmodelElementMapCollectionConverter.mapToSM(map);
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
@@ -203,13 +217,28 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		HasDataSpecification.createAsFacade(this).setEmbeddedDataSpecifications(embeddedDataSpecifications);
 	}
 
+	/**
+	 * @deprecated Please use {@link #getKind()} instead.
+	 */
 	@Override
 	public ModelingKind getModelingKind() {
-		return HasKind.createAsFacade(this).getModelingKind();
+		return this.getKind();
 	}
 
+	/**
+	 * @deprecated Please use {@link #setKind(ModelingKind)} instead.
+	 */
 	public void setModelingKind(ModelingKind kind) {
-		HasKind.createAsFacade(this).setModelingKind(kind);
+		this.setKind(kind);
+	}
+
+	@Override
+	public ModelingKind getKind() {
+		return HasKind.createAsFacade(this).getKind();
+	}
+
+	public void setKind(ModelingKind kind) {
+		HasKind.createAsFacade(this).setKind(kind);
 	}
 
 	@Override
@@ -224,7 +253,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 	public void setProperties(Map<String, IProperty> properties) {
 		// first, remove all properties
 		Set<Entry<String, ISubmodelElement>> elementSet = getSubmodelElements().entrySet();
-		for ( Iterator<Entry<String, ISubmodelElement>> iterator = elementSet.iterator(); iterator.hasNext(); ) {
+		for (Iterator<Entry<String, ISubmodelElement>> iterator = elementSet.iterator(); iterator.hasNext();) {
 			Entry<String, ISubmodelElement> entry = iterator.next();
 			if (entry.getValue() instanceof IProperty) {
 				iterator.remove();
@@ -288,7 +317,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	@Override
 	public Map<String, IProperty> getProperties() {
-		Map<String, IProperty> properties = new HashMap<>();
+		Map<String, IProperty> properties = new LinkedHashMap<>();
 		getSubmodelElements().values().forEach(e -> {
 			if (e instanceof IProperty) {
 				properties.put(e.getIdShort(), (IProperty) e);
@@ -299,7 +328,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	@Override
 	public Map<String, IOperation> getOperations() {
-		Map<String, IOperation> operations = new HashMap<>();
+		Map<String, IOperation> operations = new LinkedHashMap<>();
 		getSubmodelElements().values().forEach(e -> {
 			if (e instanceof IOperation) {
 				operations.put(e.getIdShort(), (IOperation) e);
@@ -307,7 +336,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 		});
 		return operations;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, ISubmodelElement> getSubmodelElements() {
@@ -316,9 +345,9 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	@Override
 	public Map<String, Object> getValues() {
-		return SubmodelValuesHelper.getSubmodelValue(this);
+		return ElementContainerValuesHelper.getSubmodelValue(this);
 	}
-	
+
 	@Override
 	public Collection<IConstraint> getQualifiers() {
 		return Qualifiable.createAsFacade(this).getQualifiers();
@@ -335,6 +364,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	/**
 	 * Retrieves an element from element collection
+	 * 
 	 * @param id
 	 * @return retrieved element
 	 */
@@ -346,6 +376,7 @@ public class Submodel extends VABModelMap<Object> implements IElementContainer, 
 
 	/**
 	 * Deletes an element from element collection
+	 * 
 	 * @param id
 	 */
 	@Override

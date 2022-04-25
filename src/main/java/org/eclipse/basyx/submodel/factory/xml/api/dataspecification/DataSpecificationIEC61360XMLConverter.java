@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.factory.xml.api.dataspecification;
 
@@ -29,8 +44,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Handles the conversion between a DataSpecificationIEC61360 object and the XML tag
- * &lt;aas:dataSpecificationIEC61360&gt; in both directions
+ * Handles the conversion between a DataSpecificationIEC61360 object and the XML
+ * tag &lt;aas:dataSpecificationIEC61360&gt; in both directions
  * 
  * @author conradi, espen
  *
@@ -58,12 +73,13 @@ public class DataSpecificationIEC61360XMLConverter {
 	public static final String IEC61360_VALUE = "IEC61360:value";
 	public static final String IEC61360_VALUEID = "IEC61360:valueId";
 	public static final String IEC61360_LEVELTYPE = "IEC61360:levelType";
-	
-	
+
 	/**
 	 * Parses the DataSpecificationIEC61360 object from XML
 	 * 
-	 * @param contentObj the XML map containing the &lt;aas:dataSpecificationIEC61360&gt; tag
+	 * @param contentObj
+	 *            the XML map containing the &lt;aas:dataSpecificationIEC61360&gt;
+	 *            tag
 	 * @return the parsed DataSpecificationIEC61360 object
 	 */
 	@SuppressWarnings("unchecked")
@@ -72,20 +88,17 @@ public class DataSpecificationIEC61360XMLConverter {
 		if (contentObj == null) {
 			return spec;
 		}
-		
+
 		// PreferredName - LangStrings
-		LangStrings preferredName = LangStringsXMLConverter
-				.parseLangStrings(contentObj.get(IEC61360_PREFERREDNAME), IEC61360_LANGSTRING);
+		LangStrings preferredName = LangStringsXMLConverter.parseLangStrings(contentObj.get(IEC61360_PREFERREDNAME), IEC61360_LANGSTRING);
 		spec.setPreferredName(preferredName);
 		// ShortName - LangStrings
-		LangStrings shortName = LangStringsXMLConverter
-				.parseLangStrings(contentObj.get(IEC61360_SHORTNAME), IEC61360_LANGSTRING);
+		LangStrings shortName = LangStringsXMLConverter.parseLangStrings(contentObj.get(IEC61360_SHORTNAME), IEC61360_LANGSTRING);
 		spec.setShortName(shortName);
 		// Unit - String
 		spec.setUnit(XMLHelper.getString(contentObj.get(IEC61360_UNIT)));
 		// UnitId - IReference
-		spec.setUnitId(ReferenceXMLConverter.parseReference((Map<String, Object>) contentObj.get(IEC61360_UNITID),
-				IEC61360_KEYS, IEC61360_KEY));
+		spec.setUnitId(ReferenceXMLConverter.parseReference((Map<String, Object>) contentObj.get(IEC61360_UNITID), IEC61360_KEYS, IEC61360_KEY));
 		// Source Of Definition - String
 		spec.setSourceOfDefinition(XMLHelper.getString(contentObj.get(IEC61360_SOURCEOFDEFINITION)));
 		// Symbol - String
@@ -93,8 +106,7 @@ public class DataSpecificationIEC61360XMLConverter {
 		// Data Type - DataTypeIEC61360
 		spec.setDataType(DataTypeIEC61360.fromString(XMLHelper.getString(contentObj.get(IEC61360_DATATYPE))));
 		// Definition - LangStrings
-		LangStrings definition = LangStringsXMLConverter
-				.parseLangStrings(contentObj.get(IEC61360_DEFINITION), IEC61360_LANGSTRING);
+		LangStrings definition = LangStringsXMLConverter.parseLangStrings(contentObj.get(IEC61360_DEFINITION), IEC61360_LANGSTRING);
 		spec.setDefinition(definition);
 		// ValueFormat - String
 		spec.setValueFormat(XMLHelper.getString(contentObj.get(IEC61360_VALUEFORMAT)));
@@ -103,17 +115,18 @@ public class DataSpecificationIEC61360XMLConverter {
 		// Value - String
 		spec.setValue(XMLHelper.getString(contentObj.get(IEC61360_VALUE)));
 		// ValueId - Ref
-		spec.setValueId(ReferenceXMLConverter.parseReference((Map<String, Object>) contentObj.get(IEC61360_VALUEID),
-				IEC61360_KEYS, IEC61360_KEY));
+		spec.setValueId(ReferenceXMLConverter.parseReference((Map<String, Object>) contentObj.get(IEC61360_VALUEID), IEC61360_KEYS, IEC61360_KEY));
 		// LevelType - LevelType
 		spec.setLevelType(LevelType.fromString(XMLHelper.getString(contentObj.get(IEC61360_LEVELTYPE))));
 		return spec;
 	}
-	
+
 	/**
 	 * Parses the Collection<IValueReferencePair> object from XML
 	 * 
-	 * @param xmlObj the XML map containing the &lt;IEC61360:valueReferencePair&gt; tags
+	 * @param xmlObj
+	 *            the XML map containing the &lt;IEC61360:valueReferencePair&gt;
+	 *            tags
 	 * @return the parsed collection of IValueReferencePair
 	 */
 	@SuppressWarnings("unchecked")
@@ -133,20 +146,22 @@ public class DataSpecificationIEC61360XMLConverter {
 	}
 
 	/**
-	 * Populates a DataSpecificationContent XML from the IDataSpecificationIEC61360Content object.
+	 * Populates a DataSpecificationContent XML from the
+	 * IDataSpecificationIEC61360Content object.
 	 * 
-	 * @param document    the XML document
-	 * @param contentRoot the XML root Element to be populated
-	 * @param content     the IDataSpecification object to be converted to XML
+	 * @param document
+	 *            the XML document
+	 * @param contentRoot
+	 *            the XML root Element to be populated
+	 * @param content
+	 *            the IDataSpecification object to be converted to XML
 	 */
-	public static void populateIEC61360ContentXML(Document document, Element contentRoot,
-			IDataSpecificationIEC61360Content content) {
+	public static void populateIEC61360ContentXML(Document document, Element contentRoot, IDataSpecificationIEC61360Content content) {
 		// PreferredName
 		LangStrings preferredName = content.getPreferredName();
 		if (preferredName != null && !preferredName.isEmpty()) {
 			Element preferredNameRoot = document.createElement(IEC61360_PREFERREDNAME);
-			LangStringsXMLConverter.buildLangStringsXML(document, preferredNameRoot, IEC61360_LANGSTRING,
-					preferredName);
+			LangStringsXMLConverter.buildLangStringsXML(document, preferredNameRoot, IEC61360_LANGSTRING, preferredName);
 			contentRoot.appendChild(preferredNameRoot);
 		}
 		// ShortName
@@ -167,8 +182,7 @@ public class DataSpecificationIEC61360XMLConverter {
 		IReference unitId = content.getUnitId();
 		if (unitId != null) {
 			Element unitIdRoot = document.createElement(IEC61360_UNITID);
-			unitIdRoot.appendChild(
-							ReferenceXMLConverter.buildReferenceXML(document, unitId, IEC61360_KEYS, IEC61360_KEY));
+			unitIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, unitId, IEC61360_KEYS, IEC61360_KEY));
 			contentRoot.appendChild(unitIdRoot);
 		}
 		// Source Of Definition
@@ -224,8 +238,7 @@ public class DataSpecificationIEC61360XMLConverter {
 		IReference valueId = content.getValueId();
 		if (valueId != null) {
 			Element valueIdRoot = document.createElement(IEC61360_VALUEID);
-			valueIdRoot.appendChild(
-							ReferenceXMLConverter.buildReferenceXML(document, valueId, IEC61360_KEYS, IEC61360_KEY));
+			valueIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, valueId, IEC61360_KEYS, IEC61360_KEY));
 			contentRoot.appendChild(valueIdRoot);
 		}
 		// LevelType
@@ -237,16 +250,13 @@ public class DataSpecificationIEC61360XMLConverter {
 		}
 	}
 
-	private static void buildValueListXML(Document document, Element valueListRoot,
-			Collection<IValueReferencePair> valueList) {
+	private static void buildValueListXML(Document document, Element valueListRoot, Collection<IValueReferencePair> valueList) {
 		for (IValueReferencePair pair : valueList) {
 			Element pairRoot = document.createElement(IEC61360_REFERENCEPAIR);
 
 			IReference valueId = pair.getValueId();
 			Element valueIdRoot = document.createElement(IEC61360_PAIRID);
-			valueIdRoot
-					.appendChild(
-							ReferenceXMLConverter.buildReferenceXML(document, valueId, IEC61360_KEYS, IEC61360_KEY));
+			valueIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, valueId, IEC61360_KEYS, IEC61360_KEY));
 			pairRoot.appendChild(valueIdRoot);
 
 			Element valueRoot = document.createElement(IEC61360_PAIRVALUE);
@@ -256,5 +266,5 @@ public class DataSpecificationIEC61360XMLConverter {
 			valueListRoot.appendChild(pairRoot);
 		}
 	}
-	
+
 }

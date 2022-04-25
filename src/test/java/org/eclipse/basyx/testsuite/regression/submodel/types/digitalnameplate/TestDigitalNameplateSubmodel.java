@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.types.digitalnameplate;
 
@@ -13,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,8 +62,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests createAsFacade and isValid of {@link DigitalNameplateSubmodel} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link DigitalNameplateSubmodel} for
+ * their correctness
  * 
  * @author haque
  *
@@ -63,8 +78,8 @@ public class TestDigitalNameplateSubmodel {
 	public static Markings markings;
 	public static AssetSpecificProperties assetSpecificProperties = new AssetSpecificProperties(Collections.singletonList(TestAssetSpecificProperties.guidelineSpecificProperties));
 	public static Identifier identifier = new Identifier(IdentifierType.IRI, "https://admin-shell.io/zvei/nameplate/1/0/Nameplate");
-	private Map<String, Object> submodelMap = new HashMap<String, Object>();
-	
+	private Map<String, Object> submodelMap = new LinkedHashMap<String, Object>();
+
 	@Before
 	public void buildFax() {
 		manufacturerName.setValue(new LangStrings(new LangString("DE", "Test Manufacturer")));
@@ -72,7 +87,7 @@ public class TestDigitalNameplateSubmodel {
 		productFamily.setValue(new LangStrings(new LangString("DE", "Test Product Family")));
 		serialNumber.setValue("123456");
 		yearsOfConstruction.setValue("2020");
-		
+
 		TestMarking.markingFile.setIdShort(Marking.MARKINGFILEID);
 		TestMarking.markingName.setValue("0173-1#07-DAA603#004");
 		TestMarkings.marking = new Marking(TestMarking.IDSHORT, TestMarking.markingName, TestMarking.markingFile);
@@ -80,12 +95,12 @@ public class TestDigitalNameplateSubmodel {
 		TestMarkings.markings = new ArrayList<Marking>();
 		TestMarkings.markings.add(TestMarkings.marking);
 		markings = new Markings(TestMarkings.markings);
-		
+
 		TestAddress.street.setValue(new LangStrings(new LangString("DE", "musterstraße 1")));
 		TestAddress.zipCode.setValue(new LangStrings(new LangString("DE", "12345")));
 		TestAddress.cityTown.setValue(new LangStrings(new LangString("DE", "MusterStadt")));
 		TestAddress.nationalCode.setValue(new LangStrings(new LangString("DE", "DE")));
-		
+
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(manufacturerName);
 		elements.add(designation);
@@ -116,55 +131,55 @@ public class TestDigitalNameplateSubmodel {
 		assertEquals(DigitalNameplateSubmodel.SUBMODELID, submodelFromMap.getIdShort());
 		assertEquals(identifier, submodelFromMap.getIdentification());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		submodelMap.remove(Referable.IDSHORT);
 		DigitalNameplateSubmodel.createAsFacade(submodelMap);
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdentifier() {
 		submodelMap.remove(Identifiable.IDENTIFICATION);
 		DigitalNameplateSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionManufacturerName() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(manufacturerName);
 		DigitalNameplateSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionZearsOfConstruction() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(yearsOfConstruction);
 		DigitalNameplateSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionManufacturerProductDesignation() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(designation);
 		DigitalNameplateSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionAddress() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(address);
 		DigitalNameplateSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionManufacturerProductFamily() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(productFamily);
 		DigitalNameplateSubmodel.createAsFacade(submodelMap);
 	}

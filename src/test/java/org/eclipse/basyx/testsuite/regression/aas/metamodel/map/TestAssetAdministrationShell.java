@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.metamodel.map;
 
@@ -51,7 +66,7 @@ import org.junit.Test;
  */
 public class TestAssetAdministrationShell extends AssetAdministrationShellSuite {
 	private static final Reference REFERENCE = new Reference(new Key(KeyElements.ASSET, true, "testValue", IdentifierType.IRI));
-	
+
 	private AssetAdministrationShell shell;
 
 	/**
@@ -71,14 +86,14 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 	public void testGetSubmodel() throws Exception {
 		// Overwritten because getting submodels on local AAS is not supported
 	}
-	
+
 	@Test
 	public void testSetDataSpecificationReferences() {
 		Collection<IReference> refs = Collections.singleton(REFERENCE);
 		shell.setDataSpecificationReferences(refs);
 		assertEquals(refs, shell.getDataSpecificationReferences());
 	}
-	
+
 	@Test
 	public void testSetEmbeddedDataSpecifications() {
 		EmbeddedDataSpecification embeddedDataSpecification = new EmbeddedDataSpecification();
@@ -86,20 +101,20 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		shell.setEmbeddedDataSpecifications(specifications);
 		assertEquals(specifications, shell.getEmbeddedDataSpecifications());
 	}
-	
+
 	@Test
 	public void testSecurity() {
 		Security security = new Security();
 		shell.setSecurity(security);
 		assertEquals(security, shell.getSecurity());
-	} 
-	
+	}
+
 	@Test
 	public void testSetParent() {
 		shell.setParent(REFERENCE);
 		assertEquals(REFERENCE, shell.getParent());
 	}
-	
+
 	@Test
 	public void testAddConceptDescription() {
 		IdentifierType idType = IdentifierType.IRI;
@@ -115,7 +130,7 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		dictionaries.add(dictionary);
 		assertEquals(dictionaries, shell.getConceptDictionary());
 	}
-	
+
 	@Test
 	public void testSetSubmodels() {
 		// Create submodels
@@ -128,7 +143,7 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		Property prop2 = new Property("prop2Id", ValueType.String);
 		prop2.setValue("testProperty2");
 		subModel2.addSubmodelElement(prop2);
-		
+
 		// create a collection of descriptors and add the above descriptors
 		Collection<Submodel> submodels = new ArrayList<Submodel>();
 		submodels.add(subModel1);
@@ -150,5 +165,5 @@ public class TestAssetAdministrationShell extends AssetAdministrationShellSuite 
 		assertTrue(smReferences.contains(expected1));
 		assertTrue(smReferences.contains(expected2));
 		assertEquals(2, smReferences.size());
-	} 
+	}
 }

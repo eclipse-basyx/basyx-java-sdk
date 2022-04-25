@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.factory.xml.converters.submodelelement.dataelement;
 
@@ -23,20 +38,25 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Parses &lt;aas:multiLanguageProperty&gt; and builds the MultiLanguageProperty object from it <br>
- * Builds &lt;aas:multiLanguageProperty&gt; from a given MultiLanguageProperty object
+ * Parses &lt;aas:multiLanguageProperty&gt; and builds the MultiLanguageProperty
+ * object from it <br>
+ * Builds &lt;aas:multiLanguageProperty&gt; from a given MultiLanguageProperty
+ * object
  * 
  * @author conradi
  *
  */
 public class MultiLanguagePropertyXMLConverter extends SubmodelElementXMLConverter {
-	
+
 	public static final String MULTI_LANGUAGE_PROPERTY = "aas:multiLanguageProperty";
-	
+
 	/**
-	 * Parses a Map containing the content of XML tag &lt;aas:multiLanguageProperty&gt;
+	 * Parses a Map containing the content of XML tag
+	 * &lt;aas:multiLanguageProperty&gt;
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:multiLanguageProperty&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag
+	 *            &lt;aas:multiLanguageProperty&gt;
 	 * @return the parsed MultiLanguageProperty
 	 */
 	@SuppressWarnings("unchecked")
@@ -50,30 +70,32 @@ public class MultiLanguagePropertyXMLConverter extends SubmodelElementXMLConvert
 		return mLProperty;
 	}
 
-
-	
 	/**
-	 * Builds the &lt;aas:multiLanguageProperty&gt; XML tag for a MultiLanguageProperty
+	 * Builds the &lt;aas:multiLanguageProperty&gt; XML tag for a
+	 * MultiLanguageProperty
 	 * 
-	 * @param document the XML document
-	 * @param mLProperty the IMultiLanguageProperty to build the XML for
-	 * @return the &lt;aas:multiLanguageProperty&gt; XML tag for the given MultiLanguageProperty
+	 * @param document
+	 *            the XML document
+	 * @param mLProperty
+	 *            the IMultiLanguageProperty to build the XML for
+	 * @return the &lt;aas:multiLanguageProperty&gt; XML tag for the given
+	 *         MultiLanguageProperty
 	 */
 	public static Element buildMultiLanguageProperty(Document document, IMultiLanguageProperty mLProperty) {
 		Element mLPropertyRoot = document.createElement(MULTI_LANGUAGE_PROPERTY);
 		populateSubmodelElement(document, mLPropertyRoot, mLProperty);
-		
+
 		IReference valueId = mLProperty.getValueId();
-		if(valueId != null) {
+		if (valueId != null) {
 			Element valueIdRoot = document.createElement(VALUE_ID);
-			valueIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, valueId)); 
+			valueIdRoot.appendChild(ReferenceXMLConverter.buildReferenceXML(document, valueId));
 			mLPropertyRoot.appendChild(valueIdRoot);
-		}	
-		
+		}
+
 		Element valueRoot = document.createElement(VALUE);
 		LangStringsXMLConverter.buildLangStringsXML(document, valueRoot, mLProperty.getValue());
 		mLPropertyRoot.appendChild(valueRoot);
-		
+
 		return mLPropertyRoot;
 	}
 }

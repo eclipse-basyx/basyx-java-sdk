@@ -1,123 +1,166 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
 import java.util.Collection;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
+import org.eclipse.basyx.aas.aggregator.observing.ObservableAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
 /**
  * Implementation variant for the AASAggregator that triggers MQTT events for
  * different operations on the aggregator. Has to be based on a backend
  * implementation of the IAASAggregator to forward its method calls.
+ *
+ * @author haque, jungjan, fischer
  * 
- * @author haque
+ * @deprecated Deprecated, please use {@link MqttDecoratingAASAggregatorFactory}
  *
  */
-public class MqttAASAggregator extends MqttEventService implements IAASAggregator {
-	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregator.class);
+@Deprecated
+public class MqttAASAggregator implements IAASAggregator {
 
-	// List of topics
-	public static final String TOPIC_CREATEAAS = "BaSyxAggregator_createdAAS";
-	public static final String TOPIC_DELETEAAS = "BaSyxAggregator_deletedAAS";
-	public static final String TOPIC_UPDATEAAS = "BaSyxAggregator_updatedAAS";
+	protected ObservableAASAggregator observedAASAggregator;
+	private MqttAASAggregatorObserver observer;
 
-	// The underlying AASAggregator
-	protected IAASAggregator observedAASAggregator;
-	
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param observedAASAggregator the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
 	 * @throws MqttException
 	 */
-	public MqttAASAggregator(IAASAggregator observedAASAggregator, String serverEndpoint, String clientId) throws MqttException {
-		super(serverEndpoint, clientId);
-		logger.info("Create new MQTT AAS Aggregator for endpoint " + serverEndpoint);
-		this.observedAASAggregator = observedAASAggregator;
+	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId) throws MqttException {
+		this(aasAggregatorToBeObserved, serverEndpoint, clientId, new MqttDefaultFilePersistence());
+	}
+
+	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, MqttClient client) throws MqttException {
+		observedAASAggregator = new ObservableAASAggregator(aasAggregatorToBeObserved);
+		observer = new MqttAASAggregatorObserver(client);
+		observedAASAggregator.addObserver(observer);
 	}
 
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param observedAASAggregator the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param pw password for authentication with broker
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * 
 	 * @throws MqttException
 	 */
-	public MqttAASAggregator(IAASAggregator observedAASAggregator, String serverEndpoint, String clientId, String user, char[] pw)
-			throws MqttException {
-		super(serverEndpoint, clientId, user, pw);
-		logger.info("Create new MQTT AAS Aggregator for endpoint " + serverEndpoint);
-		this.observedAASAggregator = observedAASAggregator;
+	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
+		observedAASAggregator = new ObservableAASAggregator(aasAggregatorToBeObserved);
+		observer = new MqttAASAggregatorObserver(serverEndpoint, clientId, persistence);
+		observedAASAggregator.addObserver(observer);
 	}
-	
+
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param observedAASAggregator the underlying AAS Aggregator 
-	 * @param client already configured client
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
-	public MqttAASAggregator(IAASAggregator observedAASAggregator, MqttClient client) throws MqttException {
-		super(client);
-		logger.info("Create new MQTT AAS Aggregator for endpoint " + client.getServerURI());
-		this.observedAASAggregator = observedAASAggregator;
+	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
+		this(aasAggregatorToBeObserved, serverEndpoint, clientId, user, pw, new MqttDefaultFilePersistence());
 	}
-	
+
+	/**
+	 *
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param persistence
+	 *            persistence level
+	 * @throws MqttException
+	 */
+	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
+		observedAASAggregator = new ObservableAASAggregator(aasAggregatorToBeObserved);
+		observer = new MqttAASAggregatorObserver(serverEndpoint, clientId, user, pw, persistence);
+		observedAASAggregator.addObserver(observer);
+	}
+
 	@Override
 	public Collection<IAssetAdministrationShell> getAASList() {
-		return this.observedAASAggregator.getAASList();
+		return observedAASAggregator.getAASList();
 	}
 
 	@Override
-	public IAssetAdministrationShell getAAS(IIdentifier aasId) throws ResourceNotFoundException {
-		return this.observedAASAggregator.getAAS(aasId);
+	public IAssetAdministrationShell getAAS(IIdentifier shellId) throws ResourceNotFoundException {
+		return observedAASAggregator.getAAS(shellId);
 	}
 
 	@Override
-	public IModelProvider getAASProvider(IIdentifier aasId) throws ResourceNotFoundException {
-		return this.observedAASAggregator.getAASProvider(aasId);
+	public IModelProvider getAASProvider(IIdentifier shellId) throws ResourceNotFoundException {
+		return observedAASAggregator.getAASProvider(shellId);
 	}
 
 	@Override
-	public void createAAS(AssetAdministrationShell aas) {
-		this.observedAASAggregator.createAAS(aas);
-		sendMqttMessage(TOPIC_CREATEAAS, aas.getIdentification().getId());
-		
+	public void createAAS(AssetAdministrationShell shell) {
+		observedAASAggregator.createAAS(shell);
 	}
 
 	@Override
-	public void updateAAS(AssetAdministrationShell aas) throws ResourceNotFoundException {
-		this.observedAASAggregator.updateAAS(aas);
-		sendMqttMessage(TOPIC_UPDATEAAS, aas.getIdentification().getId());
-		
+	public void updateAAS(AssetAdministrationShell shell) throws ResourceNotFoundException {
+		observedAASAggregator.updateAAS(shell);
 	}
 
 	@Override
-	public void deleteAAS(IIdentifier aasId) {
-		this.observedAASAggregator.deleteAAS(aasId);
-		sendMqttMessage(TOPIC_DELETEAAS, aasId.getId());
+	public void deleteAAS(IIdentifier shellId) {
+		observedAASAggregator.deleteAAS(shellId);
 	}
 }

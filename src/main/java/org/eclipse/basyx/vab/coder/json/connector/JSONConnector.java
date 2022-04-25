@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.coder.json.connector;
 
@@ -25,7 +40,6 @@ import org.eclipse.basyx.vab.protocol.api.IBaSyxConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Connector Class responsible for serializing parameters and de-serializing
  * results. It verifies the results, removes the message header and returns the
@@ -38,26 +52,22 @@ public class JSONConnector implements IModelProvider {
 
 	private static final Logger LOGGER_DEFAULT = LoggerFactory.getLogger(JSONConnector.class);
 	private static final Logger LOGGER_COMMUNICATION = LoggerFactory.getLogger(LOGGER_DEFAULT.getName() + ".MALFORMED");
-	
-	
+
 	/**
 	 * Reference to Connector backend
 	 */
 	protected IBaSyxConnector provider = null;
-	
-	
+
 	/**
 	 * Reference to serializer / deserializer
 	 */
 	protected GSONTools serializer = null;
-	
-	
+
 	/**
 	 * Handle meta protocol in JSON String
-	 * */
+	 */
 	protected IMetaProtocolHandler metaProtocolHandler = null;
-	
-	
+
 	/**
 	 * Constructor
 	 * 
@@ -66,15 +76,14 @@ public class JSONConnector implements IModelProvider {
 	public JSONConnector(IBaSyxConnector provider) {
 		// Store provider backend
 		this.provider = provider;
-		
+
 		// Create the meta protocal handler
 		this.metaProtocolHandler = new MetaprotocolHandler();
-		
+
 		// Create GSON serializer
 		serializer = new GSONTools(new DefaultTypeFactory());
 	}
 
-	
 	/**
 	 * Constructor that accepts specific factory for serializer
 	 * 
@@ -83,12 +92,10 @@ public class JSONConnector implements IModelProvider {
 	public JSONConnector(IBaSyxConnector provider, GSONToolsFactory factory) {
 		// Store provider backend
 		this.provider = provider;
-		
+
 		// Create GSON serializer
 		serializer = new GSONTools(factory);
 	}
-
-	
 
 	@Override
 	public Object getValue(String path) throws ProviderException {
@@ -127,7 +134,7 @@ public class JSONConnector implements IModelProvider {
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
 		VABPathTools.checkPathForNull(path);
-		
+
 		// Serialize value Object
 		String jsonString = serializer.serialize(newEntity);
 

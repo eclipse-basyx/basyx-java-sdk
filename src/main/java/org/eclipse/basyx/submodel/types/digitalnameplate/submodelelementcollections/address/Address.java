@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.types.digitalnameplate.submodelelementcollections.address;
 
@@ -33,9 +48,9 @@ import org.eclipse.basyx.submodel.types.helper.SubmodelElementRetrievalHelper;
 
 /**
  * Address as defined in the AAS Digital Nameplate Template document <br>
- * It is a submodel element collection which contains
- * The standardized SMC Address contains information 
- * about address of a partner within the value chain.
+ * It is a submodel element collection which contains The standardized SMC
+ * Address contains information about address of a partner within the value
+ * chain.
  * 
  * @author haque
  *
@@ -57,12 +72,13 @@ public class Address extends SubmodelElementCollection {
 	public static final String EMAILPREFIX = "Email";
 	public static final Reference SEMANTICID = new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "0173-1#02-AAQ832#005", KeyType.IRDI));
 	public static final String ADDRESSIDSHORT = "Address";
-	
+
 	private Address() {
 	}
-	
+
 	/**
 	 * Constructor with default idShort
+	 * 
 	 * @param street
 	 * @param zipCode
 	 * @param cityTown
@@ -71,9 +87,10 @@ public class Address extends SubmodelElementCollection {
 	public Address(MultiLanguageProperty street, MultiLanguageProperty zipCode, MultiLanguageProperty cityTown, MultiLanguageProperty nationalCode) {
 		this(ADDRESSIDSHORT, street, zipCode, cityTown, nationalCode);
 	}
-	
+
 	/**
 	 * Constructor with default idShort
+	 * 
 	 * @param street
 	 * @param zipCode
 	 * @param cityTown
@@ -82,9 +99,10 @@ public class Address extends SubmodelElementCollection {
 	public Address(LangString street, LangString zipCode, LangString cityTown, LangString nationalCode) {
 		this(ADDRESSIDSHORT, street, zipCode, cityTown, nationalCode);
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param street
 	 * @param zipCode
@@ -99,9 +117,10 @@ public class Address extends SubmodelElementCollection {
 		setCityTown(cityTown);
 		setNationalCode(nationalCode);
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param street
 	 * @param zipCode
@@ -116,18 +135,19 @@ public class Address extends SubmodelElementCollection {
 		setCityTown(cityTown);
 		setNationalCode(nationalCode);
 	}
-	
+
 	/**
 	 * Creates a Address SMC object from a map
 	 * 
-	 * @param obj a Address SMC object as raw map
+	 * @param obj
+	 *            a Address SMC object as raw map
 	 * @return a Address SMC object, that behaves like a facade for the given map
 	 */
 	public static Address createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Address.class, obj);
 		}
@@ -136,11 +156,12 @@ public class Address extends SubmodelElementCollection {
 		address.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return address;
 	}
-	
+
 	/**
 	 * Creates a Address SMC object from a map without validation
 	 * 
-	 * @param obj a Address SMC object as raw map
+	 * @param obj
+	 *            a Address SMC object as raw map
 	 * @return a Address SMC object, that behaves like a facade for the given map
 	 */
 	private static Address createAsFacadeNonStrict(Map<String, Object> obj) {
@@ -152,10 +173,9 @@ public class Address extends SubmodelElementCollection {
 		address.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return address;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for Address SMC
-	 * exist in the map
+	 * Check whether all mandatory elements for Address SMC exist in the map
 	 * 
 	 * @param obj
 	 * 
@@ -164,16 +184,15 @@ public class Address extends SubmodelElementCollection {
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> obj) {
 		Address address = createAsFacadeNonStrict(obj);
-		
-		return SubmodelElementCollection.isValid(obj)
-				&& MultiLanguageProperty.isValid((Map<String, Object>) address.getStreet())
-				&& MultiLanguageProperty.isValid((Map<String, Object>) address.getZipCode())
-				&& MultiLanguageProperty.isValid((Map<String, Object>) address.getCityTown())
-				&& MultiLanguageProperty.isValid((Map<String, Object>) address.getNationalCode());
+
+		return SubmodelElementCollection.isValid(obj) && MultiLanguageProperty.isValid((Map<String, Object>) address.getStreet()) && MultiLanguageProperty.isValid((Map<String, Object>) address.getZipCode())
+				&& MultiLanguageProperty.isValid((Map<String, Object>) address.getCityTown()) && MultiLanguageProperty.isValid((Map<String, Object>) address.getNationalCode());
 	}
 
 	/**
-	 * Gets administrative section within an organisation where a business partner is located
+	 * Gets administrative section within an organisation where a business partner
+	 * is located
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -182,16 +201,22 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Sets administrative section within an organisation where a business partner is located
-	 * @param department {@link MultiLanguageProperty}
+	 * Sets administrative section within an organisation where a business partner
+	 * is located
+	 * 
+	 * @param department
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setDepartment(MultiLanguageProperty department) {
 		addSubmodelElement(department);
 	}
-	
+
 	/**
-	 * Sets administrative section within an organisation where a business partner is located
-	 * @param department {@link LangString}
+	 * Sets administrative section within an organisation where a business partner
+	 * is located
+	 * 
+	 * @param department
+	 *            {@link LangString}
 	 */
 	public void setDepartment(LangString department) {
 		MultiLanguageProperty deptProp = new MultiLanguageProperty(DEPARTMENTID);
@@ -201,8 +226,9 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Gets street name and house number
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
+	 * Gets street name and house number Note: mandatory property according to EU
+	 * Machine Directive 2006/42/EC.
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -211,18 +237,22 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Sets street name and house number
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
-	 * @param street {@link MultiLanguageProperty}
+	 * Sets street name and house number Note: mandatory property according to EU
+	 * Machine Directive 2006/42/EC.
+	 * 
+	 * @param street
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setStreet(MultiLanguageProperty street) {
 		addSubmodelElement(street);
 	}
-	
+
 	/**
-	 * Sets street name and house number
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
-	 * @param street {@link LangString}
+	 * Sets street name and house number Note: mandatory property according to EU
+	 * Machine Directive 2006/42/EC.
+	 * 
+	 * @param street
+	 *            {@link LangString}
 	 */
 	public void setStreet(LangString street) {
 		MultiLanguageProperty streetProp = new MultiLanguageProperty(STREETID);
@@ -232,8 +262,9 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Gets ZIP code of address
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
+	 * Gets ZIP code of address Note: mandatory property according to EU Machine
+	 * Directive 2006/42/EC.
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -242,18 +273,22 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Sets ZIP code of address
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
-	 * @param zipCode {@link MultiLanguageProperty}
+	 * Sets ZIP code of address Note: mandatory property according to EU Machine
+	 * Directive 2006/42/EC.
+	 * 
+	 * @param zipCode
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setZipCode(MultiLanguageProperty zipCode) {
 		addSubmodelElement(zipCode);
 	}
-	
+
 	/**
-	 * Sets ZIP code of address
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
-	 * @param zipCode {@link LangString}
+	 * Sets ZIP code of address Note: mandatory property according to EU Machine
+	 * Directive 2006/42/EC.
+	 * 
+	 * @param zipCode
+	 *            {@link LangString}
 	 */
 	public void setZipCode(LangString zipCode) {
 		MultiLanguageProperty zipCodeProp = new MultiLanguageProperty(ZIPCODEID);
@@ -264,6 +299,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Gets P.O. box number
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -273,15 +309,19 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets P.O. box number
-	 * @param poBox {@link MultiLanguageProperty}
+	 * 
+	 * @param poBox
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setPOBox(MultiLanguageProperty poBox) {
 		addSubmodelElement(poBox);
 	}
-	
+
 	/**
 	 * Sets P.O. box number
-	 * @param poBox {@link LangString}
+	 * 
+	 * @param poBox
+	 *            {@link LangString}
 	 */
 	public void setPOBox(LangString poBox) {
 		MultiLanguageProperty poBoxProp = new MultiLanguageProperty(POBOXID);
@@ -292,6 +332,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Gets ZIP code of P.O. box address
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -301,15 +342,19 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets ZIP code of P.O. box address
-	 * @param zipCodeOfPoBox {@link MultiLanguageProperty}
+	 * 
+	 * @param zipCodeOfPoBox
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setZipCodeOfPOBox(MultiLanguageProperty zipCodeOfPoBox) {
 		addSubmodelElement(zipCodeOfPoBox);
 	}
-	
+
 	/**
 	 * Sets ZIP code of P.O. box address
-	 * @param zipCodeOfPoBox {@link LangString}
+	 * 
+	 * @param zipCodeOfPoBox
+	 *            {@link LangString}
 	 */
 	public void setZipCodeOfPOBox(LangString zipCodeOfPoBox) {
 		MultiLanguageProperty zipCodeOfPoBoxProp = new MultiLanguageProperty(ZIPCODEOFPOBOXID);
@@ -319,28 +364,33 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Gets town or city
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
+	 * Gets town or city Note: mandatory property according to EU Machine Directive
+	 * 2006/42/EC.
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IMultiLanguageProperty getCityTown() {
 		return MultiLanguageProperty.createAsFacade((Map<String, Object>) getSubmodelElement(CITYTOWNID));
 	}
-	
+
 	/**
-	 * Sets town or city
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
-	 * @param cityTown {@link MultiLanguageProperty}
+	 * Sets town or city Note: mandatory property according to EU Machine Directive
+	 * 2006/42/EC.
+	 * 
+	 * @param cityTown
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setCityTown(MultiLanguageProperty cityTown) {
 		addSubmodelElement(cityTown);
 	}
-	
+
 	/**
-	 * Sets town or city
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
-	 * @param cityTown {@link LangString}
+	 * Sets town or city Note: mandatory property according to EU Machine Directive
+	 * 2006/42/EC.
+	 * 
+	 * @param cityTown
+	 *            {@link LangString}
 	 */
 	public void setCityTown(LangString cityTown) {
 		MultiLanguageProperty cityTownProp = new MultiLanguageProperty(CITYTOWNID);
@@ -351,6 +401,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Gets federal state a part of a state
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -360,7 +411,9 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets federal state a part of a state
-	 * @param stateCounty {@link MultiLanguageProperty}
+	 * 
+	 * @param stateCounty
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setStateCounty(MultiLanguageProperty stateCounty) {
 		addSubmodelElement(stateCounty);
@@ -368,7 +421,9 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets federal state a part of a state
-	 * @param stateCounty {@link LangString}
+	 * 
+	 * @param stateCounty
+	 *            {@link LangString}
 	 */
 	public void setStateCounty(LangString stateCounty) {
 		MultiLanguageProperty stateCountyProp = new MultiLanguageProperty(STATECOUNTYID);
@@ -376,11 +431,11 @@ public class Address extends SubmodelElementCollection {
 		stateCountyProp.setValue(new LangStrings(stateCounty));
 		setStateCounty(stateCountyProp);
 	}
-	
+
 	/**
-	 * Gets code of a country
-     * Note: Country codes defined accord. to DIN EN ISO 3166-1
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
+	 * Gets code of a country Note: Country codes defined accord. to DIN EN ISO
+	 * 3166-1 Note: mandatory property according to EU Machine Directive 2006/42/EC.
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -389,20 +444,22 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Sets code of a country
-     * Note: Country codes defined accord. to DIN EN ISO 3166-1
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
-	 * @param nationalCode {@link MultiLanguageProperty}
+	 * Sets code of a country Note: Country codes defined accord. to DIN EN ISO
+	 * 3166-1 Note: mandatory property according to EU Machine Directive 2006/42/EC.
+	 * 
+	 * @param nationalCode
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setNationalCode(MultiLanguageProperty nationalCode) {
 		addSubmodelElement(nationalCode);
 	}
-	
+
 	/**
-	 * Sets code of a country
-     * Note: Country codes defined accord. to DIN EN ISO 3166-1
-     * Note: mandatory property according to EU Machine Directive 2006/42/EC.
-	 * @param nationalCode {@link LangString}
+	 * Sets code of a country Note: Country codes defined accord. to DIN EN ISO
+	 * 3166-1 Note: mandatory property according to EU Machine Directive 2006/42/EC.
+	 * 
+	 * @param nationalCode
+	 *            {@link LangString}
 	 */
 	public void setNationalCode(LangString nationalCode) {
 		MultiLanguageProperty nationalCodeProp = new MultiLanguageProperty(NATIONALCODEID);
@@ -413,6 +470,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Gets VAT identification number of the business partner
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -422,15 +480,19 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets VAT identification number of the business partner
-	 * @param vatNumber {@link MultiLanguageProperty}
+	 * 
+	 * @param vatNumber
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setVatNumber(MultiLanguageProperty vatNumber) {
 		addSubmodelElement(vatNumber);
 	}
-	
+
 	/**
 	 * Sets VAT identification number of the business partner
-	 * @param vatNumber {@link LangString}
+	 * 
+	 * @param vatNumber
+	 *            {@link LangString}
 	 */
 	public void setVatNumber(LangString vatNumber) {
 		MultiLanguageProperty vatNumberProp = new MultiLanguageProperty(VATNUMBERID);
@@ -440,7 +502,9 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Gets plain text characterizing address information for which there is no property
+	 * Gets plain text characterizing address information for which there is no
+	 * property
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -449,16 +513,22 @@ public class Address extends SubmodelElementCollection {
 	}
 
 	/**
-	 * Sets plain text characterizing address information for which there is no property
-	 * @param addressRemarks {@link MultiLanguageProperty}
+	 * Sets plain text characterizing address information for which there is no
+	 * property
+	 * 
+	 * @param addressRemarks
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setAddressRemarks(MultiLanguageProperty addressRemarks) {
 		addSubmodelElement(addressRemarks);
 	}
-	
+
 	/**
-	 * Sets plain text characterizing address information for which there is no property
-	 * @param addressRemarks {@link LangString}
+	 * Sets plain text characterizing address information for which there is no
+	 * property
+	 * 
+	 * @param addressRemarks
+	 *            {@link LangString}
 	 */
 	public void setAddressRemarks(LangString addressRemarks) {
 		MultiLanguageProperty addressRemarksProp = new MultiLanguageProperty(ADDRESSREMARKSID);
@@ -469,6 +539,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Gets web site address where information about the product or contact is given
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -478,15 +549,19 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets web site address where information about the product or contact is given
-	 * @param addressOfAdditionalLink {@link Property}
+	 * 
+	 * @param addressOfAdditionalLink
+	 *            {@link Property}
 	 */
 	public void setAddressOfAdditionalLink(Property addressOfAdditionalLink) {
 		addSubmodelElement(addressOfAdditionalLink);
 	}
-	
+
 	/**
 	 * Sets web site address where information about the product or contact is given
-	 * @param addressOfAdditionalLink {@link String}
+	 * 
+	 * @param addressOfAdditionalLink
+	 *            {@link String}
 	 */
 	public void setAddressOfAdditionalLink(String addressOfAdditionalLink) {
 		Property addressOfAdditionalLinkProp = new Property(ADDRESSOFADDITIONALLINKID, ValueType.String);
@@ -497,14 +572,15 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Gets Phone number including type
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Phone> getPhone() {
 		List<Phone> ret = new ArrayList<Phone>();
 		List<ISubmodelElement> elements = SubmodelElementRetrievalHelper.getSubmodelElementsByIdPrefix(PHONEPREFIX, getSubmodelElements());
-		
-		for (ISubmodelElement element: elements) {
+
+		for (ISubmodelElement element : elements) {
 			ret.add(Phone.createAsFacade((Map<String, Object>) element));
 		}
 		return ret;
@@ -512,6 +588,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets Phone number including type
+	 * 
 	 * @param phones
 	 */
 	public void setPhone(List<Phone> phones) {
@@ -524,14 +601,15 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Gets fax number including type
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Fax> getFax() {
 		List<Fax> ret = new ArrayList<Fax>();
 		List<ISubmodelElement> elements = SubmodelElementRetrievalHelper.getSubmodelElementsByIdPrefix(FAXPREFIX, getSubmodelElements());
-		
-		for (ISubmodelElement element: elements) {
+
+		for (ISubmodelElement element : elements) {
 			ret.add(Fax.createAsFacade((Map<String, Object>) element));
 		}
 		return ret;
@@ -539,6 +617,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets fax number including type
+	 * 
 	 * @param faxes
 	 */
 	public void setFax(List<Fax> faxes) {
@@ -551,14 +630,15 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Gets E-mail address and encryption method
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Email> getEmail() {
 		List<Email> ret = new ArrayList<Email>();
 		List<ISubmodelElement> elements = SubmodelElementRetrievalHelper.getSubmodelElementsByIdPrefix(EMAILPREFIX, getSubmodelElements());
-		
-		for (ISubmodelElement element: elements) {
+
+		for (ISubmodelElement element : elements) {
 			ret.add(Email.createAsFacade((Map<String, Object>) element));
 		}
 		return ret;
@@ -566,6 +646,7 @@ public class Address extends SubmodelElementCollection {
 
 	/**
 	 * Sets E-mail address and encryption method
+	 * 
 	 * @param emails
 	 */
 	public void setEmail(List<Email> emails) {

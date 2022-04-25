@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.opcua.server;
 
@@ -21,6 +36,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.eclipse.basyx.vab.protocol.opcua.connector.IOpcUaClient;
+import org.eclipse.basyx.vab.protocol.opcua.connector.milo.MiloOpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfig;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
@@ -42,124 +59,123 @@ import org.eclipse.milo.opcua.stack.core.types.structured.TranslateBrowsePathsTo
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated As of version 1.1. Replaced by {@link IOpcUaClient} and
+ *             {@link MiloOpcUaClient}.
+ */
+@Deprecated
 public class BaSyxOpcUaClientRunner {
 
-    private static Logger logger = LoggerFactory.getLogger(BaSyxOpcUaClientRunner.class);
+	private static Logger logger = LoggerFactory.getLogger(BaSyxOpcUaClientRunner.class);
 
-    static {
-        // Required for SecurityPolicy.Aes256_Sha256_RsaPss
-        Security.addProvider(new BouncyCastleProvider());
-    }
+	static {
+		// Required for SecurityPolicy.Aes256_Sha256_RsaPss
+		Security.addProvider(new BouncyCastleProvider());
+	}
 
-    private final CompletableFuture<OpcUaClient> future = new CompletableFuture<>();
+	private final CompletableFuture<OpcUaClient> future = new CompletableFuture<>();
 
-    private OpcUaClient client;
+	private OpcUaClient client;
 
-    private String endpointUrl;
+	private String endpointUrl;
 
-    public BaSyxOpcUaClientRunner(String endpointUrl) throws Exception {
-        this.endpointUrl = endpointUrl;
-    }
+	public BaSyxOpcUaClientRunner(String endpointUrl) throws Exception {
+		this.endpointUrl = endpointUrl;
+	}
 
-    private OpcUaClient createClient() throws Exception {
-        Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
-        Files.createDirectories(securityTempDir);
-        if (!Files.exists(securityTempDir)) {
-            throw new Exception("unable to create security dir: " + securityTempDir);
-        }
-        logger.trace("security temp dir: {}", securityTempDir.toAbsolutePath());
+	private OpcUaClient createClient() throws Exception {
+		Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
+		Files.createDirectories(securityTempDir);
+		if (!Files.exists(securityTempDir)) {
+			throw new Exception("unable to create security dir: " + securityTempDir);
+		}
+		logger.trace("security temp dir: {}", securityTempDir.toAbsolutePath());
 
-        KeyStoreLoaderClient loader = new KeyStoreLoaderClient().load(securityTempDir);
+		KeyStoreLoaderClient loader = new KeyStoreLoaderClient().load(securityTempDir);
 
-        SecurityPolicy securityPolicy = SecurityPolicy.None;
+		SecurityPolicy securityPolicy = SecurityPolicy.None;
 
-        List<EndpointDescription> endpoints;
+		List<EndpointDescription> endpoints;
 
-        try {
-            endpoints = DiscoveryClient.getEndpoints(endpointUrl).get();
-        } catch (Throwable ex) {
-            // try the explicit discovery endpoint as well
-            String discoveryUrl = endpointUrl;
+		try {
+			endpoints = DiscoveryClient.getEndpoints(endpointUrl).get();
+		} catch (Throwable ex) {
+			// try the explicit discovery endpoint as well
+			String discoveryUrl = endpointUrl;
 
-            if (!discoveryUrl.endsWith("/")) {
-                discoveryUrl += "/";
-            }
-            discoveryUrl += "discovery";
+			if (!discoveryUrl.endsWith("/")) {
+				discoveryUrl += "/";
+			}
+			discoveryUrl += "discovery";
 
-            logger.trace("Trying explicit discovery URL: {}", discoveryUrl);
-            endpoints = DiscoveryClient.getEndpoints(discoveryUrl).get();
-        }
+			logger.trace("Trying explicit discovery URL: {}", discoveryUrl);
+			endpoints = DiscoveryClient.getEndpoints(discoveryUrl).get();
+		}
 
-        EndpointDescription endpoint = endpoints.stream()
-                .filter(e -> e.getSecurityPolicyUri().equals(securityPolicy.getUri())).filter(e -> true).findFirst()
-                .orElseThrow(() -> new Exception("no desired endpoints returned"));
+		EndpointDescription endpoint = endpoints.stream().filter(e -> e.getSecurityPolicyUri().equals(securityPolicy.getUri())).filter(e -> true).findFirst().orElseThrow(() -> new Exception("no desired endpoints returned"));
 
-        logger.trace("Using endpoint: {} [{}/{}]", endpoint.getEndpointUrl(), securityPolicy,
-                endpoint.getSecurityMode());
+		logger.trace("Using endpoint: {} [{}/{}]", endpoint.getEndpointUrl(), securityPolicy, endpoint.getSecurityMode());
 
-        OpcUaClientConfig config = OpcUaClientConfig.builder()
-                .setApplicationName(LocalizedText.english("eclipse milo opc-ua client"))
-                .setApplicationUri("urn:eclipse:milo:examples:client").setCertificate(loader.getClientCertificate())
-                .setKeyPair(loader.getClientKeyPair()).setEndpoint(endpoint)
-                .setIdentityProvider(new AnonymousProvider()).setRequestTimeout(uint(5000)).build();
+		OpcUaClientConfig config = OpcUaClientConfig.builder().setApplicationName(LocalizedText.english("eclipse milo opc-ua client")).setApplicationUri("urn:eclipse:milo:examples:client").setCertificate(loader.getClientCertificate())
+				.setKeyPair(loader.getClientKeyPair()).setEndpoint(endpoint).setIdentityProvider(new AnonymousProvider()).setRequestTimeout(uint(5000)).build();
 
-        return OpcUaClient.create(config);
-    }
+		return OpcUaClient.create(config);
+	}
 
-    public void run() {
-        try {
-            client = createClient();
+	public void run() {
+		try {
+			client = createClient();
 
-            future.whenCompleteAsync((c, ex) -> {
-                if (ex != null) {
-                    logger.error("Error running example: {}", ex.getMessage(), ex);
-                }
+			future.whenCompleteAsync((c, ex) -> {
+				if (ex != null) {
+					logger.error("Error running example: {}", ex.getMessage(), ex);
+				}
 
-                try {
-                    client.disconnect().get();
-                    Stack.releaseSharedResources();
-                } catch (InterruptedException | ExecutionException e) {
-                    logger.error("Error disconnecting:", e.getMessage(), e);
-                }
+				try {
+					client.disconnect().get();
+					Stack.releaseSharedResources();
+				} catch (InterruptedException | ExecutionException e) {
+					logger.error("Error disconnecting:", e.getMessage(), e);
+				}
 
-                try {
-                    Thread.sleep(1000);
-                    throw new RuntimeException("Could not disconnect from server '" + endpointUrl + "'");
-                } catch (InterruptedException e) {
-                	logger.error("Exception in run", e);
-                }
-            });
-            client.connect().get();
-        } catch (Throwable t) {
-            logger.error("Error getting client: {}", t.getMessage(), t);
+				try {
+					Thread.sleep(1000);
+					throw new RuntimeException("Could not disconnect from server '" + endpointUrl + "'");
+				} catch (InterruptedException e) {
+					logger.error("Exception in run", e);
+				}
+			});
+			client.connect().get();
+		} catch (Throwable t) {
+			logger.error("Error getting client: {}", t.getMessage(), t);
 
-            future.completeExceptionally(t);
+			future.completeExceptionally(t);
 
-            try {
-                Thread.sleep(1000);
-                throw new RuntimeException("Could not connect to server '" + endpointUrl + "'");
-            } catch (InterruptedException e) {
-            	logger.error("Exception in run", e);
-            }
-        }
-    }
+			try {
+				Thread.sleep(1000);
+				throw new RuntimeException("Could not connect to server '" + endpointUrl + "'");
+			} catch (InterruptedException e) {
+				logger.error("Exception in run", e);
+			}
+		}
+	}
 
-    public CompletableFuture<List<DataValue>> read(List<NodeId> nodeIds) {
-        return client.readValues(0, TimestampsToReturn.Both, nodeIds);
-    }
+	public CompletableFuture<List<DataValue>> read(List<NodeId> nodeIds) {
+		return client.readValues(0, TimestampsToReturn.Both, nodeIds);
+	}
 
-    public CompletableFuture<List<StatusCode>> write(List<NodeId> nodeIds, List<DataValue> values) {
-        return client.writeValues(nodeIds, values);
-    }
+	public CompletableFuture<List<StatusCode>> write(List<NodeId> nodeIds, List<DataValue> values) {
+		return client.writeValues(nodeIds, values);
+	}
 
-    public CompletableFuture<CallResponse> callMethod(NodeId objectId, NodeId methodId, Variant[] inputArguments) {
-        List<CallMethodRequest> cmr = new ArrayList<CallMethodRequest>();
-        cmr.add(new CallMethodRequest(objectId, methodId, inputArguments));
-        return client.call(cmr);
-    }
+	public CompletableFuture<CallResponse> callMethod(NodeId objectId, NodeId methodId, Variant[] inputArguments) {
+		List<CallMethodRequest> cmr = new ArrayList<CallMethodRequest>();
+		cmr.add(new CallMethodRequest(objectId, methodId, inputArguments));
+		return client.call(cmr);
+	}
 
-    public CompletableFuture<TranslateBrowsePathsToNodeIdsResponse> translate(List<BrowsePath> browsePaths) {
-        return client.translateBrowsePaths(browsePaths);
-    }
+	public CompletableFuture<TranslateBrowsePathsToNodeIdsResponse> translate(List<BrowsePath> browsePaths) {
+		return client.translateBrowsePaths(browsePaths);
+	}
 
 }

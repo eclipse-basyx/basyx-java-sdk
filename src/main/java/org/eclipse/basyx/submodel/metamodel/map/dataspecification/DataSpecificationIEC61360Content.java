@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.dataspecification;
 
@@ -46,15 +61,14 @@ public class DataSpecificationIEC61360Content extends VABModelMap<Object> implem
 	/**
 	 * Constructor
 	 */
-	public DataSpecificationIEC61360Content() {}
+	public DataSpecificationIEC61360Content() {
+	}
 
 	/**
 	 * Constructor
 	 */
-	public DataSpecificationIEC61360Content(LangStrings preferredName, LangStrings shortName, String unit,
-			IReference unitId, String sourceOfDefinition, String symbol, DataTypeIEC61360 dataType,
-			LangStrings definition, String valueFormat, Collection<IValueReferencePair> valueList, String value,
-			IReference valueId, LevelType levelType) {
+	public DataSpecificationIEC61360Content(LangStrings preferredName, LangStrings shortName, String unit, IReference unitId, String sourceOfDefinition, String symbol, DataTypeIEC61360 dataType, LangStrings definition, String valueFormat,
+			Collection<IValueReferencePair> valueList, String value, IReference valueId, LevelType levelType) {
 		// Default values
 		put(PREFERREDNAME, preferredName);
 		put(SHORTNAME, shortName);
@@ -173,7 +187,7 @@ public class DataSpecificationIEC61360Content extends VABModelMap<Object> implem
 	public Collection<IValueReferencePair> getValueList() {
 		ArrayList<IValueReferencePair> result = new ArrayList<>();
 		Object list = get(DataSpecificationIEC61360Content.VALUELIST);
-		if ( !(list instanceof Collection<?>) ) {
+		if (!(list instanceof Collection<?>)) {
 			return result;
 		}
 		for (Map<String, Object> pair : (Collection<Map<String, Object>>) list) {
@@ -198,7 +212,7 @@ public class DataSpecificationIEC61360Content extends VABModelMap<Object> implem
 	public IReference getValueId() {
 		return Reference.createAsFacade((Map<String, Object>) get(DataSpecificationIEC61360Content.VALUEID));
 	}
-	
+
 	/**
 	 * @return The level types
 	 */

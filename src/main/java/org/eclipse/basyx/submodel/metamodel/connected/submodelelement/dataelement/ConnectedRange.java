@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement;
 
@@ -22,6 +37,7 @@ import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
  * "Connected" implementation of IRange
+ * 
  * @author conradi
  *
  */
@@ -57,11 +73,11 @@ public class ConnectedRange extends ConnectedDataElement implements IRange {
 	public RangeValue getValue() {
 		return new RangeValue(getMin(), getMax());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(Object value) {
-		if(RangeValue.isRangeValue(value)) {
+		if (RangeValue.isRangeValue(value)) {
 			RangeValue rangeValue = RangeValue.createAsFacade((Map<String, Object>) value);
 			setValue(rangeValue);
 		} else {
@@ -79,11 +95,8 @@ public class ConnectedRange extends ConnectedDataElement implements IRange {
 		Object minRaw = rangeValue.getMin();
 		Object maxRaw = rangeValue.getMax();
 
-		RangeValue prepared = new RangeValue(
-				ValueTypeHelper.prepareForSerialization(minRaw),
-				ValueTypeHelper.prepareForSerialization(maxRaw)
-			);
-				
+		RangeValue prepared = new RangeValue(ValueTypeHelper.prepareForSerialization(minRaw), ValueTypeHelper.prepareForSerialization(maxRaw));
+
 		getProxy().setValue(MultiSubmodelElementProvider.VALUE, prepared);
 	}
 }

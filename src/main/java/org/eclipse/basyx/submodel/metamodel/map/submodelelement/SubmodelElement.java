@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement;
 
@@ -29,7 +44,6 @@ import org.eclipse.basyx.submodel.metamodel.map.qualifier.haskind.HasKind;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifiable;
 import org.eclipse.basyx.vab.model.VABModelMap;
 
-
 /**
  * SubmodelElement as defined in "Details of the Asset Administration Shell"
  * 
@@ -47,36 +61,39 @@ public class SubmodelElement extends VABModelMap<Object> implements ISubmodelEle
 
 	/**
 	 * Constructor with only mandatory attribute
+	 * 
 	 * @param idShort
 	 */
 	protected SubmodelElement(String idShort) {
 		this();
 		setIdShort(idShort);
 	}
-	
+
 	/**
 	 * Creates a SubmodelElement object from a map
 	 * 
-	 * @param obj a SubmodelElement object as raw map
-	 * @return a SubmodelElement object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a SubmodelElement object as raw map
+	 * @return a SubmodelElement object, that behaves like a facade for the given
+	 *         map
 	 */
 	public static SubmodelElement createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
-			throw new MetamodelConstructionException(SubmodelElement.class, obj);	
+			throw new MetamodelConstructionException(SubmodelElement.class, obj);
 		}
 
 		SubmodelElement ret = new SubmodelElement();
 		ret.setMap(obj);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
@@ -163,13 +180,28 @@ public class SubmodelElement extends VABModelMap<Object> implements ISubmodelEle
 		HasSemantics.createAsFacade(this).setSemanticId(ref);
 	}
 
+	/**
+	 * @deprecated Please use {@link #getKind()} instead.
+	 */
 	@Override
 	public ModelingKind getModelingKind() {
-		return HasKind.createAsFacade(this).getModelingKind();
+		return this.getKind();
 	}
 
+	/**
+	 * @deprecated Please use {@link #setKind(ModelingKind)} instead.
+	 */
 	public void setModelingKind(ModelingKind kind) {
-		HasKind.createAsFacade(this).setModelingKind(kind);
+		this.setKind(kind);
+	}
+
+	@Override
+	public ModelingKind getKind() {
+		return HasKind.createAsFacade(this).getKind();
+	}
+
+	public void setKind(ModelingKind kind) {
+		HasKind.createAsFacade(this).setKind(kind);
 	}
 
 	@Override
@@ -182,12 +214,12 @@ public class SubmodelElement extends VABModelMap<Object> implements ISubmodelEle
 	public IReference getReference() {
 		return Referable.createAsFacade(this, getKeyElement()).getReference();
 	}
-	
+
 	@Override
 	public Object getValue() {
 		throw new UnsupportedOperationException("getValue is only possible in specific Element");
 	}
-	
+
 	@Override
 	public void setValue(Object value) {
 		throw new UnsupportedOperationException("setValue is only possible in specific Element");

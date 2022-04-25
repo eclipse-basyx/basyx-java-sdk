@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.registration.mqtt;
 
@@ -23,8 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation variant for the AASRegistryService that triggers MQTT events for
- * different operations on the registry. Has to be based on a backend
+ * Implementation variant for the AASRegistryService that triggers MQTT events
+ * for different operations on the registry. Has to be based on a backend
  * implementation of the IAASRegistryService to forward its method calls.
  * 
  * @author haque
@@ -33,21 +48,18 @@ import org.slf4j.LoggerFactory;
 public class MqttAASRegistryService extends MqttEventService implements IAASRegistry {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASRegistryService.class);
 
-	// List of topics
-	public static final String TOPIC_REGISTERAAS = "BaSyxRegistry_registeredAAS";
-	public static final String TOPIC_REGISTERSUBMODEL = "BaSyxRegistry_registeredSubmodel";
-	public static final String TOPIC_DELETEAAS = "BaSyxRegistry_deletedAAS";
-	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
-
 	// The underlying AASRegistryService
 	protected IAASRegistry observedRegistryService;
-	
+
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASRegistryService
 	 * 
-	 * @param observedRegistryService the underlying registry service 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
+	 * @param observedRegistryService
+	 *            the underlying registry service
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryService(IAASRegistry observedRegistryService, String serverEndpoint, String clientId) throws MqttException {
@@ -59,25 +71,31 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASRegistryService
 	 * 
-	 * @param observedRegistryService the underlying registry service 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param pw password for authentication with broker
+	 * @param observedRegistryService
+	 *            the underlying registry service
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
-	public MqttAASRegistryService(IAASRegistry observedRegistryService, String serverEndpoint, String clientId, String user, char[] pw)
-			throws MqttException {
+	public MqttAASRegistryService(IAASRegistry observedRegistryService, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		super(serverEndpoint, clientId, user, pw);
 		logger.info("Create new MQTT AAS Registry Service for endpoint " + serverEndpoint);
 		this.observedRegistryService = observedRegistryService;
 	}
-	
+
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASRegistryService
 	 * 
-	 * @param observedRegistryService the underlying registry service 
-	 * @param client already configured client
+	 * @param observedRegistryService
+	 *            the underlying registry service
+	 * @param client
+	 *            already configured client
 	 * @throws MqttException
 	 */
 	public MqttAASRegistryService(IAASRegistry observedRegistryService, MqttClient client) throws MqttException {
@@ -86,29 +104,28 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 		this.observedRegistryService = observedRegistryService;
 	}
 
-	
 	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
 		this.observedRegistryService.register(deviceAASDescriptor);
-		sendMqttMessage(TOPIC_REGISTERAAS, deviceAASDescriptor.getIdentifier().getId());	
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERAAS, deviceAASDescriptor.getIdentifier().getId());
 	}
 
 	@Override
 	public void register(IIdentifier aas, SubmodelDescriptor smDescriptor) throws ProviderException {
 		this.observedRegistryService.register(aas, smDescriptor);
-		sendMqttMessage(TOPIC_REGISTERSUBMODEL, concatAasSmId(aas, smDescriptor.getIdentifier()));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aas, smDescriptor.getIdentifier()));
 	}
 
 	@Override
 	public void delete(IIdentifier aasId) throws ProviderException {
 		this.observedRegistryService.delete(aasId);
-		sendMqttMessage(TOPIC_DELETEAAS, aasId.getId());
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETEAAS, aasId.getId());
 	}
 
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		this.observedRegistryService.delete(aasId, smId);
-		sendMqttMessage(TOPIC_DELETESUBMODEL, concatAasSmId(aasId, smId));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
 	}
 
 	@Override
@@ -129,9 +146,5 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	@Override
 	public SubmodelDescriptor lookupSubmodel(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		return this.observedRegistryService.lookupSubmodel(aasId, smId);
-	}
-	
-	public static String concatAasSmId(IIdentifier aasId, IIdentifier smId) {
-		return "(" + aasId.getId() + "," + smId.getId() + ")";
 	}
 }

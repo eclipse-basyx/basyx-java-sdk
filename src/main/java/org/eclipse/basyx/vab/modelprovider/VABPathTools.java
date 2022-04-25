@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.modelprovider;
 
@@ -239,8 +254,9 @@ public class VABPathTools {
 	}
 
 	/**
-	 * Check if the path to an VAB elements leads to the invocation of an operation. In this case, the
-	 * element path conforms to /aas/submodels/{subModelId}/submodelElements/{operationId}/invoke
+	 * Check if the path to an VAB elements leads to the invocation of an operation.
+	 * In this case, the element path conforms to
+	 * /aas/submodels/{subModelId}/submodelElements/{operationId}/invoke
 	 */
 	public static boolean isOperationInvokationPath(String path) {
 		// null-Paths are no operation paths
@@ -250,8 +266,8 @@ public class VABPathTools {
 
 		// Split path
 		String[] pathElements = splitPath(path);
-		
-		if(pathElements.length == 0) {
+
+		if (pathElements.length == 0) {
 			return false;
 		}
 
@@ -273,14 +289,16 @@ public class VABPathTools {
 
 	/**
 	 * Gets the first endpoint of a path.
-	 * @param fullPath 
-	 * 		A path that can contain 0..* endpoints.
-	 * @return
-	 * 		The first address entry of a path. The address entry is the first endpoint combined with a protocol.
-	 * 		If there is no protocol defined, the address entry is empty ("").
-	 * 		E.g. basyx://127.0.0.1:6998//https://localhost/test/ will return basyx://127.0.0.1:6998, 
-	 * 		https://localhost/test//basyx://127.0.0.1:6998/ will return https://localhost/test
-	 * 		and http://localhost/test/ will return "". 
+	 * 
+	 * @param fullPath
+	 *            A path that can contain 0..* endpoints.
+	 * @return The first address entry of a path. The address entry is the first
+	 *         endpoint combined with a protocol. If there is no protocol defined,
+	 *         the address entry is empty (""). E.g.
+	 *         basyx://127.0.0.1:6998//https://localhost/test/ will return
+	 *         basyx://127.0.0.1:6998,
+	 *         https://localhost/test//basyx://127.0.0.1:6998/ will return
+	 *         https://localhost/test and http://localhost/test/ will return "".
 	 */
 	public static String getFirstEndpoint(String fullPath) {
 		// Return null result for null argument
@@ -298,10 +316,11 @@ public class VABPathTools {
 
 	/**
 	 * Removes the first endpoint from a path.<br>
+	 * 
 	 * @param fullPath
-	 * @return 
-	 * 		The first endpoint. E.g. basyx://127.0.0.1:6998//https://localhost/test/ will return
-	 * 		https://localhost/test/.
+	 * @return The first endpoint. E.g.
+	 *         basyx://127.0.0.1:6998//https://localhost/test/ will return
+	 *         https://localhost/test/.
 	 * 
 	 */
 	public static String removeFirstEndpoint(String fullPath) {
@@ -362,7 +381,7 @@ public class VABPathTools {
 		// Return combined path
 		return result.toString();
 	}
-	
+
 	/**
 	 * Checks if path is null, if yes throw exception
 	 * 
@@ -373,7 +392,7 @@ public class VABPathTools {
 			throw new MalformedRequestException("Path is not allowed to be null");
 		}
 	}
-	
+
 	/**
 	 * Strips the last path element if it is "invoke"
 	 * 
@@ -381,45 +400,56 @@ public class VABPathTools {
 	 * @return path without last element "invoke" or unchanged path
 	 */
 	public static String stripInvokeFromPath(String path) {
-		
-		if(path == null)
+		return stripFromPath(path, Operation.INVOKE);
+	}
+
+	/**
+	 * Strips the last path element if it is elementToStrip
+	 * 
+	 * @param path
+	 * @param elementToStrip
+	 * @return path without last element "invoke" or unchanged path
+	 */
+	public static String stripFromPath(String path, String elementToStrip) {
+		if (path == null)
 			return null;
-		
-		if(getLastElement(path).startsWith(Operation.INVOKE)) {
+
+		if (getLastElement(path).startsWith(elementToStrip)) {
 			return getParentPath(path);
 		}
-		
+
 		return path;
 	}
-	
+
 	/**
-	 * Gets the path from a URL
-	 * e.g "http://localhost:8080/path/to/test.file" results in "/path/to/test.file"
+	 * Gets the path from a URL e.g "http://localhost:8080/path/to/test.file"
+	 * results in "/path/to/test.file"
 	 * 
 	 * @param url
 	 * @return the path from the URL
 	 */
 	public static String getPathFromURL(String url) {
-		if(url == null) {
+		if (url == null) {
 			return null;
 		}
-		
-		if(url.contains("://")) {
-			
+
+		if (url.contains("://")) {
+
 			// Find the ":" and and remove the "http://" from the url
 			int index = url.indexOf(":") + 3;
 			url = url.substring(index);
-			
-			// Find the first "/" from the URL (now without the "http://") and remove everything before that
+
+			// Find the first "/" from the URL (now without the "http://") and remove
+			// everything before that
 			index = url.indexOf("/");
 			url = url.substring(index);
-			
-			// Recursive call to deal with more than one server parts 
+
+			// Recursive call to deal with more than one server parts
 			// (e.g. basyx://127.0.0.1:6998//https://localhost/test/)
 			return getPathFromURL(url);
 		} else {
 			// Make sure the path has a / at the start
-			if(!url.startsWith("/")) {
+			if (!url.startsWith("/")) {
 				url = "/" + url;
 			}
 			return url;

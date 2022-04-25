@@ -1,17 +1,35 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.modelprovider.generic;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.eclipse.basyx.vab.exception.provider.NotAnInvokableException;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceAlreadyExistsException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -105,26 +123,80 @@ public class VABModelProvider implements IModelProvider {
 		handler.deleteValue(targetElement, obj);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object invokeOperation(String path, Object... parameters) {
-		
+
 		path = VABPathTools.stripInvokeFromPath(path);
-		
+
 		Object childElement = getValue(path);
 
 		// Invoke operation for function interfaces
 		if (childElement instanceof Function<?, ?>) {
-			Function<Object[], Object> function = (Function<Object[], Object>) childElement;
-			return function.apply(parameters);
+			return runFunction(childElement, parameters);
+		} else if (childElement instanceof Supplier<?>) {
+			return runSupplier(childElement);
+		} else if (childElement instanceof Consumer<?>) {
+			return runConsumer(childElement, parameters);
+		} else if (childElement instanceof Runnable) {
+			return runRunnable(childElement);
 		} else {
 			throw new NotAnInvokableException("Element \"" + path + "\" is not a function.");
 		}
 	}
 
+	private Object runRunnable(Object childElement) {
+		Runnable runnable = (Runnable) childElement;
+		try {
+			runnable.run();
+		} catch (ProviderException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProviderException(e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object runConsumer(Object childElement, Object... parameters) {
+		Consumer<Object> consumer = (Consumer<Object>) childElement;
+		try {
+			consumer.accept(parameters);
+		} catch (ProviderException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProviderException(e);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object runSupplier(Object childElement) {
+		Supplier<Object> supplier = (Supplier<Object>) childElement;
+		try {
+			return supplier.get();
+		} catch (ProviderException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProviderException(e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object runFunction(Object childElement, Object... parameters) {
+		Function<Object[], Object> function = (Function<Object[], Object>) childElement;
+		try {
+			return function.apply(parameters);
+		} catch (ProviderException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProviderException(e);
+		}
+	}
+
 	/**
-	 * Get the parent of an element in this provider. The path should include the path to the element separated by '/'.
-	 * E.g., for accessing element c in path a/b, the path should be a/b/c.
+	 * Get the parent of an element in this provider. The path should include the
+	 * path to the element separated by '/'. E.g., for accessing element c in path
+	 * a/b, the path should be a/b/c.
 	 */
 	private Object getParentElement(String path) {
 		VABPathTools.checkPathForNull(path);
@@ -145,10 +217,9 @@ public class VABModelProvider implements IModelProvider {
 		return currentElement;
 	}
 
-
 	/**
-	 * Instead of returning the parent element of a path, this function gives the target element.
-	 * E.g., it returns c for the path a/b/c
+	 * Instead of returning the parent element of a path, this function gives the
+	 * target element. E.g., it returns c for the path a/b/c
 	 */
 	protected Object getTargetElement(String path) {
 		VABPathTools.checkPathForNull(path);

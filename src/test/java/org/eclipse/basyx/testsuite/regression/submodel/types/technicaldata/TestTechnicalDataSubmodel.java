@@ -1,12 +1,27 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 * 
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 * 
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 
 package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata;
@@ -14,7 +29,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,10 +67,10 @@ public class TestTechnicalDataSubmodel {
 	public static ProductClassifications productClassifications = new ProductClassifications(TechnicalDataSubmodel.PRODUCTCLASSIFICATIONSID);
 	public static TechnicalProperties technicalProperties = new TechnicalProperties(TechnicalDataSubmodel.TECHNICALPROPERTIESID);
 	public static FurtherInformation furtherInformation = new FurtherInformation(new Property(FurtherInformation.VALIDDATEID, ValueType.DateTime));
-	
+
 	public static Identifier identifier = new Identifier(IdentifierType.IRI, "http://admin-shell.io/ZVEI/TechnicalData/Submodel/1/1");
-	private Map<String, Object> submodelMap = new HashMap<String, Object>();
-	
+	private Map<String, Object> submodelMap = new LinkedHashMap<String, Object>();
+
 	@Before
 	public void buildFax() {
 		TestGeneralInformation.manufacturerName.setValue("Example Company");
@@ -68,7 +83,7 @@ public class TestTechnicalDataSubmodel {
 		elements.add(furtherInformation);
 		elements.add(productClassifications);
 		elements.add(technicalProperties);
-		
+
 		submodelMap.put(Referable.IDSHORT, TechnicalDataSubmodel.SUBMODELID);
 		submodelMap.put(HasSemantics.SEMANTICID, TechnicalDataSubmodel.SEMANTICID);
 		submodelMap.put(Submodel.SUBMODELELEMENT, elements);
@@ -86,31 +101,31 @@ public class TestTechnicalDataSubmodel {
 		assertEquals(TechnicalDataSubmodel.SUBMODELID, submodelFromMap.getIdShort());
 		assertEquals(identifier, submodelFromMap.getIdentification());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		submodelMap.remove(Referable.IDSHORT);
 		TechnicalDataSubmodel.createAsFacade(submodelMap);
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdentifier() {
 		submodelMap.remove(Identifiable.IDENTIFICATION);
 		TechnicalDataSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionGeneralInfo() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(generalInformation);
 		TechnicalDataSubmodel.createAsFacade(submodelMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionTechnicalProp() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)submodelMap.get(Submodel.SUBMODELELEMENT);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) submodelMap.get(Submodel.SUBMODELELEMENT);
 		elements.remove(technicalProperties);
 		TechnicalDataSubmodel.createAsFacade(submodelMap);
 	}

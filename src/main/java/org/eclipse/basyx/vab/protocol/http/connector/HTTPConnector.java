@@ -1,23 +1,46 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.connector;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
+import org.eclipse.basyx.vab.coder.json.metaprotocol.MessageType;
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Result;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.protocol.api.IBaSyxConnector;
@@ -25,6 +48,9 @@ import org.eclipse.basyx.vab.protocol.http.server.ExceptionToHTTPCodeMapper;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
+
+import com.google.gson.Gson;
 
 import io.netty.handler.codec.http.HttpMethod;
 
@@ -35,11 +61,13 @@ import io.netty.handler.codec.http.HttpMethod;
  *
  */
 public class HTTPConnector implements IBaSyxConnector {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(HTTPConnector.class);
-	
+
 	private String address;
 	private String mediaType;
+	@Nullable
+	private final IAuthorizationSupplier authorizationSupplier;
 	protected Client client;
 
 	/**
@@ -58,10 +86,19 @@ public class HTTPConnector implements IBaSyxConnector {
 		this(address, MediaType.APPLICATION_JSON + ";charset=UTF-8");
 	}
 
+	public HTTPConnector(String address, final IAuthorizationSupplier authorizationSupplier) {
+		this(address, MediaType.APPLICATION_JSON + ";charset=UTF-8", authorizationSupplier);
+	}
+
 	public HTTPConnector(String address, String mediaType) {
+		this(address, mediaType, null);
+	}
+
+	public HTTPConnector(final String address, final String mediaType, @Nullable final IAuthorizationSupplier authorizationSupplier) {
 		this.address = address;
 		this.mediaType = mediaType;
-		
+		this.authorizationSupplier = authorizationSupplier;
+
 		// Create client
 		client = ClientBuilder.newClient();
 
@@ -132,8 +169,14 @@ public class HTTPConnector implements IBaSyxConnector {
 		// Build request, set JSON encoding
 		Builder request = resource.request();
 		request.accept(mediaType);
+		getAuthorization().ifPresent(authorization -> request.header(HttpHeaders.AUTHORIZATION, authorization));
+
 		// Return JSON request
 		return request;
+	}
+
+	private Optional<String> getAuthorization() {
+		return Optional.ofNullable(authorizationSupplier).flatMap(IAuthorizationSupplier::getAuthorization);
 	}
 
 	/**
@@ -152,7 +195,7 @@ public class HTTPConnector implements IBaSyxConnector {
 
 		return part1 + "/" + part2;
 	}
-	
+
 	/**
 	 * Perform a HTTP get request
 	 * 
@@ -170,7 +213,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = request.get();
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.GET, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.GET, rsp);
 			}
 		}
 
@@ -189,7 +232,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = request.put(Entity.entity(newValue, mediaType));
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.PUT, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.PUT, rsp);
 			}
 		}
 
@@ -204,10 +247,12 @@ public class HTTPConnector implements IBaSyxConnector {
 		// Create and invoke HTTP PATCH request
 		Response rsp = null;
 		try {
-			rsp = this.client.target(VABPathTools.concatenatePaths(address, servicePath)).request().build("PATCH", Entity.text(newValue)).property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
+			final Builder request = this.client.target(VABPathTools.concatenatePaths(address, servicePath)).request();
+			getAuthorization().ifPresent(authorization -> request.header(HttpHeaders.AUTHORIZATION, authorization));
+			rsp = request.build("PATCH", Entity.text(newValue)).property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).invoke();
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.PATCH, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.PATCH, rsp);
 			}
 		}
 
@@ -226,7 +271,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = request.post(Entity.entity(parameter, mediaType));
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.POST, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.POST, rsp);
 			}
 		}
 
@@ -245,7 +290,7 @@ public class HTTPConnector implements IBaSyxConnector {
 			rsp = request.delete();
 		} finally {
 			if (!isRequestSuccess(rsp)) {
-				throw this.handleProcessingException(HttpMethod.DELETE, getStatusCode(rsp));	
+				throw this.handleProcessingException(HttpMethod.DELETE, rsp);
 			}
 		}
 
@@ -269,25 +314,36 @@ public class HTTPConnector implements IBaSyxConnector {
 		return buildRequest(client, VABPathTools.concatenatePaths(address, servicePath));
 	}
 
-	private ProviderException handleProcessingException(HttpMethod method, int statusCode) {
-		if (statusCode == 0) {
-			return ExceptionToHTTPCodeMapper.mapToException(404, "[HTTP " + method.name() + "] Failed to request " + this.address + " with mediatype " + this.mediaType);
-		} else {
-			return ExceptionToHTTPCodeMapper.mapToException(statusCode, "[HTTP " + method.name() + "] Failed to request " + this.address + " with mediatype " + this.mediaType);
+	private ProviderException handleProcessingException(HttpMethod method, Response rsp) {
+		if (rsp == null) {
+			return ExceptionToHTTPCodeMapper.mapToException(404, buildMessageString(method.name(), null));
 		}
+
+		int statusCode = getStatusCode(rsp);
+		String responseJson = rsp.readEntity(String.class);
+
+		Result result = buildResultFromJSON(responseJson);
+
+		List<Message> messages = result.getMessages();
+		messages.add(new Message(MessageType.Exception, buildMessageString(method.name(), result)));
+
+		ProviderException e = ExceptionToHTTPCodeMapper.mapToException(statusCode, result.getMessages());
+		return e;
 	}
-	
+
 	/**
 	 * Get status code from HTTP Response
+	 * 
 	 * @param rsp
 	 * @return
 	 */
 	private int getStatusCode(Response rsp) {
 		return rsp != null ? rsp.getStatus() : 0;
 	}
-	
+
 	/**
 	 * Returns true if the response is succeeded
+	 * 
 	 * @param rsp
 	 * @return
 	 */
@@ -296,12 +352,56 @@ public class HTTPConnector implements IBaSyxConnector {
 	}
 
 	/**
-	 * Get string representation of endpoint for given path for debugging. 
-	 * @param path Requested path
+	 * Get string representation of endpoint for given path for debugging.
+	 * 
+	 * @param path
+	 *            Requested path
 	 * @return String representing requested endpoint
 	 */
 	@Override
 	public String getEndpointRepresentation(String path) {
 		return VABPathTools.concatenatePaths(address, path);
+	}
+
+	/**
+	 * Builds a Result object from the json response
+	 * 
+	 * @param json
+	 *            The json response
+	 * @return Result
+	 */
+	@SuppressWarnings("unchecked")
+	private Result buildResultFromJSON(String json) {
+		Gson gson = new Gson();
+		Map<String, Object> map = gson.fromJson(json, Map.class);
+		return Result.createAsFacade(map);
+	}
+
+	/**
+	 * Builds the text for the message about the failed HTTP Request
+	 * 
+	 * @param methodName
+	 *            the HTTP method that failed
+	 * @param result
+	 *            the Messages returned by the server if any
+	 * @return the message text
+	 */
+	private String buildMessageString(String methodName, Result result) {
+		String message = "[HTTP " + methodName + "] Failed to request " + this.address + " with mediatype " + this.mediaType;
+
+		if (result == null) {
+			return message;
+		}
+
+		String text = "";
+		if (result.getMessages().size() > 0) {
+			text = result.getMessages().get(0).getText();
+		}
+
+		if (!text.isEmpty()) {
+			message += ". \"" + text + "\"";
+		}
+
+		return message;
 	}
 }

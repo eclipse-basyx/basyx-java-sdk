@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.proxy;
 
@@ -18,9 +33,12 @@ import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.restapi.TaggedDirectoryProvider;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
+import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 
@@ -44,7 +62,27 @@ public class TaggedDirectoryProxy extends AASRegistryProxy implements IAASTagged
 
 	@Override
 	public void register(TaggedAASDescriptor descriptor) {
-		taggedProvider.createValue("", descriptor);
+		taggedProvider.createValue(VABPathTools.encodePathElement(descriptor.getIdentifier().getId()), descriptor);
+	}
+
+	@Override
+	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor smDescriptor) {
+		taggedProvider.createValue(VABPathTools.encodePathElement(aas.getId() + "/submodels/" + smDescriptor.getIdentifier().getId()), smDescriptor);
+	}
+
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(Set<String> aasTags, Set<String> submodelTags) {
+		String aasTagsList = joinTagsAsString(aasTags);
+		String submodelTagsList = joinTagsAsString(submodelTags);
+
+		return performCombinedTagRequest(aasTagsList, submodelTagsList);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Set<TaggedSubmodelDescriptor> performCombinedTagRequest(String aasTagList, String submodelTagList) {
+		Collection<Map<String, Object>> desc = (Collection<Map<String, Object>>) taggedProvider.getValue("?" + TaggedDirectoryProvider.API_ACCESS + aasTagList + "&" + TaggedDirectoryProvider.SUBMODEL_API_ACCESS + submodelTagList);
+
+		return desc.stream().map(TaggedSubmodelDescriptor::createAsFacade).collect(Collectors.toSet());
 	}
 
 	@Override
@@ -54,16 +92,36 @@ public class TaggedDirectoryProxy extends AASRegistryProxy implements IAASTagged
 
 	@Override
 	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags) {
-		StringJoiner joiner = new StringJoiner(",");
-		tags.stream().forEach(t -> joiner.add(t));
-
-		return performTagRequest(joiner.toString());
+		return performTagRequest(joinTagsAsString(tags));
 	}
 
 	@SuppressWarnings("unchecked")
 	private Set<TaggedAASDescriptor> performTagRequest(String tagList) {
-		Collection<Map<String, Object>> desc = (Collection<Map<String, Object>>) taggedProvider.getValue(TaggedDirectoryProvider.API_ACCESS + tagList);
+		Collection<Map<String, Object>> desc = (Collection<Map<String, Object>>) taggedProvider.getValue("?" + TaggedDirectoryProvider.API_ACCESS + tagList);
 		return desc.stream().map(m -> TaggedAASDescriptor.createAsFacade(m)).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(String submodelTag) {
+		return performSubmodelTagRequest(submodelTag);
+	}
+
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(Set<String> tags) {
+		return performSubmodelTagRequest(joinTagsAsString(tags));
+	}
+
+	@SuppressWarnings("unchecked")
+	private Set<TaggedSubmodelDescriptor> performSubmodelTagRequest(String submodelTagList) {
+		Collection<Map<String, Object>> desc = (Collection<Map<String, Object>>) taggedProvider.getValue("?" + TaggedDirectoryProvider.SUBMODEL_API_ACCESS + submodelTagList);
+		return desc.stream().map(m -> TaggedSubmodelDescriptor.createAsFacade(m)).collect(Collectors.toSet());
+	}
+
+	private String joinTagsAsString(Set<String> tags) {
+		StringJoiner joiner = new StringJoiner(",");
+		tags.stream().forEach(joiner::add);
+
+		return joiner.toString();
 	}
 
 }

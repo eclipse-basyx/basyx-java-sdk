@@ -1,18 +1,35 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.eclipse.basyx.aas.metamodel.exception.MetamodelConstructionException;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -25,7 +42,7 @@ import org.eclipse.basyx.submodel.metamodel.map.qualifier.HasDataSpecification;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
-import org.eclipse.basyx.vab.exception.provider.WrongNumberOfParametersException;
+import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
 
 /**
  * Operation as defined in DAAS document <br>
@@ -44,43 +61,40 @@ public class Operation extends SubmodelElement implements IOperation {
 
 	public static final String INVOKABLE = "invokable";
 	public static final String MODELTYPE = "Operation";
-	
+
+	// Extension of DAAS specification for function storage
 	public static final String INVOKE = "invoke";
+	public static final String IS_WRAPPED_INVOKABLE = "isWrappedInvokable";
 
-	/**
-	 * Constructor
-	 */
 	public Operation() {
-		// Add model type
-		putAll(new ModelType(MODELTYPE));
-
-		// Input variables
-		put(IN, new ArrayList<OperationVariable>());
-
-		// Output variables
-		put(OUT, new ArrayList<OperationVariable>());
-
-		// Variables, that are input and output
-		put(INOUT, new ArrayList<OperationVariable>());
+		this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 */
 	public Operation(String idShort) {
-		super(idShort);
-		// Add model type
+		this();
+		setIdShort(idShort);
+	}
+
+	/**
+	 * @param in
+	 *            Input parameter of the operation.
+	 * @param out
+	 *            Output parameter of the operation.
+	 * @param inout
+	 *            Inoutput parameter of the operation.
+	 * 
+	 */
+	public Operation(Collection<OperationVariable> in, Collection<OperationVariable> out, Collection<OperationVariable> inout) {
+		super();
 		putAll(new ModelType(MODELTYPE));
-
-		// Input variables
-		setInputVariables(new ArrayList<OperationVariable>());
-
-		// Output variables
-		setOutputVariables(new ArrayList<OperationVariable>());
-
-		// Variables, that are input and output
-		setInOutputVariables(new ArrayList<OperationVariable>());
+		setInputVariables(in);
+		setOutputVariables(out);
+		setInOutputVariables(inout);
 	}
 
 	/**
@@ -92,25 +106,12 @@ public class Operation extends SubmodelElement implements IOperation {
 	 * @param inout
 	 *            Inoutput parameter of the operation.
 	 * @param function
-	 *            the concrete function
+	 *            the concrete function that can directly handle unwrapped values
 	 * 
 	 */
-	public Operation(Collection<OperationVariable> in, Collection<OperationVariable> out,
-			Collection<OperationVariable> inout, Function<Object[], Object> function) {
-		// Add model type
-		putAll(new ModelType(MODELTYPE));
-
-		// Input variables
-		put(IN, in);
-
-		// Output variables
-		put(OUT, out);
-
-		// Output variables
-		put(INOUT, inout);
-
-		// Extension of DAAS specification for function storage
-		put(INVOKABLE, function);
+	public Operation(Collection<OperationVariable> in, Collection<OperationVariable> out, Collection<OperationVariable> inout, Function<Object[], Object> function) {
+		this(in, out, inout);
+		setInvokable(function);
 	}
 
 	/**
@@ -134,19 +135,19 @@ public class Operation extends SubmodelElement implements IOperation {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Operation.class, obj);
 		}
-		
+
 		Operation ret = new Operation();
 		ret.setMap(obj);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Checks whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
@@ -158,16 +159,16 @@ public class Operation extends SubmodelElement implements IOperation {
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isOperation(Object value) {
-		if(!(value instanceof Map<?, ?>)) {
+		if (!(value instanceof Map<?, ?>)) {
 			return false;
 		}
-		
+
 		Map<String, Object> map = (Map<String, Object>) value;
-		
+
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained
-		return MODELTYPE.equals(modelType)
-				|| (modelType == null && (map.containsKey(IN) && map.containsKey(OUT) && map.containsKey(INOUT)));
+		// Either model type is set or the element type specific attributes are
+		// contained
+		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(IN) && map.containsKey(OUT) && map.containsKey(INOUT)));
 	}
 
 	@Override
@@ -185,33 +186,35 @@ public class Operation extends SubmodelElement implements IOperation {
 		return transformToOperationVariables(get(Operation.INOUT));
 	}
 
-	@SuppressWarnings("unchecked")
-	private Collection<IOperationVariable> transformToOperationVariables(Object obj) {
-		if (obj instanceof Collection<?>) {
-			Collection<Map<String, Object>> map = (Collection<Map<String, Object>>) obj;
-			Collection<IOperationVariable> ret = new ArrayList<>();
-			for (Map<String, Object> m : map) {
-				ret.add(OperationVariable.createAsFacade(m));
-			}
-			return ret;
+	@Override
+	public Object invoke(Object... params) {
+		return invokeSimple(params);
+	}
+
+	@Override
+	public Object invokeSimple(Object... simpleParams) {
+		OperationCheckHelper.checkValidParameterLength(simpleParams.length, getIdShort(), getInputVariables());
+		OperationCheckHelper.checkSubmodelElementExpectedTypes(simpleParams, getInputVariables());
+		if (isWrappedInvokable()) {
+			return invokeWrappedInvokableWithSimpleParameters(simpleParams);
 		} else {
-			return new ArrayList<>();
+			return directlyInvokeSimpleInvokable(simpleParams);
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Object invoke(Object... params) {
-		if (params.length != getInputVariables().size()) {
-			throw new WrongNumberOfParametersException(getIdShort(), getInputVariables(), params);
-		}
-		return ((Function<Object[], Object>) get(INVOKABLE)).apply(params);
+	private Object invokeWrappedInvokableWithSimpleParameters(Object... simpleParams) {
+		Map<String, SubmodelElement> wrappedParamMap = OperationHelper.wrapSimpleInputParametersInMap(simpleParams, getInputVariables());
+		OperationCheckHelper.checkSubmodelElementAsParameter(wrappedParamMap, getInputVariables());
+		SubmodelElement[] wrappedResult = directlyInvokeWrappedInvokable(wrappedParamMap);
+		return OperationHelper.unwrapResult(wrappedResult);
 	}
 
 	@Override
 	public SubmodelElement[] invoke(SubmodelElement... elems) {
-		throw new UnsupportedOperationException(
-				"SubmodelElement matching logic is only supported for connected Operations");
+		OperationCheckHelper.checkValidParameterLength(elems.length, getIdShort(), getInputVariables());
+		OperationCheckHelper.checkSubmodelElementAsParameter(elems, getInputVariables());
+		Map<String, SubmodelElement> seMap = OperationHelper.convertSubmodelElementArrayToMap(elems);
+		return invokeWrappedUnchecked(seMap);
 	}
 
 	@Override
@@ -236,8 +239,58 @@ public class Operation extends SubmodelElement implements IOperation {
 		put(Operation.INOUT, inOut);
 	}
 
+	/**
+	 * Sets an invokable that handles submodel elements.
+	 * 
+	 * @param endpoint
+	 */
+	public void setWrappedInvokable(Function<Map<String, SubmodelElement>, SubmodelElement[]> endpoint) {
+		Function<Object[], Object> wrappedInvokable = prepareWrappedFunctionForVAB(endpoint);
+		setInvokable(wrappedInvokable);
+		put(Operation.IS_WRAPPED_INVOKABLE, true);
+	}
+
+	/**
+	 * Sets an invokable that handles a consumer.
+	 * 
+	 * @param consumer
+	 */
+	public void setWrappedInvokable(Consumer<Map<String, SubmodelElement>> consumer) {
+		Consumer<Object[]> wrappedInvokable = prepareWrappedFunctionForVAB(consumer);
+		setInvokable(wrappedInvokable);
+		put(Operation.IS_WRAPPED_INVOKABLE, true);
+	}
+
+	/**
+	 * Sets an invokable that handles a supplier.
+	 * 
+	 * @param supplier
+	 */
+	public void setWrappedInvokable(Supplier<SubmodelElement[]> supplier) {
+		Supplier<Object> wrappedInvokable = prepareWrappedFunctionForVAB(supplier);
+		setInvokable(wrappedInvokable);
+		put(Operation.IS_WRAPPED_INVOKABLE, true);
+	}
+
+	/**
+	 * Sets an invokable that handles direct values.
+	 * 
+	 * @param endpoint
+	 */
 	public void setInvokable(Function<Object[], Object> endpoint) {
-		put(Operation.INVOKABLE, endpoint);
+		setSimpleInvokable(endpoint);
+	}
+
+	public void setInvokable(Runnable runnable) {
+		setSimpleInvokable(runnable);
+	}
+
+	public void setInvokable(Supplier<Object> supplier) {
+		setSimpleInvokable(supplier);
+	}
+
+	public void setInvokable(Consumer<Object[]> consumer) {
+		setSimpleInvokable(consumer);
 	}
 
 	@Override
@@ -264,7 +317,7 @@ public class Operation extends SubmodelElement implements IOperation {
 	public LangStrings getDescription() {
 		return Referable.createAsFacade(this, getKeyElement()).getDescription();
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.OPERATION;
@@ -301,5 +354,66 @@ public class Operation extends SubmodelElement implements IOperation {
 		inoutVars.stream().forEach(v -> inoutVarCopy.add(new OperationVariable(v.getValue().getLocalCopy())));
 		copy.setInOutputVariables(inoutVarCopy);
 		return copy;
+	}
+
+	private void setSimpleInvokable(Object invokable) {
+		put(Operation.INVOKABLE, invokable);
+		put(Operation.IS_WRAPPED_INVOKABLE, false);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Collection<IOperationVariable> transformToOperationVariables(Object obj) {
+		if (obj instanceof Collection<?>) {
+			Collection<Map<String, Object>> mapCollection = (Collection<Map<String, Object>>) obj;
+			return transformToOperationVariable(mapCollection);
+		} else {
+			return new ArrayList<>();
+		}
+	}
+
+	private Collection<IOperationVariable> transformToOperationVariable(Collection<Map<String, Object>> mapCollection) {
+		Collection<IOperationVariable> ret = new ArrayList<>();
+		for (Map<String, Object> m : mapCollection) {
+			OperationVariable opVariable = OperationVariable.createAsFacade(m);
+			ret.add(opVariable);
+		}
+		return ret;
+	}
+
+	private Object directlyInvokeSimpleInvokable(Object[] simpleParams) {
+		return new VABLambdaProvider(this).invokeOperation(INVOKABLE, simpleParams);
+	}
+
+	private SubmodelElement[] invokeWrappedUnchecked(Map<String, SubmodelElement> wrappedParamMap) {
+		if (isWrappedInvokable()) {
+			return directlyInvokeWrappedInvokable(wrappedParamMap);
+		} else {
+			Object[] unwrappedParams = OperationHelper.unwrapInputParameters(wrappedParamMap, getInputVariables());
+			Object unwrappedResult = directlyInvokeSimpleInvokable(unwrappedParams);
+			return OperationHelper.wrapResult(unwrappedResult, getOutputVariables());
+		}
+	}
+
+	private SubmodelElement[] directlyInvokeWrappedInvokable(Map<String, SubmodelElement> wrappedParamMap) {
+		return (SubmodelElement[]) new VABLambdaProvider(this).invokeOperation(INVOKABLE, wrappedParamMap);
+	}
+
+	private boolean isWrappedInvokable() {
+		Object isWrappedInvokable = get(IS_WRAPPED_INVOKABLE);
+		return isWrappedInvokable != null && ((boolean) isWrappedInvokable);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Function<Object[], Object> prepareWrappedFunctionForVAB(Function<Map<String, SubmodelElement>, SubmodelElement[]> wrappedFunction) {
+		return elemArray -> wrappedFunction.apply((Map<String, SubmodelElement>) elemArray[0]);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Consumer<Object[]> prepareWrappedFunctionForVAB(Consumer<Map<String, SubmodelElement>> consumer) {
+		return elemArray -> consumer.accept((Map<String, SubmodelElement>) elemArray[0]);
+	}
+
+	private Supplier<Object> prepareWrappedFunctionForVAB(Supplier<SubmodelElement[]> supplier) {
+		return () -> supplier.get();
 	}
 }

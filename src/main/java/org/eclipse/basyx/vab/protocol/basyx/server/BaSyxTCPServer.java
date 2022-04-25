@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.basyx.server;
 
@@ -22,8 +37,6 @@ import org.eclipse.basyx.vab.service.api.BaSyxService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * BaSyx TCP server thread
  * 
@@ -31,41 +44,34 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyxService {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(BaSyxTCPServer.class);
 
-	
 	/**
 	 * Store server socket channel instance
 	 */
 	protected ServerSocketChannel serverSockChannel = null;
 
-	
 	/**
 	 * Reference to IModelProvider backend
 	 */
 	protected T providerBackend = null;
 
-	
 	/**
 	 * Exit flag
 	 */
 	protected boolean exit = false;
-	
-	
+
 	/**
 	 * Store thread
 	 */
 	protected Thread thread = null;
-	
-	
+
 	/**
 	 * Store name
 	 */
 	protected String name = null;
-	
-	
-	
+
 	/**
 	 * Constructor
 	 */
@@ -75,7 +81,8 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 
 		// Create communication channel
 		try {
-			// The channel should listen on all interfaces, binding on 127.0.0.1 prohibits remote communication
+			// The channel should listen on all interfaces, binding on 127.0.0.1 prohibits
+			// remote communication
 			InetAddress hostIPAddress = InetAddress.getByName("0.0.0.0");
 
 			// Server socket channel
@@ -88,7 +95,6 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 		}
 	}
 
-	
 	/**
 	 * Default constructor without port number
 	 */
@@ -97,7 +103,6 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 		this(modelProviderBackend, 6998);
 	}
 
-	
 	/**
 	 * Thread main method
 	 */
@@ -109,8 +114,7 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 			acceptIncomingConnection();
 		}
 	}
-	
-	
+
 	/**
 	 * Accept an incoming connection
 	 */
@@ -122,11 +126,12 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 
 			// Wait for connections
 			try {
-				communicationSocket = serverSockChannel.accept(); 
+				communicationSocket = serverSockChannel.accept();
 			} catch (SocketException e) {
 				logger.error("Exception in acceptIncomingConnection", e);
 				// End process; Server socket has been closed by shutdown
-				exit = true; return;
+				exit = true;
+				return;
 			}
 
 			// Handle an incoming connection
@@ -136,21 +141,21 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 			tcpProvider.start();
 		} catch (IOException e) {
 			// Indicate exception only iff exit flag is false
-			if (!exit) logger.error("Exception in acceptIncomingConnection", e);
+			if (!exit)
+				logger.error("Exception in acceptIncomingConnection", e);
 
 			// Return
 			return;
 		}
 	}
-	
-	
+
 	/**
 	 * End server
 	 */
 	protected void shutdown() {
 		// End thread
 		exit = true;
-		
+
 		// Handle IOException
 		try {
 			// Close stream
@@ -158,9 +163,8 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 		} catch (IOException e) {
 			// Indicate exception
 			logger.error("Exception in shutdown", e);
-		}			
+		}
 	}
-
 
 	/**
 	 * Start the server
@@ -169,11 +173,10 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 	public void start() {
 		// Create thread
 		thread = new Thread(this);
-		
+
 		// Start thread
 		thread.start();
 	}
-
 
 	/**
 	 * Stop the server and block until the server thread is finished
@@ -182,11 +185,14 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 	public void stop() {
 		// Shutdown thread
 		shutdown();
-		
-		// Wait for thread end
-		try {thread.join();} catch (InterruptedException e) {logger.error("Exception in stop", e);}
-	}
 
+		// Wait for thread end
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			logger.error("Exception in stop", e);
+		}
+	}
 
 	/**
 	 * Change service name
@@ -195,11 +201,10 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 	public BaSyxService setName(String newName) {
 		// Store name
 		name = newName;
-		
+
 		// Return 'this' instance
 		return this;
 	}
-
 
 	/**
 	 * Return service name
@@ -209,17 +214,19 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 		// Return service name
 		return name;
 	}
-	
-	
+
 	/**
 	 * Wait for end of runnable
 	 */
 	public void waitFor() {
 		// Wait for thread end
-		try {thread.join();} catch (InterruptedException e) {logger.error("Exception in waitFor", e);}		
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			logger.error("Exception in waitFor", e);
+		}
 	}
-	
-	
+
 	/**
 	 * Indicate if this service has ended
 	 */
@@ -228,4 +235,3 @@ public class BaSyxTCPServer<T extends IModelProvider> implements Runnable, BaSyx
 		return !serverSockChannel.isOpen();
 	}
 }
-

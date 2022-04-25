@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.vab.modelprovider;
 
@@ -178,10 +193,8 @@ public class VABPathToolsTest {
 
 	@Test
 	public void testIsOperationPath() {
-		String[] positive = { "submodelElements/id/invoke", "submodelElements/id/invoke/",
-				"operations/id/invoke", "operations/id/invoke/", "operations/test", "elem/operations/id" };
-		String[] negative = { "", "/submodelElementsX/", "/myoperations/", "/submodelElementsFake/",
-				"/submodelElementsFake/operationX/", "submodelElements/id/" };
+		String[] positive = { "submodelElements/id/invoke", "submodelElements/id/invoke/", "operations/id/invoke", "operations/id/invoke/", "operations/test", "elem/operations/id" };
+		String[] negative = { "", "/submodelElementsX/", "/myoperations/", "/submodelElementsFake/", "/submodelElementsFake/operationX/", "submodelElements/id/" };
 		for (String test : positive) {
 			assertTrue(test, VABPathTools.isOperationInvokationPath(test));
 		}
@@ -190,7 +203,7 @@ public class VABPathToolsTest {
 		}
 		assertFalse(VABPathTools.isOperationInvokationPath(null));
 	}
-	
+
 	@Test
 	public void testStripInvokeFromPath() {
 		assertEquals("id", VABPathTools.stripInvokeFromPath("id/invoke"));
@@ -199,14 +212,23 @@ public class VABPathToolsTest {
 		assertEquals("id/value", VABPathTools.stripInvokeFromPath("id/value"));
 		assertEquals("", VABPathTools.stripInvokeFromPath(""));
 	}
-	
+
+	@Test
+	public void testStripFromPath() {
+		assertEquals("id", VABPathTools.stripFromPath("id/invoke", "invoke"));
+		assertEquals("", VABPathTools.stripFromPath("invoke", "invoke"));
+		assertEquals("", VABPathTools.stripFromPath("/invoke", "invoke"));
+		assertEquals("id/value", VABPathTools.stripFromPath("id/value", "invoke"));
+		assertEquals("id", VABPathTools.stripFromPath("id/value", "value"));
+		assertEquals("", VABPathTools.stripFromPath("", ""));
+	}
+
 	@Test
 	public void testGetPathFromURL() {
-		
-		String[] urls = {"http://localhost:8080/test/elem.aasx", "http://localhost/test/elem.aasx",
-				"basyx://127.0.0.1:4000//http://localhost:8080/test/elem.aasx", "/test/elem.aasx", "test/elem.aasx"};
-		
-		for(String url: urls) {
+
+		String[] urls = { "http://localhost:8080/test/elem.aasx", "http://localhost/test/elem.aasx", "basyx://127.0.0.1:4000//http://localhost:8080/test/elem.aasx", "/test/elem.aasx", "test/elem.aasx" };
+
+		for (String url : urls) {
 			assertEquals("/test/elem.aasx", VABPathTools.getPathFromURL(url));
 		}
 	}
@@ -214,10 +236,7 @@ public class VABPathToolsTest {
 	@Test
 	public void testHarmonizePathWithSuffix() {
 		String expected = "http://localhost:8080/server/subserver/suffix";
-		String[] toTest = { expected, 
-							"http://localhost:8080/server/subserver/suffix/", 
-							"http://localhost:8080/server/subserver/", 
-				"http://localhost:8080/server/subserver", };
+		String[] toTest = { expected, "http://localhost:8080/server/subserver/suffix/", "http://localhost:8080/server/subserver/", "http://localhost:8080/server/subserver", };
 
 		for (String t : toTest) {
 			String harmonized = VABPathTools.harmonizePathWithSuffix(t, "suffix");

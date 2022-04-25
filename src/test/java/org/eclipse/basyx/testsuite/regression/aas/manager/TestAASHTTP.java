@@ -1,17 +1,34 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
@@ -24,7 +41,10 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.testsuite.regression.aas.restapi.StubAASServlet;
+import org.eclipse.basyx.testsuite.regression.submodel.restapi.SimpleAASSubmodel;
 import org.eclipse.basyx.testsuite.regression.vab.protocol.http.AASHTTPServerResource;
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.registry.memory.VABInMemoryRegistry;
@@ -43,8 +63,7 @@ public class TestAASHTTP {
 	// Manager used to connect to the AAS
 	ConnectedAssetAdministrationShellManager manager;
 
-	private static BaSyxContext context = new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir"))
-			.addServletMapping("/Testsuite/StubAAS/*", new StubAASServlet());
+	private static BaSyxContext context = new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir")).addServletMapping("/Testsuite/StubAAS/*", new StubAASServlet());
 
 	/**
 	 * Makes sure Tomcat Server is started
@@ -60,25 +79,22 @@ public class TestAASHTTP {
 		// Fill directory stub
 		VABInMemoryRegistry directory = new VABInMemoryRegistry();
 		directory.addMapping(StubAASServlet.AASURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas");
-		directory.addMapping(StubAASServlet.SMURN.getId(),
-				"http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
+		directory.addMapping(StubAASServlet.SMURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
 
 		InMemoryRegistry registry = new InMemoryRegistry();
 
 		// Create aas descriptor for the aas registry
-		AASDescriptor aasDescriptor = new AASDescriptor(StubAASServlet.AASURN,
-				"http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas");
+		AASDescriptor aasDescriptor = new AASDescriptor(StubAASServlet.AASURN, "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas");
 
 		// Create the submodel descriptor
-		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(StubAASServlet.SMIDSHORT, StubAASServlet.SMURN,
-				"http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(StubAASServlet.SMIDSHORT, StubAASServlet.SMURN, "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
 
 		// add submodel descriptor to the aas descriptor
 		aasDescriptor.addSubmodelDescriptor(submodelDescriptor);
 
 		// register the aas in the registry
 		registry.register(aasDescriptor);
-		
+
 		// Create manager using the directory stub an the HTTPConnectorProvider
 		manager = new ConnectedAssetAdministrationShellManager(registry, new HTTPConnectorFactory());
 	}
@@ -129,7 +145,29 @@ public class TestAASHTTP {
 		assertEquals(4, operations.size());
 
 		IOperation op = operations.get("complex");
-		assertEquals(1, op.invoke(2, 1));
+		assertEquals(1, op.invokeSimple(2, 1));
+
+		op = operations.get("exception1");
+		try {
+			op.invokeSimple();
+			fail();
+		} catch (ProviderException e) {
+			List<Message> msg = e.getMessages();
+			assertEquals(2, msg.size());
+			String msgText = msg.get(1).getText();
+			assertTrue(msgText.contains("ProviderException: " + NullPointerException.class.getName()));
+		}
+
+		op = operations.get("exception2");
+		try {
+			op.invokeSimple();
+			fail();
+		} catch (ProviderException e) {
+			List<Message> msg = e.getMessages();
+			assertEquals(2, msg.size());
+			String msgText = msg.get(1).getText();
+			assertTrue(msgText.contains("ProviderException: " + SimpleAASSubmodel.EXCEPTION_MESSAGE));
+		}
 
 		Map<String, ISubmodelElement> elements = sm.getSubmodelElements();
 		// 2 properties, 4 operations, 1 collection

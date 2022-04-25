@@ -1,13 +1,32 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.https;
+
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.KeyManager;
@@ -16,14 +35,11 @@ import javax.net.ssl.TrustManager;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 
 /**
- * A Factory class containing methods creating an HTTPS client
- * with no verification and validation for self signed SSL
- * and other helper methods
+ * A Factory class containing methods creating an HTTPS client with no
+ * verification and validation for self signed SSL and other helper methods
  * 
  * @author haque
  *
@@ -32,39 +48,49 @@ public class JerseyHttpsClientFactory {
 	private static final String PROTOCOL = "TLSv1.2";
 
 	/**
-	 * Returns an HTTPS client
+	 * Returns an HTTPS client without validation
+	 * 
 	 * @return
 	 * @throws KeyManagementException
 	 * @throws NoSuchAlgorithmException
 	 */
-    public static Client getJerseyHTTPSClient() throws KeyManagementException, NoSuchAlgorithmException {
-        SSLContext sslContext = getSslContext(PROTOCOL);
-        HostnameVerifier allHostsValid = new DefaultHostNameVerifier();
+	public static Client getJerseyHTTPSClientWithoutValidation() throws KeyManagementException, NoSuchAlgorithmException {
+		return getJerseyHTTPSClient(new NonVerifyingHostnameVerifier());
+	}
 
-        return ClientBuilder.newBuilder()
-                .sslContext(sslContext)
-                .hostnameVerifier(allHostsValid)
-                .build();
-    }
+	/**
+	 * Returns an HTTPS client
+	 * 
+	 * @return
+	 * @throws KeyManagementException
+	 * @throws NoSuchAlgorithmException
+	 */
+	public static Client getJerseyHTTPSClientWithValidation() throws KeyManagementException, NoSuchAlgorithmException {
+		return getJerseyHTTPSClient(new DefaultHostnameVerifier());
+	}
 
-    /**
-     * Retrieves an SSL Context
-     * with given protocol
-     * @param protocol
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws KeyManagementException
-     */
-    private static SSLContext getSslContext(String protocol) throws NoSuchAlgorithmException,
-                                                     KeyManagementException {
-        SSLContext sslContext = SSLContext.getInstance(protocol);
+	private static Client getJerseyHTTPSClient(HostnameVerifier hostnameVerifier) throws KeyManagementException, NoSuchAlgorithmException {
+		SSLContext sslContext = getSslContext(PROTOCOL);
+		return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(hostnameVerifier).build();
+	}
 
-        KeyManager[] keyManagers = null;
-        TrustManager[] trustManager = {new DefaultTrustManager()};
-        SecureRandom secureRandom = new SecureRandom();
+	/**
+	 * Retrieves an SSL Context with given protocol
+	 * 
+	 * @param protocol
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
+	 */
+	private static SSLContext getSslContext(String protocol) throws NoSuchAlgorithmException, KeyManagementException {
+		SSLContext sslContext = SSLContext.getInstance(protocol);
 
-        sslContext.init(keyManagers, trustManager, secureRandom);
+		KeyManager[] keyManagers = null;
+		TrustManager[] trustManager = { new DefaultTrustManager() };
+		SecureRandom secureRandom = new SecureRandom();
 
-        return sslContext;
-    }
+		sslContext.init(keyManagers, trustManager, secureRandom);
+
+		return sslContext;
+	}
 }

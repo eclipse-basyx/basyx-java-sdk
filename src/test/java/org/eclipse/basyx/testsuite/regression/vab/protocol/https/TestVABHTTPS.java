@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.vab.protocol.https;
 
@@ -13,12 +28,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.basyx.testsuite.regression.vab.modelprovider.TestProvider;
@@ -34,6 +49,7 @@ import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
 import org.eclipse.basyx.vab.protocol.https.HTTPSConnectorProvider;
 import org.eclipse.basyx.vab.protocol.https.JerseyHttpsClientFactory;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,33 +60,38 @@ import org.junit.Test;
  *
  */
 public class TestVABHTTPS extends TestProvider {
-	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory("https"),
-			new HTTPSConnectorProvider());
 
-	private RecordingProvider recorder = new RecordingProvider(new VABMapProvider(new HashMap<>()));
+	protected VABConnectionManager connManager;
+
+	private RecordingProvider recorder = new RecordingProvider(new VABMapProvider(new LinkedHashMap<>()));
 
 	/**
 	 * Makes sure Tomcat Server is started after before each test case
 	 */
 	@Rule
-	public AASHTTPServerResource res = new AASHTTPServerResource(
-			new BaSyxContext("/basys.sdk", 
-					System.getProperty("java.io.tmpdir"), "localhost", 8080, true, "resources/ssl.cert", "pass123")
-					.addServletMapping("/Testsuite/SimpleVAB/*", new SimpleVABElementServlet())
-					.addServletMapping("/Testsuite/Recorder/*", new VABHTTPInterface<RecordingProvider>(recorder)));
+	public AASHTTPServerResource res = new AASHTTPServerResource(new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir"), "localhost", 8080, true, "resources/ssl.cert", "pass123")
+			.addServletMapping("/Testsuite/SimpleVAB/*", new SimpleVABElementServlet()).addServletMapping("/Testsuite/Recorder/*", new VABHTTPInterface<RecordingProvider>(recorder)));
+
+	@Before
+	public void setUp() {
+		HTTPSConnectorProvider httpsConnectorProvider = new HTTPSConnectorProvider();
+		httpsConnectorProvider.disableValidation();
+		connManager = new VABConnectionManager(new TestsuiteDirectory("https"), httpsConnectorProvider);
+	}
 
 	@Override
 	protected VABConnectionManager getConnectionManager() {
 		return connManager;
 	}
-	
+
 	/**
 	 * Tests for URL with no ending slash when accessing the root element, e.g.
 	 * http://localhost:8080/basys.sdk/Testsuite/SimpleVAB <br />
 	 * The SDK ensures that each access ends with a <i>/</i>. However, browser
 	 * requests do not necessarily conform to this
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * 
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
 	 */
 	@Test
 	public void testRootURL() throws KeyManagementException, NoSuchAlgorithmException {
@@ -116,11 +137,11 @@ public class TestVABHTTPS extends TestProvider {
 	 * Performs an HTTP request on an URL
 	 * 
 	 * @param URL
-	 * @throws NoSuchAlgorithmException 
-	 * @throws KeyManagementException 
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
 	 */
 	private void performRequest(String URL) throws KeyManagementException, NoSuchAlgorithmException {
-		Client client = JerseyHttpsClientFactory.getJerseyHTTPSClient();
+		Client client = JerseyHttpsClientFactory.getJerseyHTTPSClientWithoutValidation();
 
 		// Called URL
 		WebTarget resource = client.target(URL);

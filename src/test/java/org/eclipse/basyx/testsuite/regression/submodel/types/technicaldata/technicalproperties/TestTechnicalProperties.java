@@ -1,12 +1,27 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 * 
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 * 
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 
 package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.technicalproperties;
@@ -14,7 +29,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.tech
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +61,9 @@ public class TestTechnicalProperties {
 	public static SubmodelElementCollection subSection = new SubmodelElementCollection(TechnicalProperties.SUBSECTIONPREFIX + "01");
 	public static SubmodelElement arbitrary1 = new Property("arbitraryId1", ValueType.String);
 	public static SubmodelElement arbitrary2 = new Property("arbitraryId2", ValueType.String);
-	
-	private Map<String, Object> technicalMap = new HashMap<String, Object>();
-	
+
+	private Map<String, Object> technicalMap = new LinkedHashMap<String, Object>();
+
 	@Before
 	public void init() {
 		mainSection.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, TechnicalProperties.MAINSECTIONID, IdentifierType.IRDI)));
@@ -61,12 +76,12 @@ public class TestTechnicalProperties {
 		elements.add(subSection);
 		elements.add(arbitrary1);
 		elements.add(arbitrary2);
-		
+
 		technicalMap.put(Referable.IDSHORT, TechnicalProperties.IDSHORT);
 		technicalMap.put(HasSemantics.SEMANTICID, TechnicalProperties.SEMANTICID);
 		technicalMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		TechnicalProperties propFromMap = TechnicalProperties.createAsFacade(technicalMap);
@@ -77,8 +92,8 @@ public class TestTechnicalProperties {
 		assertEquals(Collections.singletonList(arbitrary1), propFromMap.getArbitrary());
 		assertEquals(Collections.singletonList(arbitrary2), propFromMap.getSMENotDescribedBySemanticId());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		technicalMap.remove(Referable.IDSHORT);
 		TechnicalProperties.createAsFacade(technicalMap);

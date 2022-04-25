@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi.operation;
 
@@ -45,7 +60,7 @@ public class InvocationRequest extends VABModelMap<Object> {
 		if (map == null) {
 			return null;
 		}
-		
+
 		InvocationRequest ret = new InvocationRequest();
 		ret.setRequestId((String) map.get(REQUESTID));
 		Collection<IOperationVariable> inoutArguments = createInoutArguments(map);
@@ -60,7 +75,31 @@ public class InvocationRequest extends VABModelMap<Object> {
 	}
 
 	/**
-	 * Unwraps the values of the inputVars in the order of occurance in the collection of input arguments
+	 * Returns true if the given map is recognized as an InvocationRequest
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean isInvocationRequest(Object value) {
+		if (!(value instanceof Map<?, ?>)) {
+			return false;
+		}
+
+		Map<String, Object> map = (Map<String, Object>) value;
+
+		return isValid(map);
+	}
+
+	/**
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
+	 * @return true/false
+	 */
+	public static boolean isValid(Map<String, Object> map) {
+		return map.containsKey(REQUESTID) && map.containsKey(TIMEOUT);
+	}
+
+	/**
+	 * Unwraps the values of the inputVars in the order of occurance in the
+	 * collection of input arguments
 	 * 
 	 * @return
 	 */

@@ -1,15 +1,31 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +42,7 @@ import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.ConnectedS
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
@@ -49,7 +66,7 @@ public class TestConnectedSubmodelElementCollection {
 
 	ConnectedSubmodelElementCollection prop;
 
-	@Before 
+	@Before
 	public void build() {
 		// Create PropertySingleValued containing the collection
 		Property propertyMeta = new Property(4);
@@ -60,11 +77,11 @@ public class TestConnectedSubmodelElementCollection {
 			return (int) arr[0] + (int) arr[1];
 		});
 		Property aProp = new Property("a", 1);
-		aProp.setModelingKind(ModelingKind.TEMPLATE);
+		aProp.setKind(ModelingKind.TEMPLATE);
 		Property bProp = new Property("b", 2);
-		bProp.setModelingKind(ModelingKind.TEMPLATE);
+		bProp.setKind(ModelingKind.TEMPLATE);
 		Property rProp = new Property("r", 3);
-		rProp.setModelingKind(ModelingKind.TEMPLATE);
+		rProp.setKind(ModelingKind.TEMPLATE);
 		OperationVariable a = new OperationVariable(aProp);
 		OperationVariable b = new OperationVariable(bProp);
 		OperationVariable r = new OperationVariable(rProp);
@@ -82,10 +99,11 @@ public class TestConnectedSubmodelElementCollection {
 		sm.addSubmodelElement(complex);
 
 		Map<String, Object> destroyType = TypeDestroyer.destroyType(sm);
-		// Create a dummy connection manager containing the created ContainerProperty map
-		// The model is wrapped in the corresponding ModelProvider that implements the API access
-		VABConnectionManagerStub manager = new VABConnectionManagerStub(
-				new SubmodelProvider(new VABLambdaProvider(destroyType)));
+		// Create a dummy connection manager containing the created ContainerProperty
+		// map
+		// The model is wrapped in the corresponding ModelProvider that implements the
+		// API access
+		VABConnectionManagerStub manager = new VABConnectionManagerStub(new SubmodelProvider(new VABLambdaProvider(destroyType)));
 
 		// Retrieve the ConnectedContainerProperty
 		prop = new ConnectedSubmodelElementCollection(manager.connectToVABElement("").getDeepProxy("/submodel/submodelElements/" + complex.getIdShort()));
@@ -126,23 +144,22 @@ public class TestConnectedSubmodelElementCollection {
 		IOperation sum = ops.get(OPERATION);
 
 		// Check operation invocation
-		assertEquals(5, sum.invoke(2, 3));
+		assertEquals(5, sum.invokeSimple(2, 3));
 	}
-	
+
 	@Test
 	public void testSetValue() {
 		Property property = new Property("testProperty");
 		property.setIdShort(PROP);
-		
-		
+
 		Collection<ISubmodelElement> newValue = new ArrayList<>();
 		newValue.add(property);
-		
+
 		prop.setValue(newValue);
-		
+
 		Map<String, ISubmodelElement> value = prop.getSubmodelElements();
 		IProperty property2 = (IProperty) value.get(PROP);
-		
+
 		assertEquals("testProperty", property2.getValue());
 	}
 
@@ -151,13 +168,13 @@ public class TestConnectedSubmodelElementCollection {
 		ISubmodelElement element = prop.getSubmodelElement(PROP);
 		assertEquals(PROP, element.getIdShort());
 	}
-	
+
 	@Test(expected = ResourceNotFoundException.class)
 	public void testDeleteSubmodelElement() {
 		prop.deleteSubmodelElement(PROP);
 		prop.getSubmodelElement(PROP);
 	}
-	
+
 	@Test
 	public void testAddSubmodelElement() {
 		String newId = "abc";
@@ -166,5 +183,25 @@ public class TestConnectedSubmodelElementCollection {
 		prop.addSubmodelElement(newProp);
 		ISubmodelElement element = prop.getSubmodelElement(newId);
 		assertEquals(newId, element.getIdShort());
+	}
+
+	@Test
+	public void testGetValues() {
+		Map<String, Object> values = prop.getValues();
+		assertEquals(1, values.size());
+		assertTrue(values.containsKey(PROP));
+		assertEquals(4, values.get(PROP));
+
+		String newKey = "newKey";
+		String newValue = "newValue";
+
+		Property newProp = new Property(newKey, newValue);
+		newProp.setValueType(ValueType.String);
+		prop.addSubmodelElement(newProp);
+
+		values = prop.getValues();
+		assertEquals(2, values.size());
+		assertTrue(values.containsKey(newKey));
+		assertEquals(newValue, values.get(newKey));
 	}
 }

@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel;
 
@@ -21,7 +36,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +92,6 @@ public abstract class TestSubmodelSuite {
 	private final String MULTI_LANG_PROP_ID = "multi_lang_prop_id";
 	private final String REFERENCE_ELEMENT_ID = "reference_element_id";
 	private final String PROPERTY_ID2 = "property_id2";
-	
 
 	private final static Reference testSemanticIdRef = new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "testVal", IdentifierType.CUSTOM));
 
@@ -124,7 +138,6 @@ public abstract class TestSubmodelSuite {
 		assertEquals(100, prop.getValue());
 	}
 
-
 	@Test
 	public void saveAndLoadPropertyTest() throws Exception {
 		ISubmodel submodel = getSubmodel();
@@ -151,7 +164,6 @@ public abstract class TestSubmodelSuite {
 		for (ISubmodelElement element : testDataElements.values()) {
 			submodel.addSubmodelElement(element);
 		}
-
 
 		// Get sample SubmodelElements and save them into Submodel
 		Map<String, ISubmodelElement> testSMElements = getTestSubmodelElements();
@@ -251,7 +263,7 @@ public abstract class TestSubmodelSuite {
 	 * Generates test IDataElements
 	 */
 	private Map<String, IProperty> getTestDataProperty() {
-		Map<String, IProperty> ret = new HashMap<>();
+		Map<String, IProperty> ret = new LinkedHashMap<>();
 
 		Property property = new Property();
 		property.setIdShort(PROPERTY_ID);
@@ -281,16 +293,17 @@ public abstract class TestSubmodelSuite {
 		Property bigNumberProp = new Property();
 		bigNumberProp.setIdShort("bignumber_prop01");
 		BigInteger bignumber = new BigInteger("9223372036854775817");
-		property.setValue(bignumber);
+		bigNumberProp.setValue(bignumber);
 		ret.put(bigNumberProp.getIdShort(), bigNumberProp);
 
 		return ret;
 	}
+
 	/**
 	 * Generates test ISubmodelElements
 	 */
 	private Map<String, ISubmodelElement> getTestSubmodelElements() {
-		Map<String, ISubmodelElement> ret = new HashMap<>();
+		Map<String, ISubmodelElement> ret = new LinkedHashMap<>();
 
 		SubmodelElementCollection smECollection = new SubmodelElementCollection();
 		smECollection.setIdShort(SUBMODEL_ELEM_COLLECTION_ID);
@@ -299,7 +312,6 @@ public abstract class TestSubmodelSuite {
 		List<ISubmodelElement> values = new ArrayList<>();
 		Property contained = new Property(PROPERTY_CONTAINED_ID, true);
 		values.add(contained);
-
 
 		smECollection.setValue(values);
 		ret.put(smECollection.getIdShort(), smECollection);
@@ -310,7 +322,7 @@ public abstract class TestSubmodelSuite {
 
 		Reference first = new Reference(new Key(KeyElements.BASICEVENT, true, "testFirst", IdentifierType.CUSTOM));
 		Reference second = new Reference(new Key(KeyElements.BASICEVENT, true, "testSecond", IdentifierType.CUSTOM));
-		
+
 		RelationshipElement relElement = new RelationshipElement(RELATIONSHIP_ELEM_ID, first, second);
 		ret.put(relElement.getIdShort(), relElement);
 
@@ -320,23 +332,23 @@ public abstract class TestSubmodelSuite {
 		annotations.add(annotationProperty);
 		annotatedRelElement.setAnnotation(annotations);
 		ret.put(annotatedRelElement.getIdShort(), annotatedRelElement);
-		
+
 		Property property = new Property(PROPERTY_ID2, ValueType.AnySimpleType);
 		ret.put(property.getIdShort(), property);
-		
+
 		Range range = new Range(RANGE_ID, ValueType.Integer);
 		range.setValue(new RangeValue(-100, +100));
 		ret.put(range.getIdShort(), range);
-		
+
 		File file = new File("text/plain");
 		file.setIdShort(FILE_ID);
 		file.setValue("fileUrl");
 		ret.put(file.getIdShort(), file);
-		
+
 		MultiLanguageProperty languageProperty = new MultiLanguageProperty(MULTI_LANG_PROP_ID);
 		languageProperty.setValue(new LangStrings(new LangString("en-en", "TestDescription")));
 		ret.put(languageProperty.getIdShort(), languageProperty);
-		
+
 		ReferenceElement referenceElement = new ReferenceElement(REFERENCE_ELEMENT_ID, first);
 		ret.put(referenceElement.getIdShort(), referenceElement);
 
@@ -379,7 +391,6 @@ public abstract class TestSubmodelSuite {
 		assertNotNull(actualCollection);
 
 		Collection<ISubmodelElement> elements = actualCollection.getSubmodelElements().values();
-
 
 		// Check for correct Type
 		assertEquals(1, elements.size());

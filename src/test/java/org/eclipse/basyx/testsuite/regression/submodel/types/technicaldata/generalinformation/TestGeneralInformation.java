@@ -1,12 +1,27 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 * 
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 * 
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 
 package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.generalinformation;
@@ -14,7 +29,7 @@ package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.gene
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +62,9 @@ public class TestGeneralInformation {
 	public static Property partNumber = new Property(GeneralInformation.MANUFACTURERPARTNUMBERID, ValueType.String);
 	public static Property orderCode = new Property(GeneralInformation.MANUFACTURERORDERCODEID, ValueType.String);
 	public static File image = new File("image/jpg");
-	
-	private Map<String, Object> InfoMap = new HashMap<String, Object>();
-	
+
+	private Map<String, Object> InfoMap = new LinkedHashMap<String, Object>();
+
 	@Before
 	public void init() {
 		manufacturerName.setValue("Example Company");
@@ -60,7 +75,7 @@ public class TestGeneralInformation {
 		orderCode.setValue("EEA-EX-200-S/47-Q3");
 		image.setIdShort(GeneralInformation.PRODUCTIMAGEPREFIX + "01");
 		image.setValue("/aasx/TechnicalData/ ProdFromTop.jpg");
-		
+
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(manufacturerName);
 		elements.add(manufacturerLogo);
@@ -68,12 +83,12 @@ public class TestGeneralInformation {
 		elements.add(partNumber);
 		elements.add(orderCode);
 		elements.add(image);
-		
+
 		InfoMap.put(Referable.IDSHORT, GeneralInformation.IDSHORT);
 		InfoMap.put(HasSemantics.SEMANTICID, GeneralInformation.SEMANTICID);
 		InfoMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		GeneralInformation infoFromMap = GeneralInformation.createAsFacade(InfoMap);
@@ -86,41 +101,41 @@ public class TestGeneralInformation {
 		assertEquals(orderCode, infoFromMap.getManufacturerOrderCode());
 		assertEquals(GeneralInformation.IDSHORT, infoFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		InfoMap.remove(Referable.IDSHORT);
 		GeneralInformation.createAsFacade(InfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionName() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)InfoMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) InfoMap.get(Property.VALUE);
 		elements.remove(manufacturerName);
 		GeneralInformation.createAsFacade(InfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionDesignation() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)InfoMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) InfoMap.get(Property.VALUE);
 		elements.remove(designation);
 		GeneralInformation.createAsFacade(InfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionPartNumber() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)InfoMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) InfoMap.get(Property.VALUE);
 		elements.remove(partNumber);
 		GeneralInformation.createAsFacade(InfoMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionOrderCode() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)InfoMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) InfoMap.get(Property.VALUE);
 		elements.remove(orderCode);
 		GeneralInformation.createAsFacade(InfoMap);
 	}

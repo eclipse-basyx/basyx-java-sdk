@@ -3,14 +3,14 @@
  */
 package org.eclipse.basyx.aas.manager;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.eclipse.basyx.aas.aggregator.AASAggregatorAPIHelper;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
-import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.manager.api.IAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
@@ -23,7 +23,6 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.connected.ConnectedSubmodel;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
-import org.eclipse.basyx.vab.exception.FeatureNotImplementedException;
 import org.eclipse.basyx.vab.factory.java.ModelProxyFactory;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -57,8 +56,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	 * @param directory
 	 * @param provider
 	 */
-	public ConnectedAssetAdministrationShellManager(IAASRegistry directory,
-			IConnectorFactory provider) {
+	public ConnectedAssetAdministrationShellManager(IAASRegistry directory, IConnectorFactory provider) {
 		this.aasDirectory = directory;
 		this.connectorFactory = provider;
 		this.proxyFactory = new ModelProxyFactory(provider);
@@ -86,7 +84,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	public Map<String, ISubmodel> retrieveSubmodels(IIdentifier aasId) {
 		AASDescriptor aasDesc = aasDirectory.lookupAAS(aasId);
 		Collection<SubmodelDescriptor> smDescriptors = aasDesc.getSubmodelDescriptors();
-		Map<String, ISubmodel> submodels = new HashMap<>();
+		Map<String, ISubmodel> submodels = new LinkedHashMap<>();
 		for (SubmodelDescriptor smDesc : smDescriptors) {
 			String smEndpoint = smDesc.getFirstEndpoint();
 			String smIdShort = smDesc.getIdShort();
@@ -108,9 +106,16 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		return proxyFactory.createProxy(addr);
 	}
 
+	/**
+	 * Retrieves all AASs registered. This can take a long time if many AASs are
+	 * present! Use with caution!
+	 * 
+	 * @return all AASs registered
+	 */
 	@Override
 	public Collection<IAssetAdministrationShell> retrieveAASAll() {
-		throw new FeatureNotImplementedException();
+		List<AASDescriptor> aasDescriptors = aasDirectory.lookupAll();
+		return aasDescriptors.stream().map(d -> retrieveAAS(d.getIdentifier())).collect(Collectors.toList());
 	}
 
 	@Override
@@ -136,17 +141,17 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	@Override
 	public void createSubmodel(IIdentifier aasId, Submodel submodel) {
-		
+
 		// Push the SM to the server using the ConnectedAAS
 
 		retrieveAAS(aasId).addSubmodel(submodel);
-		
+
 		// Lookup AAS descriptor
 		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(aasId);
 
 		// Get aas endpoint
 		String addr = aasDescriptor.getFirstEndpoint();
-		
+
 		// Register the SM
 		String smEndpoint = VABPathTools.concatenatePaths(addr, AssetAdministrationShell.SUBMODELS, submodel.getIdShort(), SubmodelProvider.SUBMODEL);
 		aasDirectory.register(aasId, new SubmodelDescriptor(submodel, smEndpoint));
@@ -163,19 +168,12 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	@Override
 	public void createAAS(AssetAdministrationShell aas, String endpoint) {
 		endpoint = VABPathTools.stripSlashes(endpoint);
-		if (!endpoint.endsWith(AASAggregatorProvider.PREFIX)) {
-			endpoint += "/" + AASAggregatorProvider.PREFIX;
-		}
 
-		IModelProvider provider = connectorFactory.getConnector(endpoint);
+		IModelProvider provider = connectorFactory.create(endpoint);
 		AASAggregatorProxy proxy = new AASAggregatorProxy(provider);
 		proxy.createAAS(aas);
-		try {
+		String combinedEndpoint = VABPathTools.concatenatePaths(endpoint, AASAggregatorAPIHelper.getAASAccessPath(aas.getIdentification()));
+		aasDirectory.register(new AASDescriptor(aas, combinedEndpoint));
 
-			String combinedEndpoint = VABPathTools.concatenatePaths(endpoint, URLEncoder.encode(aas.getIdentification().getId(), "UTF-8"), "aas");
-			aasDirectory.register(new AASDescriptor(aas, combinedEndpoint));
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Encoding failed. This should never happen");
-		}
 	}
 }

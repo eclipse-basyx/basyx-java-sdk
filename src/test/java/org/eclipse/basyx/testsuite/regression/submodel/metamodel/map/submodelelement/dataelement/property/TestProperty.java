@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelelement.dataelement.property;
 
@@ -42,7 +57,6 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.junit.Before;
 import org.junit.Test;
 
-
 /**
  * Tests constructor, getter and setter of {@link Property} for their
  * correctness
@@ -59,16 +73,16 @@ public class TestProperty {
 	public void buildFile() {
 		property = new Property(VALUE);
 	}
-	
+
 	@Test
-	public void testConstructor1(){
+	public void testConstructor1() {
 		assertEquals(VALUE, property.getValue());
 		assertNull(property.getValueId());
 		assertEquals(STRING_TYPE, property.getValueType());
-	} 
-	
+	}
+
 	@Test
-	public void testConstructor2(){
+	public void testConstructor2() {
 		Referable referable = new Referable("testIdShort", "testCategory", new LangStrings("DE", "test"));
 		Reference semanticId = new Reference(new Key(KeyElements.ASSET, true, "testValue", IdentifierType.IRI));
 		Qualifiable qualifiable = new Qualifiable(new Formula(Collections.singleton(new Reference(new Key(KeyElements.BLOB, true, "TestValue", IdentifierType.IRI)))));
@@ -76,16 +90,16 @@ public class TestProperty {
 		assertEquals(VALUE, property.getValue());
 		assertNull(property.getValueId());
 		assertEquals(STRING_TYPE, property.getValueType());
-	} 
-	
+	}
+
 	@Test
 	public void testSetValueType() {
 		property.setValueType(ValueType.String);
 		assertEquals(STRING_TYPE, property.getValueType());
-	} 
-	
+	}
+
 	@Test
-	public void testSet() throws DatatypeConfigurationException{
+	public void testSet() throws DatatypeConfigurationException {
 		Property booleanProp = new Property();
 		Boolean isSomething = true;
 		booleanProp.setValue(isSomething);
@@ -97,7 +111,7 @@ public class TestProperty {
 		byteProp.setValue(byteNumber);
 		assertEquals(byteNumber, byteProp.getValue());
 		assertEquals(ValueType.Int8, byteProp.getValueType());
-		
+
 		Duration duration = Duration.ofSeconds(10);
 		Property durationProp = new Property();
 		durationProp.setValue(duration);
@@ -117,7 +131,7 @@ public class TestProperty {
 		bigNumberProp.setValue(bignumber);
 		assertEquals(bignumber, bigNumberProp.getValue());
 		assertEquals(ValueType.PositiveInteger, bigNumberProp.getValueType());
-		
+
 		Property dateProp = new Property();
 		GregorianCalendar dateValue = GregorianCalendar.from(ZonedDateTime.of(birthday, LocalTime.MIDNIGHT, ZoneId.of("UTC")));
 		XMLGregorianCalendar xmlDateValue = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateValue);
@@ -127,7 +141,7 @@ public class TestProperty {
 	}
 
 	@Test
-	public void testSetCustom(){
+	public void testSetCustom() {
 		property.set(null, ValueType.String);
 		assertEquals(null, property.getValue());
 		assertEquals(ValueType.String, property.getValueType());
@@ -139,6 +153,9 @@ public class TestProperty {
 		IReference ref2 = new Reference(new Key(KeyElements.PROPERTY, true, "custom", IdentifierType.CUSTOM));
 		property.setValueId(ref);
 		assertEquals(ref2, property.getValueId());
+
+		property.setValueId(null);
+		assertNull(property.getValueId());
 	}
 
 	@Test
@@ -149,7 +166,7 @@ public class TestProperty {
 		property.addConceptDescription(description);
 		assertEquals(new Reference(description, KeyElements.CONCEPTDESCRIPTION, true), property.getSemanticId());
 	}
-	
+
 	@Test
 	public void testInitializeWithNullValue() {
 		try {
@@ -158,7 +175,7 @@ public class TestProperty {
 			fail();
 		} catch (RuntimeException e) {
 		}
-		
+
 		try {
 			// Should not work as valueType can not be set with null as value
 			Property prop = new Property();
@@ -166,7 +183,7 @@ public class TestProperty {
 			fail();
 		} catch (RuntimeException e) {
 		}
-		
+
 		Property prop = new Property("id", "value");
 		// This should work as the valueType is already set
 		prop.setValue(null);

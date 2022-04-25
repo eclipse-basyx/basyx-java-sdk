@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.coder.json.metaprotocol;
 
@@ -23,7 +38,7 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 	 * Reference to serializer / deserializer
 	 */
 	protected GSONTools serializer = null;
-	
+
 	/**
 	 * Constructor that create the serializer
 	 * 
@@ -32,41 +47,40 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 		// Create GSON serializer
 		serializer = new GSONTools(new DefaultTypeFactory());
 	}
-	
+
 	/**
 	 * Constructor that accepts specific factory for serializer
+	 * 
 	 * @param factory
 	 */
 	public MetaprotocolHandler(GSONToolsFactory factory) {
 		// Create GSON serializer
 		serializer = new GSONTools(factory);
 	}
-	
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public Object deserialize(String message) throws ProviderException {
 
 		// First get the GSON object from the JSON string
 		Object gsonObj = serializer.deserialize(message);
-		
+
 		// Then interpret and verify the result object
 		Object result = null;
 
 		// If it is a map, see if it does contain an exception
 		if (gsonObj instanceof Map) {
 			Map<String, Object> responseMap = (Map<String, Object>) gsonObj;
-				
+
 			// Handle meta information and exceptions
 			result = handleResult(responseMap);
 		} else {
 			// Otherwise, return directly.
 			result = gsonObj;
 		}
-        return result;
+		return result;
 	}
-	
-	
+
 	/**
 	 * Verify the Result and try to extract the entity if available. Process
 	 * information of "success", "entityType" and "messages"
@@ -88,7 +102,7 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 		if (messages == null) {
 			throw new ProviderException("Unknown error occured: Success entry is indicating an error but no message was attached");
 		}
-		
+
 		Map<String, Object> first = messages.iterator().next(); // assumes an Exception always comes with a message
 
 		// Get the code of the exception message
@@ -99,19 +113,20 @@ public class MetaprotocolHandler implements IMetaProtocolHandler {
 
 		throw getExceptionFromCode(code, text);
 	}
-	
+
 	/**
 	 * Creates a ProviderException from a String received form the Server<br>
 	 * The String has to be formated e.g. "ResourceNotFoundException: Requested Item
 	 * was not found"
 	 * 
-	 * @param code - code of the exception message
+	 * @param code
+	 *            - code of the exception message
 	 * @return the matching ProviderException
 	 */
 	public static ProviderException getExceptionFromCode(String code, String text) {
 
 		int exceptionCode = Integer.parseInt(code);
-		
+
 		// return exception based on code
 		return ExceptionToHTTPCodeMapper.mapToException(exceptionCode, text);
 	}

@@ -1,18 +1,33 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.factory.xml;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,18 +58,21 @@ import org.xml.sax.SAXException;
  * <code> {@literal <a><b>v</b></a> => {a={b=v}}}<br></code><br>
  * 
  * -Text Node with Attributes<br>
- * <code> {@literal <a b="v1" c="v2">v3</a> => {ele :{#text:v3,b:v1, c:v2}}}</code> <br>
+ * <code> {@literal <a b="v1" c=
+ * "v2">v3</a> => {ele :{#text:v3,b:v1, c:v2}}}</code> <br>
  * <br>
  * 
  * -Multiple Text Nodes<br>
  * <code>{@literal <a><b>v1</b><b>v2</b></a> => {a={b=[v1,v2]}}}<br></code><br>
  * 
  * -Multiple Text Nodes with Attributes <br>
- * <code> {@literal <a><b d="v3" e="v5">v1</b><b d="v4" e="v6">v2</b></a> => {a={b=[{#text=v1, d=v3, e=v5}, {#text=v2, d=v4, e=v6}]}}}</code><br>
+ * <code> {@literal <a><b d="v3" e="v5">v1</b><b d="v4" e=
+ * "v6">v2</b></a> => {a={b=[{#text=v1, d=v3, e=v5}, {#text=v2, d=v4, e=v6}]}}}</code><br>
  * <br>
  * 
  * -Element Node Attributes<br>
- * <code> {@literal <a c="v1" d="v2"><b>v3</b></a> => {a={b=v3}, c=v1, d=v2}}</code><br>
+ * <code> {@literal <a c="v1" d=
+ * "v2"><b>v3</b></a> => {a={b=v3}, c=v1, d=v2}}</code><br>
  * <br>
  * 
  * @author kannoth
@@ -65,17 +83,17 @@ public class XmlParser {
 	private static final String TEXT = "#text";
 
 	/**
-	 * Parses the XML string content and returns the nested HashMap
+	 * Parses the XML string content and returns the nested LinkedHashMap
 	 * 
-	 * @param xmlContent - String content of the xml file
+	 * @param xmlContent
+	 *            - String content of the xml file
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException
 	 */
-	public static Map<String, Object> buildXmlMap(String xmlContent)
-			throws ParserConfigurationException, SAXException, IOException {
+	public static Map<String, Object> buildXmlMap(String xmlContent) throws ParserConfigurationException, SAXException, IOException {
 
-		Map<String, Object> retMap = new HashMap<>();
+		Map<String, Object> retMap = new LinkedHashMap<>();
 		// Getting rid of the white spaces between the tags in order to avoid creation
 		// of
 		// unwanted nodes with no content. Applying the regex has no implications
@@ -104,12 +122,13 @@ public class XmlParser {
 	 * Traverse through the given DOM Node and build nested map representing the DOM
 	 * tree.
 	 * 
-	 * @param parentNode - Node from which the traversal should be initiated.
+	 * @param parentNode
+	 *            - Node from which the traversal should be initiated.
 	 * @return
 	 */
 	private static Object traverseDomTree(Node parentNode) {
 
-		Map<String, Object> retMap = new HashMap<>();
+		Map<String, Object> retMap = new LinkedHashMap<>();
 		Object leafNode = null;
 		NodeList childNodes = parentNode.getChildNodes();
 
@@ -161,14 +180,15 @@ public class XmlParser {
 	/**
 	 * Creates a Map of with element's text and attributes combined
 	 * 
-	 * @param nodeAttrs - Text node of interest
+	 * @param nodeAttrs
+	 *            - Text node of interest
 	 * @return
 	 */
 	private static Map<String, Object> makeAttrMapForTxtNode(Node node) {
 		// Get all attributes of the node
 		NamedNodeMap nodeAttrs = node.getAttributes();
 		// Create a special key for text of the element
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		ret.put(TEXT, node.getTextContent());
 		// Collect all attributes of the Text node and append
 		// to the text map contents.
@@ -183,14 +203,16 @@ public class XmlParser {
 	 * Appends the attributes of the Element node to the given map. Useful for
 	 * nested Element nodes.
 	 * 
-	 * @param eleMap - Nested map corresponding to an element node where the
-	 *               attributes needs to be appended.
-	 * @param node   - Element node of interest
+	 * @param eleMap
+	 *            - Nested map corresponding to an element node where the attributes
+	 *            needs to be appended.
+	 * @param node
+	 *            - Element node of interest
 	 * @return
 	 */
 	private static Map<String, Object> makeAttrMapForEleNode(Map<String, Object> eleMap, Node node) {
 
-		Map<String, Object> ret = new HashMap<>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		ret = eleMap;
 		// Collect all attributes of the Element node and append to
 		// nested map contents.
@@ -203,9 +225,12 @@ public class XmlParser {
 	/**
 	 * Updates the nested Map until created with new element.
 	 * 
-	 * @param map      - Map which is created until
-	 * @param nodeName - Node name of interest
-	 * @param leafNode - Leaf object that to be added
+	 * @param map
+	 *            - Map which is created until
+	 * @param nodeName
+	 *            - Node name of interest
+	 * @param leafNode
+	 *            - Leaf object that to be added
 	 */
 	@SuppressWarnings("unchecked")
 	private static void updateNestedMap(Map<String, Object> map, String nodeName, Object leafNode) {
@@ -235,7 +260,8 @@ public class XmlParser {
 	/**
 	 * Makes the given NodeList iterable
 	 * 
-	 * @param nodeList - NodeList to be made iterable
+	 * @param nodeList
+	 *            - NodeList to be made iterable
 	 * @return
 	 */
 	private static Iterable<Node> iterableNodeMap(final NodeList nodeList) {
@@ -261,7 +287,8 @@ public class XmlParser {
 	/**
 	 * Makes the given NamedNodeMap iterable
 	 * 
-	 * @param namedNodeMap - NamedNodeMap to be made iterable
+	 * @param namedNodeMap
+	 *            - NamedNodeMap to be made iterable
 	 * @return
 	 */
 	private static Iterable<Node> iterableNamedNodeMap(final NamedNodeMap namedNodeMap) {

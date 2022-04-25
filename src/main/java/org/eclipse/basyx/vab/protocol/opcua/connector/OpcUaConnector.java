@@ -1,238 +1,243 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2021 Festo Didactic SE
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.opcua.connector;
 
-import java.util.ArrayList;
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
-import org.eclipse.basyx.vab.protocol.opcua.server.BaSyxOpcUaClientRunner;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
-import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
-import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
-import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
-import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
-import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
-import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
-import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
-import org.eclipse.milo.opcua.stack.core.types.structured.BrowsePath;
-import org.eclipse.milo.opcua.stack.core.types.structured.CallResponse;
-import org.eclipse.milo.opcua.stack.core.types.structured.RelativePath;
-import org.eclipse.milo.opcua.stack.core.types.structured.RelativePathElement;
-import org.eclipse.milo.opcua.stack.core.types.structured.TranslateBrowsePathsToNodeIdsResponse;
+import org.eclipse.basyx.vab.protocol.opcua.exception.OpcUaException;
+import org.eclipse.basyx.vab.protocol.opcua.types.NodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OPC UA connector class
- * 
- * @author kdorofeev
+ * The OpcUaConnector can be used to connect to remote models over OPC UA.
  *
+ * <p>
+ * When this class is instantiated with an endpoint URL, an {@link IOpcUaClient}
+ * is automatically created with a default configuration. The default is an
+ * insecure, anonymous connection without a client certificate.
+ *
+ * <p>
+ * The configuration can be changed as long as no connection has been
+ * established. A connection is established automatically the first time a node
+ * is read or written or an operation is invoked, either through this connector
+ * or directly through the associated {@link IOpcUaClient}. <br>
+ * To change the configuration, do the following:
+ *
+ * <pre>
+ * ClientConfiguration config = opcUaConnector.getClient().getConfiguration();
+ * // Modify configuration
+ * opcUaConnector.getClient().setConfiguration(config);
+ * </pre>
+ *
+ * <h2>Using browse paths</h2>
+ *
+ * This class uses browses paths to identify OPC UA nodes for read, write and
+ * invoke requests. That has two noteworthy caveats:
+ * <ol>
+ * <li>Browse paths aren't necessarily unambiguous. In other words, a browse
+ * path might match more than one node. This would lead to an exception being
+ * returned from this connector. <br>
+ * It is up to the user to make sure their server's address space doesn't have
+ * that problem.
+ * <li>The connector must translate the browse path to a unique node id in the
+ * background. That necessitates an additional network request to the server,
+ * every time a read, write or invoke request is made. <br>
+ * To address this issue, this class contains a cache for translated browse
+ * paths.
+ * </ol>
+ *
+ * <h3>Node id cache</h3>
+ *
+ * Using the cache is entirely optional and it is disabled be default. It can be
+ * enabled using {@link #setNodeIdCacheDuration(Duration)}.
+ *
+ * <p>
+ * If it is enabled, it will cache any browse path passed to
+ * {@link #getValue(String)}, {@link #setValue(String, Object)} or
+ * {@link #invokeOperation(String, Object...)} and the matching node id for the
+ * specified duration. Subsequent requests using the same browse path within the
+ * configured timespan would omit the additional network request for browse path
+ * resolution.
+ *
+ * <p>
+ * <b>Caution:</b> An OPC UA server can dynamically reconfigure their address
+ * space during runtime. This could even be done remotely from clients, if the
+ * server allows it. <br>
+ * Such changes would render this cache invalid, but there is no way for this
+ * connector to get notified of them. Only use the cache with servers where you
+ * can be sure the address space doesn't change.
  */
 public class OpcUaConnector implements IModelProvider {
-	
-	private Logger logger = LoggerFactory.getLogger(OpcUaConnector.class);
-	
-    private String address;
-    private BaSyxOpcUaClientRunner clientRunner;
+	/**
+	 * {@link TimerTask} which removes an entry from a map.
+	 */
+	private static class RemoveEntryFromMapTimerTask<TKey, TValue> extends TimerTask {
+		Map<TKey, TValue> map;
+		TKey key;
 
-    /**
-     * Invoke a BaSys get operation via OPC UA
-     * 
-     * @param servicePath
-     *            requested node path
-     * @return the requested value
-     */
-    @Override
-    public String getValue(String servicePath) {
-        try {
-            clientRunner = new BaSyxOpcUaClientRunner(address);
-            clientRunner.run();
-        } catch (Exception e) {
-        	logger.error("Exception in getModelPropertyValue", e);
-        	throw new RuntimeException(e);
-        }
-        return opcUaRead(translateBrowsePathToNodeId(servicePath)[1]);
-    }
+		public RemoveEntryFromMapTimerTask(Map<TKey, TValue> map, TKey key) {
+			this.map = map;
+			this.key = key;
+		}
 
-    @Override
-	public void setValue(String servicePath, Object newValue) throws ProviderException {
-        try {
-            clientRunner = new BaSyxOpcUaClientRunner(address);
-            clientRunner.run();
-        } catch (Exception e) {
-        	logger.error("Exception in setModelPropertyValue", e);
-        	throw new RuntimeException(e);
-        }
-        opcUaWrite(translateBrowsePathToNodeId(servicePath)[1], newValue);
-    }
+		@Override
+		public void run() {
+			map.remove(key);
+		}
+	}
 
-    @Override
+	private static final Timer cacheTimer = new Timer(true);
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private Duration cacheDuration = Duration.ZERO;
+	private IOpcUaClient client;
+	private Map<String, NodeId> nodeIdCache = new ConcurrentHashMap<>();
+	private Map<String, List<NodeId>> operationNodeIdsCache = new ConcurrentHashMap<>();
+
+	public OpcUaConnector(String endpointUrl) {
+		client = IOpcUaClient.create(endpointUrl);
+	}
+
+	/**
+	 * Gets the OPC UA client used for communication to the server.
+	 *
+	 * @return The OPC UA client object.
+	 */
+	public IOpcUaClient getClient() {
+		return client;
+	}
+
+	/**
+	 * Sets the duration for the NodeId cache.
+	 *
+	 * <p>
+	 * When a {@link OpcUaConnector} resolves a browse path to a NodeId, it can
+	 * cache the result to make future access to that same browse path more
+	 * efficient. <br>
+	 * This setting controls how long looked up NodeIds remain cached. A value of
+	 * {@link Duration#ZERO} disables the cache.
+	 *
+	 * <p>
+	 * See {@link OpcUaConnector} for more information on the caching feature.
+	 *
+	 * @param cacheDuration
+	 *            The cache duration. {@link Duration#ZERO} disable the cache.
+	 *
+	 * @throws IllegalArgumentException
+	 *             if cacheDuration is <code>null</code> or negative.
+	 */
+	public void setNodeIdCacheDuration(Duration cacheDuration) {
+		if (cacheDuration == null || cacheDuration.isNegative()) {
+			throw new IllegalArgumentException("cacheDuration must not be negative.");
+		}
+
+		this.cacheDuration = cacheDuration;
+	}
+
+	@Override
+	public Object getValue(String path) throws OpcUaException {
+		try {
+			NodeId nodeId = getNodeIdForBrowsePath(path);
+			return client.readValue(nodeId);
+		} catch (OpcUaException e) {
+			logger.error("Failed to get node value.");
+			throw e;
+		}
+	}
+
+	@Override
+	public void setValue(String path, Object newValue) throws OpcUaException {
+		try {
+			NodeId nodeId = getNodeIdForBrowsePath(path);
+			client.writeValue(nodeId, newValue);
+		} catch (OpcUaException e) {
+			logger.error("Failed to set node value.");
+			throw e;
+		}
+	}
+
+	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
+		throw new UnsupportedOperationException("Cannot create values through OPC UA.");
+	}
 
-    }
-
-    @Override
+	@Override
 	public void deleteValue(String path) throws ProviderException {
+		throw new UnsupportedOperationException("Cannot delete values through OPC UA.");
+	}
 
-    }
-
-    @Override
+	@Override
 	public void deleteValue(String path, Object obj) throws ProviderException {
+		throw new UnsupportedOperationException("Cannot delete values through OPC UA.");
+	}
 
-    }
+	@Override
+	public Object invokeOperation(String path, Object... parameters) throws OpcUaException {
+		try {
+			List<NodeId> nodeIds = getNodeIdsForOperationBrowsePath(path);
+			return client.invokeMethod(nodeIds.get(1), nodeIds.get(0), parameters);
+		} catch (OpcUaException e) {
+			logger.error("Failed to invoke operation.");
+			throw e;
+		}
+	}
 
-    @Override
-	public Object invokeOperation(String servicePath, Object... parameters) throws ProviderException {
-        try {
-            clientRunner = new BaSyxOpcUaClientRunner(address);
-            clientRunner.run();
-        } catch (Exception e) {
-        	logger.error("Exception in invokeOperation", e);
-        	throw new RuntimeException(e);
-        }
-        return opcUaMethodCall(translateBrowsePathToNodeId(servicePath), parameters);
-    }
+	private NodeId getNodeIdForBrowsePath(String browsePath) {
+		if (nodeIdCache.containsKey(browsePath)) {
+			logger.debug("Using cached NodeId for browse path '{}'.", browsePath);
+			return nodeIdCache.get(browsePath);
+		}
 
-    public OpcUaConnector(String address) {
-        this.address = address;
-    }
+		NodeId nodeId = client.translateBrowsePathToNodeId(browsePath);
 
-    /**
-     * Perform a OPC UA read request
-     * 
-     * @param servicePath
-     * @return
-     */
-    private String opcUaRead(NodeId servicePath) {
-        try {
-            List<NodeId> nodes = new ArrayList<NodeId>();
-            nodes.add(servicePath);
-            CompletableFuture<List<DataValue>> result = clientRunner.read(nodes);
+		if (!cacheDuration.isZero()) {
+			nodeIdCache.put(browsePath, nodeId);
+			cacheTimer.schedule(new RemoveEntryFromMapTimerTask<>(nodeIdCache, browsePath), cacheDuration.toMillis());
+		}
+		return nodeId;
+	}
 
-            return result.get().get(0).getValue().getValue().toString();
+	private List<NodeId> getNodeIdsForOperationBrowsePath(String browsePath) {
+		if (operationNodeIdsCache.containsKey(browsePath)) {
+			logger.debug("Using cached NodeIds for operation at browse path '{}'.", browsePath);
+			return operationNodeIdsCache.get(browsePath);
+		}
 
-        } catch (Exception e) {
-        	logger.error("Exception in opcUaRead", e);
-        }
-        return null;
-    }
+		List<NodeId> nodeIds = client.translateBrowsePathToParentAndTargetNodeId(browsePath);
 
-    private String opcUaMethodCall(NodeId[] methodNodes, Object[] inputParameters) {
-        try {
-            Variant[] inputs = new Variant[inputParameters.length];
-            for (int i = 0; i < inputParameters.length; i++) {
-                inputs[i] = new Variant(inputParameters[i]);
-            }
-            CompletableFuture<CallResponse> result = clientRunner.callMethod(methodNodes[0], methodNodes[1], inputs);
-            Variant[] outputs = result.get().getResults()[0].getOutputArguments();
-            String ret = "";
-            for (Variant var : outputs) {
-                ret += var.getValue() + " ";
-            }
-            return ret;
-        } catch (Exception e) {
-        	logger.error("Exception in opcUaMethodCall", e);
-        }
-        return null;
-    }
-
-    private String opcUaWrite(NodeId servicePath, Object parameter) throws ProviderException {
-        try {
-            List<NodeId> nodes = new ArrayList<NodeId>();
-            nodes.add(servicePath);
-            List<DataValue> parameters = new ArrayList<DataValue>();
-            parameters.add(new DataValue(new Variant(parameter), null, null, null));
-            CompletableFuture<List<StatusCode>> result = clientRunner.write(nodes, parameters);
-
-            return result.get().get(0).toString();
-        } catch (Exception e) {
-        	logger.error("Exception in opcUaWrite", e);
-        }
-        return null;
-    }
-
-    private NodeId[] translateBrowsePathToNodeId(String path) {
-        String[] nodes = path.split("/");
-        List<RelativePathElement> rpe_list = new ArrayList<RelativePathElement>();
-        for (String node : nodes) {
-            if (node.split(":").length != 2) {
-            	logger.warn("OpcUaName should be in form namespaceIdx:identifier");
-            }
-            int nsIdx = Integer.valueOf(node.split(":")[0]);
-            String name = node.split(":")[1];
-            rpe_list.add(new RelativePathElement(Identifiers.HierarchicalReferences, false, true,
-                    new QualifiedName(nsIdx, name)));
-        }
-        RelativePathElement[] rpe_node_arr = new RelativePathElement[rpe_list.size()];
-        RelativePathElement[] rpe_parent_arr = new RelativePathElement[rpe_list.size() - 1];
-        rpe_node_arr = rpe_list.toArray(rpe_node_arr);
-
-        // get list for parent (all but the last one)
-        rpe_list.remove(rpe_list.size() - 1);
-        rpe_parent_arr = rpe_list.toArray(rpe_parent_arr);
-
-        BrowsePath bp_node = new BrowsePath(Identifiers.RootFolder, new RelativePath(rpe_node_arr));
-        BrowsePath bp_parent = new BrowsePath(Identifiers.RootFolder, new RelativePath(rpe_parent_arr));
-        List<BrowsePath> bp_node_list = new ArrayList<BrowsePath>();
-        List<BrowsePath> bp_parent_list = new ArrayList<BrowsePath>();
-        bp_node_list.add(bp_node);
-        bp_parent_list.add(bp_parent);
-        try {
-            CompletableFuture<TranslateBrowsePathsToNodeIdsResponse> result_node = clientRunner.translate(bp_node_list);
-            CompletableFuture<TranslateBrowsePathsToNodeIdsResponse> result_parent = clientRunner
-                    .translate(bp_parent_list);
-            if (result_node.get().getResults().length == 0) {
-                logger.warn("TranslateBrowsePathsToNodeIdsResponse result size = 0, check the browse path!");
-                return null;
-            }
-            if (result_node.get().getResults().length > 1) {
-            	logger.warn("TranslateBrowsePathsToNodeIdsResponse result size > 1, the method returns only the first one!");
-            }
-			if (result_node.get().getResults()[0].getTargets() == null || result_node.get().getResults()[0].getTargets().length == 0) {
-            	logger.warn("TranslateBrowsePathsToNodeIdsResponse targets size = 0, check the browse path!");
-				logger.trace(result_node.get().getResults()[0].getStatusCode().toString());
-				return null;
-            }
-            if (result_node.get().getResults()[0].getTargets().length > 1) {
-            	logger.warn("TranslateBrowsePathsToNodeIdsResponse targets size > 1, the method returns only the first one!");
-            }
-            Object nodeIdentifier = result_node.get().getResults()[0].getTargets()[0].getTargetId().getIdentifier();
-            Object parentIdentifier = result_parent.get().getResults()[0].getTargets()[0].getTargetId().getIdentifier();
-            UShort nodeNsIdx = result_node.get().getResults()[0].getTargets()[0].getTargetId().getNamespaceIndex();
-            UShort parentNsIdx = result_parent.get().getResults()[0].getTargets()[0].getTargetId().getNamespaceIndex();
-            if (nodeIdentifier instanceof String && parentIdentifier instanceof String) {
-                return new NodeId[] { new NodeId(parentNsIdx, (String) parentIdentifier),
-                        new NodeId(nodeNsIdx, (String) nodeIdentifier) };
-            }
-            if (nodeIdentifier instanceof UInteger && parentIdentifier instanceof UInteger) {
-                return new NodeId[] { new NodeId(parentNsIdx, (UInteger) parentIdentifier),
-                        new NodeId(nodeNsIdx, (UInteger) nodeIdentifier) };
-            }
-            if (nodeIdentifier instanceof UInteger && parentIdentifier instanceof String) {
-                return new NodeId[] { new NodeId(parentNsIdx, (String) parentIdentifier),
-                        new NodeId(nodeNsIdx, (UInteger) nodeIdentifier) };
-            }
-            if (nodeIdentifier instanceof String && parentIdentifier instanceof UInteger) {
-                return new NodeId[] { new NodeId(parentNsIdx, (UInteger) parentIdentifier),
-                        new NodeId(nodeNsIdx, (String) nodeIdentifier) };
-            } else {
-            	logger.error("NodeId identifier is not neither String, nor int");
-                return null;
-            }
-        } catch (Exception e) {
-        	logger.error("Exception in translateBrowsePathToNodeId", e);
-        }
-        return null;
-    }
-
+		if (!cacheDuration.isZero()) {
+			operationNodeIdsCache.put(browsePath, nodeIds);
+			cacheTimer.schedule(new RemoveEntryFromMapTimerTask<>(operationNodeIdsCache, browsePath), cacheDuration.toMillis());
+		}
+		return nodeIds;
+	}
 }

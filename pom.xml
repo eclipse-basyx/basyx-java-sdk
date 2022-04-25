@@ -5,15 +5,15 @@
 
 	<groupId>org.eclipse.basyx</groupId>
 	<artifactId>basyx.sdk</artifactId>
-	<version>1.0.2</version>
+	<version>1.1.0</version>
 	<name>BaSyx SDK</name>
 	<description>BaSyx Software Development Kit</description>
 	<url>https://www.eclipse.org/basyx/</url>
 	
 	<licenses>
 		<license>
-			<name>Eclipse Public License 2.0</name>
-			<url>https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt</url>
+			<name>MIT</name>
+			<url>https://opensource.org/licenses/MIT</url>
 		</license>
 	</licenses>
 	
@@ -33,11 +33,20 @@
 		<url>https://github.com/eclipse-basyx/basyx-java-sdk</url>
 	</scm>
 
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Eclipse BaSyx Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/eclipse-basyx/basyx-java-sdk</url>
+		</repository>
+	</distributionManagement>
+
 	<packaging>jar</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<spring-security-version>5.5.3</spring-security-version>
 	</properties>
 	
 	<repositories>
@@ -46,11 +55,6 @@
 	        <id>Eclipse Paho Repo</id>
 	        <url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
 	    </repository>
-	    <!-- Additional repository for MQTT Broker releases (Moquette Java Broker) -->
-	    <repository>
-    		<id>bintray</id>
-    		<url>https://jcenter.bintray.com</url>
-  		</repository>
 	</repositories>
 
 	<build>
@@ -168,12 +172,20 @@
 			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<!-- Mockito for mocking in JUnit tests -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>4.1.0</version>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Moquette MQTT broker for testing MQTT events -->
 		<dependency>
 			<groupId>io.moquette</groupId>
 			<artifactId>moquette-broker</artifactId>
-			<version>0.12.1</version>
+			<version>0.15</version>
 			<scope>test</scope>
 		    <exclusions>
 				<exclusion> 
@@ -187,14 +199,14 @@
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>sdk-client</artifactId>
-			<version>0.3.6</version>
+			<version>0.6.1</version>
 		</dependency>
 
 		<!-- Eclipse Milo (for OPC-UA server) -->
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>sdk-server</artifactId>
-			<version>0.3.6</version>
+			<version>0.6.1</version>
 		</dependency>
 
 		<!-- Java Servlet API (for HTTP provider) -->
@@ -241,9 +253,9 @@
 
 		<!-- Logger -->
 		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.2.3</version>
+    		<groupId>ch.qos.logback</groupId>
+    		<artifactId>logback-classic</artifactId>
+    		<version>1.2.3</version>
 		</dependency>
 		
 		<!-- Used by Logback to compile filter expressions from logback.xml -->
@@ -267,7 +279,63 @@
 			<version>2.8.5</version>
 		</dependency>
 		
+		<!-- Handles resources & files -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+		<dependency>
+		    <groupId>commons-fileupload</groupId>
+		    <artifactId>commons-fileupload</artifactId>
+		    <version>1.4</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpmime</artifactId>
+		    <version>4.5.13</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.13</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-resource-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-jose</artifactId>
+		</dependency>
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-bom</artifactId>
+				<version>${spring-security-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	
 	<profiles>
 		<profile>
@@ -318,7 +386,6 @@
 							<autoReleaseAfterClose>true</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
-					
 				</plugins>
 			</build>
 		</profile>

@@ -1,18 +1,37 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperationVariable;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
@@ -20,19 +39,20 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operat
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.submodel.restapi.operation.AsyncOperationHandler;
 import org.eclipse.basyx.submodel.restapi.operation.CallbackResponse;
+import org.eclipse.basyx.submodel.restapi.operation.DelegatedInvocationManager;
 import org.eclipse.basyx.submodel.restapi.operation.ExecutionState;
 import org.eclipse.basyx.submodel.restapi.operation.InvocationRequest;
 import org.eclipse.basyx.submodel.restapi.operation.InvocationResponse;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
-import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 
 /**
  * Handles operations according to AAS meta model.
  *
- * @author schnicke
+ * @author schnicke, espen, fischer
  *
  */
 public class OperationProvider implements IModelProvider {
@@ -41,9 +61,15 @@ public class OperationProvider implements IModelProvider {
 	public String operationId;
 
 	private IModelProvider modelProvider;
+	private DelegatedInvocationManager invocationHelper;
 
 	public OperationProvider(IModelProvider modelProvider) {
+		this(modelProvider, new DelegatedInvocationManager(new HTTPConnectorFactory()));
+	}
+
+	public OperationProvider(IModelProvider modelProvider, DelegatedInvocationManager invocationHelper) {
 		this.modelProvider = modelProvider;
+		this.invocationHelper = invocationHelper;
 		operationId = getIdShort(modelProvider.getValue(""));
 	}
 
@@ -52,13 +78,17 @@ public class OperationProvider implements IModelProvider {
 		String[] splitted = VABPathTools.splitPath(path);
 		if (path.isEmpty()) {
 			return modelProvider.getValue("");
-		} else if (splitted[0].equals(INVOCATION_LIST) && splitted.length == 2) {
+		} else if (isInvocationListQuery(splitted)) {
 			String requestId = splitted[1];
 			return AsyncOperationHandler.retrieveResult(requestId, operationId);
-			
+
 		} else {
 			throw new MalformedRequestException("Get of an Operation supports only empty or /invocationList/{requestId} paths");
 		}
+	}
+
+	private boolean isInvocationListQuery(String[] splitted) {
+		return splitted[0].equals(INVOCATION_LIST) && splitted.length == 2;
 	}
 
 	@Override
@@ -82,103 +112,156 @@ public class OperationProvider implements IModelProvider {
 		throw new MalformedRequestException("Delete not allowed at path '" + path + "'");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object invokeOperation(String path, Object... parameters) throws ProviderException {
-		// Fix path
-		boolean async = path.endsWith(ASYNC);
-		// remove the "invoke" from the end of the path
+		boolean isAsync = isAsyncInvokePath(path);
 		path = VABPathTools.stripInvokeFromPath(path);
-
-		// TODO: Only allow wrapped parameters with InvokationRequests
-		Object[] unwrappedParameters;
-		InvocationRequest request = getInvocationRequest(parameters);
-		String requestId;
-		if (request != null) {
-			unwrappedParameters = request.unwrapInputParameters();
-			requestId = request.getRequestId();
-		} else {
-			// => not necessary, if it is only allowed to use InvocationRequests
-			unwrappedParameters = unwrapDirectParameters(parameters);
-			// Generate random request id
-			requestId = UUID.randomUUID().toString();
-		}
 
 		// Invoke /invokable instead of an Operation property if existent
 		Object childElement = modelProvider.getValue(path);
-		if (Operation.isOperation(childElement)) {
-			path = VABPathTools.concatenatePaths(path, Operation.INVOKABLE);
+		if (!Operation.isOperation(childElement)) {
+			throw new MalformedRequestException("Only operations can be invoked.");
 		}
-		
-		// Handle async operations
-		if (async) {
-			// Async call? No return value, yet
-			Collection<IOperationVariable> outputVars = copyOutputVariables();
-			IModelProvider provider = new VABElementProxy(path, modelProvider);
+		Operation op = Operation.createAsFacade((Map<String, Object>) childElement);
 
-			// Only necessary as long as invocations without InvokationRequest is allowed
-			if (request != null) {
-				AsyncOperationHandler.invokeAsync(provider, operationId, request, outputVars);
+		if (DelegatedInvocationManager.isDelegatingOperation(op)) {
+			return invocationHelper.invokeDelegatedOperation(op, parameters);
+		} else {
+			InvocationRequest request = getInvocationRequest(parameters, op);
+
+			if (request != null && isAsync) {
+				return handleAsyncRequestInvokation(op, request);
+			} else if (request != null) {
+				return handleSyncRequestInvokation(op, request);
+			} else if (isAsync) {// => not necessary, if it is only allowed to use InvocationRequests
+				return handleAsyncParameterInvokation(op, parameters);
 			} else {
-				AsyncOperationHandler.invokeAsync(provider, operationId, requestId, unwrappedParameters, outputVars,
-						10000);
+				return handleSyncParameterInvokation(op, parameters);
 			}
-
-			// Request id has to be returned for caller to be able to retrieve result
-			// => Use callback response and leave url empty
-			return new CallbackResponse(requestId, "");
 		}
-
-		// Handle synchronous operations
-		// Forward direct operation call to modelprovider
-		Object directResult = modelProvider.invokeOperation(path, unwrappedParameters);
-		if (request == null) {
-			// Parameters have been passed directly? Directly return the result
-			return directResult;
-		}
-		return createInvocationResponseFromDirectResult(request, directResult);
 	}
 
-	/**
-	 * Directly creates an InvocationResponse from an operation result
-	 */
-	private Object createInvocationResponseFromDirectResult(InvocationRequest request, Object directResult) {
-		// Get SubmodelElement output template
-		Collection<IOperationVariable> outputs = copyOutputVariables();
-		if(outputs.size() > 0)
-		{
-			SubmodelElement outputElem = (SubmodelElement) outputs.iterator().next().getValue();
-			// Set result object
-			outputElem.setValue(directResult);
-		};
-		
-		// Create and return InvokationResponse
+	private CallbackResponse handleAsyncRequestInvokation(Operation operation, InvocationRequest request) {
+		Collection<IOperationVariable> outputVars = copyOutputVariables(operation);
+
+		AsyncOperationHandler.invokeAsync(operation, operationId, request, outputVars);
+
+		// Request id has to be returned for caller to be able to retrieve result
+		// => Use callback response and leave url empty
+		return new CallbackResponse(request.getRequestId(), "");
+	}
+
+	private InvocationResponse handleSyncRequestInvokation(Operation operation, InvocationRequest request) {
+		SubmodelElement[] inputVariables = getSumbodelElementsFromInvocationRequest(request);
+		SubmodelElement[] submodelElementsResult = operation.invoke(inputVariables);
+
+		return createInvocationResponseFromSubmodelElementsResult(request, submodelElementsResult);
+	}
+
+	private SubmodelElement[] getSumbodelElementsFromInvocationRequest(InvocationRequest request) {
+		Collection<IOperationVariable> inputVariables = request.getInputArguments();
+
+		Stream<IOperationVariable> inputVariablesStream = StreamSupport.stream(inputVariables.spliterator(), false);
+		Stream<SubmodelElement> submodelElementStream = inputVariablesStream.map(inputVar -> (SubmodelElement) inputVar.getValue());
+
+		return submodelElementStream.toArray(SubmodelElement[]::new);
+	}
+
+	private CallbackResponse handleAsyncParameterInvokation(Operation operation, Object[] parameters) {
+		Object[] unwrappedParameters = unwrapDirectParameters(parameters);
+		Collection<IOperationVariable> outputVars = copyOutputVariables(operation);
+
+		String requestId = UUID.randomUUID().toString();
+
+		AsyncOperationHandler.invokeAsync(operation, operationId, requestId, unwrappedParameters, outputVars, 10000);
+		// Request id has to be returned for caller to be able to retrieve result
+		// => Use callback response and leave url empty
+		return new CallbackResponse(requestId, "");
+	}
+
+	private Object handleSyncParameterInvokation(Operation operation, Object[] parameters) {
+		Object[] unwrappedParameters = unwrapDirectParameters(parameters);
+
+		Object directResult = operation.invokeSimple(unwrappedParameters);
+
+		return directResult;
+	}
+
+	private boolean isAsyncInvokePath(String path) {
+		return path.endsWith(ASYNC);
+	}
+
+	private InvocationResponse createInvocationResponseFromSubmodelElementsResult(InvocationRequest request, SubmodelElement[] submodelElementsResult) {
+		Collection<IOperationVariable> outputs;
+		if (submodelElementsResult == null) {
+			outputs = new ArrayList<>();
+		} else {
+			Stream<SubmodelElement> submodelElementsStream = Arrays.stream(submodelElementsResult);
+			Stream<OperationVariable> operationVariableStream = submodelElementsStream.map(submodelElement -> new OperationVariable(submodelElement));
+
+			outputs = operationVariableStream.collect(Collectors.toList());
+		}
 		return new InvocationResponse(request.getRequestId(), new ArrayList<>(), outputs, ExecutionState.COMPLETED);
 	}
 
 	/**
-	 * Extracts an invokation request from a generic parameter array
+	 * Extracts an invocation request from a generic parameter array Matches
+	 * parameters to order of Operation inputs by id Throws
+	 * MalformedArgumentException if a required parameter is missing
 	 * 
 	 * @param parameters
-	 * @return
+	 *            the input parameters
+	 * @param op
+	 *            the Operation providing the inputVariables to be matched to the
+	 *            actual input
+	 * @return the build InvocationRequest
 	 */
 	@SuppressWarnings("unchecked")
-	private InvocationRequest getInvocationRequest(Object[] parameters) {
-		if (parameters.length == 1 && parameters[0] instanceof Map<?, ?>) {
-			Map<String, Object> requestMap = (Map<String, Object>) parameters[0];
-			return InvocationRequest.createAsFacade(requestMap);
+	private InvocationRequest getInvocationRequest(Object[] parameters, Operation op) {
+		if (!isInvokationRequest(parameters)) {
+			return null;
 		}
-		return null;
+
+		Map<String, Object> requestMap = (Map<String, Object>) parameters[0];
+		InvocationRequest request = InvocationRequest.createAsFacade(requestMap);
+
+		// Sort parameters in request by InputVariables of operation
+		Collection<IOperationVariable> vars = op.getInputVariables();
+		Collection<IOperationVariable> ordered = createOrderedInputVariablesList(request, vars);
+
+		return new InvocationRequest(request.getRequestId(), request.getInOutArguments(), ordered, request.getTimeout());
 	}
-	
-	/**
-	 * Gets the (first) output parameter from the underlying object
-	 * 
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	private Collection<IOperationVariable> copyOutputVariables() {
-		Map<String, Object> operationMap = (Map<String, Object>) getValue("");
-		Operation op = Operation.createAsFacade(operationMap);
+
+	private Collection<IOperationVariable> createOrderedInputVariablesList(InvocationRequest request, Collection<IOperationVariable> vars) {
+		Collection<IOperationVariable> ordered = new ArrayList<>();
+
+		for (IOperationVariable var : vars) {
+			String id = var.getValue().getIdShort();
+			ordered.add(findOperationVariableById(id, request.getInputArguments()));
+		}
+
+		return ordered;
+	}
+
+	private IOperationVariable findOperationVariableById(String id, Collection<IOperationVariable> vars) {
+		for (IOperationVariable input : vars) {
+			if (input.getValue().getIdShort().equals(id)) {
+				return input;
+			}
+		}
+
+		throw new MalformedRequestException("Expected parameter " + id + " missing in request");
+	}
+
+	private boolean isInvokationRequest(Object[] parameters) {
+		if (parameters.length != 1) {
+			return false;
+		}
+		return InvocationRequest.isInvocationRequest(parameters[0]);
+	}
+
+	private Collection<IOperationVariable> copyOutputVariables(Operation op) {
 		Collection<IOperationVariable> outputs = op.getOutputVariables();
 		Collection<IOperationVariable> outCopy = new ArrayList<>();
 		outputs.stream().forEach(o -> outCopy.add(new OperationVariable(o.getValue().getLocalCopy())));
@@ -187,7 +270,7 @@ public class OperationProvider implements IModelProvider {
 
 	@SuppressWarnings("unchecked")
 	private String getIdShort(Object operation) {
-		if(Operation.isOperation(operation)) {
+		if (Operation.isOperation(operation)) {
 			return Operation.createAsFacade((Map<String, Object>) operation).getIdShort();
 		} else {
 			// Should never happen as SubmodelElementProvider.getElementProvider

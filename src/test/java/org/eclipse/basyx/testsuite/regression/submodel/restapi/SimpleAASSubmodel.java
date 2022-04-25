@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.restapi;
 
@@ -35,11 +50,11 @@ public class SimpleAASSubmodel extends Submodel {
 
 	public static final String INTPROPIDSHORT = "integerProperty";
 	public static final String OPERATIONSIMPLEIDSHORT = "simple";
-	public static final List<String> KEYWORDS = Collections.unmodifiableList(Arrays.asList(
-	        Property.MODELTYPE, Property.VALUETYPE, Property.VALUE, Property.VALUEID,
-	        Submodel.MODELTYPE, Submodel.SUBMODELELEMENT,
-	        Operation.MODELTYPE, Operation.INVOKE, Operation.OUT, Operation.IN, Operation.INOUT, Operation.INVOKABLE,
-	        SubmodelElementCollection.MODELTYPE, SubmodelElementCollection.ALLOWDUPLICATES, SubmodelElementCollection.ORDERED));
+
+	public static final String EXCEPTION_MESSAGE = "Exception description";
+
+	public static final List<String> KEYWORDS = Collections.unmodifiableList(Arrays.asList(Property.MODELTYPE, Property.VALUETYPE, Property.VALUE, Property.VALUEID, Submodel.MODELTYPE, Submodel.SUBMODELELEMENT, Operation.MODELTYPE,
+			Operation.INVOKE, Operation.OUT, Operation.IN, Operation.INOUT, Operation.INVOKABLE, SubmodelElementCollection.MODELTYPE, SubmodelElementCollection.ALLOWDUPLICATES, SubmodelElementCollection.ORDERED));
 
 	public SimpleAASSubmodel() {
 		this("SimpleAASSubmodel");
@@ -71,13 +86,12 @@ public class SimpleAASSubmodel extends Submodel {
 			return (int) v[0] - (int) v[1];
 		});
 		Property inProp1 = new Property("complexIn1", 0);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 		Property inProp2 = new Property("complexIn2", 0);
-		inProp2.setModelingKind(ModelingKind.TEMPLATE);
+		inProp2.setKind(ModelingKind.TEMPLATE);
 		Property outProp = new Property("complexOut", 0);
-		outProp.setModelingKind(ModelingKind.TEMPLATE);
-		complex.setInputVariables(Arrays.asList(new OperationVariable(inProp1),
-				new OperationVariable(inProp2)));
+		outProp.setKind(ModelingKind.TEMPLATE);
+		complex.setInputVariables(Arrays.asList(new OperationVariable(inProp1), new OperationVariable(inProp2)));
 		complex.setOutputVariables(Collections.singleton(new OperationVariable(outProp)));
 		complex.setIdShort("complex");
 		addSubmodelElement(complex);
@@ -98,7 +112,7 @@ public class SimpleAASSubmodel extends Submodel {
 
 		// - Contained operation that throws VAB exception
 		Operation exception2 = new Operation((Function<Object[], Object>) elId -> {
-			throw new ProviderException("Exception description");
+			throw new ProviderException(EXCEPTION_MESSAGE);
 		});
 		exception2.setIdShort("exception2");
 		addSubmodelElement(exception2);
@@ -107,7 +121,7 @@ public class SimpleAASSubmodel extends Submodel {
 			return 123;
 		});
 		opInCollection.setIdShort("operationId");
-		
+
 		SubmodelElementCollection containerProp = new SubmodelElementCollection();
 		containerProp.setIdShort("container");
 		containerProp.addSubmodelElement(intProp);
@@ -121,6 +135,6 @@ public class SimpleAASSubmodel extends Submodel {
 		// Create various submodel elements with keywords in their idShorts
 		SubmodelElementCollection containerKeywords = new SubmodelElementCollection();
 		containerKeywords.setIdShort("keywords");
-        addSubmodelElement(containerKeywords);
+		addSubmodelElement(containerKeywords);
 	}
 }

@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.aas.aggregator.proxy;
 
@@ -13,6 +28,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.eclipse.basyx.aas.aggregator.AASAggregatorAPIHelper;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
@@ -29,9 +45,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AASAggregatorProxy implements IAASAggregator {
+	protected IModelProvider provider;
 	private static Logger logger = LoggerFactory.getLogger(AASRegistryProxy.class);
-	private IModelProvider provider;
-	
+
 	/**
 	 * Constructor for an AAS aggregator proxy based on a HTTP connection
 	 * 
@@ -53,19 +69,19 @@ public class AASAggregatorProxy implements IAASAggregator {
 	}
 
 	/**
-	 * Adds the "/shells" suffix if it does not exist
+	 * Removes the "/shells" suffix if it exists
 	 * 
 	 * @param url
 	 * @return
 	 */
-	private static String harmonizeURL(String url) {
-		return VABPathTools.harmonizePathWithSuffix(url, AASAggregatorProvider.PREFIX);
+	protected static String harmonizeURL(String url) {
+		return VABPathTools.stripFromPath(url, AASAggregatorProvider.PREFIX);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<IAssetAdministrationShell> getAASList() {
-		Collection<Map<String, Object>> collection = (Collection<Map<String, Object>>) provider.getValue("");
+		Collection<Map<String, Object>> collection = (Collection<Map<String, Object>>) provider.getValue(AASAggregatorAPIHelper.getAggregatorPath());
 		logger.debug("Getting all AAS");
 		return collection.stream().map(m -> AssetAdministrationShell.createAsFacade(m)).map(aas -> getConnectedAAS(aas.getIdentification(), aas)).collect(Collectors.toList());
 	}
@@ -89,38 +105,32 @@ public class AASAggregatorProxy implements IAASAggregator {
 		return new ConnectedAssetAdministrationShell(proxy, localCopy);
 	}
 
-
 	private VABElementProxy getAASProxy(IIdentifier aasId) {
-		String path = VABPathTools.concatenatePaths(getEncodedIdentifier(aasId), "aas");
+		String path = AASAggregatorAPIHelper.getAASAccessPath(aasId);
 		VABElementProxy proxy = new VABElementProxy(path, provider);
 		return proxy;
 	}
 
 	@Override
 	public void createAAS(AssetAdministrationShell aas) {
-		provider.setValue(getEncodedIdentifier(aas.getIdentification()), aas);
+		provider.setValue(AASAggregatorAPIHelper.getAASEntryPath(aas.getIdentification()), aas);
 		logger.info("AAS with Id " + aas.getIdentification().getId() + " created");
 	}
 
 	@Override
 	public void updateAAS(AssetAdministrationShell aas) {
-		provider.setValue(getEncodedIdentifier(aas.getIdentification()), aas);
+		provider.setValue(AASAggregatorAPIHelper.getAASEntryPath(aas.getIdentification()), aas);
 		logger.info("AAS with Id " + aas.getIdentification().getId() + " updated");
 	}
 
 	@Override
 	public void deleteAAS(IIdentifier aasId) {
-		provider.deleteValue(getEncodedIdentifier(aasId));
+		provider.deleteValue(AASAggregatorAPIHelper.getAASEntryPath(aasId));
 		logger.info("AAS with Id " + aasId.getId() + " deleted");
 	}
 
 	@Override
 	public IModelProvider getAASProvider(IIdentifier aasId) {
-		return new VABElementProxy(getEncodedIdentifier(aasId), provider);
+		return new VABElementProxy(AASAggregatorAPIHelper.getAASEntryPath(aasId), provider);
 	}
-
-	private String getEncodedIdentifier(IIdentifier aasId) {
-		return VABPathTools.encodePathElement(aasId.getId());
-	}
-
 }
