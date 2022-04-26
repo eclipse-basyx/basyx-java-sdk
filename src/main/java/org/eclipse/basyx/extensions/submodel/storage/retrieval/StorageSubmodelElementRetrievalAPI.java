@@ -54,8 +54,13 @@ public class StorageSubmodelElementRetrievalAPI {
 	 *         their descending timestamp
 	 */
 	public boolean isSubmodelElementStored(String submodelId, String idShort) {
-		Query query = new StorageSubmodelElementQueryBuilder(entityManager).enableCount().setSubmodelId(submodelId).setElementIdShort(idShort).build();
-		return (long) query.getSingleResult() > 0;
+		if (entityManager.getProperties().get("eclipselink.target-database").equals("PostgreSQL")) {
+			Query query = new StorageSubmodelElementQueryBuilder(entityManager).enableCount().setSubmodelId(submodelId).setElementIdShort(idShort).build();
+			return (long) query.getSingleResult() > 0;
+		} else {
+			Query query = new StorageSubmodelElementQueryBuilder(entityManager).setSubmodelId(submodelId).setElementIdShort(idShort).build().setMaxResults(1);
+			return !query.getResultList().isEmpty();
+		}
 	}
 
 	/**

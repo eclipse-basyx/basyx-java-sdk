@@ -24,6 +24,9 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.relationship.Rel
 public class StorageSubmodelElementComponentHelper {
 	public static final String QUALIFIER = "storage";
 
+	private StorageSubmodelElementComponentHelper() {
+	}
+
 	public static String getModelTypeSpecial(ISubmodelElement submodelElement) {
 		Map<String, Object> elementMap = submodelElement.getLocalCopy();
 		if (Property.isProperty(elementMap)) {
