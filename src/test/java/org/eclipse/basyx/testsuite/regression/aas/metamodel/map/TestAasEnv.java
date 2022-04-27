@@ -58,6 +58,7 @@ public class TestAasEnv {
 	@Test
 	public void testAssetAdministrationShellGetSet() {
 		AasEnv env = new AasEnv();
+		assertEquals(0, env.getAssetAdministrationShells().size());
 		AssetAdministrationShell aas = new AssetAdministrationShell();
 		aas.setIdShort("TestAasEnv");
 		env.setAssetAdministrationShells(Arrays.asList(aas));
@@ -65,8 +66,19 @@ public class TestAasEnv {
 	}
 
 	@Test
+	public void testAddAssetAdministrationShell() {
+		AasEnv env = new AasEnv();
+		assertEquals(0, env.getAssetAdministrationShells().size());
+		AssetAdministrationShell aas = new AssetAdministrationShell();
+		aas.setIdShort("TestAasEnv");
+		env.addAssetAdministrationShell(aas);
+		assertEquals(aas, env.getAssetAdministrationShells().toArray()[0]);
+	}
+
+	@Test
 	public void testConceptDescriptionsGetSet() {
 		AasEnv env = new AasEnv();
+		assertEquals(0, env.getConceptDescriptions().size());
 		ConceptDescription conceptDescriptions = new ConceptDescription();
 		conceptDescriptions.setIdShort("TestAasEnv");
 		env.setConceptDescriptions(Arrays.asList(conceptDescriptions));
@@ -76,9 +88,19 @@ public class TestAasEnv {
 	@Test
 	public void testSubmodelsGetSet() {
 		AasEnv env = new AasEnv();
+		assertEquals(0, env.getSubmodels().size());
 		Submodel submodels = new Submodel();
 		submodels.setIdShort("TestAasEnv");
 		env.setSubmodels(Arrays.asList(submodels));
+		assertEquals(submodels, env.getSubmodels().toArray()[0]);
+	}
+
+	@Test
+	public void testAddSubmodels() {
+		AasEnv env = new AasEnv();
+		Submodel submodels = new Submodel();
+		submodels.setIdShort("TestAasEnv");
+		env.addSubmodel(submodels);
 		assertEquals(submodels, env.getSubmodels().toArray()[0]);
 	}
 
