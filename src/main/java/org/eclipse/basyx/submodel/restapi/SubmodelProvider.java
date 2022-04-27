@@ -139,33 +139,8 @@ public class SubmodelProvider implements IModelProvider {
 		if (sm instanceof Submodel) {
 			return SubmodelElementMapCollectionConverter.smToMap((Submodel) sm);
 		} else {
-			String[] splitted = VABPathTools.splitPath(path);
-			// Request for submodelElements
-			if (splitted.length == 1 && splitted[0].equals(VALUES)) {
-				// Request for values of all submodelElements
-				return submodelAPI.getSubmodel().getValues();
-			} else if (splitted.length == 1 && splitted[0].equals(MultiSubmodelElementProvider.ELEMENTS)) {
-				return submodelAPI.getSubmodelElements();
-			} else if (splitted.length >= 2 && isQualifier(splitted[0])) { // Request for element with specific idShort
-				// Remove initial "/submodelElements"
-				path = removeSMElementPrefix(path);
-
-				if (endsWithValue(splitted)) { // Request for the value of an property
-					String idShortPath = removeValueSuffix(path);
-					return submodelAPI.getSubmodelElementValue(idShortPath);
-				} else if (isInvocationListPath(splitted)) {
-					List<String> idShorts = getIdShorts(splitted);
-
-					// Remove invocationList/{requestId} from the idShorts
-					idShorts.remove(idShorts.size() - 1);
-					idShorts.remove(idShorts.size() - 1);
-					return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
-				} else {
-					return submodelAPI.getSubmodelElement(path);
-				}
-			}
+			return sm;
 		}
-		throw new MalformedRequestException("Unknown path " + path + " was requested");
 	}
 
 	private Object getSubmodelElement(String path) {
