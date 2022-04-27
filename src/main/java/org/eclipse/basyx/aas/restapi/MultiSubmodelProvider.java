@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  *
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * SPDX-License-Identifier: EPL-2.0
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.aas.restapi;
 
@@ -25,6 +40,7 @@ import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -291,9 +307,10 @@ public class MultiSubmodelProvider implements IModelProvider {
 		// Make a list and return all local submodels
 		Collection<ISubmodel> submodels = getSmAggregator().getSubmodelList();
 		addConnectedSubmodels(submodels);
-		return submodels;
+		return submodels.stream().map(sm -> SubmodelElementMapCollectionConverter.smToMap((Submodel) sm)).collect(Collectors.toList());
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addConnectedSubmodels(Collection<ISubmodel> submodels) {
 		if (registry != null) {
 			AASDescriptor desc = registry.lookupAAS(aasId);
@@ -326,8 +343,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 					}
 				}
 
-				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> getConnectorFactory().create(endpoint)).map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m))
-						.collect(Collectors.toList());
+				List<Submodel> remoteSms = missingEndpoints.stream().map(endpoint -> getConnectorFactory().create(endpoint)).map(p -> (Map<String, Object>) p.getValue("")).map(m -> Submodel.createAsFacade(m)).collect(Collectors.toList());
 				submodels.addAll(remoteSms);
 			}
 		}
@@ -386,7 +402,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 			}
 			Submodel sm = (Submodel) getSmAggregator().getSubmodelbyIdShort(smIdShort);
 			String smId = sm.getIdentification().getId();
-			aas_provider.deleteValue(SUBMODELS_PREFIX + "/" + smId);
+			aas_provider.deleteValue(SUBMODELS_PREFIX + "/" + VABPathTools.encodePathElement(smId));
 			getSmAggregator().deleteSubmodelByIdShort(smIdShort);
 		} else if (propertyPath.length() > 0) {
 			String smIdShort = pathElements[2];

@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- *
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
- *
- * SPDX-License-Identifier: EPL-2.0
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
@@ -124,8 +139,33 @@ public class SubmodelProvider implements IModelProvider {
 		if (sm instanceof Submodel) {
 			return SubmodelElementMapCollectionConverter.smToMap((Submodel) sm);
 		} else {
-			return sm;
+			String[] splitted = VABPathTools.splitPath(path);
+			// Request for submodelElements
+			if (splitted.length == 1 && splitted[0].equals(VALUES)) {
+				// Request for values of all submodelElements
+				return submodelAPI.getSubmodel().getValues();
+			} else if (splitted.length == 1 && splitted[0].equals(MultiSubmodelElementProvider.ELEMENTS)) {
+				return submodelAPI.getSubmodelElements();
+			} else if (splitted.length >= 2 && isQualifier(splitted[0])) { // Request for element with specific idShort
+				// Remove initial "/submodelElements"
+				path = removeSMElementPrefix(path);
+
+				if (endsWithValue(splitted)) { // Request for the value of an property
+					String idShortPath = removeValueSuffix(path);
+					return submodelAPI.getSubmodelElementValue(idShortPath);
+				} else if (isInvocationListPath(splitted)) {
+					List<String> idShorts = getIdShorts(splitted);
+
+					// Remove invocationList/{requestId} from the idShorts
+					idShorts.remove(idShorts.size() - 1);
+					idShorts.remove(idShorts.size() - 1);
+					return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
+				} else {
+					return submodelAPI.getSubmodelElement(path);
+				}
+			}
 		}
+		throw new MalformedRequestException("Unknown path " + path + " was requested");
 	}
 
 	private Object getSubmodelElement(String path) {
@@ -292,23 +332,39 @@ public class SubmodelProvider implements IModelProvider {
 
 	@Override
 	public Object invokeOperation(String path, Object... parameters) throws ProviderException {
-		path = removeSubmodelPrefix(path);
-		if (path.isEmpty()) {
+		String pathWithoutSubmodelPrefix = removeSubmodelPrefix(path);
+		if (pathWithoutSubmodelPrefix.isEmpty()) {
 			throw new MalformedRequestException("Given path must not be empty");
-		} else {
-			if (VABPathTools.isOperationInvokationPath(path)) {
-				if (path.endsWith(OperationProvider.ASYNC)) {
-					path = removeSMElementPrefix(path);
-					path = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC), "");
-					return submodelAPI.invokeAsync(path, parameters);
-				} else {
-					path = removeSMElementPrefix(path);
-					return submodelAPI.invokeOperation(path, parameters);
-				}
-			} else {
-				throw new MalformedRequestException("Given path '" + path + "' does not end in /" + Operation.INVOKE);
-			}
 		}
+
+		if (!VABPathTools.isOperationInvokationPath(pathWithoutSubmodelPrefix)) {
+			throw new MalformedRequestException("Given path '" + path + "' does not end in /" + Operation.INVOKE);
+		}
+
+		String pathWithoutSMElementPrefix = removeSMElementPrefix(pathWithoutSubmodelPrefix);
+
+		if (isAsyncInvokePath(pathWithoutSMElementPrefix)) {
+			return invokeAsync(pathWithoutSMElementPrefix, parameters);
+		} else {
+			return invokeSync(pathWithoutSMElementPrefix, parameters);
+		}
+
+	}
+
+	private Object invokeSync(String path, Object... parameters) {
+		String pathWithoutInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE), "");
+		String strippedPathWithoutInvoke = VABPathTools.stripSlashes(pathWithoutInvoke);
+		return submodelAPI.invokeOperation(strippedPathWithoutInvoke, parameters);
+	}
+
+	private Object invokeAsync(String path, Object... parameters) {
+		String pathWithoutAsyncInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC), "");
+		String strippedPathWithoutAsyncInvoke = VABPathTools.stripSlashes(pathWithoutAsyncInvoke);
+		return submodelAPI.invokeAsync(strippedPathWithoutAsyncInvoke, parameters);
+	}
+
+	private boolean isAsyncInvokePath(String path) {
+		return path.endsWith(OperationProvider.ASYNC);
 	}
 
 	public ISubmodelAPI getAPI() {

@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement;
 
@@ -51,8 +66,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests if the ConnectedSubmodelElementFactory
- * handles all ISubmodelElement Objects correctly.
+ * Tests if the ConnectedSubmodelElementFactory handles all ISubmodelElement
+ * Objects correctly.
  * 
  * @author conradi
  *
@@ -69,42 +84,41 @@ public class TestConnectedSubmodelElementFactory {
 	private static final String CAPABILITY_ID = "CapabilityId";
 	private static final String OPERATION_ID = "OperationId";
 	private static final String RELELEMENT_ID = "RelElementId";
-	private static final String SMELEMCOLLECTION_ID = "SmElemCollectionId";	
-	
+	private static final String SMELEMCOLLECTION_ID = "SmElemCollectionId";
+
 	VABElementProxy proxy;
-	
+
 	@Before
 	public void build() {
-		
+
 		Map<String, Object> dataElements = buildDataElements();
-		
+
 		Map<String, Object> operations = buildOperations();
-		
+
 		Map<String, Object> submodelElements = buildSubmodelElements();
-		
+
 		submodelElements.putAll(dataElements);
 		submodelElements.putAll(operations);
-		
-		
+
 		Map<String, Object> values = new LinkedHashMap<>();
-		
+
 		values.put(Submodel.SUBMODELELEMENT, submodelElements);
-		
-		proxy = new VABElementProxy("/" + SubmodelProvider.SUBMODEL,
-				new SubmodelProvider(new TypeDestroyingProvider(new VABLambdaProvider(values))));
+
+		proxy = new VABElementProxy("/" + SubmodelProvider.SUBMODEL, new SubmodelProvider(new TypeDestroyingProvider(new VABLambdaProvider(values))));
 	}
-	
+
 	/**
 	 * Builds a Map containing an Object of every IDataElement
+	 * 
 	 * @return A Map ID->IDataElement
 	 */
 	private Map<String, Object> buildDataElements() {
 		Map<String, Object> ret = new LinkedHashMap<>();
-		
+
 		Property property = new Property();
 		property.setIdShort(PROPERTY_ID);
 		ret.put(PROPERTY_ID, property);
-		
+
 		Blob blob = new Blob();
 		blob.setIdShort(BLOB_ID);
 		ret.put(BLOB_ID, blob);
@@ -130,6 +144,7 @@ public class TestConnectedSubmodelElementFactory {
 
 	/**
 	 * Builds a Map containing an Object of every IOperation
+	 * 
 	 * @return A Map ID->IOperation
 	 */
 	private Map<String, Object> buildOperations() {
@@ -138,17 +153,18 @@ public class TestConnectedSubmodelElementFactory {
 		Operation operation = new Operation();
 		operation.setIdShort(OPERATION_ID);
 		ret.put(OPERATION_ID, operation);
-		
+
 		return ret;
 	}
-	
+
 	/**
 	 * Builds a Map containing an Object of every IOperation
+	 * 
 	 * @return A Map ID->IOperation
 	 */
 	private Map<String, Object> buildSubmodelElements() {
 		Map<String, Object> ret = new LinkedHashMap<>();
-		
+
 		BasicEvent basicEvent = new BasicEvent();
 		basicEvent.setIdShort(BASICEVENT_ID);
 		ret.put(BASICEVENT_ID, basicEvent);
@@ -156,53 +172,47 @@ public class TestConnectedSubmodelElementFactory {
 		Capability capability = new Capability();
 		capability.setIdShort(CAPABILITY_ID);
 		ret.put(CAPABILITY_ID, capability);
-		
+
 		RelationshipElement relElement = new RelationshipElement();
 		relElement.setIdShort(RELELEMENT_ID);
 		ret.put(RELELEMENT_ID, relElement);
-		
+
 		SubmodelElementCollection smElemCollection = new SubmodelElementCollection();
 		smElemCollection.setIdShort(SMELEMCOLLECTION_ID);
 		ret.put(SMELEMCOLLECTION_ID, smElemCollection);
-		
+
 		return ret;
 	}
-	
+
 	/**
 	 * Tests if getProperties() returns the correct value
 	 */
 	@Test
 	public void testGetProperties() {
-		Map<String, IProperty> properties =
-				ConnectedSubmodelElementFactory.getProperties(
-						proxy, MultiSubmodelElementProvider.ELEMENTS, MultiSubmodelElementProvider.ELEMENTS);
-		
+		Map<String, IProperty> properties = ConnectedSubmodelElementFactory.getProperties(proxy, MultiSubmodelElementProvider.ELEMENTS, MultiSubmodelElementProvider.ELEMENTS);
+
 		assertEquals(1, properties.size());
 		assertTrue(properties.get(PROPERTY_ID) instanceof ConnectedProperty);
 	}
-	
+
 	/**
 	 * Tests if getOperations() returns the correct value
 	 */
 	@Test
 	public void testGetOperations() {
-		Map<String, IOperation> operations =
-				ConnectedSubmodelElementFactory.getOperations(
-						proxy, MultiSubmodelElementProvider.ELEMENTS, MultiSubmodelElementProvider.ELEMENTS);
-		
+		Map<String, IOperation> operations = ConnectedSubmodelElementFactory.getOperations(proxy, MultiSubmodelElementProvider.ELEMENTS, MultiSubmodelElementProvider.ELEMENTS);
+
 		assertEquals(1, operations.size());
 		assertTrue(operations.get(OPERATION_ID) instanceof ConnectedOperation);
 	}
-	
+
 	/**
 	 * Tests if getSubmodelElements() returns the correct value
 	 */
 	@Test
 	public void testGetSubmodelElements() {
-		Map<String, ISubmodelElement> submodelElements =
-				ConnectedSubmodelElementFactory.getConnectedSubmodelElements(
-						proxy, Submodel.SUBMODELELEMENT, Submodel.SUBMODELELEMENT);
-		
+		Map<String, ISubmodelElement> submodelElements = ConnectedSubmodelElementFactory.getConnectedSubmodelElements(proxy, Submodel.SUBMODELELEMENT, Submodel.SUBMODELELEMENT);
+
 		assertEquals(11, submodelElements.size());
 		assertTrue(submodelElements.get(PROPERTY_ID) instanceof ConnectedProperty);
 		assertTrue(submodelElements.get(BLOB_ID) instanceof ConnectedBlob);
@@ -216,5 +226,5 @@ public class TestConnectedSubmodelElementFactory {
 		assertTrue(submodelElements.get(RELELEMENT_ID) instanceof ConnectedRelationshipElement);
 		assertTrue(submodelElements.get(SMELEMCOLLECTION_ID) instanceof ConnectedSubmodelElementCollection);
 	}
-	
+
 }

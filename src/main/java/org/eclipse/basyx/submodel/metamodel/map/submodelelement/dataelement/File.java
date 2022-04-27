@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement;
 
@@ -23,8 +38,8 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
  * @author pschorn, schnicke
  *
  */
-public class File extends DataElement implements IFile{
-	public static final String MIMETYPE="mimeType";
+public class File extends DataElement implements IFile {
+	public static final String MIMETYPE = "mimeType";
 	public static final String MODELTYPE = "File";
 
 	/**
@@ -34,16 +49,17 @@ public class File extends DataElement implements IFile{
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param mimeType
 	 */
 	public File(String mimeType) {
 		this();
 		setMimeType(mimeType);
 	}
-	
+
 	/**
 	 * Creates a file data element. It has to have a mimeType <br>
 	 * An absolute path is used in the case that the file exists independently of
@@ -65,30 +81,31 @@ public class File extends DataElement implements IFile{
 		put(Property.VALUE, value);
 		put(MIMETYPE, mimeType);
 	}
-	
+
 	/**
 	 * Creates a File object from a map
 	 * 
-	 * @param obj a File object as raw map
+	 * @param obj
+	 *            a File object as raw map
 	 * @return a File object, that behaves like a facade for the given map
 	 */
 	public static File createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(File.class, obj);
 		}
-		
+
 		File facade = new File();
 		facade.setMap(obj);
 		return facade;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
@@ -100,22 +117,21 @@ public class File extends DataElement implements IFile{
 	 */
 	public static boolean isFile(Map<String, Object> map) {
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained (fallback)
+		// Either model type is set or the element type specific attributes are
+		// contained (fallback)
 		// Note: Fallback is ambiguous - Blob has exactly the same attributes
 		// => would need value parsing in order to be able to differentiate
-		return MODELTYPE.equals(modelType)
-				|| (modelType == null && (map.containsKey(Property.VALUE) && map.containsKey(MIMETYPE)));
+		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(Property.VALUE) && map.containsKey(MIMETYPE)));
 	}
 
 	@Override
 	public void setValue(Object value) {
-		if(value instanceof String) {
+		if (value instanceof String) {
 			setValue((String) value);
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Given Object is not a String");
 		}
-		
+
 	}
 
 	@Override
@@ -131,7 +147,7 @@ public class File extends DataElement implements IFile{
 	public String getMimeType() {
 		return (String) get(File.MIMETYPE);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.FILE;

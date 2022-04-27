@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement;
 
@@ -45,7 +60,6 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	public static final String ALLOWDUPLICATES = "allowDuplicates";
 	public static final String MODELTYPE = "SubmodelElementCollection";
 
-
 	/**
 	 * Constructor
 	 */
@@ -58,9 +72,10 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 		put(ORDERED, true);
 		put(ALLOWDUPLICATES, true);
 	}
-	
+
 	/**
 	 * Constructor with only mandatory attribute
+	 * 
 	 * @param idShort
 	 */
 	public SubmodelElementCollection(String idShort) {
@@ -89,48 +104,51 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	public SubmodelElementCollection(Collection<ISubmodelElement> value, boolean ordered, boolean allowDuplicates) {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
-		
+
 		// Put attributes
 		put(Property.VALUE, SubmodelElementMapCollectionConverter.convertCollectionToIDMap(value));
 		put(ORDERED, ordered);
 		put(ALLOWDUPLICATES, allowDuplicates);
 	}
-	
+
 	/**
 	 * Creates a SubmodelElementCollection object from a map
 	 * 
-	 * @param obj a SubmodelElementCollection object as raw map
-	 * @return a SubmodelElementCollection object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a SubmodelElementCollection object as raw map
+	 * @return a SubmodelElementCollection object, that behaves like a facade for
+	 *         the given map
 	 */
 	public static SubmodelElementCollection createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(SubmodelElementCollection.class, obj);
 		}
-		
+
 		return SubmodelElementMapCollectionConverter.mapToSmECollection(obj);
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> obj) {
 		return SubmodelElement.isValid(obj);
 	}
-	
+
 	/**
-	 * Returns true if the given submodel element map is recognized as a submodel element collection
+	 * Returns true if the given submodel element map is recognized as a submodel
+	 * element collection
 	 */
 	public static boolean isSubmodelElementCollection(Map<String, Object> map) {
 		String modelType = ModelType.createAsFacade(map).getName();
-		// Either model type is set or the element type specific attributes are contained (fallback)
-		return MODELTYPE.equals(modelType) || (modelType == null
-				&& (map.containsKey(Property.VALUE) && map.containsKey(ORDERED) && map.containsKey(ALLOWDUPLICATES)));
+		// Either model type is set or the element type specific attributes are
+		// contained (fallback)
+		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(Property.VALUE) && map.containsKey(ORDERED) && map.containsKey(ALLOWDUPLICATES)));
 	}
 
 	/**
@@ -220,8 +238,8 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	public Map<String, IProperty> getProperties() {
 		Map<String, IProperty> ret = new LinkedHashMap<>();
 		Map<String, ISubmodelElement> smElems = (Map<String, ISubmodelElement>) get(Property.VALUE);
-		
-		for(ISubmodelElement smElement: smElems.values()) {
+
+		for (ISubmodelElement smElement : smElems.values()) {
 			if (Property.isProperty((Map<String, Object>) smElement)) {
 				ret.put(smElement.getIdShort(), (IProperty) smElement);
 			}
@@ -235,8 +253,8 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 	public Map<String, IOperation> getOperations() {
 		Map<String, IOperation> ret = new LinkedHashMap<>();
 		Map<String, ISubmodelElement> smElems = (Map<String, ISubmodelElement>) get(Property.VALUE);
-		
-		for(ISubmodelElement smElement: smElems.values()) {
+
+		for (ISubmodelElement smElement : smElems.values()) {
 			if (Operation.isOperation(smElement)) {
 				ret.put(smElement.getIdShort(), (IOperation) smElement);
 			}
@@ -247,6 +265,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 
 	/**
 	 * Retrieves an element from element collection
+	 * 
 	 * @param id
 	 * @return retrieved element
 	 */
@@ -259,6 +278,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 
 	/**
 	 * Deletes an element from element collection
+	 * 
 	 * @param id
 	 */
 	@SuppressWarnings("unchecked")
@@ -267,7 +287,7 @@ public class SubmodelElementCollection extends SubmodelElement implements ISubmo
 		Map<String, ISubmodelElement> submodelElems = (Map<String, ISubmodelElement>) get(Property.VALUE);
 		ElementContainerHelper.removeElementById(submodelElems, id);
 	}
-	
+
 	@Override
 	protected KeyElements getKeyElement() {
 		return KeyElements.SUBMODELELEMENTCOLLECTION;

@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.vab.coder.json;
 
@@ -59,7 +74,7 @@ public class TestJson {
 		JsonPrimitive primitive = new JsonPrimitive(12.3);
 		assertEquals(primitive.toString(), tools.serialize(12.3));
 	}
-	
+
 	/**
 	 * Tests if an integer is correctly (de-)serialized
 	 */
@@ -115,11 +130,10 @@ public class TestJson {
 		expected.put("b", "123");
 
 		assertEquals(expected, tools.deserialize(str));
-		
-		
+
 		JsonObject aObj = new JsonObject();
 		aObj.add("x", new JsonPrimitive(123));
-		
+
 		JsonObject expectedObj = new JsonObject();
 		expectedObj.add("a", aObj);
 		expectedObj.add("b", new JsonPrimitive("123"));
@@ -137,10 +151,10 @@ public class TestJson {
 
 		Map<String, Object> listMap = new LinkedHashMap<>();
 		listMap.put("a", Arrays.asList(1, 2, 3));
-		
+
 		Map<String, Object> setMap = new LinkedHashMap<>();
 		setMap.put("a", Sets.newHashSet(1, 2, 3));
-		
+
 		Map<String, Object> deserialized = (Map<String, Object>) tools.deserialize(str);
 		Collection<Object> coll = (Collection<Object>) deserialized.get("a");
 		assertEquals(1, deserialized.size());
@@ -148,7 +162,7 @@ public class TestJson {
 		assertTrue(coll.contains(1));
 		assertTrue(coll.contains(2));
 		assertTrue(coll.contains(3));
-		
+
 		deserialized = (Map<String, Object>) tools.deserialize(tools.serialize(listMap));
 		coll = (Collection<Object>) deserialized.get("a");
 		assertEquals(1, deserialized.size());
@@ -156,7 +170,7 @@ public class TestJson {
 		assertTrue(coll.contains(1));
 		assertTrue(coll.contains(2));
 		assertTrue(coll.contains(3));
-		
+
 		deserialized = (Map<String, Object>) tools.deserialize(tools.serialize(setMap));
 		coll = (Collection<Object>) deserialized.get("a");
 		assertEquals(1, deserialized.size());
@@ -226,17 +240,16 @@ public class TestJson {
 
 		Set<Map<String, Object>> unorderedSet = new HashSet<>();
 		unorderedSet.add(Collections.singletonMap("a", 4));
-		
-		Collection<Map<String, Object>> deserialized = (Collection<Map<String, Object>>) tools
-				.deserialize(strComplexUnordered);
+
+		Collection<Map<String, Object>> deserialized = (Collection<Map<String, Object>>) tools.deserialize(strComplexUnordered);
 		assertEquals(1, deserialized.size());
 		assertEquals(4, deserialized.iterator().next().get("a"));
-		
+
 		JsonArray unorderedArray = new JsonArray();
 		JsonObject o1 = new JsonObject();
 		o1.add("a", new JsonPrimitive(4));
 		unorderedArray.add(o1);
-		
+
 		assertEquals(unorderedArray.toString(), tools.serialize(unorderedSet));
 
 		Set<Integer> primitiveSet = new HashSet<>();
@@ -282,8 +295,7 @@ public class TestJson {
 		};
 
 		assertEquals(functionObject.toString(), tools.serialize(testConsumer));
-		
-		
+
 		String operation = GSONTools.BASYXINVOCABLE;
 		assertEquals(operation, tools.deserialize(functionObject.toString()));
 
@@ -318,10 +330,10 @@ public class TestJson {
 
 		assertEquals(testFunction.apply(5), deserialized.apply(5));
 	}
-	
+
 	/**
-	 * Tests if null values and empty arrays are getting removed successfully
-	 * with remove flag on
+	 * Tests if null values and empty arrays are getting removed successfully with
+	 * remove flag on
 	 * 
 	 */
 	@Test
@@ -334,10 +346,10 @@ public class TestJson {
 		expected.put("b", "123");
 		expected.put("c", null);
 		expected.put("d", new ArrayList<String>());
-		
+
 		JsonObject aObj = new JsonObject();
 		aObj.add("x", new JsonPrimitive(123));
-		
+
 		JsonObject expectedObj = new JsonObject();
 		expectedObj.add("a", aObj);
 		expectedObj.add("b", new JsonPrimitive("123"));

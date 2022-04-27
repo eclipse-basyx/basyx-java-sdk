@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.https;
 
@@ -23,9 +38,8 @@ import javax.ws.rs.client.ClientBuilder;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 
 /**
- * A Factory class containing methods creating an HTTPS client
- * with no verification and validation for self signed SSL
- * and other helper methods
+ * A Factory class containing methods creating an HTTPS client with no
+ * verification and validation for self signed SSL and other helper methods
  * 
  * @author haque
  *
@@ -40,9 +54,9 @@ public class JerseyHttpsClientFactory {
 	 * @throws KeyManagementException
 	 * @throws NoSuchAlgorithmException
 	 */
-    public static Client getJerseyHTTPSClientWithoutValidation() throws KeyManagementException, NoSuchAlgorithmException {
+	public static Client getJerseyHTTPSClientWithoutValidation() throws KeyManagementException, NoSuchAlgorithmException {
 		return getJerseyHTTPSClient(new NonVerifyingHostnameVerifier());
-    }
+	}
 
 	/**
 	 * Returns an HTTPS client
@@ -55,30 +69,28 @@ public class JerseyHttpsClientFactory {
 		return getJerseyHTTPSClient(new DefaultHostnameVerifier());
 	}
 
-
 	private static Client getJerseyHTTPSClient(HostnameVerifier hostnameVerifier) throws KeyManagementException, NoSuchAlgorithmException {
 		SSLContext sslContext = getSslContext(PROTOCOL);
 		return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(hostnameVerifier).build();
 	}
 
-    /**
-     * Retrieves an SSL Context
-     * with given protocol
-     * @param protocol
-     * @return
-     * @throws NoSuchAlgorithmException
-     * @throws KeyManagementException
-     */
-    private static SSLContext getSslContext(String protocol) throws NoSuchAlgorithmException,
-                                                     KeyManagementException {
-        SSLContext sslContext = SSLContext.getInstance(protocol);
+	/**
+	 * Retrieves an SSL Context with given protocol
+	 * 
+	 * @param protocol
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
+	 */
+	private static SSLContext getSslContext(String protocol) throws NoSuchAlgorithmException, KeyManagementException {
+		SSLContext sslContext = SSLContext.getInstance(protocol);
 
-        KeyManager[] keyManagers = null;
-        TrustManager[] trustManager = {new DefaultTrustManager()};
-        SecureRandom secureRandom = new SecureRandom();
+		KeyManager[] keyManagers = null;
+		TrustManager[] trustManager = { new DefaultTrustManager() };
+		SecureRandom secureRandom = new SecureRandom();
 
-        sslContext.init(keyManagers, trustManager, secureRandom);
+		sslContext.init(keyManagers, trustManager, secureRandom);
 
-        return sslContext;
-    }
+		return sslContext;
+	}
 }

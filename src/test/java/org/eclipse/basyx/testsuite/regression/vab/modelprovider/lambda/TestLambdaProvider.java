@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.vab.modelprovider.lambda;
 
@@ -44,14 +59,13 @@ public class TestLambdaProvider extends TestProvider {
 	@SuppressWarnings("unchecked")
 	private static LinkedHashMap<String, Object> mapElement = (LinkedHashMap<String, Object>) structureElement.get("map");
 
-	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(),
-			new ConnectorFactory() {
+	protected VABConnectionManager connManager = new VABConnectionManager(new TestsuiteDirectory(), new ConnectorFactory() {
 
-				@Override
-				protected IModelProvider createProvider(String addr) {
-					return buildProvider();
-				}
-			});
+		@Override
+		protected IModelProvider createProvider(String addr) {
+			return buildProvider();
+		}
+	});
 
 	@Override
 	protected VABConnectionManager getConnectionManager() {
@@ -62,11 +76,13 @@ public class TestLambdaProvider extends TestProvider {
 	private static IModelProvider buildProvider() {
 		// Create primitive lambda elements
 		LinkedHashMap<String, Object> primitives = (LinkedHashMap<String, Object>) rootElement.get("primitives");
-		// Has no hidden setter (==null), so value should be completely replaced when set
+		// Has no hidden setter (==null), so value should be completely replaced when
+		// set
 		primitives.put("integer", VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
 			return 123;
 		}, null));
-		// Has a hidden setter, so write access to this element changes "doubleElement", which is returned by the getter
+		// Has a hidden setter, so write access to this element changes "doubleElement",
+		// which is returned by the getter
 		primitives.put("double", VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
 			return doubleElement;
 		}, (Consumer<Object>) (newObject) -> {
@@ -99,7 +115,8 @@ public class TestLambdaProvider extends TestProvider {
 			rootElement.remove(key);
 		});
 
-		// Create first accessor for structure/map element (-> test nested lambda properties)
+		// Create first accessor for structure/map element (-> test nested lambda
+		// properties)
 		Map<String, Object> structureAccessor = VABLambdaProviderHelper.createMap((Supplier<?>) () -> {
 			return structureElement;
 		}, (Consumer<Map<String, Object>>) (map) -> {
@@ -112,7 +129,8 @@ public class TestLambdaProvider extends TestProvider {
 		});
 		// Replace actual structure property with lambda accessor
 		rootElement.put("structure", structureAccessor);
-		// Create second accessor for structure/map element (-> nested lambda properties)
+		// Create second accessor for structure/map element (-> nested lambda
+		// properties)
 		Map<String, Object> mapAccessor = VABLambdaProviderHelper.createMap((Supplier<?>) () -> {
 			return mapElement;
 		}, (Consumer<Map<String, Object>>) (map) -> {

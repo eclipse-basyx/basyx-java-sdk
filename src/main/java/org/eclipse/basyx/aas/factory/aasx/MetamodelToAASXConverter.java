@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.aas.factory.aasx;
 
@@ -43,64 +58,63 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * This class can be used to generate an .aasx file from
- * Metamodel Objects and the Files referred to in the Submodels
+ * This class can be used to generate an .aasx file from Metamodel Objects and
+ * the Files referred to in the Submodels
  * 
  * @author conradi
  *
  */
 public class MetamodelToAASXConverter {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(MetamodelToAASXConverter.class);
-	
+
 	private static final String MIME_PLAINTXT = "text/plain";
 	private static final String MIME_XML = "application/xml";
 
 	private static final String ORIGIN_RELTYPE = "http://www.admin-shell.io/aasx/relationships/aasx-origin";
 	private static final String ORIGIN_PATH = "/aasx/aasx-origin";
 	private static final String ORIGIN_CONTENT = "Intentionally empty.";
-	
-	
+
 	private static final String AASSPEC_RELTYPE = "http://www.admin-shell.io/aasx/relationships/aas-spec";
 	private static final String XML_PATH = "/aasx/xml/content.xml";
-	
-	
+
 	private static final String AASSUPPL_RELTYPE = "http://www.admin-shell.io/aasx/relationships/aas-suppl";
-	
-	
-	
+
 	/**
 	 * Generates the .aasx file and writes it to the given OutputStream
 	 * 
-	 * @param aasList                the AASs to be saved in the .aasx
-	 * @param assetList              the Assets to be saved in the .aasx
-	 * @param conceptDescriptionList the ConceptDescriptions to be saved in the
-	 *                               .aasx
-	 * @param submodelList           the Submodels to be saved in the .aasx
-	 * @param files                  the files referred to in the Submodels
-	 * @param os                     the OutputStream the resulting .aasx is written
-	 *                               to
+	 * @param aasList
+	 *            the AASs to be saved in the .aasx
+	 * @param assetList
+	 *            the Assets to be saved in the .aasx
+	 * @param conceptDescriptionList
+	 *            the ConceptDescriptions to be saved in the .aasx
+	 * @param submodelList
+	 *            the Submodels to be saved in the .aasx
+	 * @param files
+	 *            the files referred to in the Submodels
+	 * @param os
+	 *            the OutputStream the resulting .aasx is written to
 	 * @throws IOException
 	 * @throws TransformerException
 	 * @throws ParserConfigurationException
 	 */
-	public static void buildAASX(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, 
-			Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Collection<InMemoryFile> files, OutputStream os) throws IOException, TransformerException, ParserConfigurationException {
-		
+	public static void buildAASX(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Collection<InMemoryFile> files,
+			OutputStream os) throws IOException, TransformerException, ParserConfigurationException {
+
 		prepareFilePaths(submodelList, files);
-		
+
 		OPCPackage rootPackage = OPCPackage.create(os);
-		
+
 		PackagePart origin = createAASXPart(rootPackage, rootPackage, ORIGIN_PATH, MIME_PLAINTXT, ORIGIN_RELTYPE, ORIGIN_CONTENT.getBytes());
-		
+
 		String xml = convertToXML(aasList, assetList, conceptDescriptionList, submodelList);
-		
+
 		PackagePart xmlPart = createAASXPart(rootPackage, origin, XML_PATH, MIME_XML, AASSPEC_RELTYPE, xml.getBytes());
-		
+
 		storeFilesInAASX(submodelList, files, rootPackage, xmlPart);
-		
+
 		saveAASX(os, rootPackage);
 	}
 
@@ -109,30 +123,32 @@ public class MetamodelToAASXConverter {
 	 * 
 	 * @param aasEnv
 	 * @param files
-	 * @param os     the OutputStream the resulting .aasx is written to
+	 * @param os
+	 *            the OutputStream the resulting .aasx is written to
 	 * @throws IOException
 	 * @throws TransformerException
 	 * @throws ParserConfigurationException
 	 */
-	public static void buildAASX(AasEnv aasEnv, Collection<InMemoryFile> files, OutputStream os)
-			throws IOException, TransformerException, ParserConfigurationException {
-		buildAASX(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(),
-				aasEnv.getSubmodels(), files, os);
+	public static void buildAASX(AasEnv aasEnv, Collection<InMemoryFile> files, OutputStream os) throws IOException, TransformerException, ParserConfigurationException {
+		buildAASX(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(), aasEnv.getSubmodels(), files, os);
 	}
 
 	/**
 	 * Stores the files from the Submodels in the .aasx file
 	 * 
-	 * @param submodelList the Submodels
-	 * @param files the content of the files
-	 * @param rootPackage the OPCPackage
-	 * @param xmlPart the Part the files should be related to
+	 * @param submodelList
+	 *            the Submodels
+	 * @param files
+	 *            the content of the files
+	 * @param rootPackage
+	 *            the OPCPackage
+	 * @param xmlPart
+	 *            the Part the files should be related to
 	 */
-	private static void storeFilesInAASX(Collection<ISubmodel> submodelList, Collection<InMemoryFile> files,
-			OPCPackage rootPackage, PackagePart xmlPart) {
-		
-		for(ISubmodel sm: submodelList) {
-			for(File file: findFileElements(sm.getSubmodelElements().values())) {
+	private static void storeFilesInAASX(Collection<ISubmodel> submodelList, Collection<InMemoryFile> files, OPCPackage rootPackage, PackagePart xmlPart) {
+
+		for (ISubmodel sm : submodelList) {
+			for (File file : findFileElements(sm.getSubmodelElements().values())) {
 				String filePath = file.getValue();
 				storeFileInAASX(files, rootPackage, xmlPart, file, filePath);
 			}
@@ -148,8 +164,7 @@ public class MetamodelToAASXConverter {
 	 * @param file
 	 * @param filePath
 	 */
-	private static void storeFileInAASX(Collection<InMemoryFile> files, OPCPackage rootPackage, PackagePart xmlPart,
-			File file, String filePath) {
+	private static void storeFileInAASX(Collection<InMemoryFile> files, OPCPackage rootPackage, PackagePart xmlPart, File file, String filePath) {
 		try {
 			InMemoryFile content = findFileByPath(files, filePath);
 			logger.trace("Writing file '" + filePath + "' to .aasx.");
@@ -159,22 +174,24 @@ public class MetamodelToAASXConverter {
 			logger.warn("Could not add File '" + filePath + "'. It was not contained in given InMemoryFiles.");
 		}
 	}
-	
+
 	/**
 	 * Saves the OPCPackage to the given OutputStream
 	 * 
-	 * @param os the Stream to be saved to
-	 * @param rootPackage the Package to be saved
+	 * @param os
+	 *            the Stream to be saved to
+	 * @param rootPackage
+	 *            the Package to be saved
 	 * @throws IOException
 	 */
 	private static void saveAASX(OutputStream os, OPCPackage rootPackage) throws IOException {
 		rootPackage.flush();
 		rootPackage.save(os);
 	}
-	
+
 	/**
-	 * Generates a UUID. Every element of the 
-	 * .aasx needs a unique Id according to the specification
+	 * Generates a UUID. Every element of the .aasx needs a unique Id according to
+	 * the specification
 	 * 
 	 * @return UUID
 	 */
@@ -185,23 +202,31 @@ public class MetamodelToAASXConverter {
 		// old AASX Package Explorer versions expect a leading R
 		return "Rid_" + UUID.randomUUID().toString();
 	}
-	
+
 	/**
 	 * Creates a Part (a file in the .aasx) of the .aasx and adds it to the Package
 	 * 
-	 * @param root the OPCPackage
-	 * @param relateTo the Part of the OPC the relationship of the new Part should be added to
-	 * @param path the path inside the .aasx where the new Part should be created
-	 * @param mimeType the mime-type of the file
-	 * @param relType the type of the Relationship
-	 * @param content the data the new part should contain
-	 * @return the created PackagePart; Returned in case it is needed late as a Part to relate to
+	 * @param root
+	 *            the OPCPackage
+	 * @param relateTo
+	 *            the Part of the OPC the relationship of the new Part should be
+	 *            added to
+	 * @param path
+	 *            the path inside the .aasx where the new Part should be created
+	 * @param mimeType
+	 *            the mime-type of the file
+	 * @param relType
+	 *            the type of the Relationship
+	 * @param content
+	 *            the data the new part should contain
+	 * @return the created PackagePart; Returned in case it is needed late as a Part
+	 *         to relate to
 	 */
 	private static PackagePart createAASXPart(OPCPackage root, RelationshipSource relateTo, String path, String mimeType, String relType, byte[] content) {
-		if(mimeType == null || mimeType.equals("")) {
+		if (mimeType == null || mimeType.equals("")) {
 			throw new RuntimeException("Could not create AASX Part '" + path + "'. No MIME_TYPE specified.");
 		}
-		
+
 		PackagePartName partName = null;
 		MemoryPackagePart part = null;
 		try {
@@ -210,124 +235,132 @@ public class MetamodelToAASXConverter {
 		} catch (InvalidFormatException e) {
 			// This occurs if the given MIME-Type is not valid according to RFC2046
 			throw new RuntimeException("Could not create AASX Part '" + path + "'", e);
-		}		
+		}
 		writeDataToPart(part, content);
 		root.registerPartAndContentType(part);
 		// set TargetMode to EXTERNAL to force absolute file paths
-    // this step is necessary for compatibility reasons with AASXPackageExplorer
+		// this step is necessary for compatibility reasons with AASXPackageExplorer
 		relateTo.addRelationship(partName, TargetMode.EXTERNAL, relType, createUniqueID());
 		return part;
 	}
-	
+
 	/**
 	 * Writes the content of a byte[] to a Part
 	 * 
-	 * @param part the Part to be written to
-	 * @param content the content to be written to the part
+	 * @param part
+	 *            the Part to be written to
+	 * @param content
+	 *            the content to be written to the part
 	 */
 	private static void writeDataToPart(PackagePart part, byte[] content) {
-		try(OutputStream ostream = part.getOutputStream();) {
+		try (OutputStream ostream = part.getOutputStream();) {
 			ostream.write(content);
 			ostream.flush();
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to write content to AASX Part '" + part.getPartName().getName() + "'", e);
 		}
 	}
-	
+
 	/**
 	 * Uses the MetamodelToXMLConverter to generate the XML
 	 */
-	private static String convertToXML(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, 
-			Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList) throws TransformerException, ParserConfigurationException {
-		
+	private static String convertToXML(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList)
+			throws TransformerException, ParserConfigurationException {
+
 		StringWriter writer = new StringWriter();
 		MetamodelToXMLConverter.convertToXML(aasList, assetList, conceptDescriptionList, submodelList, new StreamResult(writer));
-		
+
 		return writer.toString();
 	}
-	
+
 	/**
-	 * Gets the File elements from a collection of elements
-	 * Also recursively searches in SubmodelElementCollections
+	 * Gets the File elements from a collection of elements Also recursively
+	 * searches in SubmodelElementCollections
 	 * 
-	 * @param elements the Elements to be searched for File elements
+	 * @param elements
+	 *            the Elements to be searched for File elements
 	 * @return the found Files
 	 */
-	private static Collection<File> findFileElements(Collection<ISubmodelElement> elements) {		
+	private static Collection<File> findFileElements(Collection<ISubmodelElement> elements) {
 		Collection<File> files = new ArrayList<>();
-		
-		for(ISubmodelElement element: elements) {
-			if(element instanceof File) {
+
+		for (ISubmodelElement element : elements) {
+			if (element instanceof File) {
 				files.add((File) element);
-			} else if(element instanceof SubmodelElementCollection) {
+			} else if (element instanceof SubmodelElementCollection) {
 				// Recursive call to deal with SubmodelElementCollections
 				files.addAll(findFileElements(((SubmodelElementCollection) element).getSubmodelElements().values()));
 			}
 		}
-		
+
 		return files;
 	}
-	
+
 	/**
 	 * Find files which has a valid in memory file path
+	 * 
 	 * @param elements
 	 * @param inMemoryFiles
 	 * @return
 	 */
 	private static Collection<File> findInMemoryFileElements(Collection<ISubmodelElement> elements, Collection<InMemoryFile> inMemoryFiles) {
 		Collection<File> files = findFileElements(elements);
-		return files.stream().filter(f -> 
-			isInMemoryFile(inMemoryFiles, f.getValue()))
-				.collect(Collectors.toList());
+		return files.stream().filter(f -> isInMemoryFile(inMemoryFiles, f.getValue())).collect(Collectors.toList());
 	}
-	
+
 	/**
-	 * Replaces the path in File Elements which has an in memory file with the result of preparePath
+	 * Replaces the path in File Elements which has an in memory file with the
+	 * result of preparePath
 	 * 
-	 * @param submodels the Submodels
+	 * @param submodels
+	 *            the Submodels
 	 */
 	private static void prepareFilePaths(Collection<ISubmodel> submodels, Collection<InMemoryFile> inMemoryFiles) {
-		submodels.stream()
-			.forEach(sm -> findInMemoryFileElements(sm.getSubmodelElements().values(), inMemoryFiles).stream().forEach(f -> f.setValue(preparePath(f.getValue()))));
+		submodels.stream().forEach(sm -> findInMemoryFileElements(sm.getSubmodelElements().values(), inMemoryFiles).stream().forEach(f -> f.setValue(preparePath(f.getValue()))));
 	}
-	
+
 	/**
 	 * Removes the serverpart from a path. VABPathTools.getPathFromURL() also
 	 * ensures that it starts with a slash.
 	 * 
-	 * @param path the path to be prepared
+	 * @param path
+	 *            the path to be prepared
 	 * @return the prepared path
 	 */
 	private static String preparePath(String path) {
 		return VABPathTools.getPathFromURL(path);
 	}
-	
+
 	/**
 	 * Finds an InMemoryFile by its path
 	 * 
-	 * @param files the InMemoryFiles
-	 * @param path the path of the wanted file
+	 * @param files
+	 *            the InMemoryFiles
+	 * @param path
+	 *            the path of the wanted file
 	 * @return the InMemoryFile if it was found; else null
 	 */
 	private static InMemoryFile findFileByPath(Collection<InMemoryFile> files, String path) {
-		for(InMemoryFile file: files) {
-			if(preparePath(file.getPath()).equals(path)) {
+		for (InMemoryFile file : files) {
+			if (preparePath(file.getPath()).equals(path)) {
 				return file;
 			}
 		}
 		throw new ResourceNotFoundException("The wanted file '" + path + "' was not found in the given files.");
 	}
-	
+
 	/**
 	 * Finds an InMemoryFile by its path
 	 * 
-	 * @param files the InMemoryFiles
-	 * @param path the path of the wanted file
+	 * @param files
+	 *            the InMemoryFiles
+	 * @param path
+	 *            the path of the wanted file
 	 * @return the InMemoryFile if it was found; else null
 	 */
 	private static boolean isInMemoryFile(Collection<InMemoryFile> files, String path) {
-		for(InMemoryFile file: files) {
-			if(VABPathTools.stripSlashes(file.getPath()).equals(VABPathTools.stripSlashes(path))) {
+		for (InMemoryFile file : files) {
+			if (VABPathTools.stripSlashes(file.getPath()).equals(VABPathTools.stripSlashes(path))) {
 				return true;
 			}
 		}

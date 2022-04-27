@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.aas.registration.restapi;
 
@@ -54,14 +69,13 @@ public class AASRegistryModelProvider implements IModelProvider {
 	 * 
 	 * @param path
 	 * @return
-	 * @throws MalformedRequestException if path does not start with PREFIX
-	 *                                   "api/v1/registry"
+	 * @throws MalformedRequestException
+	 *             if path does not start with PREFIX "api/v1/registry"
 	 */
 	private String stripPrefix(String path) throws MalformedRequestException {
 		path = VABPathTools.stripSlashes(path);
 		if (!path.startsWith(PREFIX)) {
-			throw new MalformedRequestException(
-					"Path " + path + " not recognized as registry path. Has to start with " + PREFIX);
+			throw new MalformedRequestException("Path " + path + " not recognized as registry path. Has to start with " + PREFIX);
 		}
 		path = path.replaceFirst(PREFIX, "");
 		path = VABPathTools.stripSlashes(path);
@@ -72,9 +86,11 @@ public class AASRegistryModelProvider implements IModelProvider {
 	 * Splits a path and checks, that first element is not "submodels" and that the
 	 * second one, if exists, is "submodels"
 	 * 
-	 * @param path the path to be splitted
+	 * @param path
+	 *            the path to be splitted
 	 * @return Array of path elements
-	 * @throws MalformedRequestException if path is not valid
+	 * @throws MalformedRequestException
+	 *             if path is not valid
 	 */
 	private String[] splitPath(String path) throws MalformedRequestException {
 
@@ -116,14 +132,15 @@ public class AASRegistryModelProvider implements IModelProvider {
 	/**
 	 * Checks if a given Object is a Map and checks if it has the correct modelType
 	 * 
-	 * @param expectedModelType the modelType the Object is expected to have
-	 * @param value             the Object to be checked and casted
+	 * @param expectedModelType
+	 *            the modelType the Object is expected to have
+	 * @param value
+	 *            the Object to be checked and casted
 	 * @return the object casted to a Map
 	 * @throws MalformedRequestException
 	 */
 	@SuppressWarnings("unchecked")
-	private Map<String, Object> checkModelType(String expectedModelType, Object value)
-			throws MalformedRequestException {
+	private Map<String, Object> checkModelType(String expectedModelType, Object value) throws MalformedRequestException {
 		// check if the given value is a Map
 		if (!(value instanceof Map)) {
 			throw new MalformedRequestException("Given newValue is not a Map");
@@ -144,10 +161,12 @@ public class AASRegistryModelProvider implements IModelProvider {
 	}
 
 	/**
-	 * Makes sure, that given Object is an AASDescriptor by checking its ModelType<br>
+	 * Makes sure, that given Object is an AASDescriptor by checking its
+	 * ModelType<br>
 	 * Creates a new AASDescriptor with the content of the given Map
 	 * 
-	 * @param value the AAS Map object
+	 * @param value
+	 *            the AAS Map object
 	 * @return an AAS
 	 * @throws MalformedRequestException
 	 */
@@ -158,10 +177,12 @@ public class AASRegistryModelProvider implements IModelProvider {
 	}
 
 	/**
-	 * Makes sure, that given Object is an SubmodelDescriptor by checking its ModelType<br>
+	 * Makes sure, that given Object is an SubmodelDescriptor by checking its
+	 * ModelType<br>
 	 * Creates a new SubmodelDescriptor with the content of the given Map
 	 * 
-	 * @param value the AAS Map object
+	 * @param value
+	 *            the AAS Map object
 	 * @return an AAS
 	 * @throws MalformedRequestException
 	 */
@@ -196,8 +217,7 @@ public class AASRegistryModelProvider implements IModelProvider {
 		SubmodelDescriptor smDescriptor = getSmDescriptorFromAAS(createAASModelUrn(splitted), splitted[2]);
 
 		if (smDescriptor == null) {
-			throw new ResourceNotFoundException(
-					"Specified SubmodelId '" + splitted[2] + "' does not exist in AAS '" + splitted[0] + "'.");
+			throw new ResourceNotFoundException("Specified SubmodelId '" + splitted[2] + "' does not exist in AAS '" + splitted[0] + "'.");
 		}
 
 		return smDescriptor;
@@ -262,8 +282,7 @@ public class AASRegistryModelProvider implements IModelProvider {
 		if (descId.equals(urlId)) {
 			registry.register(desc);
 		} else {
-			throw new MalformedRequestException(
-					"The Identifier " + descId + " in the descriptor does not match the URL with id " + urlId);
+			throw new MalformedRequestException("The Identifier " + descId + " in the descriptor does not match the URL with id " + urlId);
 		}
 	}
 
@@ -302,8 +321,7 @@ public class AASRegistryModelProvider implements IModelProvider {
 
 		SubmodelDescriptor smDesc = getSmDescriptorFromAAS(aasId, smId);
 		if (smDesc == null) {
-			throw new ResourceNotFoundException(
-					"A Submodel with id '" + smId + "' does not exist in aas '" + aasId + "'.");
+			throw new ResourceNotFoundException("A Submodel with id '" + smId + "' does not exist in aas '" + aasId + "'.");
 		}
 
 		registry.delete(aasId, smDesc.getIdentifier());
@@ -337,9 +355,11 @@ public class AASRegistryModelProvider implements IModelProvider {
 	 * Gets all SubmodelDescriptor objects form an aas. Throws RuntimeException if
 	 * aas does not exist.
 	 * 
-	 * @param id id of the aas
+	 * @param id
+	 *            id of the aas
 	 * @return Set of contained SubmodelDescriptor objects
-	 * @throws ResourceNotFoundException if the AAS does not exist
+	 * @throws ResourceNotFoundException
+	 *             if the AAS does not exist
 	 */
 	private Collection<SubmodelDescriptor> getSmDescriptorsFromAAS(IIdentifier id) throws ResourceNotFoundException {
 		AASDescriptor aasDescriptor = registry.lookupAAS(id);
@@ -355,10 +375,13 @@ public class AASRegistryModelProvider implements IModelProvider {
 	 * Gets a specific SubmodelDescriptor form an aas. Throws RuntimeException if
 	 * aas does not exist.
 	 * 
-	 * @param aasId id of the aas
-	 * @param smId  id of the submodel
+	 * @param aasId
+	 *            id of the aas
+	 * @param smId
+	 *            id of the submodel
 	 * @return the SubmodelDescriptor with the given id
-	 * @throws ResourceNotFoundException if aasId does not exist
+	 * @throws ResourceNotFoundException
+	 *             if aasId does not exist
 	 */
 	private SubmodelDescriptor getSmDescriptorFromAAS(IIdentifier aasId, String smId) throws ResourceNotFoundException {
 		AASDescriptor aasDescriptor = registry.lookupAAS(aasId);
@@ -370,8 +393,7 @@ public class AASRegistryModelProvider implements IModelProvider {
 		SubmodelDescriptor smDescriptor = aasDescriptor.getSubmodelDescriptorFromIdentifierId(smId);
 
 		if (smDescriptor == null) {
-			throw new ResourceNotFoundException(
-					"Specified SMId '" + smId + "' for AAS " + aasId.getId() + " does not exist.");
+			throw new ResourceNotFoundException("Specified SMId '" + smId + "' for AAS " + aasId.getId() + " does not exist.");
 		}
 
 		return smDescriptor;

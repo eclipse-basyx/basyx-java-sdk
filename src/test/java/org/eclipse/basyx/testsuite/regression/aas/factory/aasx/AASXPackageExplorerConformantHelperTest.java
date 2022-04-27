@@ -1,11 +1,26 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 *
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 
@@ -44,8 +59,7 @@ public class AASXPackageExplorerConformantHelperTest {
 		Key submodelKey = createDummySubmodelKey();
 		AssetAdministrationShell testAAS = createAASWithSingleSubmodelReferenceContainingAASKey(submodelKey);
 
-		AasEnv env = AASXPackageExplorerConformantHelper.adapt(Collections.singleton(testAAS), Collections.emptyList(),
-				Collections.emptyList(), Collections.emptyList());
+		AasEnv env = AASXPackageExplorerConformantHelper.adapt(Collections.singleton(testAAS), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 
 		assertAASKeyRemovedFromSubmodelReferences(submodelKey, env);
 	}
@@ -84,30 +98,27 @@ public class AASXPackageExplorerConformantHelperTest {
 	}
 
 	private AssetAdministrationShell createDummyAAS(final String aasId) {
-		return new AssetAdministrationShell("testAASIdShort", new CustomId(aasId),
-				new Asset("testAssetIdShort", new CustomId("testAsset"), AssetKind.INSTANCE));
+		return new AssetAdministrationShell("testAASIdShort", new CustomId(aasId), new Asset("testAssetIdShort", new CustomId("testAsset"), AssetKind.INSTANCE));
 	}
 
 	private Key createDummyAASKey(IAssetAdministrationShell aas) {
 		IIdentifier identifier = aas.getIdentification();
 		return new Key(KeyElements.ASSETADMINISTRATIONSHELL, false, identifier.getId(), identifier.getIdType());
 	}
-	
+
 	@Test
 	public void checkForCrashWhenAdaptIsCalledMultipleTimes() throws IOException, TransformerException, ParserConfigurationException {
 		AssetAdministrationShell assetAdministrationShell = createDummyAAS("testAssetAdministrationShell");
-        
-		Reference submodelReference1 =  createSubmodelReference(assetAdministrationShell, createDummySubmodelKey());
+
+		Reference submodelReference1 = createSubmodelReference(assetAdministrationShell, createDummySubmodelKey());
 		Reference submodelReference2 = createSubmodelReference(assetAdministrationShell, createDummySubmodelKey());
 
 		assetAdministrationShell.addSubmodelReference(submodelReference1);
 		assetAdministrationShell.addSubmodelReference(submodelReference2);
 
 		Collection<IAssetAdministrationShell> listOfAssetAdministrationShell = Arrays.asList(assetAdministrationShell);
-        
-        AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(),
-    				Collections.emptyList(), Collections.emptyList());
-        AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(),
-				Collections.emptyList(), Collections.emptyList());
+
+		AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+		AASXPackageExplorerConformantHelper.adapt(listOfAssetAdministrationShell, Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
 	}
 }

@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.aas.metamodel.map;
 
@@ -77,9 +92,10 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 	public AssetAdministrationShell() {
 		this(null, null, new Asset(), new HashSet<Submodel>(), new HashSet<IConceptDictionary>(), new HashSet<IView>());
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param identification
 	 * @param asset
@@ -90,11 +106,10 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 		setIdShort(idShort);
 	}
 
-	public AssetAdministrationShell(Reference derivedFrom, Security security, Asset asset,
-			Collection<Submodel> submodels, Collection<IConceptDictionary> dictionaries, Collection<IView> views) {
+	public AssetAdministrationShell(Reference derivedFrom, Security security, Asset asset, Collection<Submodel> submodels, Collection<IConceptDictionary> dictionaries, Collection<IView> views) {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
-		
+
 		// Add qualifiers
 		putAll(new Identifiable());
 		putAll(new HasDataSpecification());
@@ -123,30 +138,28 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(AssetAdministrationShell.class, map);
 		}
-					
+
 		if (!map.containsKey(SUBMODELS)) {
 			map.put(SUBMODELS, new ArrayList<>());
 		}
 
 		AssetAdministrationShell ret = new AssetAdministrationShell();
 		ret.setMap(map);
-		return ret;	
+		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> map) {
-		return Identifiable.isValid(map) &&
-				map.containsKey(AssetAdministrationShell.ASSET) &&
-				Asset.isValid((Map<String, Object>)map.get(AssetAdministrationShell.ASSET));
+		return Identifiable.isValid(map) && map.containsKey(AssetAdministrationShell.ASSET) && Asset.isValid((Map<String, Object>) map.get(AssetAdministrationShell.ASSET));
 	}
 
 	@Override
@@ -260,8 +273,7 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<IConceptDictionary> getConceptDictionary() {
-		Collection<Map<String, Object>> coll = (Collection<Map<String, Object>>) get(
-				AssetAdministrationShell.CONCEPTDICTIONARY);
+		Collection<Map<String, Object>> coll = (Collection<Map<String, Object>>) get(AssetAdministrationShell.CONCEPTDICTIONARY);
 		return coll.stream().map(ConceptDictionary::createAsFacade).collect(Collectors.toSet());
 	}
 
@@ -309,10 +321,10 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 		addSubmodelReferences(submodel);
 	}
 
-
 	@Override
 	public void removeSubmodel(IIdentifier id) {
-		// Currently not implemented since future of Submodel References in AAS is not clear
+		// Currently not implemented since future of Submodel References in AAS is not
+		// clear
 		throw new FeatureNotImplementedException();
 	}
 
@@ -353,18 +365,20 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 	private KeyElements getKeyElement() {
 		return KeyElements.ASSETADMINISTRATIONSHELL;
 	}
-	
+
 	/**
-	 * Set reference of current AAS to each Submodel of a collection
-	 * as a parent reference
+	 * Set reference of current AAS to each Submodel of a collection as a parent
+	 * reference
 	 * 
-	 * @param submodels collection of Submodels
+	 * @param submodels
+	 *            collection of Submodels
 	 */
 	private void setSubmodelParent(Collection<Submodel> submodels) {
 		for (Submodel submodel : submodels) {
 			submodel.setParent(getReference());
 		}
 	}
+
 	@Override
 	public IReference getReference() {
 		return Identifiable.createAsFacade(this, getKeyElement()).getReference();

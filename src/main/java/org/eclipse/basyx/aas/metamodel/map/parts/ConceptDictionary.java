@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.aas.metamodel.map.parts;
 
@@ -45,9 +60,10 @@ public class ConceptDictionary extends VABModelMap<Object> implements IConceptDi
 		put(CONCEPTDESCRIPTION, new ArrayList<IReference>());
 		put(CONCEPTDESCRIPTIONS, new ArrayList<IConceptDescription>());
 	}
-	
+
 	/**
 	 * Constructor accepting only mandatory attribute
+	 * 
 	 * @param idShort
 	 */
 	public ConceptDictionary(String idShort) {
@@ -73,19 +89,19 @@ public class ConceptDictionary extends VABModelMap<Object> implements IConceptDi
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(ConceptDictionary.class, map);
 		}
-		
+
 		ConceptDictionary ret = new ConceptDictionary();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	public static boolean isValid(Map<String, Object> map) {
@@ -143,16 +159,17 @@ public class ConceptDictionary extends VABModelMap<Object> implements IConceptDi
 	}
 
 	/**
-	 * Sets the concept descriptions for this concept dictionary. The method sets local references to the added
-	 * concept descriptions, too.
+	 * Sets the concept descriptions for this concept dictionary. The method sets
+	 * local references to the added concept descriptions, too.
 	 * 
-	 * @param descriptions All the concept descriptions the concept dictionary shall have
+	 * @param descriptions
+	 *            All the concept descriptions the concept dictionary shall have
 	 */
 	public void setConceptDescriptions(Collection<IConceptDescription> descriptions) {
 		put(CONCEPTDESCRIPTIONS, descriptions);
 		// Also add the references to these concept descriptions
 		Collection<IReference> refs = new ArrayList<>();
-		for ( IConceptDescription desc : descriptions ) {
+		for (IConceptDescription desc : descriptions) {
 			refs.add(createConceptDescriptionRef(desc));
 		}
 		setConceptDescriptionReferences(refs);
@@ -161,7 +178,8 @@ public class ConceptDictionary extends VABModelMap<Object> implements IConceptDi
 	/**
 	 * Adds a new concept description together with a local reference to it.
 	 * 
-	 * @param description The new concept description
+	 * @param description
+	 *            The new concept description
 	 */
 	@SuppressWarnings("unchecked")
 	public void addConceptDescription(IConceptDescription description) {
@@ -181,7 +199,7 @@ public class ConceptDictionary extends VABModelMap<Object> implements IConceptDi
 	public Collection<IConceptDescription> getConceptDescriptions() {
 		return ((Collection<IConceptDescription>) get(CONCEPTDESCRIPTIONS));
 	}
-	
+
 	private KeyElements getKeyElement() {
 		return KeyElements.CONCEPTDICTIONARY;
 	}

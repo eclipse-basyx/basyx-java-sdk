@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
@@ -30,7 +45,7 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 public class SubmodelElementProvider implements IModelProvider {
 
 	private IModelProvider proxy;
-	
+
 	// Flag used to indicate whether a specialized ElementProvider is used
 	private boolean specializedProvider = false;
 
@@ -42,19 +57,22 @@ public class SubmodelElementProvider implements IModelProvider {
 	}
 
 	/**
-	 * Used to find out if an Element needs a specialized Provider (Collection, Operation)
+	 * Used to find out if an Element needs a specialized Provider (Collection,
+	 * Operation)
 	 * 
-	 * @param proxy the Provider given from above
-	 * @return either the unchanged Provider or the Provider nested into a specialized ElementProvider
+	 * @param proxy
+	 *            the Provider given from above
+	 * @return either the unchanged Provider or the Provider nested into a
+	 *         specialized ElementProvider
 	 */
 	@SuppressWarnings("unchecked")
 	public static IModelProvider getElementProvider(IModelProvider proxy) {
 		Map<String, Object> elementMap = (Map<String, Object>) proxy.getValue("");
-		if(Operation.isOperation(elementMap)) {
+		if (Operation.isOperation(elementMap)) {
 			return new OperationProvider(proxy);
 		} else if (SubmodelElementCollection.isSubmodelElementCollection(elementMap)) {
 			return new SubmodelElementCollectionProvider(proxy);
-		} else if(Property.isProperty(elementMap)) {
+		} else if (Property.isProperty(elementMap)) {
 			return new PropertyProvider(proxy);
 		} else {
 			return proxy;
@@ -69,15 +87,15 @@ public class SubmodelElementProvider implements IModelProvider {
 		if (path.equals(MultiSubmodelElementProvider.VALUE)) {
 			// Handle "/value" path
 			// return value
-			
-			if(specializedProvider) {
+
+			if (specializedProvider) {
 				return proxy.getValue(path);
 			}
-			
+
 			Map<String, Object> elementMap = (Map<String, Object>) proxy.getValue("");
-			
+
 			ISubmodelElement element = SubmodelElementFacadeFactory.createSubmodelElement(elementMap);
-			
+
 			try {
 				return element.getValue();
 			} catch (UnsupportedOperationException e) {
@@ -94,25 +112,26 @@ public class SubmodelElementProvider implements IModelProvider {
 	@Override
 	public void setValue(String path, Object newValue) throws ProviderException {
 		path = VABPathTools.stripSlashes(path);
-		
-		if(!path.endsWith(MultiSubmodelElementProvider.VALUE)) {
+
+		if (!path.endsWith(MultiSubmodelElementProvider.VALUE)) {
 			throw new MalformedRequestException("The given path '" + path + "' does not end in /value.");
 		}
-		
+
 		if (!specializedProvider && path.equals(MultiSubmodelElementProvider.VALUE)) {
-			// Path is only "value" and no specialized Provider has to be used -> update the Element of this Provider
+			// Path is only "value" and no specialized Provider has to be used -> update the
+			// Element of this Provider
 			Map<String, Object> elementMap = (Map<String, Object>) proxy.getValue("");
-			
+
 			ISubmodelElement element = SubmodelElementFacadeFactory.createSubmodelElement(elementMap);
-			
+
 			try {
-				element.setValue(newValue);				
+				element.setValue(newValue);
 			} catch (IllegalArgumentException e) {
 				throw new MalformedRequestException("The given Value was not valid for Element '" + path + "'");
 			}
-			
+
 			proxy.setValue("", element);
-			
+
 		} else {
 			// Path has more Elements -> pass it to Provider below
 			proxy.setValue(path, newValue);
@@ -121,7 +140,7 @@ public class SubmodelElementProvider implements IModelProvider {
 
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
-		if(!specializedProvider) {
+		if (!specializedProvider) {
 			// In a regular SubmodelElement nothing can be created
 			throw new MalformedRequestException("Creating a new Element is not allowed at '" + path + "'");
 		} else {
@@ -132,7 +151,7 @@ public class SubmodelElementProvider implements IModelProvider {
 
 	@Override
 	public void deleteValue(String path) throws ProviderException {
-		if(!specializedProvider) {
+		if (!specializedProvider) {
 			// From a regular SubmodelElement nothing can be deleted
 			throw new MalformedRequestException("Deleting the Element '" + path + "' is not allowed");
 		} else {
@@ -148,7 +167,7 @@ public class SubmodelElementProvider implements IModelProvider {
 
 	@Override
 	public Object invokeOperation(String path, Object... parameter) throws ProviderException {
-		return proxy.invokeOperation(path, parameter);		
+		return proxy.invokeOperation(path, parameter);
 	}
 
 }

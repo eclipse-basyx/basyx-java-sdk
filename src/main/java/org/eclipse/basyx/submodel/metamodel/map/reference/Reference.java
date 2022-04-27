@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.reference;
 
@@ -70,7 +85,8 @@ public class Reference extends VABModelMap<Object> implements IReference {
 
 	/**
 	 * 
-	 * @param keys Unique reference in its name space.
+	 * @param keys
+	 *            Unique reference in its name space.
 	 */
 	public Reference(List<IKey> keys) {
 		setKeys(keys);
@@ -96,25 +112,25 @@ public class Reference extends VABModelMap<Object> implements IReference {
 		if (map == null) {
 			return null;
 		}
-		
+
 		if (!isValid(map)) {
 			throw new MetamodelConstructionException(Reference.class, map);
 		}
-		
+
 		Reference ret = new Reference();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for the metamodel
-	 * exist in a map
+	 * Check whether all mandatory elements for the metamodel exist in a map
+	 * 
 	 * @return true/false
 	 */
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> map) {
 		if (map != null && map.containsKey(Reference.KEY)) {
-			Collection<Map<String, Object>> keysCollection = (Collection<Map<String, Object>>)map.get(Reference.KEY);
+			Collection<Map<String, Object>> keysCollection = (Collection<Map<String, Object>>) map.get(Reference.KEY);
 			for (Map<String, Object> key : keysCollection) {
 				if (!Key.isValid(key)) {
 					return false;
@@ -124,10 +140,10 @@ public class Reference extends VABModelMap<Object> implements IReference {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Creates a Reference object from a map
-	 * without checking mandatory attributes present
+	 * Creates a Reference object from a map without checking mandatory attributes
+	 * present
 	 * 
 	 * @param map
 	 *            a Reference object as raw map
@@ -137,24 +153,24 @@ public class Reference extends VABModelMap<Object> implements IReference {
 		if (map == null) {
 			return null;
 		}
-		
+
 		Reference ret = new Reference();
 		ret.setMap(map);
 		return ret;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static boolean isReference(Object value) {
-		if(!(value instanceof Map<?, ?>)) {
+		if (!(value instanceof Map<?, ?>)) {
 			return false;
 		}
-		
+
 		Map<String, Object> map = (Map<String, Object>) value;
-		
-		if(!(map.get(KEY) instanceof Collection<?>)) {
+
+		if (!(map.get(KEY) instanceof Collection<?>)) {
 			return false;
 		}
-		
+
 		return ((Collection<?>) map.get(KEY)).stream().allMatch(Key::isKey);
 	}
 

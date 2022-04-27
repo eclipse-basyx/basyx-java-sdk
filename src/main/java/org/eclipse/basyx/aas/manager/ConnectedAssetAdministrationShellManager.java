@@ -56,8 +56,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	 * @param directory
 	 * @param provider
 	 */
-	public ConnectedAssetAdministrationShellManager(IAASRegistry directory,
-			IConnectorFactory provider) {
+	public ConnectedAssetAdministrationShellManager(IAASRegistry directory, IConnectorFactory provider) {
 		this.aasDirectory = directory;
 		this.connectorFactory = provider;
 		this.proxyFactory = new ModelProxyFactory(provider);
@@ -108,8 +107,8 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	}
 
 	/**
-	 * Retrieves all AASs registered.
-	 * This can take a long time if many AASs are present! Use with caution!
+	 * Retrieves all AASs registered. This can take a long time if many AASs are
+	 * present! Use with caution!
 	 * 
 	 * @return all AASs registered
 	 */
@@ -142,17 +141,17 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	@Override
 	public void createSubmodel(IIdentifier aasId, Submodel submodel) {
-		
+
 		// Push the SM to the server using the ConnectedAAS
 
 		retrieveAAS(aasId).addSubmodel(submodel);
-		
+
 		// Lookup AAS descriptor
 		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(aasId);
 
 		// Get aas endpoint
 		String addr = aasDescriptor.getFirstEndpoint();
-		
+
 		// Register the SM
 		String smEndpoint = VABPathTools.concatenatePaths(addr, AssetAdministrationShell.SUBMODELS, submodel.getIdShort(), SubmodelProvider.SUBMODEL);
 		aasDirectory.register(aasId, new SubmodelDescriptor(submodel, smEndpoint));

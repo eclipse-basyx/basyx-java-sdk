@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.types.digitalnameplate.submodelelementcollections.address;
 
@@ -34,8 +49,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests createAsFacade and isValid of {@link Address} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link Address} for their correctness
  * 
  * @author haque
  *
@@ -59,10 +73,9 @@ public class TestAddress {
 	public static Fax fax2 = new Fax("Fax02", new LangString("DE", "123456711"));
 	public static Email email1 = new Email("Email01", new Property(Email.EMAILADDRESSID, "abc@test.com"));
 	public static Email email2 = new Email("Email02", new Property(Email.EMAILADDRESSID, "abcd@test.com"));
-	
 
 	private Map<String, Object> addressMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void buildFax() {
 		department.setValue(new LangStrings(new LangString("DE", "Dept Test")));
@@ -76,7 +89,7 @@ public class TestAddress {
 		vatNumber.setValue(new LangStrings(new LangString("DE", "123456")));
 		addressRemarks.setValue(new LangStrings(new LangString("DE", "test remarks")));
 		additLink.setValue("test.com");
-		
+
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(department);
 		elements.add(street);
@@ -95,12 +108,12 @@ public class TestAddress {
 		elements.add(fax2);
 		elements.add(email1);
 		elements.add(email2);
-		
+
 		addressMap.put(Referable.IDSHORT, IDSHORT);
 		addressMap.put(HasSemantics.SEMANTICID, Address.SEMANTICID);
 		addressMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		Address addressFromMap = Address.createAsFacade(addressMap);
@@ -130,41 +143,41 @@ public class TestAddress {
 		assertEquals(faxes, addressFromMap.getFax());
 		assertEquals(emails, addressFromMap.getEmail());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		addressMap.remove(Referable.IDSHORT);
 		Address.createAsFacade(addressMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionStreet() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)addressMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) addressMap.get(Property.VALUE);
 		elements.remove(street);
 		Address.createAsFacade(addressMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionZipCode() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)addressMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) addressMap.get(Property.VALUE);
 		elements.remove(zipCode);
 		Address.createAsFacade(addressMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionCityTown() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)addressMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) addressMap.get(Property.VALUE);
 		elements.remove(cityTown);
 		Address.createAsFacade(addressMap);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Test (expected = ResourceNotFoundException.class)
+	@Test(expected = ResourceNotFoundException.class)
 	public void testCreateAsFacadeExceptionNationalCode() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)addressMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) addressMap.get(Property.VALUE);
 		elements.remove(nationalCode);
 		Address.createAsFacade(addressMap);
 	}

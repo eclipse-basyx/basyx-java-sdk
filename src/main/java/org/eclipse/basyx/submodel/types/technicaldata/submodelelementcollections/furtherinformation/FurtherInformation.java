@@ -1,12 +1,27 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 * 
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 * 
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 
 package org.eclipse.basyx.submodel.types.technicaldata.submodelelementcollections.furtherinformation;
@@ -34,8 +49,9 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.types.helper.SubmodelElementRetrievalHelper;
 
 /**
- * FurtherInformation as described in the Submodel Template AAS Technical Data Document
- * It contains Further information on the product, the validity of the information provided and this data record.
+ * FurtherInformation as described in the Submodel Template AAS Technical Data
+ * Document It contains Further information on the product, the validity of the
+ * information provided and this data record.
  * 
  * @author haque
  *
@@ -45,26 +61,28 @@ public class FurtherInformation extends SubmodelElementCollection {
 	public static final Reference SEMANTICID = new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "https://admin-shell.io/ZVEI/TechnicalData/FurtherInformation/1/1", KeyType.IRI));
 	public static final String TEXTSTATEMENTPREFIX = "TextStatement";
 	public static final String VALIDDATEID = "ValidDate";
-	
+
 	private FurtherInformation() {
 	}
-	
+
 	/**
 	 * Constructor with default idShort
+	 * 
 	 * @param validDate
 	 */
 	public FurtherInformation(Property validDate) {
 		this(IDSHORT, validDate);
 	}
-	
+
 	/**
 	 * Constructor with default idShort
+	 * 
 	 * @param validDate
 	 */
 	public FurtherInformation(XMLGregorianCalendar validDate) {
 		this(IDSHORT, validDate);
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
 	 * 
@@ -77,7 +95,7 @@ public class FurtherInformation extends SubmodelElementCollection {
 		setValidDate(validDate);
 		setTextStatements(new ArrayList<MultiLanguageProperty>());
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
 	 * 
@@ -90,46 +108,50 @@ public class FurtherInformation extends SubmodelElementCollection {
 		setValidDate(validDate);
 		setTextStatements(new ArrayList<MultiLanguageProperty>());
 	}
-	
+
 	/**
 	 * Creates a FurtherInformation SMC object from a map
 	 * 
-	 * @param obj a FurtherInformation SMC object as raw map
-	 * @return a FurtherInformation SMC object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a FurtherInformation SMC object as raw map
+	 * @return a FurtherInformation SMC object, that behaves like a facade for the
+	 *         given map
 	 */
 	public static FurtherInformation createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(FurtherInformation.class, obj);
 		}
-		
+
 		FurtherInformation furtherInformation = new FurtherInformation();
 		furtherInformation.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return furtherInformation;
 	}
-	
+
 	/**
 	 * Creates a FurtherInformation SMC object from a map without validation
 	 * 
-	 * @param obj a FurtherInformation SMC object as raw map
-	 * @return a FurtherInformation SMC object, that behaves like a facade for the given map
+	 * @param obj
+	 *            a FurtherInformation SMC object as raw map
+	 * @return a FurtherInformation SMC object, that behaves like a facade for the
+	 *         given map
 	 */
 	private static FurtherInformation createAsFacadeNonStrict(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		FurtherInformation furtherInformation = new FurtherInformation();
 		furtherInformation.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return furtherInformation;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for FurtherInformation SMC
-	 * exist in the map
+	 * Check whether all mandatory elements for FurtherInformation SMC exist in the
+	 * map
 	 * 
 	 * @param obj
 	 * 
@@ -138,15 +160,13 @@ public class FurtherInformation extends SubmodelElementCollection {
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> obj) {
 		FurtherInformation furtherInformation = createAsFacadeNonStrict(obj);
-		
-		return SubmodelElementCollection.isValid(obj)
-				&& Property.isValid((Map<String, Object>) furtherInformation.getValidDate());
+
+		return SubmodelElementCollection.isValid(obj) && Property.isValid((Map<String, Object>) furtherInformation.getValidDate());
 	}
-	
+
 	/**
-	 * Sets statement by the manufacturer in text form, 
-	 * e.g. scope of validity of the statements, scopes of application, 
-	 * conditions of operation.
+	 * Sets statement by the manufacturer in text form, e.g. scope of validity of
+	 * the statements, scopes of application, conditions of operation.
 	 * 
 	 * Note: Whenever possible, a multi-language definition is preferred.
 	 * 
@@ -154,16 +174,15 @@ public class FurtherInformation extends SubmodelElementCollection {
 	 */
 	public void setTextStatements(List<MultiLanguageProperty> statements) {
 		if (statements != null && statements.size() > 0) {
-			for (MultiLanguageProperty statement: statements) {
+			for (MultiLanguageProperty statement : statements) {
 				addSubmodelElement(statement);
 			}
 		}
 	}
-	
+
 	/**
-	 * Gets statement by the manufacturer in text form, 
-	 * e.g. scope of validity of the statements, scopes of application, 
-	 * conditions of operation.
+	 * Gets statement by the manufacturer in text form, e.g. scope of validity of
+	 * the statements, scopes of application, conditions of operation.
 	 * 
 	 * Note: Whenever possible, a multi-language definition is preferred.
 	 * 
@@ -173,32 +192,34 @@ public class FurtherInformation extends SubmodelElementCollection {
 	public List<IMultiLanguageProperty> getStatements() {
 		List<IMultiLanguageProperty> ret = new ArrayList<IMultiLanguageProperty>();
 		List<ISubmodelElement> elements = SubmodelElementRetrievalHelper.getSubmodelElementsByIdPrefix(TEXTSTATEMENTPREFIX, getSubmodelElements());
-		
-		for (ISubmodelElement element: elements) {
+
+		for (ISubmodelElement element : elements) {
 			ret.add(MultiLanguageProperty.createAsFacade((Map<String, Object>) element));
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * Sets a date on which the data specified in the Submodel was valid from for the associated asset.
+	 * Sets a date on which the data specified in the Submodel was valid from for
+	 * the associated asset.
 	 * 
-	 * Note: Often this date will be the date of the last update of the 
-	 * corresponding data, that are the source for the technical properties 
-	 * section in the master data system.
+	 * Note: Often this date will be the date of the last update of the
+	 * corresponding data, that are the source for the technical properties section
+	 * in the master data system.
 	 * 
 	 * @param validDate
 	 */
 	public void setValidDate(Property validDate) {
 		addSubmodelElement(validDate);
 	}
-	
+
 	/**
-	 * Sets a date on which the data specified in the Submodel was valid from for the associated asset.
+	 * Sets a date on which the data specified in the Submodel was valid from for
+	 * the associated asset.
 	 * 
-	 * Note: Often this date will be the date of the last update of the 
-	 * corresponding data, that are the source for the technical properties 
-	 * section in the master data system.
+	 * Note: Often this date will be the date of the last update of the
+	 * corresponding data, that are the source for the technical properties section
+	 * in the master data system.
 	 * 
 	 * @param validDate
 	 */
@@ -208,13 +229,14 @@ public class FurtherInformation extends SubmodelElementCollection {
 		validDateProp.setValue(validDate);
 		setValidDate(validDateProp);
 	}
-	
+
 	/**
-	 * Gets a date on which the data specified in the Submodel was valid from for the associated asset.
+	 * Gets a date on which the data specified in the Submodel was valid from for
+	 * the associated asset.
 	 * 
-	 * Note: Often this date will be the date of the last update of the 
-	 * corresponding data, that are the source for the technical properties 
-	 * section in the master data system.
+	 * Note: Often this date will be the date of the last update of the
+	 * corresponding data, that are the source for the technical properties section
+	 * in the master data system.
 	 * 
 	 * @return
 	 */

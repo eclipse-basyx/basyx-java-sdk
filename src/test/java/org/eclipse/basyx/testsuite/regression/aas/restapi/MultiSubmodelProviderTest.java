@@ -6,10 +6,13 @@ package org.eclipse.basyx.testsuite.regression.aas.restapi;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
@@ -22,6 +25,8 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
@@ -63,7 +68,7 @@ public class MultiSubmodelProviderTest {
 		stub.addProvider(urn, "", provider);
 		proxy = stub.connectToVABElement(urn);
 	}
-	
+
 	private Submodel createDynamicSubmodel() {
 		Submodel sm = new SimpleAASSubmodel();
 		Property stringProp = (Property) sm.getSubmodelElements().get("stringProperty");
@@ -80,26 +85,30 @@ public class MultiSubmodelProviderTest {
 		try {
 			proxy.invokeOperation("/aas/submodels/SimpleAASSubmodel/submodel/submodelElements/exception1/invokable/invoke");
 			fail();
-		} catch (ProviderException e) {}
+		} catch (ProviderException e) {
+		}
 
 		// Invoke operationEx2
 		try {
 			proxy.invokeOperation("/aas/submodels/SimpleAASSubmodel/submodel/submodelElements/exception2/invokable/invoke", "prop1");
 			fail();
-		} catch (ProviderException e) {}
+		} catch (ProviderException e) {
+		}
 	}
-	
+
 	@Test
 	public void invalidPathPrefixInvokeTest() {
 		try {
 			proxy.invokeOperation("/aas/submodelX/SimpleAASSubmodel/submodel/submodelElements/complex/" + Operation.INVOKE, 10, 3);
 			fail();
-		} catch (MalformedRequestException e) {}
-		
+		} catch (MalformedRequestException e) {
+		}
+
 		try {
 			proxy.invokeOperation("/abc/submodels/SimpleAASSubmodel/submodel/submodelElements/complex/" + Operation.INVOKE, 10, 3);
 			fail();
-		} catch (MalformedRequestException e) {}
+		} catch (MalformedRequestException e) {
+		}
 	}
 
 	@Test
@@ -117,25 +126,27 @@ public class MultiSubmodelProviderTest {
 
 		getTestRunner("SimpleAASSubmodel");
 	}
-	
+
 	@Test
 	public void getDynamicProperty() {
 		Object dynamicValue = proxy.getValue("/aas/submodels/SimpleAASSubmodel/submodel/submodelElements/stringProperty/value");
 		Object dynamicValue2 = proxy.getValue("/aas/submodels/SimpleAASSubmodel/submodel/submodelElements/stringProperty/value");
 		assertNotEquals(dynamicValue, dynamicValue2);
 	}
-	
+
 	@Test
 	public void invalidPathPrefixGetTest() {
 		try {
 			proxy.getValue("/aas/submodelX/SimpleAASSubmodel/submodel/");
 			fail();
-		} catch (MalformedRequestException e) {}
-		
+		} catch (MalformedRequestException e) {
+		}
+
 		try {
 			proxy.getValue("/abc/submodel/SimpleAASSubmodel/submodel/");
 			fail();
-		} catch (MalformedRequestException e) {}
+		} catch (MalformedRequestException e) {
+		}
 	}
 
 	@Test
@@ -152,7 +163,7 @@ public class MultiSubmodelProviderTest {
 		String newId = shell.getSubmodels().get("TestSM").getIdentification().getId();
 		assertEquals("TestId2", newId);
 	}
-	
+
 	@Test
 	public void invalidPathPrefixSetTest() {
 		Submodel sm = new SimpleAASSubmodel("TestSM");
@@ -160,18 +171,20 @@ public class MultiSubmodelProviderTest {
 		try {
 			proxy.setValue("/aas/submodelX/" + sm.getIdShort(), sm);
 			fail();
-		} catch (MalformedRequestException e) {}
-		
+		} catch (MalformedRequestException e) {
+		}
+
 		try {
 			proxy.setValue("/abc/submodels/" + sm.getIdShort(), sm);
 			fail();
-		} catch (MalformedRequestException e) {}
+		} catch (MalformedRequestException e) {
+		}
 	}
 
 	@Test
 	public void createDeleteSubmodelTest() {
 		Submodel sm = new SimpleAASSubmodel("TestSM");
-		sm.setIdentification(IdentifierType.CUSTOM, "TestId");
+		sm.setIdentification(IdentifierType.CUSTOM, "http://testUrl.de");
 		proxy.setValue("/aas/submodels/" + sm.getIdShort(), sm);
 
 		getTestRunner("TestSM");
@@ -180,7 +193,7 @@ public class MultiSubmodelProviderTest {
 		ConnectedAssetAdministrationShell shell = new ConnectedAssetAdministrationShell(proxy.getDeepProxy("/aas"));
 		Collection<IReference> refs = shell.getSubmodelReferences();
 		assertEquals(2, refs.size());
-		assertEquals(sm.getReference(), refs.iterator().next());
+		assertTrue(refs.contains(sm.getReference()));
 
 		proxy.deleteValue("/aas/submodels/TestSM");
 
@@ -195,7 +208,22 @@ public class MultiSubmodelProviderTest {
 			// Expected
 		}
 	}
-	
+
+	/**
+	 * Tests if SubmodelElements are returned as a List in Submodel and
+	 * SubmodelElementCollection and not as Map
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void submodelElementsAreContainedAsList() {
+		List<Map<String, Object>> submodels = (List<Map<String, Object>>) proxy.getValue("/aas/submodels");
+		Map<String, Object> submodel = submodels.get(0);
+		assertTrue(submodel.get(Submodel.SUBMODELELEMENT) instanceof List<?>);
+		List<Map<String, Object>> smCollections = ((List<Map<String, Object>>) submodel.get(Submodel.SUBMODELELEMENT)).stream().filter(e -> ModelType.createAsFacade(e).getName().equals(SubmodelElementCollection.MODELTYPE))
+				.collect(Collectors.toList());
+		assertTrue(smCollections.get(0).get(Property.VALUE) instanceof List<?>);
+	}
+
 	@Test
 	public void invalidPathPrefixDeleteTest() {
 		Submodel sm = new SimpleAASSubmodel("TestSM");
@@ -203,19 +231,19 @@ public class MultiSubmodelProviderTest {
 		try {
 			proxy.deleteValue("/aas/submodelX/SimpleAASSubmodel");
 			fail();
-		} catch (MalformedRequestException e) {}
-		
+		} catch (MalformedRequestException e) {
+		}
+
 		try {
 			proxy.deleteValue("/aas/submodelX/SimpleAASSubmodel");
 			fail();
-		} catch (MalformedRequestException e) {}
+		} catch (MalformedRequestException e) {
+		}
 	}
-
 
 	private void getTestRunner(String smId) {
 		// Get property value
-		Integer value = (Integer) proxy
-				.getValue("/aas/submodels/" + smId + "/" + SubmodelProvider.SUBMODEL + "/" + MultiSubmodelElementProvider.ELEMENTS + "/integerProperty/value");
+		Integer value = (Integer) proxy.getValue("/aas/submodels/" + smId + "/" + SubmodelProvider.SUBMODEL + "/" + MultiSubmodelElementProvider.ELEMENTS + "/integerProperty/value");
 		assertEquals(123, value.intValue());
 
 		// Get property value with /submodel suffix

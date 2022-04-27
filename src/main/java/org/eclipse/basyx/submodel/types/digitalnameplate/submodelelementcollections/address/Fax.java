@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.types.digitalnameplate.submodelelementcollections.address;
 
@@ -30,7 +45,8 @@ import org.eclipse.basyx.submodel.types.digitalnameplate.enums.FaxType;
 
 /**
  * Fax as defined in the AAS Digital Nameplate Template document <br>
- * It is a submodel element collection which contains a fax number including type
+ * It is a submodel element collection which contains a fax number including
+ * type
  * 
  * @author haque
  *
@@ -39,12 +55,13 @@ public class Fax extends SubmodelElementCollection {
 	public static final String FAXNUMBERID = "FaxNumber";
 	public static final String TYPEOFFAXID = "TypeOfFaxNumber";
 	public static final Reference SEMANTICID = new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "0173-1#02-AAQ834#005", KeyType.IRDI));
-	
+
 	private Fax() {
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param faxNumber
 	 */
@@ -53,9 +70,10 @@ public class Fax extends SubmodelElementCollection {
 		setSemanticId(SEMANTICID);
 		setFaxNumber(faxNumber);
 	}
-	
+
 	/**
 	 * Constructor with mandatory attributes
+	 * 
 	 * @param idShort
 	 * @param faxNumber
 	 */
@@ -64,46 +82,47 @@ public class Fax extends SubmodelElementCollection {
 		setSemanticId(SEMANTICID);
 		setFaxNumber(faxNumber);
 	}
-	
+
 	/**
 	 * Creates a Fax SMC object from a map
 	 * 
-	 * @param obj a Fax SMC object as raw map
+	 * @param obj
+	 *            a Fax SMC object as raw map
 	 * @return a Fax SMC object, that behaves like a facade for the given map
 	 */
 	public static Fax createAsFacade(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		if (!isValid(obj)) {
 			throw new MetamodelConstructionException(Fax.class, obj);
 		}
-		
+
 		Fax fax = new Fax();
 		fax.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return fax;
 	}
-	
+
 	/**
 	 * Creates a Fax SMC object from a map without validation
 	 * 
-	 * @param obj a Fax SMC object as raw map
+	 * @param obj
+	 *            a Fax SMC object as raw map
 	 * @return a Fax SMC object, that behaves like a facade for the given map
 	 */
 	private static Fax createAsFacadeNonStrict(Map<String, Object> obj) {
 		if (obj == null) {
 			return null;
 		}
-		
+
 		Fax fax = new Fax();
 		fax.setMap(SubmodelElementMapCollectionConverter.mapToSmECollection(obj));
 		return fax;
 	}
-	
+
 	/**
-	 * Check whether all mandatory elements for Fax SMC
-	 * exist in the map
+	 * Check whether all mandatory elements for Fax SMC exist in the map
 	 * 
 	 * @param obj
 	 * 
@@ -112,23 +131,26 @@ public class Fax extends SubmodelElementCollection {
 	@SuppressWarnings("unchecked")
 	public static boolean isValid(Map<String, Object> obj) {
 		Fax fax = createAsFacadeNonStrict(obj);
-		return SubmodelElementCollection.isValid(obj)
-				&& MultiLanguageProperty.isValid((Map<String, Object>) fax.getFaxNumber());
+		return SubmodelElementCollection.isValid(obj) && MultiLanguageProperty.isValid((Map<String, Object>) fax.getFaxNumber());
 	}
-	
+
 	/**
-	 * Sets complete telephone number to be called to reach a 
-	 * business partner's fax machine
-	 * @param faxNumber {@link MultiLanguageProperty}
+	 * Sets complete telephone number to be called to reach a business partner's fax
+	 * machine
+	 * 
+	 * @param faxNumber
+	 *            {@link MultiLanguageProperty}
 	 */
 	public void setFaxNumber(MultiLanguageProperty faxNumber) {
 		addSubmodelElement(faxNumber);
 	}
-	
+
 	/**
-	 * Sets complete telephone number to be called to reach a 
-	 * business partner's fax machine
-	 * @param faxNumber {@link LangString}
+	 * Sets complete telephone number to be called to reach a business partner's fax
+	 * machine
+	 * 
+	 * @param faxNumber
+	 *            {@link LangString}
 	 */
 	public void setFaxNumber(LangString faxNumber) {
 		MultiLanguageProperty faxProp = new MultiLanguageProperty(FAXNUMBERID);
@@ -136,18 +158,22 @@ public class Fax extends SubmodelElementCollection {
 		faxProp.setValue(new LangStrings(faxNumber));
 		setFaxNumber(faxProp);
 	}
-	
+
 	/**
 	 * Sets characterization of the fax according its location or usage
-	 * @param type {@link Property}
+	 * 
+	 * @param type
+	 *            {@link Property}
 	 */
 	public void setTypeOfFaxNumber(Property type) {
 		addSubmodelElement(type);
 	}
-	
+
 	/**
 	 * Sets characterization of the fax according its location or usage
-	 * @param type {@link FaxType}
+	 * 
+	 * @param type
+	 *            {@link FaxType}
 	 */
 	public void setTypeOfFaxNumber(FaxType type) {
 		Property faxTypeProp = new Property(TYPEOFFAXID, ValueType.String);
@@ -155,19 +181,21 @@ public class Fax extends SubmodelElementCollection {
 		faxTypeProp.setValue(type.toString());
 		setTypeOfFaxNumber(faxTypeProp);
 	}
-	
+
 	/**
 	 * Gets characterization of the fax according its location or usage
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IProperty getTypeOfFaxNumber() {
 		return Property.createAsFacade((Map<String, Object>) getSubmodelElement(TYPEOFFAXID));
 	}
-	
+
 	/**
-	 * Gets complete telephone number to be called to reach a 
-	 * business partner's fax machine
+	 * Gets complete telephone number to be called to reach a business partner's fax
+	 * machine
+	 * 
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")

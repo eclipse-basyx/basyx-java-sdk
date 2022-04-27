@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi.vab;
 
@@ -20,8 +35,8 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOpera
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.restapi.MultiSubmodelElementProvider;
-import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.SubmodelAPIHelper;
+import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
@@ -87,7 +102,6 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 		getElementProvider().deleteValue(SubmodelAPIHelper.getSubmodelElementPath(idShortPath));
 	}
 
-
 	@Override
 	public Collection<IOperation> getOperations() {
 		return getSubmodelElements().stream().filter(e -> e instanceof IOperation).map(e -> (IOperation) e).collect(Collectors.toList());
@@ -96,8 +110,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<ISubmodelElement> getSubmodelElements() {
-		Collection<Map<String, Object>> elements = (Collection<Map<String, Object>>) getElementProvider()
-				.getValue(SubmodelAPIHelper.getSubmodelElementsPath());
+		Collection<Map<String, Object>> elements = (Collection<Map<String, Object>>) getElementProvider().getValue(SubmodelAPIHelper.getSubmodelElementsPath());
 		return elements.stream().map(SubmodelElement::createAsFacade).collect(Collectors.toList());
 	}
 
@@ -119,19 +132,17 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public Object invokeOperation(String idShortPath, Object... params) {
-		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementPath(idShortPath), params);
+		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementSyncInvokePath(idShortPath), params);
 	}
-	
-	
+
 	@Override
 	public Object invokeAsync(String idShortPath, Object... params) {
-		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementInvokePath(idShortPath), params);
+		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementAsyncInvokePath(idShortPath), params);
 	}
-	
+
 	@Override
 	public Object getOperationResult(String idShortPath, String requestId) {
 		return getElementProvider().getValue(SubmodelAPIHelper.getSubmodelElementResultValuePath(idShortPath, requestId));
 	}
-
 
 }

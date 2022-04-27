@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  *
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * SPDX-License-Identifier: EPL-2.0
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
@@ -22,8 +37,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation variant for the AASAggregator that triggers MQTT events for
@@ -37,7 +50,6 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public class MqttAASAggregator implements IAASAggregator {
-	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregator.class);
 
 	protected ObservableAASAggregator observedAASAggregator;
 	private MqttAASAggregatorObserver observer;
@@ -45,9 +57,12 @@ public class MqttAASAggregator implements IAASAggregator {
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param aasAggregatorToBeObserved the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId) throws MqttException {
@@ -63,10 +78,13 @@ public class MqttAASAggregator implements IAASAggregator {
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param aasAggregatorToBeObserved the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * 
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
@@ -78,12 +96,18 @@ public class MqttAASAggregator implements IAASAggregator {
 	/**
 	 * Constructor for adding this MQTT extension on top of an AASAggregator
 	 * 
-	 * @param aasAggregatorToBeObserved the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param pw password for authentication with broker
- 	 * @param pw password for authentication with broker
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
+	 * @param pw
+	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
@@ -92,11 +116,16 @@ public class MqttAASAggregator implements IAASAggregator {
 
 	/**
 	 *
-	 * @param aasAggregatorToBeObserved the underlying AAS Aggregator 
-	 * @param serverEndpoint endpoint of mqtt broker
-	 * @param clientId unique client identifier
-	 * @param user username for authentication with broker
-	 * @param persistence persistence level
+	 * @param aasAggregatorToBeObserved
+	 *            the underlying AAS Aggregator
+	 * @param serverEndpoint
+	 *            endpoint of mqtt broker
+	 * @param clientId
+	 *            unique client identifier
+	 * @param user
+	 *            username for authentication with broker
+	 * @param persistence
+	 *            persistence level
 	 * @throws MqttException
 	 */
 	public MqttAASAggregator(IAASAggregator aasAggregatorToBeObserved, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {

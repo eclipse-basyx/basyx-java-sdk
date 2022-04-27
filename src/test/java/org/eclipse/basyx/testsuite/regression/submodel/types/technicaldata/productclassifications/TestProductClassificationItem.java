@@ -1,12 +1,27 @@
 /*******************************************************************************
 * Copyright (C) 2021 the Eclipse BaSyx Authors
 * 
-* This program and the accompanying materials are made
-* available under the terms of the Eclipse Public License 2.0
-* which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 * 
-* SPDX-License-Identifier: EPL-2.0
+* SPDX-License-Identifier: MIT
 ******************************************************************************/
 
 package org.eclipse.basyx.testsuite.regression.submodel.types.technicaldata.productclassifications;
@@ -30,8 +45,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests createAsFacade and isValid of {@link ProductClassificationItem} for their
- * correctness
+ * Tests createAsFacade and isValid of {@link ProductClassificationItem} for
+ * their correctness
  * 
  * @author haque
  *
@@ -40,25 +55,25 @@ public class TestProductClassificationItem {
 	public static Property classificationSystem = new Property(ProductClassificationItem.PRODUCTCLASSIFICATIONSYSTEMID, ValueType.String);
 	public static Property version = new Property(ProductClassificationItem.CLASSIFICATIONSYSTEMVERSIONID, ValueType.String);
 	public static Property productClass = new Property(ProductClassificationItem.PRODUCTCLASSID, ValueType.String);
-	
+
 	private Map<String, Object> classificationMap = new LinkedHashMap<String, Object>();
-	
+
 	@Before
 	public void init() {
 		classificationSystem.setValue("ECLASS");
 		version.setValue("9.0 (BASIC)");
 		productClass.setValue("27-01-88-77");
-		
+
 		List<ISubmodelElement> elements = new ArrayList<ISubmodelElement>();
 		elements.add(classificationSystem);
 		elements.add(version);
 		elements.add(productClass);
-		
+
 		classificationMap.put(Referable.IDSHORT, ProductClassifications.PRODUCTCLASSIFICATIONITEMPREFIX + "01");
 		classificationMap.put(HasSemantics.SEMANTICID, ProductClassificationItem.SEMANTICID);
 		classificationMap.put(Property.VALUE, elements);
 	}
-	
+
 	@Test
 	public void testCreateAsFacade() {
 		ProductClassificationItem classificationFromMap = ProductClassificationItem.createAsFacade(classificationMap);
@@ -68,25 +83,25 @@ public class TestProductClassificationItem {
 		assertEquals(productClass, classificationFromMap.getProductClassId());
 		assertEquals(ProductClassifications.PRODUCTCLASSIFICATIONITEMPREFIX + "01", classificationFromMap.getIdShort());
 	}
-	
-	@Test (expected = MetamodelConstructionException.class)
+
+	@Test(expected = MetamodelConstructionException.class)
 	public void testCreateAsFacadeExceptionIdShort() {
 		classificationMap.remove(Referable.IDSHORT);
 		ProductClassificationItem.createAsFacade(classificationMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionProductClassificationSystem() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)classificationMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) classificationMap.get(Property.VALUE);
 		elements.remove(classificationSystem);
 		ProductClassificationItem.createAsFacade(classificationMap);
 	}
-	
-	@Test (expected = ResourceNotFoundException.class)
+
+	@Test(expected = ResourceNotFoundException.class)
 	@SuppressWarnings("unchecked")
 	public void testCreateAsFacadeExceptionProductClassId() {
-		List<ISubmodelElement> elements = (List<ISubmodelElement>)classificationMap.get(Property.VALUE);
+		List<ISubmodelElement> elements = (List<ISubmodelElement>) classificationMap.get(Property.VALUE);
 		elements.remove(productClass);
 		ProductClassificationItem.createAsFacade(classificationMap);
 	}

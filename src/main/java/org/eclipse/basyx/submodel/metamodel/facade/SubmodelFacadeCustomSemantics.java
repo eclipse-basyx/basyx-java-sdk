@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.facade;
 
@@ -27,19 +42,17 @@ import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifiabl
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 
-
-
-
-
 /**
- * Facade class that supports the development and access of sub models using IRDI (International Registration Data Identifier) semantic definitions
+ * Facade class that supports the development and access of sub models using
+ * IRDI (International Registration Data Identifier) semantic definitions
  * 
  * @author kuhn
  *
  */
 public class SubmodelFacadeCustomSemantics extends Submodel {
 	/**
-	 * Constructor without arguments - create a sub model with all meta properties empty / set to default values
+	 * Constructor without arguments - create a sub model with all meta properties
+	 * empty / set to default values
 	 */
 	public SubmodelFacadeCustomSemantics() {
 		// Create sub model
@@ -81,14 +94,10 @@ public class SubmodelFacadeCustomSemantics extends Submodel {
 	 *            Sub model revision
 	 */
 	public SubmodelFacadeCustomSemantics(String semantics, IdentifierType idType, String id, String idShort, String category, LangStrings description, Constraint constraint, HasDataSpecification dataSpecification, ModelingKind kind,
-			String version,
-			String revision) {
+			String version, String revision) {
 		// Create sub model
 		super(new HasSemantics(new Reference(Collections.singletonList(new Key(KeyElements.GLOBALREFERENCE, false, semantics, KeyType.CUSTOM)))),
-				new Identifiable(version, revision, idShort, category, description, IdentifierType.CUSTOM, id),
-				new Qualifiable(constraint), 
-				dataSpecification,
-				new HasKind(kind));
+				new Identifiable(version, revision, idShort, category, description, IdentifierType.CUSTOM, id), new Qualifiable(constraint), dataSpecification, new HasKind(kind));
 	}
 
 	/**
@@ -129,11 +138,7 @@ public class SubmodelFacadeCustomSemantics extends Submodel {
 	public SubmodelFacadeCustomSemantics(String semantics, IdentifierType idType, String id, String idShort, String category, LangStrings description, Collection<Constraint> qualifier, Constraint constraint,
 			HasDataSpecification dataSpecification, ModelingKind kind, String version, String revision) {
 		// Create sub model
-		super(new HasSemantics(new Reference(Collections.singletonList(new Key(KeyElements.GLOBALREFERENCE, false, semantics, KeyType.CUSTOM)))),
-						new Identifiable(version, revision, idShort, category, description, idType, id), 
-						new Qualifiable(qualifier), 
-						dataSpecification, 
-				new HasKind(kind));
+		super(new HasSemantics(new Reference(Collections.singletonList(new Key(KeyElements.GLOBALREFERENCE, false, semantics, KeyType.CUSTOM)))), new Identifiable(version, revision, idShort, category, description, idType, id),
+				new Qualifiable(qualifier), dataSpecification, new HasKind(kind));
 	}
 }
-

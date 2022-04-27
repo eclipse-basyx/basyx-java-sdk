@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  * 
- * SPDX-License-Identifier: EPL-2.0
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * 
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.factory.xml.converters.submodelelement.dataelement;
 
@@ -25,15 +40,15 @@ import org.w3c.dom.Element;
  * @author conradi
  *
  */
-public class FileXMLConverter extends SubmodelElementXMLConverter{
+public class FileXMLConverter extends SubmodelElementXMLConverter {
 
 	public static final String FILE = "aas:file";
-	
-	
+
 	/**
 	 * Parses a Map containing the content of XML tag &lt;aas:file&gt;
 	 * 
-	 * @param xmlObject the Map with the content of XML tag &lt;aas:file&gt;
+	 * @param xmlObject
+	 *            the Map with the content of XML tag &lt;aas:file&gt;
 	 * @return the parsed File
 	 */
 	public static File parseFile(Map<String, Object> xmlObject) {
@@ -43,35 +58,34 @@ public class FileXMLConverter extends SubmodelElementXMLConverter{
 		populateSubmodelElement(xmlObject, file);
 		return file;
 	}
-	
-	
-	
-	
+
 	/**
 	 * Builds the &lt;aas:file&gt; XML tag for a File
 	 * 
-	 * @param document the XML document
-	 * @param file the IFile to build the XML for
+	 * @param document
+	 *            the XML document
+	 * @param file
+	 *            the IFile to build the XML for
 	 * @return the &lt;aas:file&gt; XML tag for the given File
 	 */
 	public static Element buildFile(Document document, IFile file) {
 		Element fileRoot = document.createElement(FILE);
-		
+
 		populateSubmodelElement(document, fileRoot, file);
-		
+
 		String mimeType = file.getMimeType();
 		String value = file.getValue();
-		if(mimeType != null) {
+		if (mimeType != null) {
 			Element mimeTypeRoot = document.createElement(MIME_TYPE);
 			mimeTypeRoot.appendChild(document.createTextNode(mimeType));
 			fileRoot.appendChild(mimeTypeRoot);
 		}
-		if(value != null) {
+		if (value != null) {
 			Element valueRoot = document.createElement(VALUE);
 			valueRoot.appendChild(document.createTextNode(value));
 			fileRoot.appendChild(valueRoot);
 		}
-		
+
 		return fileRoot;
 	}
 }

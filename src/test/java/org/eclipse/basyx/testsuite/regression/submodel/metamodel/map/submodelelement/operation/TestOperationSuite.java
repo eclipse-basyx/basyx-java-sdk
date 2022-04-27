@@ -1,11 +1,26 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
  *
- * This program and the accompanying materials are made
- * available under the terms of the Eclipse Public License 2.0
- * which is available at https://www.eclipse.org/legal/epl-2.0/
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * SPDX-License-Identifier: EPL-2.0
+ * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelelement.operation;
 
@@ -247,29 +262,29 @@ public abstract class TestOperationSuite {
 
 	private Collection<OperationVariable> createInOutVariables() {
 		Property inOutProp = new Property(INOUT_IDSHORT, INOUT_VALUE);
-		inOutProp.setModelingKind(ModelingKind.TEMPLATE);
+		inOutProp.setKind(ModelingKind.TEMPLATE);
 		return Arrays.asList(new OperationVariable(inOutProp));
 	}
 
 	private Collection<OperationVariable> createOutputVariables() {
 		Property outProp = new Property(OUT_IDSHORT, OUT_VALUE);
-		outProp.setModelingKind(ModelingKind.TEMPLATE);
+		outProp.setKind(ModelingKind.TEMPLATE);
 		return Arrays.asList(new OperationVariable(outProp));
 	}
 
 	private Collection<OperationVariable> createOneInputVariables() {
 		Property inProp1 = new Property(IN_IDSHORT1, IN_VALUE);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 
 		return Arrays.asList(new OperationVariable(inProp1));
 	}
 
 	private Collection<OperationVariable> createTwoInputVariables() {
 		Property inProp1 = new Property(IN_IDSHORT1, IN_VALUE);
-		inProp1.setModelingKind(ModelingKind.TEMPLATE);
+		inProp1.setKind(ModelingKind.TEMPLATE);
 
 		Property inProp2 = new Property(IN_IDSHORT2, IN_VALUE);
-		inProp2.setModelingKind(ModelingKind.TEMPLATE);
+		inProp2.setKind(ModelingKind.TEMPLATE);
 
 		return Arrays.asList(new OperationVariable(inProp1), new OperationVariable(inProp2));
 	}
