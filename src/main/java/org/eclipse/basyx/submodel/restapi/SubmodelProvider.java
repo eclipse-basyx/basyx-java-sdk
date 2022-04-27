@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.eclipse.basyx.extensions.submodel.storage.api.StorageSubmodelAPI;
+import org.eclipse.basyx.extensions.submodel.storage.retrieval.StorageSubmodelElementRetrievalAPI;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
@@ -77,7 +79,7 @@ public class SubmodelProvider implements IModelProvider {
 
 	/**
 	 * Creates a SubmodelProvider based on the VAB API, wrapping the passed provider
-	 * 
+	 *
 	 * @param provider
 	 *            to be wrapped by submodel API
 	 */
@@ -124,14 +126,18 @@ public class SubmodelProvider implements IModelProvider {
 		VABPathTools.checkPathForNull(path);
 		path = removeSubmodelPrefix(path);
 		if (path.isEmpty()) {
-			ISubmodel sm = submodelAPI.getSubmodel();
+			return getSubmodel();
+		} else {
+			return getSubmodelElement(path);
+		}
+	}
 
-			// Change internal map representation to set
-			if (sm instanceof Submodel) {
-				return SubmodelElementMapCollectionConverter.smToMap((Submodel) sm);
-			} else {
-				return sm;
-			}
+	private Object getSubmodel() {
+		ISubmodel sm = submodelAPI.getSubmodel();
+
+		// Change internal map representation to set
+		if (sm instanceof Submodel) {
+			return SubmodelElementMapCollectionConverter.smToMap((Submodel) sm);
 		} else {
 			String[] splitted = VABPathTools.splitPath(path);
 			// Request for submodelElements
@@ -162,6 +168,58 @@ public class SubmodelProvider implements IModelProvider {
 		throw new MalformedRequestException("Unknown path " + path + " was requested");
 	}
 
+	private Object getSubmodelElement(String path) {
+		String[] splitted = VABPathTools.splitPath(path);
+		if (splitted.length == 1 && splitted[0].equals(VALUES)) {
+			return submodelAPI.getSubmodel().getValues();
+		} else if (splitted.length == 1 && splitted[0].equals(MultiSubmodelElementProvider.ELEMENTS)) {
+			return submodelAPI.getSubmodelElements();
+		} else if (splitted.length >= 2 && isQualifier(splitted[0])) {
+			path = removeSMElementPrefix(path);
+
+			return getSubmodelElementData(path, splitted);
+		}
+		throw new MalformedRequestException("Unknown path " + path + " was requested");
+	}
+
+	private Object getSubmodelElementData(String path, String[] splitted) {
+		if (endsWithValue(splitted)) { // Request for the value of an property
+			return getSubmodelElementValue(path);
+		} else if (isInvocationListPath(splitted)) {
+			return getSubmodelElementOperationResult(splitted);
+		} else if (containsHistory(splitted)) {
+			return getSubmodelValueHistory(path);
+		} else {
+			return submodelAPI.getSubmodelElement(path);
+		}
+	}
+
+	private Object getSubmodelValueHistory(String path) {
+		if (submodelAPI instanceof StorageSubmodelAPI) {
+			StorageSubmodelAPI storageSubmodelAPI = (StorageSubmodelAPI) submodelAPI;
+			Map<String, String> parameters = VABPathTools.getParametersFromPath(path);
+
+			String idShortPath = VABPathTools.stripSlashes(removeHistorySuffixAndParameters(path));
+			return storageSubmodelAPI.getSubmodelElementHistory(submodelAPI.getSubmodel().getIdentification().getId(), idShortPath, parameters);
+		} else {
+			throw new MalformedRequestException("Can not access history for element without a history.");
+		}
+	}
+
+	private Object getSubmodelElementOperationResult(String[] splitted) {
+		List<String> idShorts = getIdShorts(splitted);
+
+		// Remove invocationList/{requestId} from the idShorts
+		idShorts.remove(idShorts.size() - 1);
+		idShorts.remove(idShorts.size() - 1);
+		return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
+	}
+
+	private Object getSubmodelElementValue(String path) {
+		String idShortPath = removeValueSuffix(path);
+		return submodelAPI.getSubmodelElementValue(idShortPath);
+	}
+
 	private List<String> getIdShorts(String[] splitted) {
 		// Create list from array and wrap it in ArrayList to ensure modifiability
 		List<String> idShorts = new ArrayList<>(Arrays.asList(splitted));
@@ -180,6 +238,10 @@ public class SubmodelProvider implements IModelProvider {
 		return splitted[splitted.length - 1].equals(Property.VALUE);
 	}
 
+	private boolean containsHistory(String[] splitted) {
+		return splitted[splitted.length - 1].startsWith(StorageSubmodelElementRetrievalAPI.HISTORY);
+	}
+
 	/**
 	 * Removes a trailing <code>/value</code> from the path if it exists.
 	 *
@@ -190,6 +252,14 @@ public class SubmodelProvider implements IModelProvider {
 	 */
 	private String removeValueSuffix(String path) {
 		String suffix = "/" + Property.VALUE;
+		return removeSuffix(path, suffix);
+	}
+
+	private String removeHistorySuffixAndParameters(String path) {
+		return path.split("\\/history")[0];
+	}
+
+	private String removeSuffix(String path, String suffix) {
 		if (path.endsWith(suffix)) {
 			path = path.substring(0, path.length() - suffix.length());
 		}
