@@ -105,7 +105,6 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		super(serverEndpoint, clientId, user, password);
 		
 		this.aasIdentifier = aasId;
-		
 		this.submodelIdentifier = submodelIdentifier;
 		
 		observedAPI.addObserver(this);
