@@ -73,7 +73,7 @@ public class MqttSubmodelAPI implements ISubmodelAPI {
 	 */
 	public MqttSubmodelAPI(ISubmodelAPI observedAPI, String brokerEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
 		this.observedAPI = new ObservableSubmodelAPI(observedAPI);
-		observer = new MqttSubmodelAPIObserver(this.observedAPI, brokerEndpoint, clientId, persistence);
+		observer = new MqttSubmodelAPIObserver(new MqttClient(brokerEndpoint, clientId, persistence), MqttSubmodelAPIHelper.getAASId(this.observedAPI), MqttSubmodelAPIHelper.getSubmodelId(this.observedAPI), this.observedAPI);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class MqttSubmodelAPI implements ISubmodelAPI {
 	 */
 	public MqttSubmodelAPI(ISubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
 		this.observedAPI = new ObservableSubmodelAPI(observedAPI);
-		observer = new MqttSubmodelAPIObserver(this.observedAPI, serverEndpoint, clientId, user, pw, persistence);
+		observer = new MqttSubmodelAPIObserver(clientId, MqttSubmodelAPIHelper.getAASId(this.observedAPI), MqttSubmodelAPIHelper.getSubmodelId(this.observedAPI), user, pw, serverEndpoint, this.observedAPI);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class MqttSubmodelAPI implements ISubmodelAPI {
 	 */
 	public MqttSubmodelAPI(ISubmodelAPI observedAPI, MqttClient client) throws MqttException {
 		this.observedAPI = new ObservableSubmodelAPI(observedAPI);
-		observer = new MqttSubmodelAPIObserver(this.observedAPI, client);
+		observer = new MqttSubmodelAPIObserver(client, MqttSubmodelAPIHelper.getAASId(this.observedAPI), MqttSubmodelAPIHelper.getSubmodelId(this.observedAPI), this.observedAPI);
 	}
 
 	/**

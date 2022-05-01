@@ -51,7 +51,7 @@ public class MqttDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
 		try {
 			ObservableSubmodelAPI observedAPI = new ObservableSubmodelAPI(apiFactory.create(submodel));
-			new MqttSubmodelAPIObserver(observedAPI, client);
+			new MqttSubmodelAPIObserver(client, MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI);
 			return observedAPI;
 		} catch (MqttException e) {
 			throw new ProviderException(e);

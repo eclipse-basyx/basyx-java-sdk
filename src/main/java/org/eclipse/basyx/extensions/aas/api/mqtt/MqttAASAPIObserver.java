@@ -111,7 +111,7 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 */
 	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String brokerEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
-		this(new MqttClient(brokerEndpoint, clientId, persistence), getAASIdShort(observedAPI), observedAPI);
+		this(new MqttClient(brokerEndpoint, clientId, persistence), MqttAASAPIHelper.getAASIdShort(observedAPI), observedAPI);
 		logger.info("Create new MQTT AASAPI for endpoint " + brokerEndpoint);
 	}
 
@@ -137,7 +137,7 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 */
 	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
-		this(clientId, getAASIdShort(observedAPI), user, pw, serverEndpoint, observedAPI);
+		this(clientId, MqttAASAPIHelper.getAASIdShort(observedAPI), user, pw, serverEndpoint, observedAPI);
 		logger.info("Create new MQTT AASAPI for endpoint " + serverEndpoint);
 	}
 
@@ -154,7 +154,7 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 */
 	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, MqttClient client) throws MqttException {
-		this(client, getAASIdShort(observedAPI), observedAPI);
+		this(client, MqttAASAPIHelper.getAASIdShort(observedAPI), observedAPI);
 	}
 	
 	private void connectMqttClientIfRequired() throws MqttException {
@@ -180,10 +180,6 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 
 	public static String getCombinedMessage(String aasId, String idShort) {
 		return "(" + aasId + "," + idShort + ")";
-	}
-	
-	private static String getAASIdShort(ObservableAASAPI observedAPI) {
-		return observedAPI.getAAS().getIdShort();
 	}
 
 }

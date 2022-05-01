@@ -43,7 +43,9 @@ import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -88,7 +90,7 @@ public class MqttSubmodelAPIObserverTest {
 
 		VABSubmodelAPI vabAPI = new VABSubmodelAPI(new VABMapProvider(sm));
 		observableAPI = new ObservableSubmodelAPI(vabAPI);
-		new MqttSubmodelAPIObserver(observableAPI, "tcp://localhost:1884", "testClient");
+		new MqttSubmodelAPIObserver(new MqttClient("tcp://localhost:1884", "testClient", new MqttDefaultFilePersistence()), MqttSubmodelAPIHelper.getAASId(observableAPI) ,MqttSubmodelAPIHelper.getSubmodelId(observableAPI), observableAPI);
 	}
 
 	@AfterClass

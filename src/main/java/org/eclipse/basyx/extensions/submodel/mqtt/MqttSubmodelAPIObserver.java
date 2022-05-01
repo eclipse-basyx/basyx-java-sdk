@@ -25,16 +25,10 @@
 package org.eclipse.basyx.extensions.submodel.mqtt;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
-import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
-import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
-import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
-import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserver;
 import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -134,7 +128,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 */
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String brokerEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
-		this(new MqttClient(brokerEndpoint, clientId, persistence), getAASId(observedAPI), getSubmodelId(observedAPI), observedAPI);
+		this(new MqttClient(brokerEndpoint, clientId, persistence), MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI);
 		logger.info("Create new MQTT submodel for endpoint " + brokerEndpoint);
 	}
 
@@ -160,7 +154,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 */
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
-		this(clientId, getAASId(observedAPI), getSubmodelId(observedAPI), user, pw, serverEndpoint, observedAPI);
+		this(clientId, MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), user, pw, serverEndpoint, observedAPI);
 		logger.info("Create new MQTT submodel for endpoint " + serverEndpoint);
 	}
 
@@ -177,7 +171,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 */
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, MqttClient client) throws MqttException {
-		this(client, getAASId(observedAPI), getSubmodelId(observedAPI), observedAPI);
+		this(client, MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI);
 	}
 	
 	private void connectMqttClientIfRequired() throws MqttSecurityException, MqttException {
@@ -253,31 +247,6 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	private boolean filter(String idShort) {
 		idShort = VABPathTools.stripSlashes(idShort);
 		return !useWhitelist || whitelist.contains(idShort);
-	}
-	
-	private static IIdentifier getSubmodelId(ObservableSubmodelAPI observedAPI) {
-		ISubmodel submodel = observedAPI.getSubmodel();
-		return submodel.getIdentification();
-	}
-	
-	private static IIdentifier getAASId(ObservableSubmodelAPI observedAPI) {
-		ISubmodel submodel = observedAPI.getSubmodel();
-		IReference parentReference = submodel.getParent();
-		if (parentReference != null) {
-			List<IKey> keys = parentReference.getKeys();
-			if (doesKeysExists(keys)) {
-				return createIdentifier(IdentifierType.fromString(keys.get(0).getIdType().toString()), keys.get(0).getValue());
-			}
-		}
-		return null;
-	}
-
-	private static boolean doesKeysExists(List<IKey> keys) {
-		return keys != null && !keys.isEmpty();
-	}
-	
-	private static IIdentifier createIdentifier(IdentifierType idType, String id) {
-		return new Identifier(idType, id);
 	}
 
 }

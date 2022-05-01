@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.api.mqtt;
 
+import org.eclipse.basyx.aas.restapi.observing.ObservableAASAPI;
+
 /**
  * A helper class containing string constants of topics used by the AASAPI.
  * 
@@ -33,4 +35,9 @@ package org.eclipse.basyx.extensions.aas.api.mqtt;
 public class MqttAASAPIHelper {
 	public static final String TOPIC_ADDSUBMODEL = "BaSyxAAS_addedSubmodelReference";
 	public static final String TOPIC_REMOVESUBMODEL = "BaSyxAAS_removedSubmodelReference";
+	
+	
+	public static String getAASIdShort(ObservableAASAPI observedAPI) {
+		return observedAPI.getAAS().getIdShort();
+	}
 }

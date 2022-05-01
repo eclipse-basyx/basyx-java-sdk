@@ -24,6 +24,16 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.mqtt;
 
+import java.util.List;
+
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
+
 /**
  * A helper class containing string constants of topics used by the SubmodelAPI.
  * 
@@ -35,4 +45,29 @@ public class MqttSubmodelAPIHelper {
 	public static final String TOPIC_ADDELEMENT = "BaSyxSubmodel_addedSubmodelElement";
 	public static final String TOPIC_DELETEELEMENT = "BaSyxSubmodel_removedSubmodelElement";
 	public static final String TOPIC_UPDATEELEMENT = "BaSyxSubmodel_updatedSubmodelElement";
+	
+	public static IIdentifier getSubmodelId(ObservableSubmodelAPI observedAPI) {
+		ISubmodel submodel = observedAPI.getSubmodel();
+		return submodel.getIdentification();
+	}
+	
+	public static IIdentifier getAASId(ObservableSubmodelAPI observedAPI) {
+		ISubmodel submodel = observedAPI.getSubmodel();
+		IReference parentReference = submodel.getParent();
+		if (parentReference != null) {
+			List<IKey> keys = parentReference.getKeys();
+			if (doesKeysExists(keys)) {
+				return createIdentifier(keys);
+			}
+		}
+		return null;
+	}
+
+	private static boolean doesKeysExists(List<IKey> keys) {
+		return keys != null && !keys.isEmpty();
+	}
+	
+	private static IIdentifier createIdentifier(List<IKey> keys) {
+		return new Identifier(IdentifierType.fromString(keys.get(0).getIdType().toString()), keys.get(0).getValue());
+	}
 }
