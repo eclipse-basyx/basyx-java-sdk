@@ -76,8 +76,6 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		this.aasIdentifier = aasId;
 		this.submodelIdentifier = submodelIdentifier;
 		
-		observedAPI.addObserver(this);
-		
 		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
 	}
 	
@@ -100,8 +98,6 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		
 		this.aasIdentifier = aasId;
 		this.submodelIdentifier = submodelIdentifier;
-		
-		observedAPI.addObserver(this);
 		
 		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
 	}

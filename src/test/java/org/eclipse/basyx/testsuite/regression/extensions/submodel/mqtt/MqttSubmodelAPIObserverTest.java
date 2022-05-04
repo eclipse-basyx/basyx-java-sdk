@@ -29,6 +29,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 
+import org.eclipse.basyx.extensions.submodel.mqtt.MqttDecoratingSubmodelAPIFactory;
 import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelper;
 import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -39,10 +40,9 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
-import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
-import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
+import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
-import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
@@ -65,12 +65,16 @@ import io.moquette.broker.config.ResourceLoaderConfig;
  *
  */
 public class MqttSubmodelAPIObserverTest {
+	private static final String CLIENT_ID = "testClient";
+	private static final String SERVER_URI = "tcp://localhost:1884";
 	private static final String AASID = "testaasid";
 	private static final String SUBMODELID = "testsubmodelid";
 
 	private static Server mqttBroker;
-	private static ObservableSubmodelAPI observableAPI;
+	private static ISubmodelAPI observableAPI;
 	private MqttTestListener listener;
+	
+	private static Submodel submodel;
 
 	/**
 	 * Sets up the MQTT broker and submodelAPI for tests
@@ -84,13 +88,15 @@ public class MqttSubmodelAPIObserverTest {
 		mqttBroker.startServer(classPathConfig);
 
 		// Create submodel
-		Submodel sm = new Submodel(SUBMODELID, new Identifier(IdentifierType.CUSTOM, SUBMODELID));
+		submodel = new Submodel(SUBMODELID, new Identifier(IdentifierType.CUSTOM, SUBMODELID));
 		Reference parentRef = new Reference(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID, IdentifierType.IRDI));
-		sm.setParent(parentRef);
+		submodel.setParent(parentRef);
+		
+		observableAPI = createObservableSubmodelAPI();
+	}
 
-		VABSubmodelAPI vabAPI = new VABSubmodelAPI(new VABMapProvider(sm));
-		observableAPI = new ObservableSubmodelAPI(vabAPI);
-		new MqttSubmodelAPIObserver(new MqttClient("tcp://localhost:1884", "testClient", new MqttDefaultFilePersistence()), MqttSubmodelAPIHelper.getAASId(observableAPI) ,MqttSubmodelAPIHelper.getSubmodelId(observableAPI), observableAPI);
+	private static ISubmodelAPI createObservableSubmodelAPI() throws MqttException {
+		return new MqttDecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence())).getSubmodelAPI(submodel);
 	}
 
 	@AfterClass

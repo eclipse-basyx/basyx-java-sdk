@@ -64,8 +64,6 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 		connectMqttClientIfRequired();
 		
 		this.aasIdShort = aasIdShort;
-		
-		observedAPI.addObserver(this);
 	}
 	
 	/**
@@ -85,8 +83,6 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 		super(serverEndpoint, clientId, user, password);
 		
 		this.aasIdShort = aasIdShort;
-		
-		observedAPI.addObserver(this);
 	}
 
 	/**

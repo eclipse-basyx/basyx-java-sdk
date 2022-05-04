@@ -25,6 +25,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 	private IAASAPIFactory apiFactory;
 	private MqttClient client;
+	private MqttAASAPIObserver mqttAASAPIObserver;
 
 	public MqttDecoratingAASAPIFactory(IAASAPIFactory factoryToBeDecorated, MqttClient client) {
 		this.apiFactory = factoryToBeDecorated;
@@ -35,7 +36,8 @@ public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
 		try {
 			ObservableAASAPI observedAPI = new ObservableAASAPI(apiFactory.create(aas));
-			new MqttAASAPIObserver(client, MqttAASAPIHelper.getAASIdShort(observedAPI), observedAPI);
+			mqttAASAPIObserver = new MqttAASAPIObserver(client, MqttAASAPIHelper.getAASIdShort(observedAPI), observedAPI);
+			observedAPI.addObserver(mqttAASAPIObserver);
 			return observedAPI;
 		} catch (MqttException e) {
 			throw new ProviderException(e);
