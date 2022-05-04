@@ -23,6 +23,8 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.relationship.Rel
 
 public class StorageSubmodelElementComponentHelper {
 	public static final String QUALIFIER = "storage";
+	private static final List<String> supportedModelTypes = Arrays.asList(Property.MODELTYPE, SubmodelElementCollection.MODELTYPE, Range.MODELTYPE, MultiLanguageProperty.MODELTYPE, ReferenceElement.MODELTYPE, BasicEvent.MODELTYPE,
+			Blob.MODELTYPE, File.MODELTYPE, AnnotatedRelationshipElement.MODELTYPE, RelationshipElement.MODELTYPE, Entity.MODELTYPE);
 
 	private StorageSubmodelElementComponentHelper() {
 	}
@@ -38,8 +40,6 @@ public class StorageSubmodelElementComponentHelper {
 	}
 
 	public static boolean isElementPersistable(SubmodelElement submodelElement) {
-		List<String> supportedModelTypes = Arrays.asList(Property.MODELTYPE, SubmodelElementCollection.MODELTYPE, Range.MODELTYPE, MultiLanguageProperty.MODELTYPE, ReferenceElement.MODELTYPE, BasicEvent.MODELTYPE, Blob.MODELTYPE,
-				File.MODELTYPE, AnnotatedRelationshipElement.MODELTYPE, RelationshipElement.MODELTYPE, Entity.MODELTYPE);
 		return supportedModelTypes.contains(submodelElement.getModelType());
 	}
 

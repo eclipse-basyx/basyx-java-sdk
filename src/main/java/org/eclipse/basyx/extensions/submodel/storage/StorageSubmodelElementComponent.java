@@ -128,7 +128,6 @@ public class StorageSubmodelElementComponent {
 	}
 
 	private boolean isElementPersisted(String submodelId, String elementIdShortPath) {
-		// return false;
 		return this.retrievalAPI.isSubmodelElementStored(submodelId, elementIdShortPath);
 	}
 
