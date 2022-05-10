@@ -25,9 +25,9 @@
 package org.eclipse.basyx.extensions.aas.api.authorization;
 
 /**
- * Constants for the OAuth2 scopes related to the {@link AuthorizedAASAPI}.
+ * Constants for the permission scopes related to the {@link AuthorizedAASAPI}.
  *
- * @author jungjan, fried, fischer
+ * @author jungjan, fried, fischer, wege
  * @see <a href=
  *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
  */

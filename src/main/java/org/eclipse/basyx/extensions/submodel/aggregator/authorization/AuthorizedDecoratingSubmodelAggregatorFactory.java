@@ -18,14 +18,16 @@ import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
  * @author espen
  */
 public class AuthorizedDecoratingSubmodelAggregatorFactory implements ISubmodelAggregatorFactory {
-	private ISubmodelAggregatorFactory submodelAggregatorFactory;
+	protected final ISubmodelAggregatorFactory submodelAggregatorFactory;
+	protected final ISubmodelAggregatorPep submodelAggregatorPep;
 
-	public AuthorizedDecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory) {
+	public AuthorizedDecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAggregatorPep submodelAggregatorPep) {
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.submodelAggregatorPep = submodelAggregatorPep;
 	}
 
 	@Override
 	public ISubmodelAggregator create() {
-		return new AuthorizedSubmodelAggregator(submodelAggregatorFactory.create());
+		return new AuthorizedSubmodelAggregator(submodelAggregatorFactory.create(), submodelAggregatorPep);
 	}
 }

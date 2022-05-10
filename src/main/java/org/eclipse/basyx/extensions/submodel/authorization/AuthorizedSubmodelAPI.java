@@ -1,100 +1,274 @@
+/*******************************************************************************
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: MIT
+ ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.authorization;
 
 import java.util.Collection;
-
-import org.eclipse.basyx.extensions.shared.authorization.SecurityContextAuthorizer;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Implementation variant for the SubmodelAggregator that authorized each access
+ * Implementation variant for the SubmodelAggregator that authorizes each access
  *
  * @author espen
  *
  */
 public class AuthorizedSubmodelAPI implements ISubmodelAPI {
-	private static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
-	public static final String READ_AUTHORITY = SCOPE_AUTHORITY_PREFIX + SubmodelAPIScopes.READ_SCOPE;
-	public static final String WRITE_AUTHORITY = SCOPE_AUTHORITY_PREFIX + SubmodelAPIScopes.WRITE_SCOPE;
+	private static final Logger logger = LoggerFactory.getLogger(AuthorizedSubmodelAPI.class);
 
-	private final SecurityContextAuthorizer authorizer = new SecurityContextAuthorizer();
-	private ISubmodelAPI decoratedSubmodelAPI;
+	protected final IIdentifier aasId;
+	protected final ISubmodelAPI decoratedSubmodelAPI;
+	protected final ISubmodelAPIPep submodelAPIPep;
 
-	public AuthorizedSubmodelAPI(ISubmodelAPI decoratedSubmodelAPI) {
+	public AuthorizedSubmodelAPI(ISubmodelAPI decoratedSubmodelAPI, ISubmodelAPIPep submodelAPIPep) {
+		this(null, decoratedSubmodelAPI, submodelAPIPep);
+	}
+
+	public AuthorizedSubmodelAPI(IAssetAdministrationShell aas, ISubmodelAPI decoratedSubmodelAPI, ISubmodelAPIPep submodelAPIPep) {
+		this.aasId = aas != null ? aas.getIdentification() : null;
 		this.decoratedSubmodelAPI = decoratedSubmodelAPI;
+		this.submodelAPIPep = submodelAPIPep;
 	}
 
 	@Override
 	public ISubmodel getSubmodel() {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return decoratedSubmodelAPI.getSubmodel();
+		try {
+			return enforceGetSubmodel();
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+	}
+
+	protected ISubmodel enforceGetSubmodel() throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		return submodelAPIPep.enforceGetSubmodel(
+				aasId,
+				smId,
+				sm
+		);
 	}
 
 	@Override
 	public void addSubmodelElement(ISubmodelElement elem) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		try {
+			enforceAddSubmodelElement(elem.getIdShort());
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
 		decoratedSubmodelAPI.addSubmodelElement(elem);
 	}
 
 	@Override
 	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		try {
+			enforceAddSubmodelElement(idShortPath);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
 		decoratedSubmodelAPI.addSubmodelElement(idShortPath, elem);
+	}
+
+	protected void enforceAddSubmodelElement(final String smElIdShortPath) throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		submodelAPIPep.enforceAddSubmodelElement(
+				aasId,
+				smId,
+				smElIdShortPath
+		);
 	}
 
 	@Override
 	public ISubmodelElement getSubmodelElement(String idShortPath) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return decoratedSubmodelAPI.getSubmodelElement(idShortPath);
+		try {
+			return enforceGetSubmodelElement(idShortPath);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+	}
+
+	protected ISubmodelElement enforceGetSubmodelElement(final String smElIdShortPath) throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		final ISubmodelElement smEl = decoratedSubmodelAPI.getSubmodelElement(smElIdShortPath);
+		return submodelAPIPep.enforceGetSubmodelElement(
+				aasId,
+				smId,
+				smElIdShortPath,
+				smEl
+		);
 	}
 
 	@Override
 	public void deleteSubmodelElement(String idShortPath) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		try {
+			enforceDeleteSubmodelElement(idShortPath);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
 		decoratedSubmodelAPI.deleteSubmodelElement(idShortPath);
+	}
+
+	protected void enforceDeleteSubmodelElement(final String smElIdShortPath) throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		submodelAPIPep.enforceDeleteSubmodelElement(
+				aasId,
+				smId,
+				smElIdShortPath
+		);
 	}
 
 	@Override
 	public Collection<IOperation> getOperations() {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return decoratedSubmodelAPI.getOperations();
+		return enforceGetOperations();
+	}
+
+	protected Collection<IOperation> enforceGetOperations() {
+		return decoratedSubmodelAPI.getOperations().stream().map(operation -> {
+			try {
+				return (IOperation) enforceGetSubmodelElement(operation.getIdShort());
+			} catch (final InhibitException e) {
+				// leave out that operation
+				logger.info(e.getMessage(), e);
+			}
+			return null;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	@Override
 	public Collection<ISubmodelElement> getSubmodelElements() {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return decoratedSubmodelAPI.getSubmodelElements();
+		return enforceGetSubmodelElements();
+	}
+
+	protected Collection<ISubmodelElement> enforceGetSubmodelElements() {
+		// TODO check whether additional check for submodel access is necessary
+		return decoratedSubmodelAPI.getSubmodelElements().stream().map(smEl -> {
+			try {
+				return enforceGetSubmodelElement(smEl.getIdShort());
+			} catch (final InhibitException e) {
+				// leave out that submodelElement
+				logger.info(e.getMessage(), e);
+			}
+			return null;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		try {
+			enforceUpdateSubmodelElement(idShortPath);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
 		decoratedSubmodelAPI.updateSubmodelElement(idShortPath, newValue);
+	}
+
+	protected void enforceUpdateSubmodelElement(final String smElIdShortPath) throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		submodelAPIPep.enforceUpdateSubmodelElement(
+				aasId,
+				smId,
+				smElIdShortPath
+		);
 	}
 
 	@Override
 	public Object getSubmodelElementValue(String idShortPath) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return decoratedSubmodelAPI.getSubmodelElementValue(idShortPath);
+		try {
+			return enforceGetSubmodelElementValue(idShortPath);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+	}
+
+	protected Object enforceGetSubmodelElementValue(final String smElIdShortPath) throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		final Object value = decoratedSubmodelAPI.getSubmodelElementValue(smElIdShortPath);
+		return submodelAPIPep.enforceGetSubmodelElementValue(
+				aasId,
+				smId,
+				smElIdShortPath,
+				value
+		);
 	}
 
 	@Override
-	public Object invokeOperation(String idShortPath, Object... params) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+	public Object invokeOperation(String inputIdShortPath, Object... params) {
+		final String idShortPath = fixInvokeIdShortPath(inputIdShortPath);
+		try {
+			enforceInvokeOperation(idShortPath);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
 		return decoratedSubmodelAPI.invokeOperation(idShortPath, params);
 	}
 
 	@Override
 	public Object invokeAsync(String idShortPath, Object... params) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		try {
+			enforceInvokeOperation(idShortPath);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
 		return decoratedSubmodelAPI.invokeAsync(idShortPath, params);
+	}
+
+	// https://github.com/eclipse-basyx/basyx-java-sdk/issues/60
+	protected String fixInvokeIdShortPath(final String inputIdShortPath) {
+		return inputIdShortPath.replaceFirst("/invoke$", "");
+	}
+
+	protected void enforceInvokeOperation(final String smElIdShortPath) throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		submodelAPIPep.enforceInvokeOperation(
+				aasId,
+				smId,
+				smElIdShortPath
+		);
 	}
 
 	@Override
 	public Object getOperationResult(String idShort, String requestId) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return decoratedSubmodelAPI.getOperationResult(idShort, requestId);
+		try {
+			return enforceGetOperationResult(idShort, requestId);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+	}
+
+	protected Object enforceGetOperationResult(final String smElIdShortPath, final String requestId) throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		final Object operationResult = decoratedSubmodelAPI.getOperationResult(smElIdShortPath, requestId);
+		return submodelAPIPep.enforceGetOperationResult(
+				aasId,
+				smId,
+				smElIdShortPath,
+				requestId,
+				operationResult
+		);
 	}
 }

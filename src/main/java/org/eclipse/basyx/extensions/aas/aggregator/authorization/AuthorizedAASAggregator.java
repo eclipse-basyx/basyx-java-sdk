@@ -27,69 +27,136 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 /**
  * An aggregator implementation that authorizes invocations before forwarding them to
  * an underlying aggregator implementation.
- * <p>
- * Implementation Note:
- * This implementation internally uses {@link SecurityContextHolder} to access the {@link SecurityContext} and its {@link Authentication}.
- * For read operations we require Read Scope Authority, for mutations we require Write Scope Authority.
  *
- * @author jungjan, fried, fischer
+ * @author jungjan, fried, fischer, wege
  * @see AASAggregatorScopes
  */
-import java.util.Collection;
 
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.SecurityContextAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Implementation variant for the AASAggregator that authorized each access
+ *
+ * @author wege
+ */
 public class AuthorizedAASAggregator implements IAASAggregator {
-	private static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
-	public static final String READ_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASAggregatorScopes.READ_SCOPE;
-	public static final String WRITE_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASAggregatorScopes.WRITE_SCOPE;
+	private static final Logger logger = LoggerFactory.getLogger(AuthorizedAASAggregator.class);
 
-	private final IAASAggregator aasAggregator;
-	private final SecurityContextAuthorizer authorizer = new SecurityContextAuthorizer();
+	protected final IAASAggregator decoratedAasAggregator;
+	protected final IAASAggregatorPep aasAggregatorPep;
 
-	public AuthorizedAASAggregator(IAASAggregator aasAggregator) {
-		this.aasAggregator = aasAggregator;
+	public AuthorizedAASAggregator(IAASAggregator decoratedAasAggregator, IAASAggregatorPep aasAggregatorPep) {
+		this.decoratedAasAggregator = decoratedAasAggregator;
+		this.aasAggregatorPep = aasAggregatorPep;
 	}
 
 	@Override
 	public Collection<IAssetAdministrationShell> getAASList() {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return aasAggregator.getAASList();
+		return enforceGetAASList();
+	}
+
+	protected Collection<IAssetAdministrationShell> enforceGetAASList() {
+		return decoratedAasAggregator.getAASList().stream().map(aas -> {
+			try {
+				return enforceGetAAS(aas.getIdentification());
+			} catch (final InhibitException e) {
+				// leave out that aas
+				logger.info(e.getMessage(), e);
+			}
+			return null;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	@Override
 	public IAssetAdministrationShell getAAS(IIdentifier shellId) throws ResourceNotFoundException {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return aasAggregator.getAAS(shellId);
+		try {
+			return enforceGetAAS(shellId);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+	}
+
+	protected IAssetAdministrationShell enforceGetAAS(final IIdentifier aasId) throws InhibitException {
+		return aasAggregatorPep.enforceGetAAS(
+				aasId,
+				decoratedAasAggregator.getAAS(aasId)
+		);
 	}
 
 	@Override
 	public IModelProvider getAASProvider(IIdentifier shellId) throws ResourceNotFoundException {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return aasAggregator.getAASProvider(shellId);
+		try {
+			return enforceGetAASProvider(shellId);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+	}
+
+	protected IModelProvider enforceGetAASProvider(IIdentifier aasId) throws ResourceNotFoundException, InhibitException {
+		// TODO: does this give access to everything? then we might need write and execute permissions too
+		return aasAggregatorPep.enforceGetAASProvider(
+				aasId,
+				decoratedAasAggregator.getAASProvider(aasId)
+		);
 	}
 
 	@Override
 	public void createAAS(AssetAdministrationShell shell) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
-		aasAggregator.createAAS(shell);
+		try {
+			enforceCreateAAS(shell);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+		decoratedAasAggregator.createAAS(shell);
+	}
+
+	protected void enforceCreateAAS(final IAssetAdministrationShell aas) throws InhibitException {
+		aasAggregatorPep.enforceCreateAAS(
+				aas.getIdentification()
+		);
 	}
 
 	@Override
 	public void updateAAS(AssetAdministrationShell shell) throws ResourceNotFoundException {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
-		aasAggregator.updateAAS(shell);
+		try {
+			enforceUpdateAAS(shell);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+		decoratedAasAggregator.updateAAS(shell);
+	}
+
+	protected void enforceUpdateAAS(final IAssetAdministrationShell aas) throws InhibitException {
+		aasAggregatorPep.enforceUpdateAAS(
+				aas.getIdentification()
+		);
 	}
 
 	@Override
 	public void deleteAAS(IIdentifier shellId) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
-		aasAggregator.deleteAAS(shellId);
+		try {
+			enforceDeleteAAS(shellId);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+		decoratedAasAggregator.deleteAAS(shellId);
+	}
+
+	protected void enforceDeleteAAS(final IIdentifier aasId) throws InhibitException {
+		aasAggregatorPep.enforceDeleteAAS(
+				aasId
+		);
 	}
 }

@@ -33,16 +33,18 @@ import org.eclipse.basyx.aas.aggregator.api.IAASAggregatorFactory;
  * @author fischer, fried
  */
 public class AuthorizedDecoratingAASAggregatorFactory implements IAASAggregatorFactory {
-	private IAASAggregatorFactory apiFactory;
+	protected final IAASAggregatorFactory apiFactory;
+	protected final IAASAggregatorPep aasAggregatorPep;
 
-	public AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated) {
+	public AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, IAASAggregatorPep aasAggregatorPep) {
 		this.apiFactory = factoryToBeDecorated;
+		this.aasAggregatorPep = aasAggregatorPep;
 	}
 
 	@Override
 	public IAASAggregator create() {
 		IAASAggregator aggregator = apiFactory.create();
-		aggregator = new AuthorizedAASAggregator(aggregator);
+		aggregator = new AuthorizedAASAggregator(aggregator, aasAggregatorPep);
 		return aggregator;
 	}
 

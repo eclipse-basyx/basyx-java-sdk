@@ -25,16 +25,16 @@
 package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
 /**
- * Constants for the OAuth2 scopes related to the
- * {@link AuthorizedAASAggregator}.
+ * Constants for the permission scopes related to the {@link AuthorizedAASAggregator}.
  *
- * @author jungjan, fried, fischer
+ * @author jungjan, fried, fischer, wege
  * @see <a href=
  *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
  */
 public final class AASAggregatorScopes {
 	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-aggregator:read";
 	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-aggregator:write";
+	public static final String EXECUTE_SCOPE = "urn:org.eclipse.basyx:scope:aas-aggregator:execute";
 
 	private AASAggregatorScopes() {
 		// This class should not be instantiated as it serves as a holder for constants

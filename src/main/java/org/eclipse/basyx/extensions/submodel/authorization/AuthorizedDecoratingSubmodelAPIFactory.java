@@ -9,6 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.authorization;
 
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
@@ -19,14 +20,18 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
  * @author espen
  */
 public class AuthorizedDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
-	private ISubmodelAPIFactory submodelAPIFactory;
+	protected final IAssetAdministrationShell aas;
+	protected final ISubmodelAPIFactory submodelAPIFactory;
+	protected final ISubmodelAPIPep submodelAPIPep;
 
-	public AuthorizedDecoratingSubmodelAPIFactory(ISubmodelAPIFactory submodelAPIFactory) {
+	public AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell aas, ISubmodelAPIFactory submodelAPIFactory, ISubmodelAPIPep submodelAPIPep) {
+		this.aas = aas;
 		this.submodelAPIFactory = submodelAPIFactory;
+		this.submodelAPIPep = submodelAPIPep;
 	}
 
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
-		return new AuthorizedSubmodelAPI(submodelAPIFactory.create(submodel));
+		return new AuthorizedSubmodelAPI(aas, submodelAPIFactory.create(submodel), submodelAPIPep);
 	}
 }

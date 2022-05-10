@@ -1,9 +1,22 @@
+/*******************************************************************************
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: MIT
+ ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.api.authorization;
 
+import java.util.Optional;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
-import org.eclipse.basyx.extensions.shared.authorization.SecurityContextAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
 /**
  * Implementation variant for the AASAPI that authorizes each access to the API
@@ -11,32 +24,67 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  * @author espen
  */
 public class AuthorizedAASAPI implements IAASAPI {
-	public static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
-	public static final String READ_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASAPIScopes.READ_SCOPE;
-	public static final String WRITE_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASAPIScopes.WRITE_SCOPE;
+	private IAASAPI decoratedAASAPI;
+	private IAASAPIPep aasAPIPep;
 
-	private SecurityContextAuthorizer authorizer = new SecurityContextAuthorizer();
-	private IAASAPI authorizedAPI;
-
-	public AuthorizedAASAPI(IAASAPI authorizedAPI) {
-		this.authorizedAPI = authorizedAPI;
+	public AuthorizedAASAPI(IAASAPI decoratedAASAPI, IAASAPIPep aasAPIPep) {
+		this.decoratedAASAPI = decoratedAASAPI;
+		this.aasAPIPep = aasAPIPep;
 	}
 
 	@Override
 	public IAssetAdministrationShell getAAS() {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
-		return authorizedAPI.getAAS();
+		try {
+			return enforceGetAAS();
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+	}
+
+	protected IAssetAdministrationShell enforceGetAAS() throws InhibitException {
+		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
+		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
+		return aasAPIPep.enforceGetAAS(
+				aasId,
+				aas
+		);
 	}
 
 	@Override
 	public void addSubmodel(IReference submodel) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
-		authorizedAPI.addSubmodel(submodel);
+		try {
+			enforceAddSubmodel(submodel);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+		decoratedAASAPI.addSubmodel(submodel);
+	}
+
+	protected void enforceAddSubmodel(final IReference smId) throws InhibitException {
+		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
+		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
+		aasAPIPep.enforceAddSubmodel(
+				aasId,
+				smId
+		);
 	}
 
 	@Override
 	public void removeSubmodel(String idShort) {
-		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
-		authorizedAPI.removeSubmodel(idShort);
+		try {
+			enforceRemoveSubmodel(idShort);
+		} catch (final InhibitException e) {
+			throw new ProviderException("no access");
+		}
+		decoratedAASAPI.removeSubmodel(idShort);
+	}
+
+	protected void enforceRemoveSubmodel(final String smIdShort) throws InhibitException {
+		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
+		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
+		aasAPIPep.enforceRemoveSubmodel(
+				aasId,
+				smIdShort
+		);
 	}
 }
