@@ -12,7 +12,6 @@ package org.eclipse.basyx.extensions.aas.registration.authorization;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleChecker;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.RoleAuthenticator;
@@ -27,8 +26,8 @@ public class SimpleAbacAASRegistryAuthorizer implements IAASRegistryAuthorizer {
   protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacAASRegistryAuthorizer(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
-    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
+  public SimpleAbacAASRegistryAuthorizer(final AbacRuleChecker abacRuleChecker, final RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = abacRuleChecker;
     this.roleAuthenticator = roleAuthenticator;
   }
 

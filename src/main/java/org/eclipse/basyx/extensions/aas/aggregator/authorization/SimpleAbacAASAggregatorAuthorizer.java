@@ -11,7 +11,6 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleChecker;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.RoleAuthenticator;
@@ -27,8 +26,8 @@ public class SimpleAbacAASAggregatorAuthorizer implements IAASAggregatorAuthoriz
   protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacAASAggregatorAuthorizer(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
-    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
+  public SimpleAbacAASAggregatorAuthorizer(final AbacRuleChecker abacRuleChecker, final RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = abacRuleChecker;
     this.roleAuthenticator = roleAuthenticator;
   }
 
@@ -47,7 +46,7 @@ public class SimpleAbacAASAggregatorAuthorizer implements IAASAggregatorAuthoriz
   }
 
   @Override
-  public IModelProvider enforceGetAASProvider(IIdentifier aasId, IModelProvider modelProvider) throws InhibitException {
+  public IModelProvider enforceGetAASProvider(IIdentifier aasId, IModelProvider modelProvider) {
     return modelProvider;
   }
 

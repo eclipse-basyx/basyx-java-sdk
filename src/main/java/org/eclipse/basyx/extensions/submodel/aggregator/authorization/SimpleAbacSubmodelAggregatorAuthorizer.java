@@ -27,8 +27,8 @@ public class SimpleAbacSubmodelAggregatorAuthorizer implements ISubmodelAggregat
   protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacSubmodelAggregatorAuthorizer(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
-    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
+  public SimpleAbacSubmodelAggregatorAuthorizer(final AbacRuleChecker abacRuleChecker, final RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = abacRuleChecker;
     this.roleAuthenticator = roleAuthenticator;
   }
 

@@ -13,6 +13,7 @@ import org.eclipse.basyx.extensions.aas.api.authorization.SimpleAbacAASAPIAuthor
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -77,7 +78,10 @@ public class TestAuthorizedAASAPI {
 				"*",
 				"*"
 		));
-		testSubject = new AuthorizedAASAPI(apiMock, new SimpleAbacAASAPIAuthorizer(abacRuleSet, new KeycloakAuthenticator()));
+		testSubject = new AuthorizedAASAPI(apiMock, new SimpleAbacAASAPIAuthorizer(
+				new PredefinedSetAbacRuleChecker(abacRuleSet),
+				new KeycloakAuthenticator())
+		);
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 		submodel = new Submodel(SUBMODEL_ID, SUBMODEL_IDENTIFIER);
 	}

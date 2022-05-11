@@ -32,6 +32,7 @@ import java.util.Collections;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.extensions.submodel.authorization.AuthorizedSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.authorization.SimpleAbacSubmodelAPIAuthorizer;
 import org.eclipse.basyx.extensions.submodel.authorization.SubmodelAPIScopes;
@@ -126,7 +127,13 @@ public class TestAuthorizedSubmodelAPI {
 				"*",
 				"*"
 		));
-		authorizedSubmodelAPI = new AuthorizedSubmodelAPI(apiMock, new SimpleAbacSubmodelAPIAuthorizer(abacRuleSet, new KeycloakAuthenticator()));
+		authorizedSubmodelAPI = new AuthorizedSubmodelAPI(
+				apiMock,
+				new SimpleAbacSubmodelAPIAuthorizer(
+						new PredefinedSetAbacRuleChecker(abacRuleSet),
+						new KeycloakAuthenticator()
+				)
+		);
 	}
 
 	@After

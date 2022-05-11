@@ -11,7 +11,6 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleChecker;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.RoleAuthenticator;
@@ -27,8 +26,8 @@ public class SimpleAbacAASAPIAuthorizer implements IAASAPIAuthorizer {
   protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacAASAPIAuthorizer(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
-    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
+  public SimpleAbacAASAPIAuthorizer(final AbacRuleChecker abacRuleChecker, final RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = abacRuleChecker;
     this.roleAuthenticator = roleAuthenticator;
   }
 

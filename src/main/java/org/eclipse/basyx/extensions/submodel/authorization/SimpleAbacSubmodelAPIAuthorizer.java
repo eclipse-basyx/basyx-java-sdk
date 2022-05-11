@@ -27,8 +27,8 @@ public class SimpleAbacSubmodelAPIAuthorizer implements ISubmodelAPIAuthorizer {
   protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacSubmodelAPIAuthorizer(AbacRuleSet abacRuleSet, RoleAuthenticator roleAuthenticator) {
-    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
+  public SimpleAbacSubmodelAPIAuthorizer(AbacRuleChecker abacRuleChecker, RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = abacRuleChecker;
     this.roleAuthenticator = roleAuthenticator;
   }
 

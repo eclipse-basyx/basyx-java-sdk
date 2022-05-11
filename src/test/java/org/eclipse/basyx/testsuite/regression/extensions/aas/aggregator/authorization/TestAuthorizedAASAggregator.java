@@ -37,6 +37,7 @@ import org.eclipse.basyx.extensions.aas.aggregator.authorization.SimpleAbacAASAg
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
@@ -89,7 +90,7 @@ public class TestAuthorizedAASAggregator {
 				"*"
 		));
 		testSubject = new AuthorizedAASAggregator(aggregatorMock, new SimpleAbacAASAggregatorAuthorizer(
-				abacRuleSet,
+				new PredefinedSetAbacRuleChecker(abacRuleSet),
 				new KeycloakAuthenticator()
 		));
 	}

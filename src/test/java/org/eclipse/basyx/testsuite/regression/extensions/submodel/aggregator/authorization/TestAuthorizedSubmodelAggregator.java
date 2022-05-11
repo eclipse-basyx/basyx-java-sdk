@@ -34,6 +34,7 @@ import java.util.Collections;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.AuthorizedSubmodelAggregator;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SimpleAbacSubmodelAggregatorAuthorizer;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SubmodelAggregatorScopes;
@@ -81,7 +82,7 @@ public class TestAuthorizedSubmodelAggregator {
 	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
 
 	@BeforeClass
-	public static void setUpClass() throws MqttException, IOException {
+	public static void setUpClass() {
 		submodel = new Submodel(SUBMODEL_IDSHORT, SUBMODEL_IDENTIFIER);
 		submodelAPI = new VABSubmodelAPI(new VABMapProvider(submodel));
 	}
@@ -109,7 +110,13 @@ public class TestAuthorizedSubmodelAggregator {
 				"*",
 				"*"
 		));
-		authorizedSubmodelAggregator = new AuthorizedSubmodelAggregator(aggregatorMock, new SimpleAbacSubmodelAggregatorAuthorizer(abacRuleSet, new KeycloakAuthenticator()));
+		authorizedSubmodelAggregator = new AuthorizedSubmodelAggregator(
+				aggregatorMock,
+				new SimpleAbacSubmodelAggregatorAuthorizer(
+						new PredefinedSetAbacRuleChecker(abacRuleSet),
+						new KeycloakAuthenticator()
+				)
+		);
 	}
 
 	@After
