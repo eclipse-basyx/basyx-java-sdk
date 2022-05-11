@@ -10,7 +10,7 @@
 package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRulePip;
+import org.eclipse.basyx.extensions.shared.authorization.AbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
@@ -19,22 +19,22 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
- * Simple attribute based implementation for {@link IAASAggregatorPep}.
+ * Simple attribute based implementation for {@link IAASAggregatorAuthorizer}.
  *
  * @author wege
  */
-public class SimpleAbacAASAggregatorPep implements IAASAggregatorPep {
-  protected AbacRulePip abacRulePip;
+public class SimpleAbacAASAggregatorAuthorizer implements IAASAggregatorAuthorizer {
+  protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacAASAggregatorPep(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
-    abacRulePip = new AbacRulePip(abacRuleSet);
+  public SimpleAbacAASAggregatorAuthorizer(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
     this.roleAuthenticator = roleAuthenticator;
   }
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(IIdentifier aasId, IAssetAdministrationShell aas) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASAggregatorScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -53,7 +53,7 @@ public class SimpleAbacAASAggregatorPep implements IAASAggregatorPep {
 
   @Override
   public void enforceCreateAAS(IIdentifier aasId) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASAggregatorScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -66,7 +66,7 @@ public class SimpleAbacAASAggregatorPep implements IAASAggregatorPep {
 
   @Override
   public void enforceUpdateAAS(IIdentifier aasId) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASAggregatorScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -79,7 +79,7 @@ public class SimpleAbacAASAggregatorPep implements IAASAggregatorPep {
 
   @Override
   public void enforceDeleteAAS(IIdentifier aasId) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASAggregatorScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),

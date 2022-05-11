@@ -41,7 +41,6 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.slf4j.Logger;
@@ -56,11 +55,11 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizedAASAggregator.class);
 
 	protected final IAASAggregator decoratedAasAggregator;
-	protected final IAASAggregatorPep aasAggregatorPep;
+	protected final IAASAggregatorAuthorizer aasAggregatorAuthorizer;
 
-	public AuthorizedAASAggregator(IAASAggregator decoratedAasAggregator, IAASAggregatorPep aasAggregatorPep) {
+	public AuthorizedAASAggregator(IAASAggregator decoratedAasAggregator, IAASAggregatorAuthorizer aasAggregatorAuthorizer) {
 		this.decoratedAasAggregator = decoratedAasAggregator;
-		this.aasAggregatorPep = aasAggregatorPep;
+		this.aasAggregatorAuthorizer = aasAggregatorAuthorizer;
 	}
 
 	@Override
@@ -90,7 +89,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 	}
 
 	protected IAssetAdministrationShell enforceGetAAS(final IIdentifier aasId) throws InhibitException {
-		return aasAggregatorPep.enforceGetAAS(
+		return aasAggregatorAuthorizer.enforceGetAAS(
 				aasId,
 				decoratedAasAggregator.getAAS(aasId)
 		);
@@ -107,7 +106,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 
 	protected IModelProvider enforceGetAASProvider(IIdentifier aasId) throws ResourceNotFoundException, InhibitException {
 		// TODO: does this give access to everything? then we might need write and execute permissions too
-		return aasAggregatorPep.enforceGetAASProvider(
+		return aasAggregatorAuthorizer.enforceGetAASProvider(
 				aasId,
 				decoratedAasAggregator.getAASProvider(aasId)
 		);
@@ -124,7 +123,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 	}
 
 	protected void enforceCreateAAS(final IAssetAdministrationShell aas) throws InhibitException {
-		aasAggregatorPep.enforceCreateAAS(
+		aasAggregatorAuthorizer.enforceCreateAAS(
 				aas.getIdentification()
 		);
 	}
@@ -140,7 +139,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 	}
 
 	protected void enforceUpdateAAS(final IAssetAdministrationShell aas) throws InhibitException {
-		aasAggregatorPep.enforceUpdateAAS(
+		aasAggregatorAuthorizer.enforceUpdateAAS(
 				aas.getIdentification()
 		);
 	}
@@ -156,7 +155,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 	}
 
 	protected void enforceDeleteAAS(final IIdentifier aasId) throws InhibitException {
-		aasAggregatorPep.enforceDeleteAAS(
+		aasAggregatorAuthorizer.enforceDeleteAAS(
 				aasId
 		);
 	}

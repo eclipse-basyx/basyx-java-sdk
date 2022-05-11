@@ -19,7 +19,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
  *
  * @author wege
  */
-public interface ISubmodelAPIPep {
+public interface ISubmodelAPIAuthorizer {
   ISubmodelElement enforceGetSubmodelElement(
       IIdentifier aasId,
       IIdentifier smId,

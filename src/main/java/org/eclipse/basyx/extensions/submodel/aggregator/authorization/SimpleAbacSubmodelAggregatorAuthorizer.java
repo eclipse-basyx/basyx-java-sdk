@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
-import org.eclipse.basyx.extensions.shared.authorization.AbacRulePip;
+import org.eclipse.basyx.extensions.shared.authorization.AbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
@@ -19,22 +19,22 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 /**
- * Simple attribute based implementation for {@link ISubmodelAggregatorPep}.
+ * Simple attribute based implementation for {@link ISubmodelAggregatorAuthorizer}.
  *
  * @author wege
  */
-public class SimpleAbacSubmodelAggregatorPep implements ISubmodelAggregatorPep {
-  protected AbacRulePip abacRulePip;
+public class SimpleAbacSubmodelAggregatorAuthorizer implements ISubmodelAggregatorAuthorizer {
+  protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacSubmodelAggregatorPep(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
-    abacRulePip = new AbacRulePip(abacRuleSet);
+  public SimpleAbacSubmodelAggregatorAuthorizer(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
     this.roleAuthenticator = roleAuthenticator;
   }
 
   @Override
   public ISubmodel enforceGetSubmodel(IIdentifier smId, ISubmodel sm) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         SubmodelAggregatorScopes.READ_SCOPE,
         null,
@@ -48,7 +48,7 @@ public class SimpleAbacSubmodelAggregatorPep implements ISubmodelAggregatorPep {
 
   @Override
   public ISubmodelAPI enforceGetSubmodelAPI(IIdentifier smId, ISubmodelAPI smAPI) throws InhibitException {
-    if(!abacRulePip.abacRuleGrantsPermission(
+    if(!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         SubmodelAggregatorScopes.READ_SCOPE,
         null,
@@ -62,7 +62,7 @@ public class SimpleAbacSubmodelAggregatorPep implements ISubmodelAggregatorPep {
 
   @Override
   public void enforceCreateSubmodel(IIdentifier smId) throws InhibitException {
-    if(!abacRulePip.abacRuleGrantsPermission(
+    if(!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         SubmodelAggregatorScopes.WRITE_SCOPE,
         null,
@@ -75,7 +75,7 @@ public class SimpleAbacSubmodelAggregatorPep implements ISubmodelAggregatorPep {
 
   @Override
   public void enforceUpdateSubmodel(IIdentifier smId) throws InhibitException {
-    if(!abacRulePip.abacRuleGrantsPermission(
+    if(!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         SubmodelAggregatorScopes.WRITE_SCOPE,
         null,
@@ -88,7 +88,7 @@ public class SimpleAbacSubmodelAggregatorPep implements ISubmodelAggregatorPep {
 
   @Override
   public void enforceDeleteSubmodel(IIdentifier smId) throws InhibitException {
-    if(!abacRulePip.abacRuleGrantsPermission(
+    if(!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         SubmodelAggregatorScopes.WRITE_SCOPE,
         null,

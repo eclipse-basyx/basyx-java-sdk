@@ -21,7 +21,6 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +35,11 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizedSubmodelAggregator.class);
 
 	protected final ISubmodelAggregator decoratedSubmodelAggregator;
-	protected final ISubmodelAggregatorPep submodelAggregatorPep;
+	protected final ISubmodelAggregatorAuthorizer submodelAggregatorAuthorizer;
 
-	public AuthorizedSubmodelAggregator(ISubmodelAggregator decoratedSubmodelAggregator, ISubmodelAggregatorPep submodelAggregatorPep) {
+	public AuthorizedSubmodelAggregator(ISubmodelAggregator decoratedSubmodelAggregator, ISubmodelAggregatorAuthorizer submodelAggregatorAuthorizer) {
 		this.decoratedSubmodelAggregator = decoratedSubmodelAggregator;
-		this.submodelAggregatorPep = submodelAggregatorPep;
+		this.submodelAggregatorAuthorizer = submodelAggregatorAuthorizer;
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 
 	protected ISubmodel enforceGetSubmodel(ISubmodel sm) throws ResourceNotFoundException, InhibitException {
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
-		return submodelAggregatorPep.enforceGetSubmodel(
+		return submodelAggregatorAuthorizer.enforceGetSubmodel(
 				smId,
 				sm
 		);
@@ -77,7 +76,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 	}
 
 	protected ISubmodel enforceGetSubmodel(IIdentifier smId) throws ResourceNotFoundException, InhibitException {
-		return submodelAggregatorPep.enforceGetSubmodel(
+		return submodelAggregatorAuthorizer.enforceGetSubmodel(
 				smId,
 				decoratedSubmodelAggregator.getSubmodel(smId)
 		);
@@ -95,7 +94,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 	protected ISubmodel enforceGetSubmodelbyIdShort(String idShort) throws ResourceNotFoundException, InhibitException {
 		final ISubmodel sm = decoratedSubmodelAggregator.getSubmodelbyIdShort(idShort);
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
-		return submodelAggregatorPep.enforceGetSubmodel(
+		return submodelAggregatorAuthorizer.enforceGetSubmodel(
 				smId,
 				sm
 		);
@@ -112,7 +111,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 
 	protected ISubmodelAPI enforceGetSubmodelAPIById(IIdentifier smId) throws ResourceNotFoundException, InhibitException {
 		final ISubmodelAPI smAPI = decoratedSubmodelAggregator.getSubmodelAPIById(smId);
-		return submodelAggregatorPep.enforceGetSubmodelAPI(
+		return submodelAggregatorAuthorizer.enforceGetSubmodelAPI(
 				smId,
 				smAPI
 		);
@@ -130,7 +129,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 	protected ISubmodelAPI enforceGetSubmodelAPIByIdShort(String idShort) throws ResourceNotFoundException, InhibitException {
 		final ISubmodelAPI smAPI = decoratedSubmodelAggregator.getSubmodelAPIByIdShort(idShort);
 		final IIdentifier smId = Optional.ofNullable(smAPI).map(ISubmodelAPI::getSubmodel).map(IIdentifiable::getIdentification).orElse(null);
-		return submodelAggregatorPep.enforceGetSubmodelAPI(
+		return submodelAggregatorAuthorizer.enforceGetSubmodelAPI(
 				smId,
 				smAPI
 		);
@@ -147,7 +146,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 	}
 
 	protected void enforceCreateSubmodel(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorPep.enforceCreateSubmodel(
+		submodelAggregatorAuthorizer.enforceCreateSubmodel(
 				smId
 		);
 	}
@@ -164,7 +163,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 
 	protected void enforceCreateSubmodel(ISubmodelAPI submodelAPI) throws InhibitException {
 		final IIdentifier smId = Optional.ofNullable(submodelAPI).map(ISubmodelAPI::getSubmodel).map(IIdentifiable::getIdentification).orElse(null);
-		submodelAggregatorPep.enforceCreateSubmodel(
+		submodelAggregatorAuthorizer.enforceCreateSubmodel(
 				smId
 		);
 	}
@@ -181,7 +180,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 	}
 
 	protected void enforceUpdateSubmodel(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorPep.enforceUpdateSubmodel(smId);
+		submodelAggregatorAuthorizer.enforceUpdateSubmodel(smId);
 	}
 
 	@Override
@@ -195,7 +194,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 	}
 
 	protected void enforceDeleteSubmodelByIdentifier(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorPep.enforceDeleteSubmodel(smId);
+		submodelAggregatorAuthorizer.enforceDeleteSubmodel(smId);
 	}
 
 	@Override
@@ -210,7 +209,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 
 	protected void enforceDeleteSubmodelByIdShort(final String idShort) throws InhibitException {
 		final IIdentifier smId = Optional.ofNullable(decoratedSubmodelAggregator.getSubmodelbyIdShort(idShort)).map(IIdentifiable::getIdentification).orElse(null);
-		submodelAggregatorPep.enforceDeleteSubmodel(
+		submodelAggregatorAuthorizer.enforceDeleteSubmodel(
 				smId
 		);
 	}

@@ -17,7 +17,6 @@ import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
 /**
  * Implementation variant for the AASAPI that authorizes each access to the API
@@ -26,11 +25,11 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  */
 public class AuthorizedAASAPI implements IAASAPI {
 	private IAASAPI decoratedAASAPI;
-	private IAASAPIPep aasAPIPep;
+	private IAASAPIAuthorizer aasAPIAuthorizer;
 
-	public AuthorizedAASAPI(IAASAPI decoratedAASAPI, IAASAPIPep aasAPIPep) {
+	public AuthorizedAASAPI(IAASAPI decoratedAASAPI, IAASAPIAuthorizer aasAPIAuthorizer) {
 		this.decoratedAASAPI = decoratedAASAPI;
-		this.aasAPIPep = aasAPIPep;
+		this.aasAPIAuthorizer = aasAPIAuthorizer;
 	}
 
 	@Override
@@ -45,7 +44,7 @@ public class AuthorizedAASAPI implements IAASAPI {
 	protected IAssetAdministrationShell enforceGetAAS() throws InhibitException {
 		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
 		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
-		return aasAPIPep.enforceGetAAS(
+		return aasAPIAuthorizer.enforceGetAAS(
 				aasId,
 				aas
 		);
@@ -64,7 +63,7 @@ public class AuthorizedAASAPI implements IAASAPI {
 	protected void enforceAddSubmodel(final IReference smId) throws InhibitException {
 		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
 		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
-		aasAPIPep.enforceAddSubmodel(
+		aasAPIAuthorizer.enforceAddSubmodel(
 				aasId,
 				smId
 		);
@@ -83,7 +82,7 @@ public class AuthorizedAASAPI implements IAASAPI {
 	protected void enforceRemoveSubmodel(final String smIdShort) throws InhibitException {
 		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
 		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
-		aasAPIPep.enforceRemoveSubmodel(
+		aasAPIAuthorizer.enforceRemoveSubmodel(
 				aasId,
 				smIdShort
 		);

@@ -50,15 +50,15 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizedAASRegistry.class);
 
 	private final IAASRegistry decoratedRegistry;
-	private final IAASRegistryPep aasRegistryPep;
+	private final IAASRegistryAuthorizer aasRegistryAuthorizer;
 
 	/**
 	 * Provides registry implementation that authorizes invocations before
 	 * forwarding them to the provided registry implementation.
 	 */
-	public AuthorizedAASRegistry(final IAASRegistry decoratedRegistry, final IAASRegistryPep aasRegistryPep) {
+	public AuthorizedAASRegistry(final IAASRegistry decoratedRegistry, final IAASRegistryAuthorizer aasRegistryAuthorizer) {
 		this.decoratedRegistry = decoratedRegistry;
-		this.aasRegistryPep = aasRegistryPep;
+		this.aasRegistryAuthorizer = aasRegistryAuthorizer;
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 	}
 
 	protected void enforceRegister(final AASDescriptor deviceAASDescriptor) throws InhibitException {
-		aasRegistryPep.enforceRegisterAas(
+		aasRegistryAuthorizer.enforceRegisterAas(
 				deviceAASDescriptor.getIdentifier()
 		);
 	}
@@ -88,7 +88,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 	}
 
 	protected void enforceRegister(final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException {
-		aasRegistryPep.enforceRegisterSubmodel(
+		aasRegistryAuthorizer.enforceRegisterSubmodel(
 				aasId,
 				smDescriptor.getIdentifier() // TODO: semantic id? but can be null
 		);
@@ -105,7 +105,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 	}
 
 	protected void enforceDelete(final IIdentifier aasId) throws InhibitException {
-		aasRegistryPep.enforceUnregisterAas(
+		aasRegistryAuthorizer.enforceUnregisterAas(
 				aasId
 		);
 	}
@@ -121,7 +121,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 	}
 
 	protected void enforceDelete(final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-		aasRegistryPep.enforceUnregisterSubmodel(
+		aasRegistryAuthorizer.enforceUnregisterSubmodel(
 				aasId,
 				smId
 		);
@@ -138,7 +138,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 
 	protected AASDescriptor enforceLookupAAS(final IIdentifier aasId) throws InhibitException {
 		final AASDescriptor aas = decoratedRegistry.lookupAAS(aasId);
-		final AASDescriptor enforcedAAS = aasRegistryPep.enforceLookupAas(
+		final AASDescriptor enforcedAAS = aasRegistryAuthorizer.enforceLookupAas(
 				aasId,
 				aas
 		);
@@ -206,7 +206,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 
 	protected SubmodelDescriptor enforceLookupSubmodel(final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
 		final SubmodelDescriptor sm = decoratedRegistry.lookupSubmodel(aasId, smId);
-		return aasRegistryPep.enforceLookupSubmodel(
+		return aasRegistryAuthorizer.enforceLookupSubmodel(
 				aasId,
 				smId,
 				sm

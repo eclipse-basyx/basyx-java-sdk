@@ -10,7 +10,7 @@
 package org.eclipse.basyx.extensions.aas.api.authorization;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRulePip;
+import org.eclipse.basyx.extensions.shared.authorization.AbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
@@ -19,23 +19,23 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
- * Simple attribute based implementation for {@link IAASAPIPep}.
+ * Simple attribute based implementation for {@link IAASAPIAuthorizer}.
  *
  * @author wege
  */
-public class SimpleAbacAASAPIPep implements IAASAPIPep {
-  protected AbacRulePip abacRulePip;
+public class SimpleAbacAASAPIAuthorizer implements IAASAPIAuthorizer {
+  protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacAASAPIPep(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
-    abacRulePip = new AbacRulePip(abacRuleSet);
+  public SimpleAbacAASAPIAuthorizer(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
     this.roleAuthenticator = roleAuthenticator;
   }
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(IIdentifier aasId, IAssetAdministrationShell aas)
       throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -49,7 +49,7 @@ public class SimpleAbacAASAPIPep implements IAASAPIPep {
 
   @Override
   public void enforceAddSubmodel(IIdentifier aasId, IReference smId) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -62,7 +62,7 @@ public class SimpleAbacAASAPIPep implements IAASAPIPep {
 
   @Override
   public void enforceRemoveSubmodel(IIdentifier aasId, String smIdShort) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),

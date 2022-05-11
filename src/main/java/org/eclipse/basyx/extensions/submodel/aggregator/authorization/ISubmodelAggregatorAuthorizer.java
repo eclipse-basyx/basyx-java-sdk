@@ -7,38 +7,38 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.aggregator.authorization;
+package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
-import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 /**
- * Interface for the policy enforcement points used in {@link AuthorizedAASAggregator}.
+ * Interface for the policy enforcement points used in {@link AuthorizedSubmodelAggregator}.
  *
  * @author wege
  */
-public interface IAASAggregatorPep {
-  IAssetAdministrationShell enforceGetAAS(
-      IIdentifier aasId,
-      IAssetAdministrationShell aas
+public interface ISubmodelAggregatorAuthorizer {
+  ISubmodel enforceGetSubmodel(
+      IIdentifier smId,
+      ISubmodel smSupplier
   ) throws InhibitException;
 
-  IModelProvider enforceGetAASProvider(
-      IIdentifier aasId,
-      IModelProvider modelProvider
+  ISubmodelAPI enforceGetSubmodelAPI(
+      IIdentifier smId,
+      ISubmodelAPI smAPI
   ) throws InhibitException;
 
-  void enforceCreateAAS(
-      IIdentifier aasId
+  void enforceCreateSubmodel(
+      IIdentifier smId
   ) throws InhibitException;
 
-  void enforceUpdateAAS(
-      IIdentifier aasId
+  void enforceUpdateSubmodel(
+      IIdentifier smId
   ) throws InhibitException;
 
-  void enforceDeleteAAS(
-      IIdentifier aasId
+  void enforceDeleteSubmodel(
+      IIdentifier smId
   ) throws InhibitException;
 }

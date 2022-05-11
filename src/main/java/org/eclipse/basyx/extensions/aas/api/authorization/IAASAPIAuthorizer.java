@@ -19,7 +19,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  *
  * @author wege
  */
-public interface IAASAPIPep {
+public interface IAASAPIAuthorizer {
 	IAssetAdministrationShell enforceGetAAS(
       IIdentifier aasId,
 			IAssetAdministrationShell aas

@@ -22,16 +22,17 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 public class AuthorizedDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	protected final IAssetAdministrationShell aas;
 	protected final ISubmodelAPIFactory submodelAPIFactory;
-	protected final ISubmodelAPIPep submodelAPIPep;
+	protected final ISubmodelAPIAuthorizer submodelAPIAuthorizer;
 
-	public AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell aas, ISubmodelAPIFactory submodelAPIFactory, ISubmodelAPIPep submodelAPIPep) {
+	public AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell aas, ISubmodelAPIFactory submodelAPIFactory, ISubmodelAPIAuthorizer submodelAPIAuthorizer) {
 		this.aas = aas;
 		this.submodelAPIFactory = submodelAPIFactory;
-		this.submodelAPIPep = submodelAPIPep;
+		this.submodelAPIAuthorizer = submodelAPIAuthorizer;
 	}
 
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
-		return new AuthorizedSubmodelAPI(aas, submodelAPIFactory.create(submodel), submodelAPIPep);
+		return new AuthorizedSubmodelAPI(aas, submodelAPIFactory.create(submodel),
+				submodelAPIAuthorizer);
 	}
 }

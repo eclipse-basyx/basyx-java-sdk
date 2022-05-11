@@ -31,10 +31,9 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.extensions.aas.api.authorization.AASAPIScopes;
 import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistryScopes;
 import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAASRegistry;
-import org.eclipse.basyx.extensions.aas.registration.authorization.SimpleAbacAASRegistryPep;
+import org.eclipse.basyx.extensions.aas.registration.authorization.SimpleAbacAASRegistryAuthorizer;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
@@ -90,7 +89,7 @@ public class TestAuthorizedAASRegistry {
 				"*",
 				"*"
 		));
-		testSubject = new AuthorizedAASRegistry(registryMock, new SimpleAbacAASRegistryPep(abacRuleSet, new KeycloakAuthenticator()));
+		testSubject = new AuthorizedAASRegistry(registryMock, new SimpleAbacAASRegistryAuthorizer(abacRuleSet, new KeycloakAuthenticator()));
 	}
 
 	@After

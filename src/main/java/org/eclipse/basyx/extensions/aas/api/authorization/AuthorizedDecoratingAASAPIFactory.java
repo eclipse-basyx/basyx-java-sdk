@@ -20,15 +20,15 @@ import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
  */
 public class AuthorizedDecoratingAASAPIFactory implements IAASAPIFactory {
 	protected final IAASAPIFactory apiFactory;
-	protected final IAASAPIPep aasAPIPep;
+	protected final IAASAPIAuthorizer aasAPIAuthorizer;
 
-	public AuthorizedDecoratingAASAPIFactory(IAASAPIFactory factoryToBeDecorated, IAASAPIPep aasAPIPep) {
+	public AuthorizedDecoratingAASAPIFactory(IAASAPIFactory factoryToBeDecorated, IAASAPIAuthorizer aasAPIAuthorizer) {
 		this.apiFactory = factoryToBeDecorated;
-		this.aasAPIPep = aasAPIPep;
+		this.aasAPIAuthorizer = aasAPIAuthorizer;
 	}
 
 	@Override
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
-		return new AuthorizedAASAPI(apiFactory.create(aas), aasAPIPep);
+		return new AuthorizedAASAPI(apiFactory.create(aas), aasAPIAuthorizer);
 	}
 }

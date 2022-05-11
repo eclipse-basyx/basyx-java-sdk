@@ -33,7 +33,7 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorScopes;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.AuthorizedAASAggregator;
-import org.eclipse.basyx.extensions.aas.aggregator.authorization.SimpleAbacAASAggregatorPep;
+import org.eclipse.basyx.extensions.aas.aggregator.authorization.SimpleAbacAASAggregatorAuthorizer;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
@@ -88,7 +88,7 @@ public class TestAuthorizedAASAggregator {
 				"*",
 				"*"
 		));
-		testSubject = new AuthorizedAASAggregator(aggregatorMock, new SimpleAbacAASAggregatorPep(
+		testSubject = new AuthorizedAASAggregator(aggregatorMock, new SimpleAbacAASAggregatorAuthorizer(
 				abacRuleSet,
 				new KeycloakAuthenticator()
 		));

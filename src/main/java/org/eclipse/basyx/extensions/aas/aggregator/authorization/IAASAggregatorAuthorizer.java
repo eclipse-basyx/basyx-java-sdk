@@ -7,45 +7,38 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.registration.authorization;
+package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
- * Interface for the policy enforcement points used in {@link AuthorizedAASRegistry}.
+ * Interface for the policy enforcement points used in {@link AuthorizedAASAggregator}.
  *
  * @author wege
  */
-public interface IAASRegistryPep {
-  void enforceRegisterAas(
+public interface IAASAggregatorAuthorizer {
+  IAssetAdministrationShell enforceGetAAS(
+      IIdentifier aasId,
+      IAssetAdministrationShell aas
+  ) throws InhibitException;
+
+  IModelProvider enforceGetAASProvider(
+      IIdentifier aasId,
+      IModelProvider modelProvider
+  ) throws InhibitException;
+
+  void enforceCreateAAS(
       IIdentifier aasId
   ) throws InhibitException;
 
-  void enforceRegisterSubmodel(
-      IIdentifier aasId,
-      IIdentifier smId
-  ) throws InhibitException;
-
-  void enforceUnregisterAas(
+  void enforceUpdateAAS(
       IIdentifier aasId
   ) throws InhibitException;
 
-  void enforceUnregisterSubmodel(
-      IIdentifier aasId,
-      IIdentifier smId
-  ) throws InhibitException;
-
-  AASDescriptor enforceLookupAas(
-      IIdentifier aasId,
-      AASDescriptor aas
-  ) throws InhibitException;
-
-  SubmodelDescriptor enforceLookupSubmodel(
-      IIdentifier aasId,
-      IIdentifier smId,
-      SubmodelDescriptor sm
+  void enforceDeleteAAS(
+      IIdentifier aasId
   ) throws InhibitException;
 }

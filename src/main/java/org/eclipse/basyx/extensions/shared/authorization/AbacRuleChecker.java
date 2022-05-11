@@ -21,11 +21,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author wege
  */
-public class AbacRulePip {
-  private static final Logger logger = LoggerFactory.getLogger(AbacRulePip.class);
+public class AbacRuleChecker {
+  private static final Logger logger = LoggerFactory.getLogger(AbacRuleChecker.class);
   private final AbacRuleSet abacRuleSet;
 
-  public AbacRulePip(final AbacRuleSet abacRuleSet) {
+  public AbacRuleChecker(final AbacRuleSet abacRuleSet) {
     this.abacRuleSet = abacRuleSet;
   }
 

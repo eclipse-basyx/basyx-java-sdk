@@ -11,7 +11,7 @@ package org.eclipse.basyx.extensions.aas.registration.authorization;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRulePip;
+import org.eclipse.basyx.extensions.shared.authorization.AbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
@@ -19,22 +19,22 @@ import org.eclipse.basyx.extensions.shared.authorization.RoleAuthenticator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
- * Simple attribute based implementation for {@link IAASRegistryPep}.
+ * Simple attribute based implementation for {@link IAASRegistryAuthorizer}.
  *
  * @author wege
  */
-public class SimpleAbacAASRegistryPep implements IAASRegistryPep {
-  protected AbacRulePip abacRulePip;
+public class SimpleAbacAASRegistryAuthorizer implements IAASRegistryAuthorizer {
+  protected AbacRuleChecker abacRuleChecker;
   protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacAASRegistryPep(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
-    abacRulePip = new AbacRulePip(abacRuleSet);
+  public SimpleAbacAASRegistryAuthorizer(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
+    this.abacRuleChecker = new AbacRuleChecker(abacRuleSet);
     this.roleAuthenticator = roleAuthenticator;
   }
 
   @Override
   public void enforceRegisterAas(IIdentifier aasId) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASRegistryScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -47,7 +47,7 @@ public class SimpleAbacAASRegistryPep implements IAASRegistryPep {
 
   @Override
   public void enforceRegisterSubmodel(IIdentifier aasId, IIdentifier smId) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASRegistryScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -60,7 +60,7 @@ public class SimpleAbacAASRegistryPep implements IAASRegistryPep {
 
   @Override
   public void enforceUnregisterAas(IIdentifier aasId) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASRegistryScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -73,7 +73,7 @@ public class SimpleAbacAASRegistryPep implements IAASRegistryPep {
 
   @Override
   public void enforceUnregisterSubmodel(IIdentifier aasId, IIdentifier smId) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASRegistryScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -86,7 +86,7 @@ public class SimpleAbacAASRegistryPep implements IAASRegistryPep {
 
   @Override
   public AASDescriptor enforceLookupAas(IIdentifier aasId, AASDescriptor aas) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASRegistryScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -100,7 +100,7 @@ public class SimpleAbacAASRegistryPep implements IAASRegistryPep {
 
   @Override
   public SubmodelDescriptor enforceLookupSubmodel(IIdentifier aasId, IIdentifier smId, SubmodelDescriptor sm) throws InhibitException {
-    if (!abacRulePip.abacRuleGrantsPermission(
+    if (!abacRuleChecker.abacRuleGrantsPermission(
         roleAuthenticator.getRoles(),
         AASRegistryScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),

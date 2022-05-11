@@ -35,7 +35,7 @@ import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.AuthorizedSubmodelAggregator;
-import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SimpleAbacSubmodelAggregatorPep;
+import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SimpleAbacSubmodelAggregatorAuthorizer;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SubmodelAggregatorScopes;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -109,7 +109,7 @@ public class TestAuthorizedSubmodelAggregator {
 				"*",
 				"*"
 		));
-		authorizedSubmodelAggregator = new AuthorizedSubmodelAggregator(aggregatorMock, new SimpleAbacSubmodelAggregatorPep(abacRuleSet, new KeycloakAuthenticator()));
+		authorizedSubmodelAggregator = new AuthorizedSubmodelAggregator(aggregatorMock, new SimpleAbacSubmodelAggregatorAuthorizer(abacRuleSet, new KeycloakAuthenticator()));
 	}
 
 	@After
