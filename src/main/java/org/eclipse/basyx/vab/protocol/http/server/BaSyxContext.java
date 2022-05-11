@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServlet;
 /**
  * BaSyx context that contains an Industrie 4.0 Servlet infrastructure
  * 
- * @author kuhn, haque
+ * @author kuhn, haque, danish
  *
  */
 public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
@@ -87,6 +87,8 @@ public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
 
 	@Nullable
 	private JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration;
+	
+	private String accessControlAllowOrigin;
 
 	/**
 	 * Constructor with default port
@@ -263,5 +265,13 @@ public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
 
 	public void setJwtBearerTokenAuthenticationConfiguration(@Nullable final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
 		this.jwtBearerTokenAuthenticationConfiguration = jwtBearerTokenAuthenticationConfiguration;
+	}
+
+	public String getAccessControlAllowOrigin() {
+		return accessControlAllowOrigin;
+	}
+
+	public void setAccessControlAllowOrigin(String accessControlAllowOrigin) {
+		this.accessControlAllowOrigin = accessControlAllowOrigin;
 	}
 }

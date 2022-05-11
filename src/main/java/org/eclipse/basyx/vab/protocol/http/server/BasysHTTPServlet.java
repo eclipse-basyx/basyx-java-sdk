@@ -40,7 +40,7 @@ import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
 /**
  * HTTP Servelet superclass to enable HTTP Patch
  * 
- * @author pschorn
+ * @author pschorn, danish
  *
  */
 public abstract class BasysHTTPServlet extends HttpServlet {
@@ -54,6 +54,8 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 	 * Parameter map
 	 */
 	protected Map<String, String> servletParameter = new LinkedHashMap<>();
+	
+	protected String corsOrigin;
 
 	/**
 	 * GSON instance
@@ -65,11 +67,31 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 	 */
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		enableCORSIfRequired(response);
+		
 		if (request.getMethod().equalsIgnoreCase("PATCH")) {
 			doPatch(request, response);
 		} else {
 			super.service(request, response);
 		}
+	}
+
+	private void enableCORSIfRequired(HttpServletResponse response) {
+		if(!isCorsOriginDefined()) {
+			return;
+		}
+		
+		addCorsHeaderToResponse(response);
+	}
+	
+	private boolean isCorsOriginDefined() {
+		return getCorsOrigin() != null;
+	}
+
+	private void addCorsHeaderToResponse(HttpServletResponse response) {
+		response.addHeader("Access-Control-Allow-Origin", getCorsOrigin());
+		response.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH");
+		response.addHeader("Access-Control-Allow-Headers", "X-Requested-With");
 	}
 
 	/**
@@ -109,6 +131,14 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 		// Output result
 		outputStream.write(serializer.serialize(value));
 		outputStream.flush();
+	}
+	
+	public String getCorsOrigin() {
+		return corsOrigin;
+	}
+
+	public void setCorsOrigin(String corsOrigin) {
+		this.corsOrigin = corsOrigin;
 	}
 
 }
