@@ -26,14 +26,13 @@ package org.eclipse.basyx.testsuite.regression.extensions.submodel.aggregator.au
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import java.util.Collections;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.AuthorizedSubmodelAggregator;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SimpleAbacSubmodelAggregatorAuthorizer;
@@ -46,9 +45,7 @@ import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -125,13 +122,13 @@ public class TestAuthorizedSubmodelAggregator {
 	}
 
 	@Test
-	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelList_thenThrowProviderException() {
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelList_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		Assert.assertEquals(Collections.emptyList(), authorizedSubmodelAggregator.getSubmodelList());
 	}
 
 	@Test
-	public void givenSecurityContextIsEmpty_whenGetSubmodelList_ThrowProviderException() {
+	public void givenSecurityContextIsEmpty_whenGetSubmodelList_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		Assert.assertEquals(Collections.emptyList(), authorizedSubmodelAggregator.getSubmodelList());
 	}
@@ -147,14 +144,14 @@ public class TestAuthorizedSubmodelAggregator {
 		assertEquals(expectedList, smList);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.getSubmodel(SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenGetSubmodel_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodel_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.getSubmodel(SUBMODEL_IDENTIFIER);
 	}
@@ -167,14 +164,14 @@ public class TestAuthorizedSubmodelAggregator {
 		assertEquals(submodel, returnedSubmodel);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whengetSubmodelbyIdShort_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whengetSubmodelbyIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whengetSubmodelbyIdShort_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whengetSubmodelbyIdShort_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
 	}
@@ -187,14 +184,14 @@ public class TestAuthorizedSubmodelAggregator {
 		assertEquals(submodel, returnedSubmodel);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIById_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIById_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIById_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIById_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
 	}
@@ -215,14 +212,14 @@ public class TestAuthorizedSubmodelAggregator {
 		assertEquals(submodelAPI, returnedSubmodelAPI);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIByIdShort_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIByIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIByIdShort_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIByIdShort_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
 	}
@@ -234,14 +231,14 @@ public class TestAuthorizedSubmodelAggregator {
 		Mockito.verify(aggregatorMock).createSubmodel(submodel);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.createSubmodel(submodel);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenCreateSubmodel_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenCreateSubmodel_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.createSubmodel(submodel);
 	}
@@ -253,14 +250,14 @@ public class TestAuthorizedSubmodelAggregator {
 		Mockito.verify(aggregatorMock).createSubmodel(submodelAPI);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodelAPI_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodelAPI_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.createSubmodel(submodelAPI);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenCreateSubmodelAPI_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenCreateSubmodelAPI_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.createSubmodel(submodelAPI);
 	}
@@ -272,14 +269,14 @@ public class TestAuthorizedSubmodelAggregator {
 		Mockito.verify(aggregatorMock).updateSubmodel(submodel);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenUpdateSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenUpdateSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.updateSubmodel(submodel);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenUpdateSubmodel_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenUpdateSubmodel_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.updateSubmodel(submodel);
 	}
@@ -291,14 +288,14 @@ public class TestAuthorizedSubmodelAggregator {
 		Mockito.verify(aggregatorMock).deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdentifier_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdentifier_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdentifier_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdentifier_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 	}
@@ -310,14 +307,14 @@ public class TestAuthorizedSubmodelAggregator {
 		Mockito.verify(aggregatorMock).deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdShort_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		authorizedSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdShort_ThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdShort_ThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		authorizedSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 	}

@@ -13,13 +13,13 @@ import org.eclipse.basyx.extensions.aas.api.authorization.SimpleAbacAASAPIAuthor
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -100,14 +100,14 @@ public class TestAuthorizedAASAPI {
 		assertEquals(shell, returnedShell);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenGetAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.getAAS();
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.getAAS();
 	}
@@ -120,14 +120,14 @@ public class TestAuthorizedAASAPI {
 		Mockito.verify(apiMock).addSubmodel(smReference2Add);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenAddSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.addSubmodel(submodel.getReference());
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenAddSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.addSubmodel(submodel.getReference());
 	}
@@ -139,14 +139,14 @@ public class TestAuthorizedAASAPI {
 		Mockito.verify(apiMock).removeSubmodel(SUBMODEL_ID);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenRemoveSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.removeSubmodel(SUBMODEL_ID);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenRemoveSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.removeSubmodel(SUBMODEL_ID);
 	}

@@ -37,10 +37,10 @@ import org.eclipse.basyx.extensions.aas.aggregator.authorization.SimpleAbacAASAg
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -107,8 +107,8 @@ public class TestAuthorizedAASAggregator {
 		return shell;
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenCreateAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenCreateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		invokeCreateAAS();
 	}
@@ -120,8 +120,8 @@ public class TestAuthorizedAASAggregator {
 		Mockito.verify(aggregatorMock).createAAS(shell);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingWriteAuthority_whenCreateAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenCreateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		invokeCreateAAS();
 	}
@@ -139,8 +139,8 @@ public class TestAuthorizedAASAggregator {
 		Mockito.verify(aggregatorMock).deleteAAS(shellId);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		invokeDeleteAAS();
 	}
@@ -158,8 +158,8 @@ public class TestAuthorizedAASAggregator {
 		Assert.assertEquals(expectedShell, shell);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final IIdentifier shellId = new ModelUrn("urn:test1");
@@ -183,7 +183,7 @@ public class TestAuthorizedAASAggregator {
 	}
 
 	@Test
-	public void givenPrincipalIsMissingReadAuthority_whenGetAASList_thenThrowProviderException() {
+	public void givenPrincipalIsMissingReadAuthority_whenGetAASList_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		final IIdentifier shellId = new ModelUrn("urn:test1");
 		final AssetAdministrationShell shell = new AssetAdministrationShell("test", shellId, new Asset());

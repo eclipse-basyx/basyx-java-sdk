@@ -26,7 +26,6 @@ package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.autho
 
 import java.util.Collections;
 import java.util.List;
-
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
@@ -37,10 +36,10 @@ import org.eclipse.basyx.extensions.aas.registration.authorization.SimpleAbacAAS
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -101,8 +100,8 @@ public class TestAuthorizedAASRegistry {
 		SecurityContextHolder.clearContext();
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenSecurityContextIsEmpty_whenRegisterAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenRegisterAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
 		final AASDescriptor aasDescriptor = new AASDescriptor("test", new ModelUrn("urn:test"), "http://test.example/aas");
@@ -119,8 +118,8 @@ public class TestAuthorizedAASRegistry {
 		Mockito.verify(registryMock).register(aasDescriptor);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingWriteAuthority_whenRegisterAASDescriptor_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenRegisterAASDescriptor_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final AASDescriptor aasDescriptor = new AASDescriptor("test", new ModelUrn("urn:test"), "http://test.example/aas");
@@ -138,8 +137,8 @@ public class TestAuthorizedAASRegistry {
 		Mockito.verify(registryMock).register(aas, submodelDescriptor);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodelDescriptor_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodelDescriptor_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final IIdentifier aas = new ModelUrn("urn:test");
@@ -157,8 +156,8 @@ public class TestAuthorizedAASRegistry {
 		Mockito.verify(registryMock).delete(aasId);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final IIdentifier aasId = new ModelUrn("urn:test");
@@ -176,8 +175,8 @@ public class TestAuthorizedAASRegistry {
 		Mockito.verify(registryMock).delete(aasId, smId);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final IIdentifier aasId = new ModelUrn("urn:test1");
@@ -198,8 +197,8 @@ public class TestAuthorizedAASRegistry {
 		Assert.assertEquals(expectedAASDescriptor, aasDescriptor);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenLookupAAS_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenLookupAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final IIdentifier aasId = new ModelUrn("urn:test1");
@@ -222,7 +221,7 @@ public class TestAuthorizedAASRegistry {
 	}
 
 	@Test
-	public void givenPrincipalIsMissingReadAuthority_whenLookupAll_thenThrowProviderException() {
+	public void givenPrincipalIsMissingReadAuthority_whenLookupAll_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final List<AASDescriptor> aasDescriptorList = testSubject.lookupAll();
@@ -246,7 +245,7 @@ public class TestAuthorizedAASRegistry {
 	}
 
 	@Test
-	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodels_thenThrowProviderException() {
+	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodels_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final IIdentifier aasId = new ModelUrn("urn:test1");
@@ -270,8 +269,8 @@ public class TestAuthorizedAASRegistry {
 		Assert.assertEquals(expectedSubmodelDescriptor, submodelDescriptor);
 	}
 
-	@Test(expected = ProviderException.class)
-	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodel_thenThrowProviderException() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final IIdentifier aasId = new ModelUrn("urn:test1");
