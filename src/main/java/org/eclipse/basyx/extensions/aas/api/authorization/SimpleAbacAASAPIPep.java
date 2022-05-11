@@ -14,7 +14,6 @@ import org.eclipse.basyx.extensions.shared.authorization.AbacRulePip;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.RoleAuthenticationPip;
 import org.eclipse.basyx.extensions.shared.authorization.RoleAuthenticator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -26,18 +25,18 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  */
 public class SimpleAbacAASAPIPep implements IAASAPIPep {
   protected AbacRulePip abacRulePip;
-  protected RoleAuthenticationPip authPip;
+  protected RoleAuthenticator roleAuthenticator;
 
-  public SimpleAbacAASAPIPep(AbacRuleSet abacRuleSet, RoleAuthenticator roleAuthenticator) {
+  public SimpleAbacAASAPIPep(final AbacRuleSet abacRuleSet, final RoleAuthenticator roleAuthenticator) {
     abacRulePip = new AbacRulePip(abacRuleSet);
-    authPip = new RoleAuthenticationPip(roleAuthenticator);
+    this.roleAuthenticator = roleAuthenticator;
   }
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(IIdentifier aasId, IAssetAdministrationShell aas)
       throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         AASAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
         null,
@@ -51,7 +50,7 @@ public class SimpleAbacAASAPIPep implements IAASAPIPep {
   @Override
   public void enforceAddSubmodel(IIdentifier aasId, IReference smId) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         AASAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getReferenceId(smId),
@@ -64,7 +63,7 @@ public class SimpleAbacAASAPIPep implements IAASAPIPep {
   @Override
   public void enforceRemoveSubmodel(IIdentifier aasId, String smIdShort) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         AASAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
         smIdShort,

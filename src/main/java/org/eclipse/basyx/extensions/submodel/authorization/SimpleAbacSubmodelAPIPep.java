@@ -13,7 +13,6 @@ import org.eclipse.basyx.extensions.shared.authorization.AbacRulePip;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.RoleAuthenticationPip;
 import org.eclipse.basyx.extensions.shared.authorization.RoleAuthenticator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -26,17 +25,17 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
  */
 public class SimpleAbacSubmodelAPIPep implements ISubmodelAPIPep {
   protected AbacRulePip abacRulePip;
-  protected RoleAuthenticationPip authPip;
+  protected RoleAuthenticator roleAuthenticator;
 
   public SimpleAbacSubmodelAPIPep(AbacRuleSet abacRuleSet, RoleAuthenticator roleAuthenticator) {
     abacRulePip = new AbacRulePip(abacRuleSet);
-    authPip = new RoleAuthenticationPip(roleAuthenticator);
+    this.roleAuthenticator = roleAuthenticator;
   }
 
   @Override
   public ISubmodelElement enforceGetSubmodelElement(IIdentifier aasId, IIdentifier smId, String smElIdShort, ISubmodelElement smEl) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getIdentifierId(smId),
@@ -50,7 +49,7 @@ public class SimpleAbacSubmodelAPIPep implements ISubmodelAPIPep {
   @Override
   public ISubmodel enforceGetSubmodel(IIdentifier aasId, IIdentifier smId, ISubmodel sm) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getIdentifierId(smId),
@@ -64,7 +63,7 @@ public class SimpleAbacSubmodelAPIPep implements ISubmodelAPIPep {
   @Override
   public void enforceAddSubmodelElement(IIdentifier aasId, IIdentifier smId, String smElIdShort) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         SubmodelAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getIdentifierId(smId),
@@ -77,7 +76,7 @@ public class SimpleAbacSubmodelAPIPep implements ISubmodelAPIPep {
   @Override
   public void enforceDeleteSubmodelElement(IIdentifier aasId, IIdentifier smId, String smElIdShort) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         SubmodelAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getIdentifierId(smId),
@@ -90,7 +89,7 @@ public class SimpleAbacSubmodelAPIPep implements ISubmodelAPIPep {
   @Override
   public void enforceUpdateSubmodelElement(IIdentifier aasId, IIdentifier smId, String smElIdShort) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         SubmodelAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getIdentifierId(smId),
@@ -103,7 +102,7 @@ public class SimpleAbacSubmodelAPIPep implements ISubmodelAPIPep {
   @Override
   public Object enforceGetSubmodelElementValue(IIdentifier aasId, IIdentifier smId, String smElIdShort, Object value) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getIdentifierId(smId),
@@ -117,7 +116,7 @@ public class SimpleAbacSubmodelAPIPep implements ISubmodelAPIPep {
   @Override
   public void enforceInvokeOperation(IIdentifier aasId, IIdentifier smId, String smElIdShort) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         SubmodelAPIScopes.EXECUTE_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getIdentifierId(smId),
@@ -130,7 +129,7 @@ public class SimpleAbacSubmodelAPIPep implements ISubmodelAPIPep {
   @Override
   public Object enforceGetOperationResult(IIdentifier aasId, IIdentifier smId, String smElIdShort, String requestId, Object operationResult) throws InhibitException {
     if (!abacRulePip.abacRuleGrantsPermission(
-        authPip.getRoles(),
+        roleAuthenticator.getRoles(),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
         IdUtil.getIdentifierId(smId),
