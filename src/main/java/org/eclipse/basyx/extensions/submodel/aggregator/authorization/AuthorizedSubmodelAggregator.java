@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -71,7 +72,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			return enforceGetSubmodel(identifier);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -87,7 +88,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			return enforceGetSubmodelbyIdShort(idShort);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -105,7 +106,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			return enforceGetSubmodelAPIById(identifier);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -122,7 +123,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			return enforceGetSubmodelAPIByIdShort(idShort);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -140,7 +141,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			enforceCreateSubmodel(submodel.getIdentification());
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAggregator.createSubmodel(submodel);
 	}
@@ -156,7 +157,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			enforceCreateSubmodel(submodelAPI);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAggregator.createSubmodel(submodelAPI);
 	}
@@ -174,7 +175,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			enforceUpdateSubmodel(smId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAggregator.updateSubmodel(submodel);
 	}
@@ -188,7 +189,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			enforceDeleteSubmodelByIdentifier(identifier);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAggregator.deleteSubmodelByIdentifier(identifier);
 	}
@@ -202,7 +203,7 @@ public class AuthorizedSubmodelAggregator implements ISubmodelAggregator {
 		try {
 			enforceDeleteSubmodelByIdShort(idShort);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAggregator.deleteSubmodelByIdShort(idShort);
 	}

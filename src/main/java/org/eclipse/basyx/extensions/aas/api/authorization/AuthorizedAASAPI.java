@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -37,7 +38,7 @@ public class AuthorizedAASAPI implements IAASAPI {
 		try {
 			return enforceGetAAS();
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -55,7 +56,7 @@ public class AuthorizedAASAPI implements IAASAPI {
 		try {
 			enforceAddSubmodel(submodel);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedAASAPI.addSubmodel(submodel);
 	}
@@ -74,7 +75,7 @@ public class AuthorizedAASAPI implements IAASAPI {
 		try {
 			enforceRemoveSubmodel(idShort);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedAASAPI.removeSubmodel(idShort);
 	}

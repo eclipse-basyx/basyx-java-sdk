@@ -32,6 +32,7 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.slf4j.Logger;
@@ -65,7 +66,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 		try {
 			enforceRegister(deviceAASDescriptor);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedRegistry.register(deviceAASDescriptor);
 	}
@@ -81,7 +82,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 		try {
 			enforceRegister(aas, smDescriptor);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedRegistry.register(aas, smDescriptor);
 	}
@@ -98,7 +99,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 		try {
 			enforceDelete(aasId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedRegistry.delete(aasId);
 	}
@@ -114,7 +115,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 		try {
 			enforceDelete(aasId, smId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedRegistry.delete(aasId, smId);
 	}
@@ -131,7 +132,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 		try {
 			return enforceLookupAAS(aasId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -199,7 +200,7 @@ public class AuthorizedAASRegistry implements IAASRegistry {
 		try {
 			return enforceLookupSubmodel(aasId, smId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 

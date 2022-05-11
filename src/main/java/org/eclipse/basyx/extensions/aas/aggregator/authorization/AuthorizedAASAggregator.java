@@ -39,6 +39,7 @@ import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
@@ -84,7 +85,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 		try {
 			return enforceGetAAS(shellId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -100,7 +101,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 		try {
 			return enforceGetAASProvider(shellId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -117,7 +118,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 		try {
 			enforceCreateAAS(shell);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedAasAggregator.createAAS(shell);
 	}
@@ -133,7 +134,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 		try {
 			enforceUpdateAAS(shell);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedAasAggregator.updateAAS(shell);
 	}
@@ -149,7 +150,7 @@ public class AuthorizedAASAggregator implements IAASAggregator {
 		try {
 			enforceDeleteAAS(shellId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedAasAggregator.deleteAAS(shellId);
 	}

@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
@@ -53,7 +54,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			return enforceGetSubmodel();
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -72,7 +73,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			enforceAddSubmodelElement(elem.getIdShort());
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAPI.addSubmodelElement(elem);
 	}
@@ -82,7 +83,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			enforceAddSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAPI.addSubmodelElement(idShortPath, elem);
 	}
@@ -102,7 +103,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			return enforceGetSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -123,7 +124,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			enforceDeleteSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAPI.deleteSubmodelElement(idShortPath);
 	}
@@ -178,7 +179,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			enforceUpdateSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		decoratedSubmodelAPI.updateSubmodelElement(idShortPath, newValue);
 	}
@@ -198,7 +199,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			return enforceGetSubmodelElementValue(idShortPath);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
@@ -220,7 +221,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			enforceInvokeOperation(idShortPath);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		return decoratedSubmodelAPI.invokeOperation(idShortPath, params);
 	}
@@ -230,7 +231,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			enforceInvokeOperation(idShortPath);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 		return decoratedSubmodelAPI.invokeAsync(idShortPath, params);
 	}
@@ -255,7 +256,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			return enforceGetOperationResult(idShort, requestId);
 		} catch (final InhibitException e) {
-			throw new ProviderException("no access");
+			throw new NotAuthorized();
 		}
 	}
 
