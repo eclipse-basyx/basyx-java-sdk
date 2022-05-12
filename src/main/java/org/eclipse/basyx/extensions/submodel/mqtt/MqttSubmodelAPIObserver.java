@@ -126,6 +126,10 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String brokerEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
 		this(new MqttClient(brokerEndpoint, clientId, persistence), MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI);
 		logger.info("Create new MQTT submodel for endpoint " + brokerEndpoint);
+		
+		observedAPI.addObserver(this);
+		
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
 	}
 
 	/**
@@ -152,6 +156,10 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
 		this(clientId, MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), user, pw, serverEndpoint, observedAPI);
 		logger.info("Create new MQTT submodel for endpoint " + serverEndpoint);
+		
+		observedAPI.addObserver(this);
+		
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
 	}
 
 	/**
@@ -168,6 +176,10 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, MqttClient client) throws MqttException {
 		this(client, MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI);
+		
+		observedAPI.addObserver(this);
+		
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
 	}
 	
 	private void connectMqttClientIfRequired() throws MqttSecurityException, MqttException {
