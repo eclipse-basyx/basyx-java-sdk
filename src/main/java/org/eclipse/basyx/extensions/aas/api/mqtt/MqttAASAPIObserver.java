@@ -31,10 +31,12 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 /**
  * Implementation of {@link IAASAPIObserver} Triggers MQTT events for different
@@ -54,33 +56,16 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 * @param client
 	 *            An already connected mqtt client
 	 * @param aasIdShort
-	 * @param observedAPI
-	 *            The underlying aasAPI
+	 * @param username
+	 * 		  The Username as a String (can be null)
+	 * @param password
+	 * 		  A Char Array of the password (can be null)
 	 * @throws MqttException
 	 */
-	public MqttAASAPIObserver(MqttClient client, String aasIdShort, ObservableAASAPI observedAPI) throws MqttException {
+	public MqttAASAPIObserver(MqttClient client, String aasIdShort, @Nullable String username, @Nullable char[] password) throws MqttException {
 		super(client);
 		
-		connectMqttClientIfRequired();
-		
-		this.aasIdShort = aasIdShort;
-	}
-	
-	/**
-	 * Constructor for adding this MQTT extension on top of another aasAPI with
-	 * credentials
-	 * 
-	 * @param clientId
-	 * @param aasIdShort 
-	 * @param user 
-	 * @param password
-	 * @param serverEndpoint
-	 * @param observedAPI
-	 *            The underlying aasAPI
-	 * @throws MqttException
-	 */
-	public MqttAASAPIObserver(String clientId, String aasIdShort, String user, char[] password, String serverEndpoint, ObservableAASAPI observedAPI) throws MqttException {
-		super(serverEndpoint, clientId, user, password);
+		connectMqttClientIfRequired(username, password);
 		
 		this.aasIdShort = aasIdShort;
 	}
@@ -92,7 +77,7 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 *            The underlying aasAPI
 	 * @throws MqttException
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, ObservableAASAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String serverEndpoint, String clientId) throws MqttException {
@@ -103,11 +88,11 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 * Constructor for adding this MQTT extension on top of another AASAPI with a
 	 * custom persistence strategy
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, ObservableAASAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String brokerEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
-		this(new MqttClient(brokerEndpoint, clientId, persistence), MqttAASAPIHelper.getAASIdShort(observedAPI), observedAPI);
+		this(new MqttClient(brokerEndpoint, clientId, persistence), MqttAASAPIHelper.getAASIdShort(observedAPI), null, null);
 		logger.info("Create new MQTT AASAPI for endpoint " + brokerEndpoint);
 		
 		observedAPI.addObserver(this);
@@ -120,7 +105,7 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 *            The underlying aasAPI
 	 * @throws MqttException
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(String, String, String, char[], String, ObservableAASAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
@@ -131,11 +116,11 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 * Constructor for adding this MQTT extension on top of another AASAPI with
 	 * credentials and persistency strategy
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(String, String, String, char[], String, ObservableAASAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
-		this(clientId, MqttAASAPIHelper.getAASIdShort(observedAPI), user, pw, serverEndpoint, observedAPI);
+		this(new MqttClient(serverEndpoint, clientId, persistence), MqttAASAPIHelper.getAASIdShort(observedAPI), user, pw);
 		logger.info("Create new MQTT AASAPI for endpoint " + serverEndpoint);
 		
 		observedAPI.addObserver(this);
@@ -150,19 +135,35 @@ public class MqttAASAPIObserver extends MqttEventService implements IAASAPIObser
 	 *            An already connected mqtt client
 	 * @throws MqttException
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, ObservableAASAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttAASAPIObserver(MqttClient, String, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttAASAPIObserver(ObservableAASAPI observedAPI, MqttClient client) throws MqttException {
-		this(client, MqttAASAPIHelper.getAASIdShort(observedAPI), observedAPI);
+		this(client, MqttAASAPIHelper.getAASIdShort(observedAPI), null, null);
 		
 		observedAPI.addObserver(this);
 	}
 	
-	private void connectMqttClientIfRequired() throws MqttException {
+	private void connectMqttClientIfRequired(String username, char[] password) throws MqttException {
 		if(!mqttClient.isConnected()) {
-			mqttClient.connect();
+			addOptionsAndConnectToMqttClientOrConnectWithoutOptions(username, password);
 		}
+	}
+
+	private void addOptionsAndConnectToMqttClientOrConnectWithoutOptions(String username, char[] password) throws MqttException {
+		if(!areCredentialsPresent(username, password)) {
+			mqttClient.connect();
+			return;
+		}
+		
+		MqttConnectOptions options = new MqttConnectOptions();
+		options.setUserName(username);
+		options.setPassword(password);
+		mqttClient.connect(options);
+	}
+
+	private boolean areCredentialsPresent(String username, char[] password) {
+		return username != null && password != null;
 	}
 
 	@Override

@@ -34,11 +34,12 @@ import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 /**
  * Implementation of {@link ISubmodelAPIObserver} Triggers MQTT events for
@@ -64,37 +65,16 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 *            An already connected mqtt client
 	 * @param aasId 
 	 * @param submodelIdentifier
-	 * @param observedAPI
-	 *            The underlying submodelAPI
+	 * @param username
+	 * 		  The Username as a String (can be null)
+	 * @param password
+	 * 		  A Char Array of the password (can be null)
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAPIObserver(MqttClient client, IIdentifier aasId, IIdentifier submodelIdentifier, ObservableSubmodelAPI observedAPI) throws MqttException {
+	public MqttSubmodelAPIObserver(MqttClient client, IIdentifier aasId, IIdentifier submodelIdentifier, @Nullable String username, @Nullable char[] password) throws MqttException {
 		super(client);
 		
-		connectMqttClientIfRequired();
-		
-		this.aasIdentifier = aasId;
-		this.submodelIdentifier = submodelIdentifier;
-		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
-	}
-	
-	/**
-	 * Constructor for adding this MQTT extension on top of another SubmodelAPI with
-	 * credentials
-	 * 
-	 * @param clientId
-	 * @param aasId 
-	 * @param submodelIdentifier
-	 * @param user 
-	 * @param password
-	 * @param serverEndpoint
-	 * @param observedAPI
-	 *            The underlying submodelAPI
-	 * @throws MqttException
-	 */
-	public MqttSubmodelAPIObserver(String clientId, IIdentifier aasId, IIdentifier submodelIdentifier, String user, char[] password, String serverEndpoint, ObservableSubmodelAPI observedAPI) throws MqttException {
-		super(serverEndpoint, clientId, user, password);
+		connectMqttClientIfRequired(username, password);
 		
 		this.aasIdentifier = aasId;
 		this.submodelIdentifier = submodelIdentifier;
@@ -109,7 +89,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 *            The underlying submodelAPI
 	 * @throws MqttException
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(MqttClient, IIdentifier, IIdentifier, ObservableSubmodelAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(MqttClient, IIdentifier, IIdentifier, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String serverEndpoint, String clientId) throws MqttException {
@@ -120,11 +100,11 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI with
 	 * a custom persistence strategy
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(MqttClient, IIdentifier, IIdentifier, ObservableSubmodelAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(MqttClient, IIdentifier, IIdentifier, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String brokerEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
-		this(new MqttClient(brokerEndpoint, clientId, persistence), MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI);
+		this(new MqttClient(brokerEndpoint, clientId, persistence), MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), null, null);
 		logger.info("Create new MQTT submodel for endpoint " + brokerEndpoint);
 		
 		observedAPI.addObserver(this);
@@ -139,7 +119,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 *            The underlying submodelAPI
 	 * @throws MqttException
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(String, IIdentifier, IIdentifier, String, char[], String, ObservableSubmodelAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(MqttClient, IIdentifier, IIdentifier, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
@@ -150,11 +130,11 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI with
 	 * credentials and persistency strategy
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(String, IIdentifier, IIdentifier, String, char[], String, ObservableSubmodelAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(MqttClient, IIdentifier, IIdentifier, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
-		this(clientId, MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), user, pw, serverEndpoint, observedAPI);
+		this(new MqttClient(serverEndpoint, clientId, persistence), MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), user, pw);
 		logger.info("Create new MQTT submodel for endpoint " + serverEndpoint);
 		
 		observedAPI.addObserver(this);
@@ -171,21 +151,37 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	 *            An already connected mqtt client
 	 * @throws MqttException
 	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(MqttClient, IIdentifier, IIdentifier, ObservableSubmodelAPI)} instead.
+	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserver(MqttClient, IIdentifier, IIdentifier, String, char[])} instead.
 	 */
 	@Deprecated
 	public MqttSubmodelAPIObserver(ObservableSubmodelAPI observedAPI, MqttClient client) throws MqttException {
-		this(client, MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI);
+		this(client, MqttSubmodelAPIHelper.getAASId(observedAPI), MqttSubmodelAPIHelper.getSubmodelId(observedAPI), null, null);
 		
 		observedAPI.addObserver(this);
 		
 		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
 	}
 	
-	private void connectMqttClientIfRequired() throws MqttSecurityException, MqttException {
+	private void connectMqttClientIfRequired(String username, char[] password) throws MqttException {
 		if(!mqttClient.isConnected()) {
-			mqttClient.connect();
+			addOptionsAndConnectToMqttClientOrConnectWithoutOptions(username, password);
 		}
+	}
+
+	private void addOptionsAndConnectToMqttClientOrConnectWithoutOptions(String username, char[] password) throws MqttException {
+		if(!areCredentialsPresent(username, password)) {
+			mqttClient.connect();
+			return;
+		}
+		
+		MqttConnectOptions options = new MqttConnectOptions();
+		options.setUserName(username);
+		options.setPassword(password);
+		mqttClient.connect(options);
+	}
+
+	private boolean areCredentialsPresent(String username, char[] password) {
+		return username != null && password != null;
 	}
 
 	/**
