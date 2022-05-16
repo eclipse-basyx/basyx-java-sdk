@@ -33,6 +33,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 /**
  * A helper class containing string constants of topics used by the SubmodelAPI.
@@ -69,5 +70,13 @@ public class MqttSubmodelAPIHelper {
 	
 	private static IIdentifier createIdentifier(List<IKey> keys) {
 		return new Identifier(IdentifierType.fromString(keys.get(0).getIdType().toString()), keys.get(0).getValue());
+	}
+	
+	public static MqttConnectOptions getMqttConnectOptions(String username, char[] password) {
+		MqttConnectOptions options = new MqttConnectOptions();
+		options.setUserName(username);
+		options.setPassword(password);
+		
+		return options;
 	}
 }

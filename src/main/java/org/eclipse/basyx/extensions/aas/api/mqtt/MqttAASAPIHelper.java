@@ -25,6 +25,7 @@
 package org.eclipse.basyx.extensions.aas.api.mqtt;
 
 import org.eclipse.basyx.aas.restapi.observing.ObservableAASAPI;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 /**
  * A helper class containing string constants of topics used by the AASAPI.
@@ -36,8 +37,15 @@ public class MqttAASAPIHelper {
 	public static final String TOPIC_ADDSUBMODEL = "BaSyxAAS_addedSubmodelReference";
 	public static final String TOPIC_REMOVESUBMODEL = "BaSyxAAS_removedSubmodelReference";
 	
-	
 	public static String getAASIdShort(ObservableAASAPI observedAPI) {
 		return observedAPI.getAAS().getIdShort();
+	}
+	
+	public static MqttConnectOptions getMqttConnectOptions(String username, char[] password) {
+		MqttConnectOptions options = new MqttConnectOptions();
+		options.setUserName(username);
+		options.setPassword(password);
+		
+		return options;
 	}
 }
