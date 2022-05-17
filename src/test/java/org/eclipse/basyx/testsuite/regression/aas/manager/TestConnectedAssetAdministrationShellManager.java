@@ -40,6 +40,7 @@ import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShe
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
@@ -152,6 +153,32 @@ public class TestConnectedAssetAdministrationShellManager {
 		assertEquals(7, prop1Connected.getValue());
 		assertEquals("prop2", prop2Connected.getIdShort());
 		assertEquals("myStr", prop2Connected.getValue());
+	}
+
+	@Test
+	public void testRegisterSubmodel() {
+		String aasEndpoint = "";
+
+		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
+		String aasIdShort = "aasName";
+		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
+		String smIdShort = "smName";
+
+		String expectedSubmodelEndpoint = aasEndpoint + "shells/aasId/aas/submodels/" + smIdShort + "/submodel";
+
+		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
+		prepareConnectorProvider(provider);
+		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
+		manager.createAAS(aas, aasEndpoint);
+
+		Submodel submodel = new Submodel();
+		submodel.setIdShort(smIdShort);
+		submodel.setIdentification(smId.getIdType(), smId.getId());
+		manager.createSubmodel(aasId, submodel);
+
+		SubmodelDescriptor submodelDescriptor = registry.lookupSubmodel(aasId, smId);
+		String submodelEndpoint = submodelDescriptor.getFirstEndpoint();
+		assertEquals(expectedSubmodelEndpoint, submodelEndpoint);
 	}
 
 	@Test
