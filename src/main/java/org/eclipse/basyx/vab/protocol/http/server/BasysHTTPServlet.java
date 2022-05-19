@@ -67,7 +67,7 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 	 */
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		enableCORSIfRequired(response);
+		addCORSHeaderIfConfigured(response);
 		
 		if (request.getMethod().equalsIgnoreCase("PATCH")) {
 			doPatch(request, response);
@@ -76,7 +76,7 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 		}
 	}
 
-	private void enableCORSIfRequired(HttpServletResponse response) {
+	private void addCORSHeaderIfConfigured(HttpServletResponse response) {
 		if(!isCorsOriginDefined()) {
 			return;
 		}

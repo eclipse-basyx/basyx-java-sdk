@@ -36,9 +36,7 @@ import javax.ws.rs.core.Response;
 
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxHTTPServer;
-
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -48,90 +46,114 @@ import org.junit.Test;
  *
  */
 public class TestHttpCors {
-	private static BaSyxContext contextConfig;
 	private static BaSyxHTTPServer server;
-	private static Client client;
-	private static WebTarget resource;
-	private static Builder request;
-	private static Response response;
 	
-	private static final String ALLOW_SPECIFIC_ORIGIN = "http://basyx-example.com";
-	private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
-	private static final String ALLOW_ALL_ORIGIN = "*";
-	private static final String TARGET_URL = "http://localhost:4001/aasServer/shells";
 	private static final String CONTEXT_PATH = "/aasServer";
 	private static final String DOCBASE_PATH = System.getProperty("java.io.tmpdir");
 	private static final String HOSTNAME = "localhost";
 	private static final int PORT = 4001;
-	
-	
-	@Before
-	public void initializeContext() {
-		contextConfig = new BaSyxContext(CONTEXT_PATH, DOCBASE_PATH, HOSTNAME, PORT);
-		contextConfig.addServletMapping("/shells/*", new SimpleVABElementServlet());
-		client = ClientBuilder.newClient();
-	}
-	
+
+	private static final String TARGET_URL = "http://" + HOSTNAME + ":" + PORT + CONTEXT_PATH + "/shells";
+	private static final String ALLOW_SPECIFIC_ORIGIN = "http://basyx-example.com";
+
 	@After
 	public void stopServer() {
 		server.shutdown();
 	}
 	
 	@Test
-	public void addSpecificCorsOrigin() throws InterruptedException {
-		contextConfig.setAccessControlAllowOrigin(ALLOW_SPECIFIC_ORIGIN);
-		
-		createAndStartHttpServer();
+	public void allowSpecificCorsOrigin() {
+		createAndStartHttpServerWithCORS(ALLOW_SPECIFIC_ORIGIN);
 
-		resource = client.target(TARGET_URL);
-
-		buildRequest();
-
-		response = request.get();
-		
-		assertEquals(ALLOW_SPECIFIC_ORIGIN, response.getHeaderString(ACCESS_CONTROL_ALLOW_ORIGIN));
+		assertEquals(ALLOW_SPECIFIC_ORIGIN, getAccessControlAllowOriginResponseHeader());
 	}
 	
 	@Test
-	public void allowAllOriginInCors() throws InterruptedException {
-		contextConfig.setAccessControlAllowOrigin(ALLOW_ALL_ORIGIN);
-		
-		createAndStartHttpServer();
+	public void allowAllOriginInCors() {
+		String allowAllOrigin = "*";
+		createAndStartHttpServerWithCORS(allowAllOrigin);
 
-		resource = client.target(TARGET_URL);
-
-		buildRequest();
-
-		response = request.get();
-		
-		assertEquals(ALLOW_ALL_ORIGIN, response.getHeaderString(ACCESS_CONTROL_ALLOW_ORIGIN));
+		assertEquals(allowAllOrigin, getAccessControlAllowOriginResponseHeader());
 	}
 	
 	@Test
-	public void withoutCorsConfiguration() throws InterruptedException {
-		createAndStartHttpServer();
-
-		resource = client.target(TARGET_URL);
-
-		buildRequest();
-
-		response = request.get();
+	public void withoutCorsConfiguration() {
+		createAndStartHttpServerWithoutCORS();
 		
-		assertNull(response.getHeaderString(ACCESS_CONTROL_ALLOW_ORIGIN)); 
+		assertNull(getAccessControlAllowOriginResponseHeader());
 	}
 	
-	private void createAndStartHttpServer() {
+	@Test
+	public void allowSpecificMethods() {
+		createAndStartHttpServerWithCORS(ALLOW_SPECIFIC_ORIGIN);
+		
+		String allowMethods = "GET, POST, DELETE, PUT, PATCH";
+
+		assertEquals(allowMethods, getAccessControlAllowMethodsResponseHeader());
+	}
+	
+	@Test
+	public void allowSpecificHeaders() {
+		createAndStartHttpServerWithCORS(ALLOW_SPECIFIC_ORIGIN);
+		
+		String allowHeaders = "X-Requested-With";
+
+		assertEquals(allowHeaders, getAccessControlAllowHeadersResponseHeader());
+	}
+	
+	private void createAndStartHttpServerWithoutCORS() {
+		BaSyxContext contextConfig = createBaseContext();
 		server = new BaSyxHTTPServer(contextConfig);
 		
-		startServer();
+		configureAndStartServer(contextConfig);
 	}
 	
-	public void startServer() {
+	private void createAndStartHttpServerWithCORS(String accessControlAllowOrigin) {
+		BaSyxContext contextConfig = createBaseContext();
+		contextConfig.setAccessControlAllowOrigin(accessControlAllowOrigin);
+
+		configureAndStartServer(contextConfig);
+	}
+
+	private BaSyxContext createBaseContext() {
+		BaSyxContext contextConfig = new BaSyxContext(CONTEXT_PATH, DOCBASE_PATH, HOSTNAME, PORT);
+		contextConfig.addServletMapping("/shells/*", new SimpleVABElementServlet());
+		return contextConfig;
+	}
+
+	private void configureAndStartServer(BaSyxContext contextConfig) {
+		server = new BaSyxHTTPServer(contextConfig);
 		server.start();
 	}
 
-	private void buildRequest() {
-		request = resource.request();
+	private String getAccessControlAllowOriginResponseHeader() {
+		String accessControlAllowOrigin = "Access-Control-Allow-Origin";
+
+		Response response = doRequest();
+		return response.getHeaderString(accessControlAllowOrigin);
+	}
+	
+	private String getAccessControlAllowMethodsResponseHeader() {
+		String accessControlAllowMethods = "Access-Control-Allow-Methods";
+		
+		Response response = doRequest();
+		return response.getHeaderString(accessControlAllowMethods);
+	}
+	
+	private String getAccessControlAllowHeadersResponseHeader() {
+		String accessControlAllowHeaders = "Access-Control-Allow-Headers";
+		
+		Response response = doRequest();
+		return response.getHeaderString(accessControlAllowHeaders);
+	}
+
+	private Response doRequest() {
+		Client client = ClientBuilder.newClient();
+		WebTarget resource = client.target(TARGET_URL);
+
+		Builder request = resource.request();
 		request.accept(MediaType.APPLICATION_JSON);
+
+		return request.get();
 	}
 }

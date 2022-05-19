@@ -131,23 +131,21 @@ public class BaSyxHTTPServer {
 		Iterator<Entry<String, HttpServlet>> servletIterator = context.entrySet().iterator();
 		
 		while (servletIterator.hasNext()) {
-			addNewServletAndMappingToTomcatEnvironment(context, rootCtx, servletIterator);
+			addNewServletAndMappingToTomcatEnvironment(context, rootCtx, servletIterator.next());
 		}
 	}
 
-	private void addNewServletAndMappingToTomcatEnvironment(BaSyxContext context, final Context rootCtx, Iterator<Entry<String, HttpServlet>> servletIterator) {
-		Entry<String, HttpServlet> entry = servletIterator.next();
-
+	private void addNewServletAndMappingToTomcatEnvironment(BaSyxContext context, final Context rootCtx, Entry<String, HttpServlet> entry) {
 		String mapping = entry.getKey();
 		HttpServlet servlet = entry.getValue();
 		
-		setCorsOriginToServlet(context, servlet);
+		configureCorsOrigin(context, servlet);
 
 		Tomcat.addServlet(rootCtx, Integer.toString(servlet.hashCode()), servlet);
 		rootCtx.addServletMappingDecoded(mapping, Integer.toString(servlet.hashCode()));
 	}
 
-	private void setCorsOriginToServlet(BaSyxContext context, HttpServlet servlet) {
+	private void configureCorsOrigin(BaSyxContext context, HttpServlet servlet) {
 		if(!isCorsOriginDefined(context)) {
 			return;
 		}
