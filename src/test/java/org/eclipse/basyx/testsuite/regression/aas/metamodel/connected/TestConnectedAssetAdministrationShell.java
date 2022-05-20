@@ -138,7 +138,7 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 
 	private AssetAdministrationShell addAssetReferenceToAAS(AssetAdministrationShell aas) {
 		Asset asset = (Asset) aas.getAsset();
-		LinkedHashMap<String, Object> modifiedAsset = new LinkedHashMap<>();
+		Map<String, Object> modifiedAsset = new LinkedHashMap<>();
 		modifiedAsset.put(Reference.KEY, asset.getReference().getKeys());
 		modifiedAsset.putAll(asset);
 		aas.setAsset(Asset.createAsFacade(modifiedAsset));

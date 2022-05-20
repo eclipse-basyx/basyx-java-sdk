@@ -83,8 +83,7 @@ public class AASModelProvider implements IModelProvider {
 	public Object getValue(String path) throws ProviderException {
 		path = preparePath(path);
 		if (path.isEmpty()) {
-			Object value =  aasApi.getAAS();
-			value = addAssetReferenceInAAS(value);
+			Object value = addAssetReferenceInAAS(aasApi.getAAS());
 			return value;
 		} else {
 			throw new MalformedRequestException("Path " + path + " is not supported");
@@ -113,9 +112,9 @@ public class AASModelProvider implements IModelProvider {
 	 * @param asset
 	 * @return modified asset map
 	 */
-	private LinkedHashMap<String, Object> addAssetReferenceToAsset(Map<String, Object> asset) {
+	private Map<String, Object> addAssetReferenceToAsset(Map<String, Object> asset) {
 		Reference assetReference = createAssetReference(asset);
-		LinkedHashMap<String, Object> modifiedAsset = new LinkedHashMap<>();
+		Map<String, Object> modifiedAsset = new LinkedHashMap<>();
 		modifiedAsset.put(Reference.KEY, assetReference.getKeys());
 		modifiedAsset.putAll(asset);
 		return modifiedAsset;
