@@ -34,6 +34,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.NotAnInvokableException;
@@ -83,40 +84,13 @@ public class AASModelProvider implements IModelProvider {
 		path = preparePath(path);
 		if (path.isEmpty()) {
 			Object value =  aasApi.getAAS();
-			value  = addAssetReferenceIfNecessary(value);
+			value = addAssetReferenceInAAS(value);
 			return value;
 		} else {
 			throw new MalformedRequestException("Path " + path + " is not supported");
 		}
 	}
 
-	/**
-	 * Ass asset reference to the aas if it is a call to AAS or /shells
-	 * 
-	 * @param value
-	 * @return modified value with asset reference
-	 */
-	private Object addAssetReferenceIfNecessary(Object value) {
-		if (value instanceof AssetAdministrationShell) {
-			AssetAdministrationShell aas = (AssetAdministrationShell) value;
-			aas = addAssetReferenceInAAS(aas);
-			return aas;
-			// }
-			// else if (value instanceof List<?>) {
-			// @SuppressWarnings("unchecked")
-			// List<Object> valueList = (List<Object>) value;
-			// if (!valueList.isEmpty() && valueList.get(0) instanceof
-			// AssetAdministrationShell) {
-			// valueList.forEach(v -> {
-			// AssetAdministrationShell aas = (AssetAdministrationShell) v;
-			// v = addAssetReferenceInAAS(aas);
-			// });
-			// }
-			// return valueList;
-		} else {
-			return value;
-		}
-	}
 
 	/**
 	 * Add asset reference to asset of the aas
@@ -124,11 +98,12 @@ public class AASModelProvider implements IModelProvider {
 	 * @param aas
 	 * @return aas with the modified asset
 	 */
-	private AssetAdministrationShell addAssetReferenceInAAS(AssetAdministrationShell aas) {
-		@SuppressWarnings("unchecked")
-		LinkedHashMap<String, Object> asset = (LinkedHashMap<String, Object>) aas.get("asset");
-		LinkedHashMap<String, Object> assetMap = addAssetReferenceToAsset(asset);
-		aas.put("asset", assetMap);
+	@SuppressWarnings("unchecked")
+	private AssetAdministrationShell addAssetReferenceInAAS(Object value) {
+		AssetAdministrationShell aas = (AssetAdministrationShell) value;
+		Map<String, Object> asset = (Map<String, Object>) aas.get(AssetAdministrationShell.ASSET);
+		Map<String, Object> assetMap = addAssetReferenceToAsset(asset);
+		aas.put(AssetAdministrationShell.ASSET, assetMap);
 		return aas;
 	}
 
@@ -138,10 +113,10 @@ public class AASModelProvider implements IModelProvider {
 	 * @param asset
 	 * @return modified asset map
 	 */
-	private LinkedHashMap<String, Object> addAssetReferenceToAsset(LinkedHashMap<String, Object> asset) {
+	private LinkedHashMap<String, Object> addAssetReferenceToAsset(Map<String, Object> asset) {
 		Reference assetReference = createAssetReference(asset);
 		LinkedHashMap<String, Object> modifiedAsset = new LinkedHashMap<>();
-		modifiedAsset.put("keys", assetReference.getKeys());
+		modifiedAsset.put(Reference.KEY, assetReference.getKeys());
 		modifiedAsset.putAll(asset);
 		return modifiedAsset;
 	}
@@ -152,11 +127,11 @@ public class AASModelProvider implements IModelProvider {
 	 * @param asset
 	 * @return asset reference
 	 */
-	private Reference createAssetReference(LinkedHashMap<String, Object> asset) {
+	private Reference createAssetReference(Map<String, Object> asset) {
 		@SuppressWarnings("unchecked")
-		Map<String, Object> assetIdMap = (Map<String, Object>) asset.get("identification");
-		String idType = (String) assetIdMap.get("idType");
-		String id = (String) assetIdMap.get("id");
+		Map<String, Object> assetIdMap = (Map<String, Object>) asset.get(Identifiable.IDENTIFICATION);
+		String idType = (String) assetIdMap.get(Identifier.IDTYPE);
+		String id = (String) assetIdMap.get(Identifier.ID);
 		Identifier assetId = new Identifier(IdentifierType.fromString(idType), id);
 		return new Reference(assetId, KeyElements.ASSET, true);
 	}

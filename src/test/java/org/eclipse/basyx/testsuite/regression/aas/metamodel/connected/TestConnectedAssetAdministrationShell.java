@@ -26,8 +26,11 @@ package org.eclipse.basyx.testsuite.regression.aas.metamodel.connected;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
@@ -42,6 +45,8 @@ import org.eclipse.basyx.aas.restapi.AASModelProvider;
 import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
 import org.eclipse.basyx.testsuite.regression.aas.metamodel.AssetAdministrationShellSuite;
 import org.eclipse.basyx.testsuite.regression.vab.gateway.ConnectorProviderStub;
@@ -119,10 +124,22 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 		assertEquals(originalAAS, localCAAS.getLocalCopy());
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testGetAssetReferenceFromAASJSON() {
+		Map<String, Object> assetMap = (Map<String, Object>) retrieveShell().getAsset();
+		assertTrue(assetMap.containsKey(Reference.KEY));
+		List<Object> assetKeys = (List<Object>) assetMap.get(Reference.KEY);
+		Map<String, Object> keyMap = (Map<String, Object>) assetKeys.get(0);
+		assertEquals(Asset.MODELTYPE, keyMap.get(Key.TYPE));
+		String expectedAssetId = retrieveBaselineShell().getAsset().getIdentification().getId();
+		assertEquals(expectedAssetId, keyMap.get(Key.VALUE));
+	}
+
 	private AssetAdministrationShell addAssetReferenceToAAS(AssetAdministrationShell aas) {
 		Asset asset = (Asset) aas.getAsset();
 		LinkedHashMap<String, Object> modifiedAsset = new LinkedHashMap<>();
-		modifiedAsset.put("keys", asset.getReference().getKeys());
+		modifiedAsset.put(Reference.KEY, asset.getReference().getKeys());
 		modifiedAsset.putAll(asset);
 		aas.setAsset(Asset.createAsFacade(modifiedAsset));
 		return aas;
