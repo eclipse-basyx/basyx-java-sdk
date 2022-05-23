@@ -9,8 +9,44 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_PASSWORD: admin
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
+      mongo:
+        # Mongo Docker Hub image
+        image: mongo
+        # Provide the username, password and connection string for mongo
+        env:
+          ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+          ME_CONFIG_MONGODB_ADMINPASSWORD: admin
+          ME_CONFIG_MONGODB_URL: mongodb://admin:admin@mongo:27017/
+        # Set health checks to wait until mongo has started  
+        options: >-
+            --health-cmd mongo
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+        # Maps tcp port 27017 on service container to the host
+        ports:
+          - 27017:27017
 
     steps:
     - uses: actions/checkout@v2
