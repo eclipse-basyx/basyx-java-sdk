@@ -23,46 +23,38 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author wege
  */
 public class AbacRule {
-	public enum RightModifier {
-		REDACTED
-	}
-
 	public static class Right {
 		private final String right;
-		private final Set<RightModifier> rightModifiers;
 
-		private Right(String right, RightModifier[] rightModifiers) {
+		private Right(String right) {
 			this.right = right;
-			this.rightModifiers = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(rightModifiers)));
 		}
 
-		public static Right of(String right, RightModifier... rightModifiers) {
-			return new Right(right, rightModifiers);
+		public static Right of(String right) {
+			return new Right(right);
 		}
 	}
 
 	private final String role;
 	private final String right;
-	private final Set<RightModifier> rightModifiers;
 	private final String aasId;
 	private final String smId;
 	private final String smElId;
 
-	private AbacRule(String role, String right, RightModifier[] rightModifiers, String aasId, String smId, String smElId) {
+	private AbacRule(String role, String right, String aasId, String smId, String smElId) {
 		this.role = role;
 		this.right = right;
-		this.rightModifiers = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(rightModifiers)));
 		this.aasId = aasId;
 		this.smId = smId;
 		this.smElId = smElId;
 	}
 
 	public static AbacRule of(String role, String right, String aasId, String smId, String smElId) {
-		return new AbacRule(role, right, new RightModifier[0], aasId, smId, smElId);
+		return new AbacRule(role, right, aasId, smId, smElId);
 	}
 
 	public static AbacRule of(String role, Right right, String aasId, String smId, String smElId) {
-		return new AbacRule(role, right.right, right.rightModifiers.toArray(new RightModifier[0]), aasId, smId, smElId);
+		return new AbacRule(role, right.right, aasId, smId, smElId);
 	}
 
 	public String getRole() {
@@ -71,10 +63,6 @@ public class AbacRule {
 
 	public String getRight() {
 		return right;
-	}
-
-	public Set<RightModifier> getRightModifiers() {
-		return rightModifiers;
 	}
 
 	public String getAasId() {
@@ -105,7 +93,6 @@ public class AbacRule {
 				.append(getAasId(), abacRule.getAasId())
 				.append(getSmId(), abacRule.getSmId())
 				.append(getSmElId(), abacRule.getSmElId())
-				.append(getRightModifiers(), abacRule.getRightModifiers())
 				.isEquals();
 	}
 
@@ -117,7 +104,6 @@ public class AbacRule {
 				.append(getAasId())
 				.append(getSmId())
 				.append(getSmElId())
-				.append(getRightModifiers())
 				.toHashCode();
 	}
 
