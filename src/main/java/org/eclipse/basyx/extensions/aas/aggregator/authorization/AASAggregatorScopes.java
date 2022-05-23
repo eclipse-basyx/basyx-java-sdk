@@ -34,7 +34,6 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 public final class AASAggregatorScopes {
 	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-aggregator:read";
 	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-aggregator:write";
-	public static final String EXECUTE_SCOPE = "urn:org.eclipse.basyx:scope:aas-aggregator:execute";
 
 	private AASAggregatorScopes() {
 		// This class should not be instantiated as it serves as a holder for constants
