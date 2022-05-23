@@ -310,18 +310,18 @@ public class TestConnectedAssetAdministrationShellManager {
 	}
 
 	@Test
-	public void aasCreationUrlHarmonization() {
+	public void aasCreationUrlHarmonizationRemovesShellsSuffix() {
 		ConnectorFactory mockedProvider = createAndConfigureConnectorFactoryMock();
 		IAssetAdministrationShellManager manager = new ConnectedAssetAdministrationShellManager(registry, mockedProvider);
 
-		String aggregatorUrl = "http://test";
-		String aggregatorUrlWithShellSuffix = VABPathTools.concatenatePaths(aggregatorUrl, AASAggregatorProvider.PREFIX);
+		String aggregatorUrlWithoutShellsSuffix = "http://test";
+		String aggregatorUrlWithShellsSuffix = VABPathTools.concatenatePaths(aggregatorUrlWithoutShellsSuffix, AASAggregatorProvider.PREFIX);
 
-		manager.createAAS(createTestAAS(new CustomId("Test"), "TestIdShort"), aggregatorUrlWithShellSuffix);
-		Mockito.verify(mockedProvider, Mockito.times(1)).create(aggregatorUrl);
+		manager.createAAS(createTestAAS(new CustomId("Test"), "TestIdShort"), aggregatorUrlWithShellsSuffix);
+		Mockito.verify(mockedProvider, Mockito.times(1)).create(aggregatorUrlWithoutShellsSuffix);
 
-		manager.createAAS(createTestAAS(new CustomId("Test"), "TestIdShort"), aggregatorUrl);
-		Mockito.verify(mockedProvider, Mockito.times(2)).create(aggregatorUrl);
+		manager.createAAS(createTestAAS(new CustomId("Test"), "TestIdShort"), aggregatorUrlWithoutShellsSuffix);
+		Mockito.verify(mockedProvider, Mockito.times(2)).create(aggregatorUrlWithoutShellsSuffix);
 		
 		Mockito.verifyNoMoreInteractions(mockedProvider);
 	}
