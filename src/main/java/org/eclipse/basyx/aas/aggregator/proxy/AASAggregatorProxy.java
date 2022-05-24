@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.aggregator.AASAggregatorAPIHelper;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
-import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
@@ -38,7 +37,6 @@ import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
-import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 import org.slf4j.Logger;
@@ -75,7 +73,7 @@ public class AASAggregatorProxy implements IAASAggregator {
 	 * @return
 	 */
 	protected static String harmonizeURL(String url) {
-		return VABPathTools.stripFromPath(url, AASAggregatorProvider.PREFIX);
+		return AASAggregatorAPIHelper.harmonizeURL(url);
 	}
 
 	@SuppressWarnings("unchecked")

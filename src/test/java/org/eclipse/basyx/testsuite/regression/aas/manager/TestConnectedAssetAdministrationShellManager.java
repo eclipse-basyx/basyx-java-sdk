@@ -34,12 +34,15 @@ import java.util.Collection;
 import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
+import org.eclipse.basyx.aas.manager.api.IAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.CustomId;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
@@ -57,8 +60,10 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * Tests ConnectedAssetAdministrationShellManager class
@@ -89,7 +94,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	 * @throws Exception
 	 */
 	@Test
-	public void testCreateAAS() throws Exception {
+	public void createAAS() throws Exception {
 		// Register AAS at directory
 		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
 		String aasIdShort = "aasName";
@@ -112,7 +117,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	}
 
 	@Test
-	public void testCreateSubmodel() throws Exception {
+	public void createSubmodel() throws Exception {
 		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
 		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
 		String smIdShort = "smName";
@@ -155,7 +160,33 @@ public class TestConnectedAssetAdministrationShellManager {
 	}
 
 	@Test
-	public void testDeleteSubmodel() {
+	public void registerSubmodel() {
+		String aasEndpoint = "";
+
+		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
+		String aasIdShort = "aasName";
+		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
+		String smIdShort = "smName";
+
+		String expectedSubmodelEndpoint = aasEndpoint + "shells/aasId/aas/submodels/" + smIdShort + "/submodel";
+
+		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
+		prepareConnectorProvider(provider);
+		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
+		manager.createAAS(aas, aasEndpoint);
+
+		Submodel submodel = new Submodel();
+		submodel.setIdShort(smIdShort);
+		submodel.setIdentification(smId.getIdType(), smId.getId());
+		manager.createSubmodel(aasId, submodel);
+
+		SubmodelDescriptor submodelDescriptor = registry.lookupSubmodel(aasId, smId);
+		String submodelEndpoint = submodelDescriptor.getFirstEndpoint();
+		assertEquals(expectedSubmodelEndpoint, submodelEndpoint);
+	}
+
+	@Test
+	public void deleteSubmodel() {
 		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
 		String aasIdShort = "aasName";
 
@@ -182,7 +213,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	}
 
 	@Test
-	public void testDeleteAAS() {
+	public void deleteAAS() {
 		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
 		String aasIdShort = "aasName";
 
@@ -201,7 +232,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	}
 
 	@Test
-	public void testRetrieveAll() {
+	public void retrieveAll() {
 		IIdentifier aasId1 = new Identifier(IdentifierType.CUSTOM, "aasId1");
 		String aasIdShort1 = "aasName1";
 		IIdentifier aasId2 = new Identifier(IdentifierType.CUSTOM, "aasId2");
@@ -226,7 +257,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	 * Tries to retrieve a nonexistent AAS
 	 */
 	@Test
-	public void testRetrieveNonexistentAAS() {
+	public void exceptionThrownOnNonExistingAASRetrieval() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
 
@@ -244,7 +275,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	 * Tries to retrieve a nonexistent Submodel from a nonexistent AAS
 	 */
 	@Test
-	public void testRetrieveNonexistentSMFromNonexistentSM() {
+	public void exceptionThrownOnNonExistingSMRetrievalFromNonExistingAAS() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
 
@@ -263,7 +294,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	 * Tries to retrieve a nonexistent Submodel from an existing AAS
 	 */
 	@Test
-	public void testRetrieveNonexistentSMFromExistentAAS() {
+	public void exceptionThrownOnNonExistingSMRetrievalFromExistingAAS() {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
 
@@ -278,9 +309,30 @@ public class TestConnectedAssetAdministrationShellManager {
 		}
 	}
 
-	/**
-	 * @param provider
-	 */
+	@Test
+	public void aasCreationUrlHarmonizationRemovesShellsSuffix() {
+		ConnectorFactory mockedProvider = createAndConfigureConnectorFactoryMock();
+		IAssetAdministrationShellManager manager = new ConnectedAssetAdministrationShellManager(registry, mockedProvider);
+
+		String aggregatorUrlWithoutShellsSuffix = "http://test";
+		String aggregatorUrlWithShellsSuffix = VABPathTools.concatenatePaths(aggregatorUrlWithoutShellsSuffix, AASAggregatorProvider.PREFIX);
+
+		manager.createAAS(createTestAAS(new CustomId("Test"), "TestIdShort"), aggregatorUrlWithShellsSuffix);
+		Mockito.verify(mockedProvider, Mockito.times(1)).create(aggregatorUrlWithoutShellsSuffix);
+
+		manager.createAAS(createTestAAS(new CustomId("Test"), "TestIdShort"), aggregatorUrlWithoutShellsSuffix);
+		Mockito.verify(mockedProvider, Mockito.times(2)).create(aggregatorUrlWithoutShellsSuffix);
+		
+		Mockito.verifyNoMoreInteractions(mockedProvider);
+	}
+
+	private ConnectorFactory createAndConfigureConnectorFactoryMock() {
+		ConnectorFactory mockedProvider = Mockito.mock(ConnectorFactory.class);
+		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
+		Mockito.when(mockedProvider.create(Mockito.anyString())).thenReturn(provider);
+		return mockedProvider;
+	}
+
 	private void prepareConnectorProvider(IModelProvider provider) {
 		connectorProvider.addMapping("", new VABElementProxy("", provider));
 		connectorProvider.addMapping("shells", new VABElementProxy("shells", provider));
