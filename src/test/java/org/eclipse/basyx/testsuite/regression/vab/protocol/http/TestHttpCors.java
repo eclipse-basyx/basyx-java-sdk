@@ -48,13 +48,13 @@ import org.junit.Test;
 public class TestHttpCors {
 	private static BaSyxHTTPServer server;
 	
-	private static final String CONTEXT_PATH = "/aasServer";
-	private static final String DOCBASE_PATH = System.getProperty("java.io.tmpdir");
-	private static final String HOSTNAME = "localhost";
-	private static final int PORT = 4001;
+	protected static final String CONTEXT_PATH = "/aasServer";
+	protected static final String DOCBASE_PATH = System.getProperty("java.io.tmpdir");
+	protected static final String HOSTNAME = "localhost";
+	protected static final int PORT = 4001;
 
 	private static final String TARGET_URL = "http://" + HOSTNAME + ":" + PORT + CONTEXT_PATH + "/shells";
-	private static final String ALLOW_SPECIFIC_ORIGIN = "http://basyx-example.com";
+	protected static final String ALLOW_SPECIFIC_ORIGIN = "http://basyx-example.com";
 
 	@After
 	public void stopServer() {
@@ -108,7 +108,7 @@ public class TestHttpCors {
 		configureAndStartServer(contextConfig);
 	}
 	
-	private void createAndStartHttpServerWithCORS(String accessControlAllowOrigin) {
+	protected void createAndStartHttpServerWithCORS(String accessControlAllowOrigin) {
 		BaSyxContext contextConfig = createBaseContext();
 		contextConfig.setAccessControlAllowOrigin(accessControlAllowOrigin);
 
@@ -121,12 +121,12 @@ public class TestHttpCors {
 		return contextConfig;
 	}
 
-	private void configureAndStartServer(BaSyxContext contextConfig) {
+	protected void configureAndStartServer(BaSyxContext contextConfig) {
 		server = new BaSyxHTTPServer(contextConfig);
 		server.start();
 	}
 
-	private String getAccessControlAllowOriginResponseHeader() {
+	protected String getAccessControlAllowOriginResponseHeader() {
 		String accessControlAllowOrigin = "Access-Control-Allow-Origin";
 
 		Response response = doRequest();
