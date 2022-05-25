@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.registration.restapi.AASRegistryModelProvider;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TagType;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
@@ -27,7 +28,7 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import com.google.common.base.Splitter;
 
 public class TaggedDirectoryProvider extends AASRegistryModelProvider {
-	private MapTaggedDirectory directory;
+	private IAASTaggedDirectory directory;
 	public static final String PREFIX = "api/v1/directory";
 	public static final String API_ACCESS = "tags=";
 	public static final String SUBMODEL_API_ACCESS = "submodelTags=";
@@ -36,7 +37,7 @@ public class TaggedDirectoryProvider extends AASRegistryModelProvider {
 		this(new MapTaggedDirectory(new LinkedHashMap<>(), new LinkedHashMap<>()));
 	}
 
-	public TaggedDirectoryProvider(MapTaggedDirectory directory) {
+	public TaggedDirectoryProvider(IAASTaggedDirectory directory) {
 		super(directory);
 		this.directory = directory;
 	}
