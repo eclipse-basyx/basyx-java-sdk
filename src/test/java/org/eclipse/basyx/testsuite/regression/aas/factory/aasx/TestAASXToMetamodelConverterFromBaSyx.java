@@ -86,10 +86,12 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String SUBMODEL_COLLECTION_IDSHORT = "submodelCollectionIdShort";
 
 	private static final String BOOLEAN_PROPERTY_IDSHORT = "bool";
+	private static final String BOOLEAN_EMPTY_PROPERTY_IDSHORT = "emptyBool";
 	private static final String INTEGER_PROPERTY_IDSHORT = "int";
 	private static final String DOUBLE_PROPERTY_IDSHORT = "decimal";
 	private static final String STRING_PROPERTY_IDSHORT = "string";
 	private static final Boolean EXPECTED_BOOLEAN_VALUE = true;
+	private static final Boolean EXPECTED_EMPTY_BOOLEAN_VALUE = false;
 	private static final int EXPECTED_INTEGER_VALUE = 42;
 	private static final double EXPECTED_DOUBLE_VALUE = 3.14159265359;
 	private static final String EXPECTED_STRING_VALUE = "test";
@@ -173,10 +175,12 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		Map<String, ISubmodelElement> submodelElements = parsedSubmodel.getSubmodelElements();
 
 		ISubmodelElement boolProperty = submodelElements.get(BOOLEAN_PROPERTY_IDSHORT);
+		ISubmodelElement emptyBoolProperty = submodelElements.get(BOOLEAN_EMPTY_PROPERTY_IDSHORT);
 		ISubmodelElement intProperty = submodelElements.get(INTEGER_PROPERTY_IDSHORT);
 		ISubmodelElement doubleProperty = submodelElements.get(DOUBLE_PROPERTY_IDSHORT);
 		ISubmodelElement stringProperty = submodelElements.get(STRING_PROPERTY_IDSHORT);
 
+		assertEquals(EXPECTED_EMPTY_BOOLEAN_VALUE, emptyBoolProperty.getValue());
 		assertEquals(EXPECTED_BOOLEAN_VALUE, boolProperty.getValue());
 		assertEquals(EXPECTED_INTEGER_VALUE, intProperty.getValue());
 		assertEquals(EXPECTED_DOUBLE_VALUE, doubleProperty.getValue());
@@ -391,6 +395,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 
 		sm.addSubmodelElement(collection);
 		sm.addSubmodelElement(createBooleanProperty());
+		sm.addSubmodelElement(createEmptyBooleanProperty());
 		sm.addSubmodelElement(createIntegerProperty());
 		sm.addSubmodelElement(createDoubleProperty());
 		sm.addSubmodelElement(createStringProperty());
@@ -413,7 +418,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		// size for the test comparison
 		fileList.add(createInMemoryFile(IMAGE_PATH));
 		fileList.add(createInMemoryFile(PDF_PATH));
-		submodelElementsSize = 6;
+		submodelElementsSize = 7;
 
 		try (FileOutputStream out = new FileOutputStream(filePath)) {
 			MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
@@ -426,6 +431,14 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		booleanProperty.setCategory("CONSTANT");
 		booleanProperty.setValueType(ValueType.Boolean);
 		booleanProperty.setValue(EXPECTED_BOOLEAN_VALUE);
+		return booleanProperty;
+	}
+
+	private ISubmodelElement createEmptyBooleanProperty() {
+		Property booleanProperty = new Property();
+		booleanProperty.setIdShort(BOOLEAN_EMPTY_PROPERTY_IDSHORT);
+		booleanProperty.setCategory("CONSTANT");
+		booleanProperty.setValueType(ValueType.Boolean);
 		return booleanProperty;
 	}
 
