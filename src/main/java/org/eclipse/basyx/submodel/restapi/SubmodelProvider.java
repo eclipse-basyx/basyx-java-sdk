@@ -282,7 +282,7 @@ public class SubmodelProvider implements IModelProvider {
 	}
 
 	private Object invokeSync(String path, Object... parameters) {
-		String pathWithoutInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE), "");
+		String pathWithoutInvoke = path.substring(0, path.lastIndexOf(Operation.INVOKE));
 		String strippedPathWithoutInvoke = VABPathTools.stripSlashes(pathWithoutInvoke);
 		return submodelAPI.invokeOperation(strippedPathWithoutInvoke, parameters);
 	}
