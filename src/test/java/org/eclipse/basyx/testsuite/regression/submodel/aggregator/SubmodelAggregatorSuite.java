@@ -38,6 +38,7 @@ import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -51,6 +52,13 @@ public abstract class SubmodelAggregatorSuite {
 
 	protected static Submodel sm1 = new Submodel("idShort1", new CustomId("Sm1"));
 	protected static Submodel sm2 = new Submodel("idShort2", new CustomId("Sm2"));
+
+	@Before
+	public void populateWithDefaultSubmodels() {
+		ISubmodelAggregator aggregator = getSubmodelAggregator();
+		aggregator.createSubmodel(sm1);
+		aggregator.createSubmodel(sm2);
+	}
 
 	@Test
 	public void getSubmodelByIdShort() {
@@ -138,8 +146,4 @@ public abstract class SubmodelAggregatorSuite {
 		return smToDelete;
 	}
 
-	protected static void populateWithDefaultSubmodels(ISubmodelAggregator aggregator) {
-		aggregator.createSubmodel(sm1);
-		aggregator.createSubmodel(sm2);
-	}
 }
