@@ -46,7 +46,7 @@ public class TestInMemorySubmodelAggregator extends SubmodelAggregatorSuite {
 
 	
 	@BeforeClass
-	public static void initalize() {
+	public static void initialize() {
 		aggregator = new SubmodelAggregator();
 	}
 }
