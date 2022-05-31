@@ -26,38 +26,32 @@ package org.eclipse.basyx.extensions.submodel.authorization;
 
 import java.util.Collection;
 import java.util.function.Supplier;
-import org.eclipse.basyx.extensions.shared.authorization.IAbacRuleChecker;
-import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
+import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Simple attribute based implementation for {@link ISubmodelAPIAuthorizer}.
+ * Scope based implementation for {@link ISubmodelAPIAuthorizer}.
  *
  * @author wege
  */
-public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements ISubmodelAPIAuthorizer<SubjectInformationType> {
-  protected IAbacRuleChecker abacRuleChecker;
-  protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
+public class GrantedAuthoritySubmodelAPIAuthorizer<SubjectInformationType> implements ISubmodelAPIAuthorizer<SubjectInformationType> {
+  protected IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator;
 
-  public SimpleAbacSubmodelAPIAuthorizer(final IAbacRuleChecker abacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
-    this.abacRuleChecker = abacRuleChecker;
-    this.roleAuthenticator = roleAuthenticator;
+  public GrantedAuthoritySubmodelAPIAuthorizer(
+      final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator) {
+    this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
   }
 
   @Override
   public Collection<ISubmodelElement> enforceGetSubmodelElements(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<Collection<ISubmodelElement>> smElListSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return smElListSupplier.get();
@@ -65,13 +59,9 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public ISubmodelElement enforceGetSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final Supplier<ISubmodelElement> smElSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        smElIdShortPath
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return smElSupplier.get();
@@ -79,13 +69,9 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public ISubmodel enforceGetSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return smSupplier.get();
@@ -93,52 +79,36 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public void enforceAddSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        smElIdShortPath
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public void enforceDeleteSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        smElIdShortPath
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public void enforceUpdateSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        smElIdShortPath
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public Object enforceGetSubmodelElementValue(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final Supplier<Object> valueSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        smElIdShortPath
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return valueSupplier.get();
@@ -146,13 +116,9 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public Collection<IOperation> enforceGetOperations(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<Collection<IOperation>> operationListSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return operationListSupplier.get();
@@ -160,26 +126,18 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public void enforceInvokeOperation(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.EXECUTE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        smElIdShortPath
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public Object enforceGetOperationResult(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final String requestId, final Supplier<Object> operationResultSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAPIScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        smElIdShortPath
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return operationResultSupplier.get();

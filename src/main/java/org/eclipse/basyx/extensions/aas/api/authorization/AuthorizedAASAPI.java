@@ -27,8 +27,11 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 import java.util.Optional;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -38,13 +41,31 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  *
  * @author espen
  */
-public class AuthorizedAASAPI implements IAASAPI {
-	private IAASAPI decoratedAASAPI;
-	private IAASAPIAuthorizer aasAPIAuthorizer;
+public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
+	public static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
+	public static final String READ_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASAPIScopes.READ_SCOPE;
+	public static final String WRITE_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASAPIScopes.WRITE_SCOPE;
 
-	public AuthorizedAASAPI(IAASAPI decoratedAASAPI, IAASAPIAuthorizer aasAPIAuthorizer) {
+	protected final IAASAPI decoratedAASAPI;
+	protected final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer;
+	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
+
+	public AuthorizedAASAPI(
+			final IAASAPI decoratedAASAPI,
+			final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
+	) {
 		this.decoratedAASAPI = decoratedAASAPI;
 		this.aasAPIAuthorizer = aasAPIAuthorizer;
+		this.subjectInformationProvider = subjectInformationProvider;
+	}
+
+	public AuthorizedAASAPI(final IAASAPI decoratedAASAPI) {
+		this(
+			decoratedAASAPI,
+			(IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+			(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
+		);
 	}
 
 	@Override
@@ -52,7 +73,7 @@ public class AuthorizedAASAPI implements IAASAPI {
 		try {
 			return enforceGetAAS();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 	}
 
@@ -60,17 +81,18 @@ public class AuthorizedAASAPI implements IAASAPI {
 		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
 		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
 		return aasAPIAuthorizer.enforceGetAAS(
+				subjectInformationProvider.get(),
 				aasId,
-				aas
+				() -> aas
 		);
 	}
 
 	@Override
-	public void addSubmodel(IReference submodel) {
+	public void addSubmodel(final IReference submodel) {
 		try {
 			enforceAddSubmodel(submodel);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 		decoratedAASAPI.addSubmodel(submodel);
 	}
@@ -79,27 +101,29 @@ public class AuthorizedAASAPI implements IAASAPI {
 		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
 		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
 		aasAPIAuthorizer.enforceAddSubmodel(
+				subjectInformationProvider.get(),
 				aasId,
 				smId
 		);
 	}
 
 	@Override
-	public void removeSubmodel(String idShort) {
+	public void removeSubmodel(final String smIdShortPath) {
 		try {
-			enforceRemoveSubmodel(idShort);
+			enforceRemoveSubmodel(smIdShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
-		decoratedAASAPI.removeSubmodel(idShort);
+		decoratedAASAPI.removeSubmodel(smIdShortPath);
 	}
 
-	protected void enforceRemoveSubmodel(final String smIdShort) throws InhibitException {
+	protected void enforceRemoveSubmodel(final String smIdShortPath) throws InhibitException {
 		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
 		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
 		aasAPIAuthorizer.enforceRemoveSubmodel(
+				subjectInformationProvider.get(),
 				aasId,
-				smIdShort
+				smIdShortPath
 		);
 	}
 }

@@ -27,23 +27,30 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
+import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 
 /**
  * Api provider for constructing a new AAS API that is authorized
  * 
- * @author espen
+ * @author espen, wege
  */
-public class AuthorizedDecoratingAASAPIFactory implements IAASAPIFactory {
+public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implements IAASAPIFactory {
 	protected final IAASAPIFactory apiFactory;
-	protected final IAASAPIAuthorizer aasAPIAuthorizer;
+	protected final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer;
+	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingAASAPIFactory(IAASAPIFactory factoryToBeDecorated, IAASAPIAuthorizer aasAPIAuthorizer) {
+	public AuthorizedDecoratingAASAPIFactory(
+			final IAASAPIFactory factoryToBeDecorated,
+			final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
+	) {
 		this.apiFactory = factoryToBeDecorated;
 		this.aasAPIAuthorizer = aasAPIAuthorizer;
+		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
 	@Override
-	public IAASAPI getAASApi(AssetAdministrationShell aas) {
-		return new AuthorizedAASAPI(apiFactory.create(aas), aasAPIAuthorizer);
+	public IAASAPI getAASApi(final AssetAdministrationShell aas) {
+		return new AuthorizedAASAPI<>(apiFactory.create(aas), aasAPIAuthorizer, subjectInformationProvider);
 	}
 }

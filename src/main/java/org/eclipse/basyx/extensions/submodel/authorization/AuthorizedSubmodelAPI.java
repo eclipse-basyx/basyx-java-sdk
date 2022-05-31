@@ -29,8 +29,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
@@ -46,21 +49,44 @@ import org.slf4j.LoggerFactory;
  * @author espen
  *
  */
-public class AuthorizedSubmodelAPI implements ISubmodelAPI {
+public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelAPI {
+	private static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
+	public static final String READ_AUTHORITY = SCOPE_AUTHORITY_PREFIX + SubmodelAPIScopes.READ_SCOPE;
+	public static final String WRITE_AUTHORITY = SCOPE_AUTHORITY_PREFIX + SubmodelAPIScopes.WRITE_SCOPE;
+
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizedSubmodelAPI.class);
 
 	protected final IIdentifier aasId;
 	protected final ISubmodelAPI decoratedSubmodelAPI;
-	protected final ISubmodelAPIAuthorizer submodelAPIAuthorizer;
+	protected final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer;
+	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedSubmodelAPI(ISubmodelAPI decoratedSubmodelAPI, ISubmodelAPIAuthorizer submodelAPIAuthorizer) {
-		this(null, decoratedSubmodelAPI, submodelAPIAuthorizer);
+	public AuthorizedSubmodelAPI(
+			final ISubmodelAPI decoratedSubmodelAPI,
+			final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
+	) {
+		this(null, decoratedSubmodelAPI, submodelAPIAuthorizer, subjectInformationProvider);
 	}
 
-	public AuthorizedSubmodelAPI(IAssetAdministrationShell aas, ISubmodelAPI decoratedSubmodelAPI, ISubmodelAPIAuthorizer submodelAPIAuthorizer) {
+	public AuthorizedSubmodelAPI(
+			final IAssetAdministrationShell aas,
+			final ISubmodelAPI decoratedSubmodelAPI,
+			final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
+	) {
 		this.aasId = aas != null ? aas.getIdentification() : null;
 		this.decoratedSubmodelAPI = decoratedSubmodelAPI;
 		this.submodelAPIAuthorizer = submodelAPIAuthorizer;
+		this.subjectInformationProvider = subjectInformationProvider;
+	}
+
+	public AuthorizedSubmodelAPI(final ISubmodelAPI decoratedSubmodelAPI) {
+		this(
+			decoratedSubmodelAPI,
+			(ISubmodelAPIAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+			(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
+		);
 	}
 
 	@Override
@@ -68,7 +94,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		try {
 			return enforceGetSubmodel();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 	}
 
@@ -76,28 +102,29 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
 		return submodelAPIAuthorizer.enforceGetSubmodel(
+				subjectInformationProvider.get(),
 				aasId,
 				smId,
-				sm
+				() -> sm
 		);
 	}
 
 	@Override
-	public void addSubmodelElement(ISubmodelElement elem) {
+	public void addSubmodelElement(final ISubmodelElement elem) {
 		try {
 			enforceAddSubmodelElement(elem.getIdShort());
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 		decoratedSubmodelAPI.addSubmodelElement(elem);
 	}
 
 	@Override
-	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
+	public void addSubmodelElement(final String idShortPath, final ISubmodelElement elem) {
 		try {
 			enforceAddSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 		decoratedSubmodelAPI.addSubmodelElement(idShortPath, elem);
 	}
@@ -106,6 +133,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
 		submodelAPIAuthorizer.enforceAddSubmodelElement(
+				subjectInformationProvider.get(),
 				aasId,
 				smId,
 				smElIdShortPath
@@ -113,32 +141,32 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 	}
 
 	@Override
-	public ISubmodelElement getSubmodelElement(String idShortPath) {
+	public ISubmodelElement getSubmodelElement(final String idShortPath) {
 		try {
 			return enforceGetSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 	}
 
 	protected ISubmodelElement enforceGetSubmodelElement(final String smElIdShortPath) throws InhibitException {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
-		final ISubmodelElement smEl = decoratedSubmodelAPI.getSubmodelElement(smElIdShortPath);
 		return submodelAPIAuthorizer.enforceGetSubmodelElement(
+				subjectInformationProvider.get(),
 				aasId,
 				smId,
 				smElIdShortPath,
-				smEl
+				() -> decoratedSubmodelAPI.getSubmodelElement(smElIdShortPath)
 		);
 	}
 
 	@Override
-	public void deleteSubmodelElement(String idShortPath) {
+	public void deleteSubmodelElement(final String idShortPath) {
 		try {
 			enforceDeleteSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 		decoratedSubmodelAPI.deleteSubmodelElement(idShortPath);
 	}
@@ -147,6 +175,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
 		submodelAPIAuthorizer.enforceDeleteSubmodelElement(
+				subjectInformationProvider.get(),
 				aasId,
 				smId,
 				smElIdShortPath
@@ -155,11 +184,23 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public Collection<IOperation> getOperations() {
-		return enforceGetOperations();
+		try {
+			return enforceGetOperations();
+		} catch (final InhibitException e) {
+			throw new NotAuthorized(e);
+		}
 	}
 
-	protected Collection<IOperation> enforceGetOperations() {
-		return decoratedSubmodelAPI.getOperations().stream().map(operation -> {
+	protected Collection<IOperation> enforceGetOperations() throws InhibitException {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		final Collection<IOperation> enforcedOperations = submodelAPIAuthorizer.enforceGetOperations(
+				subjectInformationProvider.get(),
+				aasId,
+				smId,
+				decoratedSubmodelAPI::getOperations
+		);
+		return enforcedOperations.stream().map(operation -> {
 			try {
 				return (IOperation) enforceGetSubmodelElement(operation.getIdShort());
 			} catch (final InhibitException e) {
@@ -172,12 +213,24 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public Collection<ISubmodelElement> getSubmodelElements() {
-		return enforceGetSubmodelElements();
+		try {
+			return enforceGetSubmodelElements();
+		} catch (final InhibitException e) {
+			throw new NotAuthorized(e);
+		}
 	}
 
-	protected Collection<ISubmodelElement> enforceGetSubmodelElements() {
+	protected Collection<ISubmodelElement> enforceGetSubmodelElements() throws InhibitException {
 		// TODO check whether additional check for submodel access is necessary
-		return decoratedSubmodelAPI.getSubmodelElements().stream().map(smEl -> {
+		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
+		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
+		final Collection<ISubmodelElement> enforcedSubmodelElements = submodelAPIAuthorizer.enforceGetSubmodelElements(
+				subjectInformationProvider.get(),
+				aasId,
+				smId,
+				decoratedSubmodelAPI::getSubmodelElements
+		);
+		return enforcedSubmodelElements.stream().map(smEl -> {
 			try {
 				return enforceGetSubmodelElement(smEl.getIdShort());
 			} catch (final InhibitException e) {
@@ -189,11 +242,11 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 	}
 
 	@Override
-	public void updateSubmodelElement(String idShortPath, Object newValue) {
+	public void updateSubmodelElement(final String idShortPath, final Object newValue) {
 		try {
 			enforceUpdateSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 		decoratedSubmodelAPI.updateSubmodelElement(idShortPath, newValue);
 	}
@@ -202,6 +255,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
 		submodelAPIAuthorizer.enforceUpdateSubmodelElement(
+				subjectInformationProvider.get(),
 				aasId,
 				smId,
 				smElIdShortPath
@@ -209,43 +263,43 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 	}
 
 	@Override
-	public Object getSubmodelElementValue(String idShortPath) {
+	public Object getSubmodelElementValue(final String idShortPath) {
 		try {
 			return enforceGetSubmodelElementValue(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 	}
 
 	protected Object enforceGetSubmodelElementValue(final String smElIdShortPath) throws InhibitException {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
-		final Object value = decoratedSubmodelAPI.getSubmodelElementValue(smElIdShortPath);
 		return submodelAPIAuthorizer.enforceGetSubmodelElementValue(
+				subjectInformationProvider.get(),
 				aasId,
 				smId,
 				smElIdShortPath,
-				value
+				() -> decoratedSubmodelAPI.getSubmodelElementValue(smElIdShortPath)
 		);
 	}
 
 	@Override
-	public Object invokeOperation(String inputIdShortPath, Object... params) {
+	public Object invokeOperation(final String inputIdShortPath, final Object... params) {
 		final String idShortPath = fixInvokeIdShortPath(inputIdShortPath);
 		try {
 			enforceInvokeOperation(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 		return decoratedSubmodelAPI.invokeOperation(idShortPath, params);
 	}
 
 	@Override
-	public Object invokeAsync(String idShortPath, Object... params) {
+	public Object invokeAsync(final String idShortPath, final Object... params) {
 		try {
 			enforceInvokeOperation(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 		return decoratedSubmodelAPI.invokeAsync(idShortPath, params);
 	}
@@ -259,6 +313,7 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
 		submodelAPIAuthorizer.enforceInvokeOperation(
+				subjectInformationProvider.get(),
 				aasId,
 				smId,
 				smElIdShortPath
@@ -266,24 +321,24 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 	}
 
 	@Override
-	public Object getOperationResult(String idShort, String requestId) {
+	public Object getOperationResult(final String smElIdShortPath, final String requestId) {
 		try {
-			return enforceGetOperationResult(idShort, requestId);
+			return enforceGetOperationResult(smElIdShortPath, requestId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized();
+			throw new NotAuthorized(e);
 		}
 	}
 
 	protected Object enforceGetOperationResult(final String smElIdShortPath, final String requestId) throws InhibitException {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 		final IIdentifier smId = Optional.ofNullable(sm).map(IIdentifiable::getIdentification).orElse(null);
-		final Object operationResult = decoratedSubmodelAPI.getOperationResult(smElIdShortPath, requestId);
 		return submodelAPIAuthorizer.enforceGetOperationResult(
+				subjectInformationProvider.get(),
 				aasId,
 				smId,
 				smElIdShortPath,
 				requestId,
-				operationResult
+				() -> decoratedSubmodelAPI.getOperationResult(smElIdShortPath, requestId)
 		);
 	}
 }

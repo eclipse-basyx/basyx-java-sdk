@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
+import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 
@@ -32,18 +33,19 @@ import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
  * 
  * @author espen
  */
-public class AuthorizedDecoratingSubmodelAggregatorFactory implements ISubmodelAggregatorFactory {
+public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationType> implements ISubmodelAggregatorFactory {
 	protected final ISubmodelAggregatorFactory submodelAggregatorFactory;
-	protected final ISubmodelAggregatorAuthorizer submodelAggregatorAuthorizer;
+	protected final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer;
+	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, ISubmodelAggregatorAuthorizer submodelAggregatorAuthorizer) {
+	public AuthorizedDecoratingSubmodelAggregatorFactory(final ISubmodelAggregatorFactory submodelAggregatorFactory, final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer, final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
 		this.submodelAggregatorAuthorizer = submodelAggregatorAuthorizer;
+		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
 	@Override
 	public ISubmodelAggregator create() {
-		return new AuthorizedSubmodelAggregator(submodelAggregatorFactory.create(),
-				submodelAggregatorAuthorizer);
+		return new AuthorizedSubmodelAggregator<>(submodelAggregatorFactory.create(), submodelAggregatorAuthorizer, subjectInformationProvider);
 	}
 }

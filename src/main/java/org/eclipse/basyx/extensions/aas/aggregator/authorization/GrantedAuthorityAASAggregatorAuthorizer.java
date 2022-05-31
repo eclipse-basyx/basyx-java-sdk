@@ -27,95 +27,80 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 import java.util.Collection;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.IAbacRuleChecker;
-import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Simple attribute based implementation for {@link IAASAggregatorAuthorizer}.
+ * Scope based implementation for {@link IAASAggregatorAuthorizer}.
  *
  * @author wege
  */
-public class SimpleAbacAASAggregatorAuthorizer<SubjectInformationType> implements IAASAggregatorAuthorizer<SubjectInformationType> {
-  protected IAbacRuleChecker abacRuleChecker;
-  protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
+public class GrantedAuthorityAASAggregatorAuthorizer<SubjectInformationType> implements IAASAggregatorAuthorizer<SubjectInformationType> {
+  protected IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator;
 
-  public SimpleAbacAASAggregatorAuthorizer(final IAbacRuleChecker abacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
-    this.abacRuleChecker = abacRuleChecker;
-    this.roleAuthenticator = roleAuthenticator;
+  public GrantedAuthorityAASAggregatorAuthorizer(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator) {
+    this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
   }
 
   @Override
   public Collection<IAssetAdministrationShell> enforceGetAASList(SubjectInformationType subjectInformation, Supplier<Collection<IAssetAdministrationShell>> aasListSupplier) throws InhibitException {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.READ_AUTHORITY))) {
+      throw new InhibitException();
+    }
+
     return aasListSupplier.get();
   }
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.READ_AUTHORITY))) {
       throw new InhibitException();
     }
+
     return aasSupplier.get();
   }
 
   @Override
   public IModelProvider enforceGetAASProvider(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IModelProvider> modelProviderSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.READ_AUTHORITY))) {
       throw new InhibitException();
     }
+
     return modelProviderSupplier.get();
   }
 
   @Override
   public void enforceCreateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public void enforceUpdateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public void enforceDeleteAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }

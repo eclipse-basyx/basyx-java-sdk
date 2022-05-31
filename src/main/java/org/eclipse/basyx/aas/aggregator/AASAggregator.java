@@ -27,6 +27,7 @@ package org.eclipse.basyx.aas.aggregator;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
@@ -38,6 +39,7 @@ import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.aggregator.SubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -115,11 +117,13 @@ public class AASAggregator implements IAASAggregator {
 		return aasProviderMap.values().stream().map(p -> {
 			try {
 				return p.getValue("/aas");
+			} catch (NotAuthorized e) {
+				return null;
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				throw new RuntimeException();
+				throw new RuntimeException(e1);
 			}
-		}).map(m -> {
+		}).filter(Objects::nonNull).map(m -> {
 			AssetAdministrationShell aas = new AssetAdministrationShell();
 			aas.putAll((Map<? extends String, ? extends Object>) m);
 			return aas;

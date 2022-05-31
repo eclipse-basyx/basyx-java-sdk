@@ -26,36 +26,29 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.IAbacRuleChecker;
-import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
+import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Simple attribute based implementation for {@link IAASAPIAuthorizer}.
+ * Scope based implementation for {@link IAASAPIAuthorizer}.
  *
  * @author wege
  */
-public class SimpleAbacAASAPIAuthorizer<SubjectInformationType> implements IAASAPIAuthorizer<SubjectInformationType> {
-  protected IAbacRuleChecker abacRuleChecker;
-  protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
+public class GrantedAuthorityAASAPIAuthorizer<SubjectInformationType> implements IAASAPIAuthorizer<SubjectInformationType> {
+  protected IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator;
 
-  public SimpleAbacAASAPIAuthorizer(final IAbacRuleChecker abacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
-    this.abacRuleChecker = abacRuleChecker;
-    this.roleAuthenticator = roleAuthenticator;
+  public GrantedAuthorityAASAPIAuthorizer(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator) {
+    this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
   }
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAPIScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAPI.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return aasSupplier.get();
@@ -63,26 +56,18 @@ public class SimpleAbacAASAPIAuthorizer<SubjectInformationType> implements IAASA
 
   @Override
   public void enforceAddSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IReference smId) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAPIScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getReferenceId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAPI.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public void enforceRemoveSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final String smIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAPIScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        smIdShortPath,
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedAASAPI.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }

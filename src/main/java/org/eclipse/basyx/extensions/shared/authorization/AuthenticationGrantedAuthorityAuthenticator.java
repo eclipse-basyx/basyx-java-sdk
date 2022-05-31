@@ -24,14 +24,26 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 
 /**
- * Interface for a role provider that should be used in the context of
- * authorization by authenticating some request.
+ * Implementation for an {@link GrantedAuthority}-based authenticator that reads from the
+ * (thread-local) {@link SecurityContext}.
  *
  * @author wege
  */
-public interface RoleAuthenticator {
-  List<String> getRoles();
+public class AuthenticationGrantedAuthorityAuthenticator implements IGrantedAuthorityAuthenticator<Authentication> {
+  public AuthenticationGrantedAuthorityAuthenticator() {}
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities(final Authentication subjectInformation) {
+    return Optional.ofNullable(subjectInformation)
+        .map(Authentication::getAuthorities)
+        .orElseGet(Collections::emptyList);
+  }
 }

@@ -24,71 +24,91 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.authorization;
 
+import java.util.Collection;
+import java.util.function.Supplier;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 
 /**
  * Interface for the policy enforcement points used in {@link AuthorizedSubmodelAPI}.
  *
  * @author wege
  */
-public interface ISubmodelAPIAuthorizer {
+public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
+  Collection<ISubmodelElement> enforceGetSubmodelElements(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final Supplier<Collection<ISubmodelElement>> smElListSupplier
+  ) throws InhibitException;
+
   ISubmodelElement enforceGetSubmodelElement(
-      IIdentifier aasId,
-      IIdentifier smId,
-      String smElIdShort,
-      ISubmodelElement smEl
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final String smElIdShortPath,
+      final Supplier<ISubmodelElement> smElSupplier
   ) throws InhibitException;
 
   ISubmodel enforceGetSubmodel(
-      IIdentifier aasId,
-      IIdentifier smId,
-      ISubmodel sm
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final Supplier<ISubmodel> smSupplier
   ) throws InhibitException;
 
   void enforceAddSubmodelElement(
-      IIdentifier aasId,
-      IIdentifier smId,
-      String smElIdShort
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final String smElIdShortPath
   ) throws InhibitException;
 
   void enforceDeleteSubmodelElement(
-      IIdentifier aasId,
-      IIdentifier smId,
-      String smElIdShort
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final String smElIdShortPath
   ) throws InhibitException;
 
-  /*Collection<IOperation> enforceGetOperations(
-      IIdentifier aasId,
-      IIdentifier identification
-  );*/
-
   void enforceUpdateSubmodelElement(
-      IIdentifier aasId,
-      IIdentifier smId,
-      String smElIdShort
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final String smElIdShortPath
   ) throws InhibitException;
 
   Object enforceGetSubmodelElementValue(
-      IIdentifier aasId,
-      IIdentifier smId,
-      String smElIdShort,
-      Object value
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final String smElIdShortPath,
+      final Supplier<Object> valueSupplier
+  ) throws InhibitException;
+
+  Collection<IOperation> enforceGetOperations(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final Supplier<Collection<IOperation>> operationListSupplier
   ) throws InhibitException;
 
   void enforceInvokeOperation(
-      IIdentifier aasId,
-      IIdentifier smId,
-      String smElIdShort
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final String smElIdShortPath
   ) throws InhibitException;
 
   Object enforceGetOperationResult(
-      IIdentifier aasId,
-      IIdentifier smId,
-      String smElIdShort,
-      String requestId,
-      Object operationResult
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final String smElIdShortPath,
+      final String requestId,
+      final Supplier<Object> operationResultSupplier
   ) throws InhibitException;
 }

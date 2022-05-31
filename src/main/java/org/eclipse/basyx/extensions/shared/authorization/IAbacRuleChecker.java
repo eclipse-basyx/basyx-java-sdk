@@ -32,12 +32,12 @@ import java.util.List;
  *
  * @author wege
  */
-public interface AbacRuleChecker {
-  boolean abacRuleGrantsPermission(
+public interface IAbacRuleChecker {
+  boolean checkAbacRuleIsSatisfied(
       final List<String> roles,
       final String right,
       final String aasId,
       final String smId,
-      final String smElId
+      final String smElIdShortPath
   );
 }

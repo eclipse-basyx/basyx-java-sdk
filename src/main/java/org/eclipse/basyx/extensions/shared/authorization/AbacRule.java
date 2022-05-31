@@ -34,38 +34,22 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author wege
  */
 public class AbacRule {
-	public static class Right {
-		private final String right;
-
-		private Right(String right) {
-			this.right = right;
-		}
-
-		public static Right of(String right) {
-			return new Right(right);
-		}
-	}
-
 	private final String role;
 	private final String right;
 	private final String aasId;
 	private final String smId;
-	private final String smElId;
+	private final String smElIdShortPath;
 
-	private AbacRule(String role, String right, String aasId, String smId, String smElId) {
+	private AbacRule(final String role, final String right, final String aasId, final String smId, final String smElIdShortPath) {
 		this.role = role;
 		this.right = right;
 		this.aasId = aasId;
 		this.smId = smId;
-		this.smElId = smElId;
+		this.smElIdShortPath = smElIdShortPath;
 	}
 
-	public static AbacRule of(String role, String right, String aasId, String smId, String smElId) {
-		return new AbacRule(role, right, aasId, smId, smElId);
-	}
-
-	public static AbacRule of(String role, Right right, String aasId, String smId, String smElId) {
-		return new AbacRule(role, right.right, aasId, smId, smElId);
+	public static AbacRule of(final String role, final String right, final String aasId, final String smId, final String smElIdShortPath) {
+		return new AbacRule(role, right, aasId, smId, smElIdShortPath);
 	}
 
 	public String getRole() {
@@ -84,8 +68,8 @@ public class AbacRule {
 		return smId;
 	}
 
-	public String getSmElId() {
-		return smElId;
+	public String getSmElIdShortPath() {
+		return smElIdShortPath;
 	}
 
 	@Override
@@ -103,7 +87,7 @@ public class AbacRule {
 				.append(getRight(), abacRule.getRight())
 				.append(getAasId(), abacRule.getAasId())
 				.append(getSmId(), abacRule.getSmId())
-				.append(getSmElId(), abacRule.getSmElId())
+				.append(getSmElIdShortPath(), abacRule.getSmElIdShortPath())
 				.isEquals();
 	}
 
@@ -114,19 +98,19 @@ public class AbacRule {
 				.append(getRight())
 				.append(getAasId())
 				.append(getSmId())
-				.append(getSmElId())
+				.append(getSmElIdShortPath())
 				.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("AbacRule{");
-		sb.append("role='").append(role).append('\'');
-		sb.append(", right='").append(right).append('\'');
-		sb.append(", aasId='").append(aasId).append('\'');
-		sb.append(", smId='").append(smId).append('\'');
-		sb.append(", smElId='").append(smElId).append('\'');
-		sb.append('}');
-		return sb.toString();
+		return new StringBuilder("AbacRule{")
+				.append("role='").append(role).append('\'')
+				.append(", right='").append(right).append('\'')
+				.append(", aasId='").append(aasId).append('\'')
+				.append(", smId='").append(smId).append('\'')
+				.append(", smElIdShortPath='").append(smElIdShortPath).append('\'')
+				.append('}')
+				.toString();
 	}
 }

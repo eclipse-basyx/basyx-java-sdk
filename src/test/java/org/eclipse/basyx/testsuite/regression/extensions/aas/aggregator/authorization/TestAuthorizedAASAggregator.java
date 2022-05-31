@@ -36,7 +36,8 @@ import org.eclipse.basyx.extensions.aas.aggregator.authorization.AuthorizedAASAg
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.SimpleAbacAASAggregatorAuthorizer;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
-import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -59,7 +60,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class TestAuthorizedAASAggregator {
 	@Mock
 	private IAASAggregator aggregatorMock;
-	private AuthorizedAASAggregator testSubject;
+	private AuthorizedAASAggregator<?> testSubject;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
 	private AbacRuleSet abacRuleSet = new AbacRuleSet();
 
@@ -89,10 +90,14 @@ public class TestAuthorizedAASAggregator {
 				"*",
 				"*"
 		));
-		testSubject = new AuthorizedAASAggregator(aggregatorMock, new SimpleAbacAASAggregatorAuthorizer(
-				new PredefinedSetAbacRuleChecker(abacRuleSet),
-				new KeycloakAuthenticator()
-		));
+		testSubject = new AuthorizedAASAggregator<>(
+				aggregatorMock,
+				new SimpleAbacAASAggregatorAuthorizer<>(
+						new PredefinedSetAbacRuleChecker(abacRuleSet),
+						new KeycloakRoleAuthenticator()
+				),
+				new JWTAuthenticationContextProvider()
+		);
 	}
 
 	@After
@@ -116,7 +121,7 @@ public class TestAuthorizedAASAggregator {
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenCreateAAS_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
-		AssetAdministrationShell shell = invokeCreateAAS();
+		final AssetAdministrationShell shell = invokeCreateAAS();
 		Mockito.verify(aggregatorMock).createAAS(shell);
 	}
 
@@ -189,7 +194,7 @@ public class TestAuthorizedAASAggregator {
 		final AssetAdministrationShell shell = new AssetAdministrationShell("test", shellId, new Asset());
 		final Collection<IAssetAdministrationShell> aasList = Collections.singletonList(shell);
 		Mockito.when(aggregatorMock.getAASList()).thenReturn(aasList);
-		Mockito.when(aggregatorMock.getAAS(shellId)).thenReturn(shell);
+		//Mockito.when(aggregatorMock.getAAS(shellId)).thenReturn(shell);
 		final Collection<IAssetAdministrationShell> returnedAASList = testSubject.getAASList();
 		Assert.assertEquals(Collections.emptyList(), returnedAASList);
 	}

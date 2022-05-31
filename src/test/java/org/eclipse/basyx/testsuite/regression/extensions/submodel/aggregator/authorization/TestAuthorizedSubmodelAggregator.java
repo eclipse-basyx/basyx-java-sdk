@@ -31,7 +31,8 @@ import java.util.Collection;
 import java.util.Collections;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
-import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.AuthorizedSubmodelAggregator;
@@ -65,7 +66,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class TestAuthorizedSubmodelAggregator {
 	@Mock
 	private ISubmodelAggregator aggregatorMock;
-	private AuthorizedSubmodelAggregator authorizedSubmodelAggregator;
+	private AuthorizedSubmodelAggregator<?> authorizedSubmodelAggregator;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
 	private AbacRuleSet abacRuleSet = new AbacRuleSet();
 
@@ -107,12 +108,13 @@ public class TestAuthorizedSubmodelAggregator {
 				"*",
 				"*"
 		));
-		authorizedSubmodelAggregator = new AuthorizedSubmodelAggregator(
+		authorizedSubmodelAggregator = new AuthorizedSubmodelAggregator<>(
 				aggregatorMock,
-				new SimpleAbacSubmodelAggregatorAuthorizer(
+				new SimpleAbacSubmodelAggregatorAuthorizer<>(
 						new PredefinedSetAbacRuleChecker(abacRuleSet),
-						new KeycloakAuthenticator()
-				)
+						new KeycloakRoleAuthenticator()
+				),
+				new JWTAuthenticationContextProvider()
 		);
 	}
 
@@ -136,11 +138,11 @@ public class TestAuthorizedSubmodelAggregator {
 	@Test
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelList_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
-		Collection<ISubmodel> expectedList = new ArrayList<>();
+		final Collection<ISubmodel> expectedList = new ArrayList<>();
 		expectedList.add(submodel);
 		Mockito.when(aggregatorMock.getSubmodelList()).thenReturn(expectedList);
 		//Mockito.when(aggregatorMock.getSubmodel(submodel.getIdentification())).thenReturn(submodel);
-		Collection<ISubmodel> smList = authorizedSubmodelAggregator.getSubmodelList();
+		final Collection<ISubmodel> smList = authorizedSubmodelAggregator.getSubmodelList();
 		assertEquals(expectedList, smList);
 	}
 
@@ -160,7 +162,7 @@ public class TestAuthorizedSubmodelAggregator {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(aggregatorMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
-		ISubmodel returnedSubmodel = authorizedSubmodelAggregator.getSubmodel(SUBMODEL_IDENTIFIER);
+		final ISubmodel returnedSubmodel = authorizedSubmodelAggregator.getSubmodel(SUBMODEL_IDENTIFIER);
 		assertEquals(submodel, returnedSubmodel);
 	}
 
@@ -180,7 +182,7 @@ public class TestAuthorizedSubmodelAggregator {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelbyIdShort_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(aggregatorMock.getSubmodelbyIdShort(SUBMODEL_IDSHORT)).thenReturn(submodel);
-		ISubmodel returnedSubmodel = authorizedSubmodelAggregator.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
+		final ISubmodel returnedSubmodel = authorizedSubmodelAggregator.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
 		assertEquals(submodel, returnedSubmodel);
 	}
 
@@ -200,7 +202,7 @@ public class TestAuthorizedSubmodelAggregator {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelAPIById_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(aggregatorMock.getSubmodelAPIById(SUBMODEL_IDENTIFIER)).thenReturn(submodelAPI);
-		ISubmodelAPI returnedSubmodelAPI = authorizedSubmodelAggregator.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
+		final ISubmodelAPI returnedSubmodelAPI = authorizedSubmodelAggregator.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
 		assertEquals(submodelAPI, returnedSubmodelAPI);
 	}
 
@@ -208,7 +210,7 @@ public class TestAuthorizedSubmodelAggregator {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelAPIByIdShort_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(aggregatorMock.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT)).thenReturn(submodelAPI);
-		ISubmodelAPI returnedSubmodelAPI = authorizedSubmodelAggregator.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
+		final ISubmodelAPI returnedSubmodelAPI = authorizedSubmodelAggregator.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
 		assertEquals(submodelAPI, returnedSubmodelAPI);
 	}
 

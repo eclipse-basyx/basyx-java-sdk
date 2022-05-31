@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
+import java.util.Collection;
+import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -34,26 +36,36 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
  *
  * @author wege
  */
-public interface IAASAggregatorAuthorizer {
+public interface IAASAggregatorAuthorizer<SubjectInformationType> {
+  Collection<IAssetAdministrationShell> enforceGetAASList(
+      SubjectInformationType subjectInformation,
+      Supplier<Collection<IAssetAdministrationShell>> aasListSupplier
+  ) throws InhibitException;
+
   IAssetAdministrationShell enforceGetAAS(
+      SubjectInformationType subjectInformation,
       IIdentifier aasId,
-      IAssetAdministrationShell aas
+      Supplier<IAssetAdministrationShell> aasSupplier
   ) throws InhibitException;
 
   IModelProvider enforceGetAASProvider(
+      SubjectInformationType subjectInformation,
       IIdentifier aasId,
-      IModelProvider modelProvider
+      Supplier<IModelProvider> modelProviderSupplier
   ) throws InhibitException;
 
   void enforceCreateAAS(
+      SubjectInformationType subjectInformation,
       IIdentifier aasId
   ) throws InhibitException;
 
   void enforceUpdateAAS(
+      SubjectInformationType subjectInformation,
       IIdentifier aasId
   ) throws InhibitException;
 
   void enforceDeleteAAS(
+      SubjectInformationType subjectInformation,
       IIdentifier aasId
   ) throws InhibitException;
 }

@@ -26,37 +26,30 @@ package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
 import java.util.Collection;
 import java.util.function.Supplier;
-import org.eclipse.basyx.extensions.shared.authorization.IAbacRuleChecker;
-import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
+import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Simple attribute based implementation for {@link ISubmodelAggregatorAuthorizer}.
+ * Scope based implementation for {@link ISubmodelAggregatorAuthorizer}.
  *
  * @author wege
  */
-public class SimpleAbacSubmodelAggregatorAuthorizer<SubjectInformationType> implements ISubmodelAggregatorAuthorizer<SubjectInformationType> {
-  protected IAbacRuleChecker abacRuleChecker;
-  protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
+public class GrantedAuthoritySubmodelAggregatorAuthorizer<SubjectInformationType> implements ISubmodelAggregatorAuthorizer<SubjectInformationType> {
+  protected IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator;
 
-  public SimpleAbacSubmodelAggregatorAuthorizer(final IAbacRuleChecker abacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
-    this.abacRuleChecker = abacRuleChecker;
-    this.roleAuthenticator = roleAuthenticator;
+  public GrantedAuthoritySubmodelAggregatorAuthorizer(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator) {
+    this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
   }
 
   @Override
   public Collection<ISubmodel> enforceGetSubmodelList(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<Collection<ISubmodel>> smListSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAggregator.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return smListSupplier.get();
@@ -64,13 +57,9 @@ public class SimpleAbacSubmodelAggregatorAuthorizer<SubjectInformationType> impl
 
   @Override
   public ISubmodel enforceGetSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAggregator.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return smSupplier.get();
@@ -78,13 +67,9 @@ public class SimpleAbacSubmodelAggregatorAuthorizer<SubjectInformationType> impl
 
   @Override
   public ISubmodelAPI enforceGetSubmodelAPI(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodelAPI> smAPISupplier) throws InhibitException {
-    if(!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAggregator.READ_AUTHORITY))) {
       throw new InhibitException();
     }
     return smAPISupplier.get();
@@ -92,39 +77,27 @@ public class SimpleAbacSubmodelAggregatorAuthorizer<SubjectInformationType> impl
 
   @Override
   public void enforceCreateSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    if(!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAggregator.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public void enforceUpdateSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    if(!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAggregator.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }
 
   @Override
   public void enforceDeleteSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    if(!abacRuleChecker.checkAbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAggregator.WRITE_AUTHORITY))) {
       throw new InhibitException();
     }
   }

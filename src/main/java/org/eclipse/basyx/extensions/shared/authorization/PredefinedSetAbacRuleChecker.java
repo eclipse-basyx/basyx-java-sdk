@@ -30,11 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link AbacRuleChecker} that works with a predefined AbacRuleSet.
+ * Implementation of {@link IAbacRuleChecker} that works with a predefined AbacRuleSet.
  *
  * @author wege
  */
-public class PredefinedSetAbacRuleChecker implements AbacRuleChecker {
+public class PredefinedSetAbacRuleChecker implements IAbacRuleChecker {
   private static final Logger logger = LoggerFactory.getLogger(PredefinedSetAbacRuleChecker.class);
   private final AbacRuleSet abacRuleSet;
 
@@ -42,21 +42,30 @@ public class PredefinedSetAbacRuleChecker implements AbacRuleChecker {
     this.abacRuleSet = abacRuleSet;
   }
 
-  public boolean abacRuleGrantsPermission(
+  /**
+   * Checks for a given abac tuple if it exists within the predefined set.
+   * @param roles roles of the subject
+   * @param action action which needs authorization
+   * @param aasId id of the asset admininstration shell or null
+   * @param smId id of the submodel or null
+   * @param smElIdShortPath id of the submodel element or null
+   * @return true if the requested abac tuple was found, false otherwise
+   */
+  public boolean checkAbacRuleIsSatisfied(
       final List<String> roles,
-      final String right,
+      final String action,
       final String aasId,
       final String smId,
-      final String smElId
+      final String smElIdShortPath
   ) {
     final Optional<AbacRule> matchingRule = this.abacRuleSet.getRules().parallelStream()
         .filter(abacRule -> abacRule.getRole().equals("*") || roles.stream().anyMatch(role -> abacRule.getRole().equals(role)))
-        .filter(abacRule -> abacRule.getRight().equals("*") || abacRule.getRight().equals(right))
+        .filter(abacRule -> abacRule.getRight().equals("*") || abacRule.getRight().equals(action))
         .filter(abacRule -> checkRegexStringMatch(abacRule.getAasId(), aasId))
         .filter(abacRule -> checkRegexStringMatch(abacRule.getSmId(), smId))
-        .filter(abacRule -> checkRegexStringMatch(abacRule.getSmElId(), smElId))
+        .filter(abacRule -> checkRegexStringMatch(abacRule.getSmElIdShortPath(), smElIdShortPath))
         .findAny();
-    logger.info("roles: {}, right: {}, aasId: {}, smId: {}, smElId: {} - matching-rule?: {}", roles, right, aasId, smId, smElId, matchingRule);
+    logger.info("roles: {}, action: {}, aasId: {}, smId: {}, smElIdShortPath: {} - matching-rule?: {}", roles, action, aasId, smId, smElIdShortPath, matchingRule);
     return matchingRule.isPresent();
   }
 

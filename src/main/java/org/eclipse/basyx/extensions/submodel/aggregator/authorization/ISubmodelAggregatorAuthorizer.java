@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
+import java.util.Collection;
+import java.util.function.Supplier;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -34,26 +36,42 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
  *
  * @author wege
  */
-public interface ISubmodelAggregatorAuthorizer {
+public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
+  Collection<ISubmodel> enforceGetSubmodelList(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final Supplier<Collection<ISubmodel>> smListSupplier
+  ) throws InhibitException;
+
   ISubmodel enforceGetSubmodel(
-      IIdentifier smId,
-      ISubmodel smSupplier
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final Supplier<ISubmodel> smSupplier
   ) throws InhibitException;
 
   ISubmodelAPI enforceGetSubmodelAPI(
-      IIdentifier smId,
-      ISubmodelAPI smAPI
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId,
+      final Supplier<ISubmodelAPI> smAPISupplier
   ) throws InhibitException;
 
   void enforceCreateSubmodel(
-      IIdentifier smId
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId
   ) throws InhibitException;
 
   void enforceUpdateSubmodel(
-      IIdentifier smId
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId
   ) throws InhibitException;
 
   void enforceDeleteSubmodel(
-      IIdentifier smId
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final IIdentifier smId
   ) throws InhibitException;
 }

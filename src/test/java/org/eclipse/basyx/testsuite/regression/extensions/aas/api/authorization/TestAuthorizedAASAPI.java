@@ -36,7 +36,8 @@ import org.eclipse.basyx.extensions.aas.api.authorization.AuthorizedAASAPI;
 import org.eclipse.basyx.extensions.aas.api.authorization.SimpleAbacAASAPIAuthorizer;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
-import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -61,7 +62,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class TestAuthorizedAASAPI {
 	@Mock
 	private IAASAPI apiMock;
-	private AuthorizedAASAPI testSubject;
+	private AuthorizedAASAPI<?> testSubject;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
 	private AbacRuleSet abacRuleSet = new AbacRuleSet();
 
@@ -102,9 +103,13 @@ public class TestAuthorizedAASAPI {
 				"*",
 				"*"
 		));
-		testSubject = new AuthorizedAASAPI(apiMock, new SimpleAbacAASAPIAuthorizer(
-				new PredefinedSetAbacRuleChecker(abacRuleSet),
-				new KeycloakAuthenticator())
+		testSubject = new AuthorizedAASAPI<>(
+				apiMock,
+				new SimpleAbacAASAPIAuthorizer<>(
+						new PredefinedSetAbacRuleChecker(abacRuleSet),
+						new KeycloakRoleAuthenticator()
+				),
+				new JWTAuthenticationContextProvider()
 		);
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 		submodel = new Submodel(SUBMODEL_ID, SUBMODEL_IDENTIFIER);
@@ -120,7 +125,7 @@ public class TestAuthorizedAASAPI {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.getAAS()).thenReturn(shell);
 
-		IAssetAdministrationShell returnedShell = testSubject.getAAS();
+		final IAssetAdministrationShell returnedShell = testSubject.getAAS();
 		assertEquals(shell, returnedShell);
 	}
 
@@ -139,7 +144,7 @@ public class TestAuthorizedAASAPI {
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenAddSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
-		IReference smReference2Add = submodel.getReference();
+		final IReference smReference2Add = submodel.getReference();
 		testSubject.addSubmodel(smReference2Add);
 		Mockito.verify(apiMock).addSubmodel(smReference2Add);
 	}

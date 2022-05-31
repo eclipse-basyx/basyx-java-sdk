@@ -26,7 +26,6 @@ package org.eclipse.basyx.testsuite.regression.extensions.shared;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -44,7 +43,7 @@ public class KeycloakAuthenticationContextProvider {
 
 	private final String ID_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImp0aSI6ImQzNWRmMTRkLTA5ZjYtNDhmZi04YTkzLTdjNmYwMzM5MzE1OSIsImlhdCI6MTU0MTk3MTU4MywiZXhwIjoxNTQxOTc1MTgzfQ.QaQOarmV8xEUYV7yvWzX3cUE_4W1luMcWCwproqqUrg";
 
-	public void setSecurityContextWithRoles(String... roles) {
+	public void setSecurityContextWithRoles(final String... roles) {
 		final SecurityContext context = SecurityContextHolder.createEmptyContext();
 		final Authentication authentication = new JwtAuthenticationToken(Jwt.withTokenValue(ID_TOKEN)
 				.header("roles", Arrays.asList(roles))
@@ -60,7 +59,7 @@ public class KeycloakAuthenticationContextProvider {
 	}
 
 	public void setEmptySecurityContext() {
-		SecurityContext context = SecurityContextHolder.createEmptyContext();
+		final SecurityContext context = SecurityContextHolder.createEmptyContext();
 		SecurityContextHolder.setContext(context);
 	}
 

@@ -22,35 +22,17 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.api.authorization;
+package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.function.Supplier;
-import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import java.util.Collection;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Interface for the policy enforcement points used in {@link AuthorizedAASAPI}.
+ * Interface for a GrantedAuthority (as defined by Spring Security) provider that should be used in the context of
+ * authorization by authenticating some request.
  *
  * @author wege
  */
-public interface IAASAPIAuthorizer<SubjectInformationType> {
-	IAssetAdministrationShell enforceGetAAS(
-			final SubjectInformationType subjectInformation,
-			final IIdentifier aasId,
-			final Supplier<IAssetAdministrationShell> aasSupplier
-  ) throws InhibitException;
-
-	void enforceAddSubmodel(
-			final SubjectInformationType subjectInformation,
-			final IIdentifier aasId,
-			final IReference smId
-  ) throws InhibitException;
-
-	void enforceRemoveSubmodel(
-			final SubjectInformationType subjectInformation,
-			final IIdentifier aasId,
-			final String smIdShortPath
-  ) throws InhibitException;
+public interface IGrantedAuthorityAuthenticator<SubjectInformationType> {
+  Collection<? extends GrantedAuthority> getAuthorities(final SubjectInformationType subjectInformation);
 }

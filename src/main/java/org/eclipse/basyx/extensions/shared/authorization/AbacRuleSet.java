@@ -54,9 +54,9 @@ public class AbacRuleSet {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("AbacRuleSet{");
-		sb.append("rules=").append(rules);
-		sb.append('}');
-		return sb.toString();
+		return new StringBuilder("AbacRuleSet{")
+				.append("rules=").append(rules)
+				.append('}')
+				.toString();
 	}
 }

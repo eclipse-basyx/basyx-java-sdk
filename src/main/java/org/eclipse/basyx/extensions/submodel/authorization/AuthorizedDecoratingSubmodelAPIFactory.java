@@ -25,6 +25,7 @@
 package org.eclipse.basyx.extensions.submodel.authorization;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
@@ -34,20 +35,21 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
  * 
  * @author espen
  */
-public class AuthorizedDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
+public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> implements ISubmodelAPIFactory {
 	protected final IAssetAdministrationShell aas;
 	protected final ISubmodelAPIFactory submodelAPIFactory;
-	protected final ISubmodelAPIAuthorizer submodelAPIAuthorizer;
+	protected final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer;
+	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell aas, ISubmodelAPIFactory submodelAPIFactory, ISubmodelAPIAuthorizer submodelAPIAuthorizer) {
+	public AuthorizedDecoratingSubmodelAPIFactory(final IAssetAdministrationShell aas, final ISubmodelAPIFactory submodelAPIFactory, final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer, ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.aas = aas;
 		this.submodelAPIFactory = submodelAPIFactory;
 		this.submodelAPIAuthorizer = submodelAPIAuthorizer;
+		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
 	@Override
-	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
-		return new AuthorizedSubmodelAPI(aas, submodelAPIFactory.create(submodel),
-				submodelAPIAuthorizer);
+	public ISubmodelAPI getSubmodelAPI(final Submodel submodel) {
+		return new AuthorizedSubmodelAPI<>(aas, submodelAPIFactory.create(submodel), submodelAPIAuthorizer, subjectInformationProvider);
 	}
 }

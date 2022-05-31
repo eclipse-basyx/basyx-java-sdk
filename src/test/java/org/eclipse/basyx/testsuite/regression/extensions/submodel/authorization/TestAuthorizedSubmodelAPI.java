@@ -31,7 +31,8 @@ import java.util.Collection;
 import java.util.Collections;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
-import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.extensions.submodel.authorization.AuthorizedSubmodelAPI;
@@ -66,7 +67,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class TestAuthorizedSubmodelAPI {
 	@Mock
 	private ISubmodelAPI apiMock;
-	private AuthorizedSubmodelAPI authorizedSubmodelAPI;
+	private AuthorizedSubmodelAPI<?> authorizedSubmodelAPI;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
 	private AbacRuleSet abacRuleSet = new AbacRuleSet();
 
@@ -127,12 +128,13 @@ public class TestAuthorizedSubmodelAPI {
 				"*",
 				"*"
 		));
-		authorizedSubmodelAPI = new AuthorizedSubmodelAPI(
+		authorizedSubmodelAPI = new AuthorizedSubmodelAPI<>(
 				apiMock,
-				new SimpleAbacSubmodelAPIAuthorizer(
+				new SimpleAbacSubmodelAPIAuthorizer<>(
 						new PredefinedSetAbacRuleChecker(abacRuleSet),
-						new KeycloakAuthenticator()
-				)
+						new KeycloakRoleAuthenticator()
+				),
+				new JWTAuthenticationContextProvider()
 		);
 	}
 
@@ -157,7 +159,7 @@ public class TestAuthorizedSubmodelAPI {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.getSubmodel()).thenReturn(submodel);
-		ISubmodel returnedSubmodel = authorizedSubmodelAPI.getSubmodel();
+		final ISubmodel returnedSubmodel = authorizedSubmodelAPI.getSubmodel();
 		assertEquals(submodel, returnedSubmodel);
 	}
 
@@ -253,7 +255,7 @@ public class TestAuthorizedSubmodelAPI {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelElement_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
-		ISubmodelElement returnedProperty = authorizedSubmodelAPI.getSubmodelElement(PROPERTY_IDSHORT);
+		final ISubmodelElement returnedProperty = authorizedSubmodelAPI.getSubmodelElement(PROPERTY_IDSHORT);
 		assertEquals(PROPERTY, returnedProperty);
 	}
 
@@ -280,11 +282,11 @@ public class TestAuthorizedSubmodelAPI {
 	@Test
 	public void givenPrincipalHasReadAuthority_whenGetOperations_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
-		Collection<IOperation> expectedOperations = new ArrayList<>();
+		final Collection<IOperation> expectedOperations = new ArrayList<>();
 		expectedOperations.add(OPERATION);
 		Mockito.when(apiMock.getOperations()).thenReturn(expectedOperations);
 		Mockito.when(apiMock.getSubmodelElement(OPERATION_IDSHORT)).thenReturn(OPERATION);
-		Collection<IOperation> returnedOperations = authorizedSubmodelAPI.getOperations();
+		final Collection<IOperation> returnedOperations = authorizedSubmodelAPI.getOperations();
 		assertEquals(expectedOperations, returnedOperations);
 	}
 
@@ -312,11 +314,11 @@ public class TestAuthorizedSubmodelAPI {
 	@Test
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelElements_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
-		Collection<ISubmodelElement> expectedElements = new ArrayList<>();
+		final Collection<ISubmodelElement> expectedElements = new ArrayList<>();
 		expectedElements.add(PROPERTY);
 		Mockito.when(apiMock.getSubmodelElements()).thenReturn(expectedElements);
 		Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
-		Collection<ISubmodelElement> returnedElements = authorizedSubmodelAPI.getSubmodelElements();
+		final Collection<ISubmodelElement> returnedElements = authorizedSubmodelAPI.getSubmodelElements();
 		assertEquals(expectedElements, returnedElements);
 	}
 
@@ -336,7 +338,7 @@ public class TestAuthorizedSubmodelAPI {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelElementValue_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.getSubmodelElementValue(PROPERTY_IDSHORT)).thenReturn(PROPERTY_VALUE);
-		Object returnedValue = authorizedSubmodelAPI.getSubmodelElementValue(PROPERTY_IDSHORT);
+		final Object returnedValue = authorizedSubmodelAPI.getSubmodelElementValue(PROPERTY_IDSHORT);
 		assertEquals(PROPERTY_VALUE, returnedValue);
 	}
 
@@ -356,7 +358,7 @@ public class TestAuthorizedSubmodelAPI {
 	public void givenPrincipalHasExecuteAuthority_whenInvokeOperation_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(executorRole);
 		Mockito.when(apiMock.invokeOperation(PROPERTY_IDSHORT)).thenReturn(PROPERTY_VALUE);
-		Object returnedValue = authorizedSubmodelAPI.invokeOperation(PROPERTY_IDSHORT);
+		final Object returnedValue = authorizedSubmodelAPI.invokeOperation(PROPERTY_IDSHORT);
 		assertEquals(PROPERTY_VALUE, returnedValue);
 	}
 
@@ -376,7 +378,7 @@ public class TestAuthorizedSubmodelAPI {
 	public void givenPrincipalHasExecuteAuthority_whenInvokeAsync_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(executorRole);
 		Mockito.when(apiMock.invokeAsync(PROPERTY_IDSHORT)).thenReturn(PROPERTY_VALUE);
-		Object returnedValue = authorizedSubmodelAPI.invokeAsync(PROPERTY_IDSHORT);
+		final Object returnedValue = authorizedSubmodelAPI.invokeAsync(PROPERTY_IDSHORT);
 		assertEquals(PROPERTY_VALUE, returnedValue);
 	}
 
@@ -396,7 +398,7 @@ public class TestAuthorizedSubmodelAPI {
 	public void givenPrincipalHasReadAuthority_whenGetOperationResult_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID)).thenReturn(PROPERTY_VALUE);
-		Object returnedValue = authorizedSubmodelAPI.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID);
+		final Object returnedValue = authorizedSubmodelAPI.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID);
 		assertEquals(PROPERTY_VALUE, returnedValue);
 	}
 }

@@ -35,7 +35,8 @@ import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAAS
 import org.eclipse.basyx.extensions.aas.registration.authorization.SimpleAbacAASRegistryAuthorizer;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
-import org.eclipse.basyx.extensions.shared.authorization.KeycloakAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -59,7 +60,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class TestAuthorizedAASRegistry {
 	@Mock
 	private IAASRegistry registryMock;
-	private AuthorizedAASRegistry testSubject;
+	private AuthorizedAASRegistry<?> testSubject;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
 	private AbacRuleSet abacRuleSet = new AbacRuleSet();
 
@@ -89,9 +90,12 @@ public class TestAuthorizedAASRegistry {
 				"*",
 				"*"
 		));
-		testSubject = new AuthorizedAASRegistry(registryMock, new SimpleAbacAASRegistryAuthorizer(
-				new PredefinedSetAbacRuleChecker(abacRuleSet),
-				new KeycloakAuthenticator())
+		testSubject = new AuthorizedAASRegistry<>(registryMock,
+				new SimpleAbacAASRegistryAuthorizer<>(
+						new PredefinedSetAbacRuleChecker(abacRuleSet),
+						new KeycloakRoleAuthenticator()
+				),
+				new JWTAuthenticationContextProvider()
 		);
 	}
 
