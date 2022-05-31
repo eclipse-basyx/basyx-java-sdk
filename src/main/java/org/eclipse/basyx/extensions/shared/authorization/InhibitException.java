@@ -25,8 +25,8 @@
 package org.eclipse.basyx.extensions.shared.authorization;
 
 /**
- * Exception that thrown in order to inhibit some
- * making while making an authorization decision.
+ * Exception that is thrown when an authorization decision point
+ * decides to inhibit some action.
  *
  * @author wege
  */
