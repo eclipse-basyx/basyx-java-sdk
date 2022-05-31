@@ -77,14 +77,6 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
-	static void abc() {
-		new AuthorizedAASAggregator<Jwt>(
-				new AASAggregator(
-
-				)
-		);
-	}
-
 	public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator) {
 		this(
 			decoratedAasAggregator,
