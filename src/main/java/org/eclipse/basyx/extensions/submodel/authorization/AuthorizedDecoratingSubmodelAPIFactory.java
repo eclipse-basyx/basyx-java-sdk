@@ -25,6 +25,8 @@
 package org.eclipse.basyx.extensions.submodel.authorization;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -41,11 +43,27 @@ public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> impl
 	protected final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingSubmodelAPIFactory(final IAssetAdministrationShell aas, final ISubmodelAPIFactory submodelAPIFactory, final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer, ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
+	public AuthorizedDecoratingSubmodelAPIFactory(
+			final IAssetAdministrationShell aas,
+			final ISubmodelAPIFactory submodelAPIFactory,
+			final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
+	) {
 		this.aas = aas;
 		this.submodelAPIFactory = submodelAPIFactory;
 		this.submodelAPIAuthorizer = submodelAPIAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
+	}
+
+	public AuthorizedDecoratingSubmodelAPIFactory(
+			final ISubmodelAPIFactory submodelAPIFactory
+	) {
+		this(
+			null,
+			submodelAPIFactory,
+			(ISubmodelAPIAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+			(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
+		);
 	}
 
 	@Override

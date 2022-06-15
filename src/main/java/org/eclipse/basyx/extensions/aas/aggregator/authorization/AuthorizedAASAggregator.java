@@ -35,7 +35,6 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
@@ -49,7 +48,6 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.oauth2.jwt.Jwt;
 
 /**
  * Implementation variant for the AASAggregator that authorized each access
@@ -77,6 +75,9 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator) {
 		this(
 			decoratedAasAggregator,

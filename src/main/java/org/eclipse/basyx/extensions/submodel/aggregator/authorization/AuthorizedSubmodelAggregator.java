@@ -83,6 +83,9 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		);
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public AuthorizedSubmodelAggregator(final ISubmodelAggregator decoratedSubmodelAggregator) {
 		this(
 			decoratedSubmodelAggregator,

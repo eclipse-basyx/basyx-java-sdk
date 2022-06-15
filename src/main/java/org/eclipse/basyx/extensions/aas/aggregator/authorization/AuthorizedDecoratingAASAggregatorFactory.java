@@ -26,6 +26,8 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregatorFactory;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 
 /**
@@ -38,10 +40,22 @@ public class AuthorizedDecoratingAASAggregatorFactory<SubjectInformationType> im
 	protected final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingAASAggregatorFactory(final IAASAggregatorFactory factoryToBeDecorated, final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer, final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
+	public AuthorizedDecoratingAASAggregatorFactory(
+			final IAASAggregatorFactory factoryToBeDecorated,
+			final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
+	) {
 		this.apiFactory = factoryToBeDecorated;
 		this.aasAggregatorAuthorizer = aasAggregatorAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
+	}
+
+	public AuthorizedDecoratingAASAggregatorFactory(final IAASAggregatorFactory factoryToBeDecorated) {
+		this(
+				factoryToBeDecorated,
+				(IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
+		);
 	}
 
 	@Override

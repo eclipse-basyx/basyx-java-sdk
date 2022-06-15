@@ -81,6 +81,9 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public AuthorizedSubmodelAPI(final ISubmodelAPI decoratedSubmodelAPI) {
 		this(
 			decoratedSubmodelAPI,

@@ -72,6 +72,9 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public AuthorizedAASRegistry(final IAASRegistry decoratedRegistry) {
 		this(
 			decoratedRegistry,

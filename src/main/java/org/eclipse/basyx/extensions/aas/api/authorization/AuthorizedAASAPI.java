@@ -60,6 +60,9 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public AuthorizedAASAPI(final IAASAPI decoratedAASAPI) {
 		this(
 			decoratedAASAPI,

@@ -24,6 +24,10 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
@@ -34,18 +38,36 @@ import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
  * @author espen
  */
 public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationType> implements ISubmodelAggregatorFactory {
+	protected final IAssetAdministrationShell aas;
 	protected final ISubmodelAggregatorFactory submodelAggregatorFactory;
 	protected final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingSubmodelAggregatorFactory(final ISubmodelAggregatorFactory submodelAggregatorFactory, final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer, final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
+	public AuthorizedDecoratingSubmodelAggregatorFactory(
+			final IAssetAdministrationShell aas,
+			final ISubmodelAggregatorFactory submodelAggregatorFactory,
+			final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
+	) {
+		this.aas = aas;
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
 		this.submodelAggregatorAuthorizer = submodelAggregatorAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	public AuthorizedDecoratingSubmodelAggregatorFactory(
+			final ISubmodelAggregatorFactory submodelAggregatorFactory
+	) {
+		this(
+				null,
+				submodelAggregatorFactory,
+				(ISubmodelAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
+		);
+	}
+
 	@Override
 	public ISubmodelAggregator create() {
-		return new AuthorizedSubmodelAggregator<>(submodelAggregatorFactory.create(), submodelAggregatorAuthorizer, subjectInformationProvider);
+		return new AuthorizedSubmodelAggregator<>(aas, submodelAggregatorFactory.create(), submodelAggregatorAuthorizer, subjectInformationProvider);
 	}
 }

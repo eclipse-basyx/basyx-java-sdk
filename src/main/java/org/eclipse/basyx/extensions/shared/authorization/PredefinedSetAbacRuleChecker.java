@@ -60,7 +60,7 @@ public class PredefinedSetAbacRuleChecker implements IAbacRuleChecker {
   ) {
     final Optional<AbacRule> matchingRule = this.abacRuleSet.getRules().parallelStream()
         .filter(abacRule -> abacRule.getRole().equals("*") || roles.stream().anyMatch(role -> abacRule.getRole().equals(role)))
-        .filter(abacRule -> abacRule.getRight().equals("*") || abacRule.getRight().equals(action))
+        .filter(abacRule -> abacRule.getAction().equals("*") || abacRule.getAction().equals(action))
         .filter(abacRule -> checkRegexStringMatch(abacRule.getAasId(), aasId))
         .filter(abacRule -> checkRegexStringMatch(abacRule.getSmId(), smId))
         .filter(abacRule -> checkRegexStringMatch(abacRule.getSmElIdShortPath(), smElIdShortPath))

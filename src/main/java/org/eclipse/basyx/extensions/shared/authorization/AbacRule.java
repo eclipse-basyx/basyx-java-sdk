@@ -29,35 +29,35 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * A single attribute based access control rule consisting of
- * role x right x (aas id, submodel id, submodel element id).
+ * role x action x (aas id, submodel id, submodel element id).
  *
  * @author wege
  */
 public class AbacRule {
 	private final String role;
-	private final String right;
+	private final String action;
 	private final String aasId;
 	private final String smId;
 	private final String smElIdShortPath;
 
-	private AbacRule(final String role, final String right, final String aasId, final String smId, final String smElIdShortPath) {
+	private AbacRule(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
 		this.role = role;
-		this.right = right;
+		this.action = action;
 		this.aasId = aasId;
 		this.smId = smId;
 		this.smElIdShortPath = smElIdShortPath;
 	}
 
-	public static AbacRule of(final String role, final String right, final String aasId, final String smId, final String smElIdShortPath) {
-		return new AbacRule(role, right, aasId, smId, smElIdShortPath);
+	public static AbacRule of(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
+		return new AbacRule(role, action, aasId, smId, smElIdShortPath);
 	}
 
 	public String getRole() {
 		return role;
 	}
 
-	public String getRight() {
-		return right;
+	public String getAction() {
+		return action;
 	}
 
 	public String getAasId() {
@@ -84,7 +84,7 @@ public class AbacRule {
 
 		return new EqualsBuilder()
 				.append(getRole(), abacRule.getRole())
-				.append(getRight(), abacRule.getRight())
+				.append(getAction(), abacRule.getAction())
 				.append(getAasId(), abacRule.getAasId())
 				.append(getSmId(), abacRule.getSmId())
 				.append(getSmElIdShortPath(), abacRule.getSmElIdShortPath())
@@ -95,7 +95,7 @@ public class AbacRule {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
 				.append(getRole())
-				.append(getRight())
+				.append(getAction())
 				.append(getAasId())
 				.append(getSmId())
 				.append(getSmElIdShortPath())
@@ -106,7 +106,7 @@ public class AbacRule {
 	public String toString() {
 		return new StringBuilder("AbacRule{")
 				.append("role='").append(role).append('\'')
-				.append(", right='").append(right).append('\'')
+				.append(", action='").append(action).append('\'')
 				.append(", aasId='").append(aasId).append('\'')
 				.append(", smId='").append(smId).append('\'')
 				.append(", smElIdShortPath='").append(smElIdShortPath).append('\'')
