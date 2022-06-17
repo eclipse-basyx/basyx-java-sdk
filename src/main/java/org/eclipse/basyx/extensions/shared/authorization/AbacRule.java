@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
+import java.util.Objects;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -41,6 +42,12 @@ public class AbacRule {
 	private final String smElIdShortPath;
 
 	private AbacRule(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
+		if (Objects.isNull(role)) {
+			throw new IllegalArgumentException("role must not be null");
+		}
+		if (Objects.isNull(action)) {
+			throw new IllegalArgumentException("action must not be null");
+		}
 		this.role = role;
 		this.action = action;
 		this.aasId = aasId;
