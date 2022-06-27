@@ -299,7 +299,7 @@ public class BaSyxHTTPServer {
 
 		Thread serverThread = new Thread(() -> {
 			try {
-				tomcat.stop();
+				stopTomcatServerIfRunningAlready();
 
 				// Adds listener that notifies the tomcat object when the server has started
 				tomcat.getServer().addLifecycleListener(new LifecycleListener() {
@@ -313,6 +313,7 @@ public class BaSyxHTTPServer {
 					}
 				});
 
+				tomcat.getConnector();
 				tomcat.start();
 
 				// Keeps the server thread alive until the server is shut down
@@ -339,6 +340,18 @@ public class BaSyxHTTPServer {
 				shutdown();
 			}
 		}
+	}
+
+	private void stopTomcatServerIfRunningAlready() throws LifecycleException {
+		if(!isTomcatServerRunning()) {
+			return;
+		}
+		
+		tomcat.stop();
+	}
+
+	private boolean isTomcatServerRunning() {
+		return tomcat != null && tomcat.getServer().getState() == LifecycleState.STARTED;
 	}
 
 	/**
