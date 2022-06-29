@@ -53,7 +53,7 @@ public class PropertyProvider implements IModelProvider {
 		path = VABPathTools.stripSlashes(path);
 
 		// Handle "/value" path
-		if (path.equals(Property.VALUE)) {
+		if (isValuePath(path)) {
 			// return value
 			Map<String, Object> p = (Map<String, Object>) proxy.getValue("");
 			return p.get(Property.VALUE);
@@ -69,20 +69,28 @@ public class PropertyProvider implements IModelProvider {
 	@Override
 	public void setValue(String path, Object newValue) throws ProviderException {
 		path = VABPathTools.stripSlashes(path);
-		// Only handle "/value" paths
-		if (path.equals(Property.VALUE)) {
-			updatePropertyValue(newValue);
-		} else {
+
+		if (!isValuePath(path)) {
 			throw new MalformedRequestException("Given Set path '" + path + "' does not end in /value");
 		}
+
+		updatePropertyValue(newValue);
+	}
+
+	private boolean isValuePath(String path) {
+		return path.equals(Property.VALUE);
 	}
 
 	private void updatePropertyValue(Object newValue) {
 		proxy.setValue(Property.VALUE, newValue);
 
-		if (!isValueTypeSet()) {
-			proxy.setValue(Property.VALUETYPE, ValueTypeHelper.getType(newValue).toString());
-		}
+		if (isValueTypeSet()) return;
+
+		updateValueType(newValue);
+	}
+
+	private void updateValueType(Object newValue) {
+		proxy.setValue(Property.VALUETYPE, ValueTypeHelper.getType(newValue).toString());
 	}
 
 	private boolean isValueTypeSet() {
