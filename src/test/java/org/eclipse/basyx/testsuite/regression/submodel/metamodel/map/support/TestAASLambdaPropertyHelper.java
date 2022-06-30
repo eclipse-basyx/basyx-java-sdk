@@ -50,6 +50,7 @@ public class TestAASLambdaPropertyHelper {
 	public void testSettingLambdaValue() throws Exception {
 		// Build property
 		Property temperature = new Property();
+		temperature.setIdShort("temperature");
 		AASLambdaPropertyHelper.setLambdaValue(temperature, () -> testValue, v -> {
 			testValue = (double) v;
 		});

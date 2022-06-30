@@ -63,6 +63,7 @@ public class Property extends DataElement implements IProperty {
 		// Put attributes
 		put(Property.VALUE, null);
 		put(Property.VALUEID, null);
+		put(Property.VALUETYPE, null);
 	}
 
 	/**
@@ -232,11 +233,7 @@ public class Property extends DataElement implements IProperty {
 	@Override
 	public Object getValue() {
 		Object value = get(Property.VALUE);
-		if (value instanceof String) {
-			return ValueTypeHelper.getJavaObject(value, getValueType());
-		} else {
-			return value;
-		}
+		return ValueTypeHelper.getJavaObject(value, getValueType());
 	}
 
 	@Override

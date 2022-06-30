@@ -27,6 +27,7 @@ package org.eclipse.basyx.testsuite.regression.aas.factory.json;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -118,7 +119,7 @@ public class TestJSONConverter {
 		assertEquals(1, sm.getSubmodelElements().size());
 
 		Property smElement = (Property) sm.getSubmodelElements().get("MaxRotationSpeed");
-		assertEquals("5000", smElement.getValue());
+		assertEquals(BigInteger.valueOf(5000), smElement.getValue());
 	}
 
 	private void checkAssets(List<Asset> assetList) {

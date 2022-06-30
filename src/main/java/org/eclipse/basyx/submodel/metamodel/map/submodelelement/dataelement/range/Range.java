@@ -129,6 +129,9 @@ public class Range extends DataElement implements IRange {
 	@Override
 	public Object getMin() {
 		Object value = get(MIN);
+		
+		if(value == null || value.equals("")) return null;
+		
 		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
 		} else {
@@ -139,6 +142,9 @@ public class Range extends DataElement implements IRange {
 	@Override
 	public Object getMax() {
 		Object value = get(MAX);
+
+		if (value == null || value.equals("")) return null;
+
 		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
 		} else {

@@ -47,23 +47,23 @@ public class PropertyProvider implements IModelProvider {
 		this.proxy = proxy;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue(String path) throws ProviderException {
 		path = VABPathTools.stripSlashes(path);
 
-		// Handle "/value" path
 		if (isValuePath(path)) {
-			// return value
-			Map<String, Object> p = (Map<String, Object>) proxy.getValue("");
-			return p.get(Property.VALUE);
+			return getProperty().getValue();
 
 		} else if (path.isEmpty()) {
-			// Handle "" path by returning complete property
-			return proxy.getValue("");
+			return getProperty();
 		} else {
 			throw new MalformedRequestException("Unknown path: " + path);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Property getProperty() {
+		return Property.createAsFacade((Map<String, Object>) proxy.getValue(""));
 	}
 
 	@Override
