@@ -155,49 +155,59 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	public void tearDown() {
 		try {
 			directory.delete(taggedAAS1);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS2);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS3);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
+
 		}
 		try {
 			directory.delete(taggedAAS4, taggedSmId1);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS4);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS5);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS5, taggedSmId2);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS5, taggedSmId3);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS5, submodelId1);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+		
+		try {
+			directory.delete(taggedAAS6);
+		} catch (ResourceNotFoundException doesntMatter) {
+		}
+
+		try {
+			directory.delete(taggedAAS6, taggedSmId4);
+		} catch (ResourceNotFoundException doesntMatter) {
+		}
+
 	}
 
 	@Test
