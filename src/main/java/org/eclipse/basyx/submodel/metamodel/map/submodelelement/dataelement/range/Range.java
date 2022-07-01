@@ -130,7 +130,7 @@ public class Range extends DataElement implements IRange {
 	public Object getMin() {
 		Object value = get(MIN);
 		
-		if(value == null || value.equals("")) return null;
+		if(isNullOrBlank(value)) return null;
 		
 		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
@@ -139,11 +139,23 @@ public class Range extends DataElement implements IRange {
 		}
 	}
 
+	private boolean isNullOrBlank(Object value) {
+		if (value == null)
+			return true;
+
+		if (!(value instanceof String))
+			return false;
+
+		String stringValue = (String) value;
+
+		return stringValue.isBlank();
+	}
+
 	@Override
 	public Object getMax() {
 		Object value = get(MAX);
 
-		if (value == null || value.equals("")) return null;
+		if (isNullOrBlank(value)) return null;
 
 		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
