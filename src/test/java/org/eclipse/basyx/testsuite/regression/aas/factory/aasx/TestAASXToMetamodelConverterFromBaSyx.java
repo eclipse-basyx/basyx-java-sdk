@@ -446,7 +446,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		Property intProperty = new Property();
 		intProperty.setIdShort(INTEGER_PROPERTY_IDSHORT);
 		intProperty.setCategory("CONSTANT");
-		intProperty.setValueType(ValueType.Integer);
+		intProperty.setValueType(ValueType.Int32);
 		intProperty.setValue(EXPECTED_INTEGER_VALUE);
 		return intProperty;
 	}

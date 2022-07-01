@@ -93,7 +93,7 @@ public class TestConnectedProperty {
 	@Test
 	public void testValueTypeRetrieval() {
 		ValueType valueType = prop.getValueType();
-		assertEquals(ValueType.Integer, valueType);
+		assertEquals(ValueType.Int32, valueType);
 	}
 
 	/**

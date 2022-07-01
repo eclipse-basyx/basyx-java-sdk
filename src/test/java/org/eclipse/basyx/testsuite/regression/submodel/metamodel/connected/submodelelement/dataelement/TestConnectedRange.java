@@ -25,6 +25,7 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.connected.submodelelement.dataelement;
 
 import static org.junit.Assert.assertEquals;
+
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedRange;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.Range;
@@ -47,7 +48,7 @@ public class TestConnectedRange {
 
 	@Before
 	public void build() {
-		range = new Range(ValueType.Integer, new Integer(1), new Integer(10));
+		range = new Range(ValueType.Int32, new Integer(1), new Integer(10));
 		range.setIdShort("testIdShort");
 
 		VABElementProxy elementProxy = SubmodelElementTestHelper.createElementProxy(range);

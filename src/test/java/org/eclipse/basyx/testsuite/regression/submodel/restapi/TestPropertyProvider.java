@@ -27,6 +27,7 @@
 package org.eclipse.basyx.testsuite.regression.submodel.restapi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
@@ -40,14 +41,23 @@ public class TestPropertyProvider {
 
 	@Test
 	public void valueTypeNotOverwrittenIfPreviouslySet() {
-		PropertyProvider provider = createPropertyProvider();
+		PropertyProvider provider = createPropertyProviderWithLongProperty();
 
-		setNewValueWithOtherDataType(provider);
+		setNewValueWithBooleanDataType(provider);
 
 		assertValueTypeDidNotChange(provider);
 	}
 
-	private void setNewValueWithOtherDataType(PropertyProvider provider) {
+	@Test
+	public void valueIsConvertedCorrectly() {
+		PropertyProvider provider = createPropertyProviderWithLongProperty();
+
+		Object longExpected = provider.getValue(Property.VALUE);
+
+		assertTrue(longExpected instanceof Long);
+	}
+
+	private void setNewValueWithBooleanDataType(PropertyProvider provider) {
 		provider.setValue(Property.VALUE, true);
 	}
 
@@ -55,7 +65,7 @@ public class TestPropertyProvider {
 		assertEquals(ValueType.Int64, getPropertyFromProvider(provider).getValueType());
 	}
 
-	private PropertyProvider createPropertyProvider() {
+	private PropertyProvider createPropertyProviderWithLongProperty() {
 		Property prop = new Property("propIdShort", ValueType.Int64);
 		prop.setValue(100000000);
 

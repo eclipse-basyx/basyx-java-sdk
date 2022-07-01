@@ -25,11 +25,11 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelelement.dataelement.range;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.Range;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.RangeValue;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -39,24 +39,26 @@ import org.junit.Test;
  *
  */
 public class TestRange {
-
-	private static final int MIN = 0;
-	private static final int MAX = 10;
-	private Range range;
-
-	@Before
-	public void buildRange() {
-		range = new Range(ValueType.Integer, MIN, MAX);
-	}
-
 	@Test
-	public void testGetValue() {
+	public void getValue() {
+		int MIN = 0;
+		int MAX = 10;
+		Range range = new Range(ValueType.Int32, MIN, MAX);
 		assertEquals(MIN, range.getMin());
 		assertEquals(MAX, range.getMax());
 
 		RangeValue value = range.getValue();
 		assertEquals(MIN, value.getMin());
 		assertEquals(MAX, value.getMax());
+	}
+	
+	@Test
+	public void getNullValue() {
+		Range rangeOpenUpperLimit = new Range(ValueType.String, "a", "");
+		assertNull(rangeOpenUpperLimit.getMax());
+
+		Range rangeOpenLowerLimit = new Range(ValueType.String, "  ", "z");
+		assertNull(rangeOpenLowerLimit.getMin());
 	}
 
 }
