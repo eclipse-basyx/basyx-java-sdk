@@ -26,11 +26,13 @@
 package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +73,7 @@ import org.xml.sax.SAXException;
 /**
  * J-Unit tests AASX-Files created by the BaSyx middleware itself.
  * 
- * @author zhangzai, conradi, fischer, jungjan
+ * @author zhangzai, conradi, fischer, jungjan, danish
  *
  */
 public class TestAASXToMetamodelConverterFromBaSyx {
@@ -116,6 +118,8 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String TARGET_PATH_REGEX_START = "Target=.*";
 	private static final String TARGET_PATH_REGEX_FULL = "Target=\"/.*";
 	private static final String DOCPROPS_PATH_REGEX = "Target=\"docProps.*";
+	
+	private static final String THUMBNAIL_PATH = "src/test/resources/thumbnail.png";
 
 	private int bundleSize;
 	private int submodelSize;
@@ -128,6 +132,13 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		createAASXFile(CREATED_AASX_FILE_PATH);
 
 		packageManager = new AASXToMetamodelConverter(CREATED_AASX_FILE_PATH);
+	}
+	
+	@Test
+	public void thumbnailInPackage() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException {
+		InputStream inputStream = packageManager.retrieveThumbnail();
+		
+		assertNotEquals(-1, inputStream.read());
 	}
 
 	/**
@@ -421,7 +432,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		submodelElementsSize = 7;
 
 		try (FileOutputStream out = new FileOutputStream(filePath)) {
-			MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
+			MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out, THUMBNAIL_PATH);
 		}
 	}
 

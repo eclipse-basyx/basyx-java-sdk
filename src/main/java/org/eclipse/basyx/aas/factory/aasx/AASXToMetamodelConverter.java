@@ -28,6 +28,7 @@ package org.eclipse.basyx.aas.factory.aasx;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -66,7 +67,7 @@ import org.xml.sax.SAXException;
  * 
  * The aas provides the references to the submodels and assets
  * 
- * @author zhangzai, conradi
+ * @author zhangzai, conradi, danish
  *
  */
 public class AASXToMetamodelConverter {
@@ -103,6 +104,16 @@ public class AASXToMetamodelConverter {
 		XMLToMetamodelConverter converter = new XMLToMetamodelConverter(xmlContent);
 		closeOPCPackage();
 		return converter.parseAasEnv();
+	}
+	
+	public InputStream retrieveThumbnail() throws IOException, InvalidFormatException {
+		loadAASX();
+
+		InputStream thumbnailStream = getThumbnailStream(aasxRoot);
+		
+		closeOPCPackage();
+		
+		return thumbnailStream;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -172,6 +183,24 @@ public class AASXToMetamodelConverter {
 		IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
 		return writer.toString();
 	}
+	
+	private InputStream getThumbnailStream(OPCPackage aasxPackage) throws IOException {
+		PackageRelationshipCollection thumbnailPackageRelationship = aasxPackage.getRelationshipsByType(MetamodelToAASXConverter.THUMBNAIL_TYPE);
+		
+		checkIfThumbnailExists(thumbnailPackageRelationship);
+		
+		PackagePart thumbnailPart = aasxPackage.getPart(thumbnailPackageRelationship.getRelationship(0));
+		
+		return thumbnailPart.getInputStream();
+	}
+
+	private void checkIfThumbnailExists(PackageRelationshipCollection thumbnailPackageRelationship) {
+		if (thumbnailPackageRelationship.size() > 1) {
+			throw new RuntimeException("More than one Thumbnail found in the specified package");
+		} else if (thumbnailPackageRelationship.size() == 0) {
+			throw new RuntimeException("No Thumbnail found in the specified package");
+		}
+	}
 
 	/**
 	 * Load the referenced filepaths in the submodels such as PDF, PNG files from
@@ -202,6 +231,8 @@ public class AASXToMetamodelConverter {
 		}
 		return paths;
 	}
+	
+	
 
 	/**
 	 * Gets the paths from a collection of ISubmodelElement

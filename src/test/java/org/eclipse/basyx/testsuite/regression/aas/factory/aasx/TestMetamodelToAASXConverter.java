@@ -41,6 +41,7 @@ import java.util.zip.ZipInputStream;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.factory.aasx.AASXToMetamodelConverter;
@@ -68,7 +69,7 @@ import org.xml.sax.SAXException;
 /**
  * Test for the AASXFactory
  * 
- * @author conradi
+ * @author conradi, danish
  *
  */
 public class TestMetamodelToAASXConverter {
@@ -83,6 +84,8 @@ public class TestMetamodelToAASXConverter {
 	private static final String FILE_ID_SHORT_2 = "file2";
 	private static final String FILE_ID_SHORT_3 = "file3";
 	private static final String COLLECTION_ID_SHORT = "collection";
+	
+	private static final String THUMBNAIL_PATH = "src/test/resources/thumbnail.png";
 
 	private AssetAdministrationShell aas;
 	private Submodel sm1;
@@ -139,7 +142,24 @@ public class TestMetamodelToAASXConverter {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
-		validateAASX(out);
+		
+		ArrayList<String> filePaths = getFilePaths(out);
+		
+		assertTrue(filePaths.contains(XML_PATH));
+		assertTrue(filePaths.contains(ORIGIN_PATH));
+		
+		assertExpectedFileElementsArePresent(filePaths);
+	}
+	
+	@Test
+	public void buildAASXWithThumbnail() throws IOException, TransformerException, ParserConfigurationException, InvalidFormatException, SAXException {
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out, THUMBNAIL_PATH);
+		
+		ArrayList<String> filePaths = getFilePaths(out);
+		
+		assertTrue(filePaths.contains(FilenameUtils.getName(THUMBNAIL_PATH)));
 	}
 
 	@Test
@@ -152,7 +172,7 @@ public class TestMetamodelToAASXConverter {
 		assertFilepathsAreCorrect(aasBundle);
 	}
 
-	private void validateAASX(ByteArrayOutputStream byteStream) throws IOException {
+	private ArrayList<String> getFilePaths(ByteArrayOutputStream byteStream) throws IOException {
 		ZipInputStream in = new ZipInputStream(new ByteArrayInputStream(byteStream.toByteArray()));
 		ZipEntry zipEntry = null;
 
@@ -164,10 +184,8 @@ public class TestMetamodelToAASXConverter {
 			}
 			filePaths.add(zipEntry.getName());
 		}
-
-		assertTrue(filePaths.contains(XML_PATH));
-		assertTrue(filePaths.contains(ORIGIN_PATH));
-		assertExpectedFileElementsArePresent(filePaths);
+		
+		return filePaths;
 	}
 
 	private void assertExpectedFileElementsArePresent(List<String> filePaths) {
