@@ -231,8 +231,6 @@ public class AASXToMetamodelConverter {
 		}
 		return paths;
 	}
-	
-	
 
 	/**
 	 * Gets the paths from a collection of ISubmodelElement
