@@ -52,7 +52,7 @@ public class PropertyProvider implements IModelProvider {
 		path = VABPathTools.stripSlashes(path);
 
 		if (isValuePath(path)) {
-			return getProperty().getValue();
+			return ValueTypeHelper.prepareForSerialization(getProperty().getValue());
 
 		} else if (path.isEmpty()) {
 			return getProperty();
