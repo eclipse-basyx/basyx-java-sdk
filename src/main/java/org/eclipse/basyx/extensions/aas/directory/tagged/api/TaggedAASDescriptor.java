@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
@@ -112,8 +111,8 @@ public class TaggedAASDescriptor extends AASDescriptor {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public Set<String> getTags() {
-		return (Set<String>) get(TAGS);
+	public Collection<String> getTags() {
+		return (Collection<String>) get(TAGS);
 	}
 
 	@Override

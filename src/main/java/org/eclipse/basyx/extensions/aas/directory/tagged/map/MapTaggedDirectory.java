@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.memory.AASRegistry;
+import org.eclipse.basyx.aas.registration.memory.IRegistryHandler;
 import org.eclipse.basyx.aas.registration.memory.MapRegistryHandler;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
@@ -34,7 +35,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  *
  */
 public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirectory {
-	private Map<String, Set<TaggedAASDescriptor>> tagMap;
+	protected Map<String, Set<TaggedAASDescriptor>> tagMap;
 	private Map<String, Set<TaggedSubmodelDescriptor>> submodelTagMap = new LinkedHashMap<>();
 
 	private static final String WILDCARD = "*";
@@ -51,11 +52,16 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 		this.tagMap = tagMap;
 	}
 
+	public MapTaggedDirectory(IRegistryHandler registryHandler, Map<String, Set<TaggedAASDescriptor>> tagMap) {
+		super(registryHandler);
+		this.tagMap = tagMap;
+	}
+
 	@Override
 	public void register(TaggedAASDescriptor descriptor) {
 		// Let MapRegistry take care of the registry part and only manage the tags
 		super.register(descriptor);
-		addTags(descriptor.getTags(), descriptor);
+		addTags(descriptor);
 
 		Collection<SubmodelDescriptor> submodelDescriptors = descriptor.getSubmodelDescriptors();
 		for(SubmodelDescriptor smDesc : submodelDescriptors) {
@@ -73,7 +79,7 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 		addSubmodelTags(descriptor.getTags(), descriptor);
 	}
 
-	private void addSubmodelTags(Set<String> submodelTags, TaggedSubmodelDescriptor descriptor) {
+	protected void addSubmodelTags(Set<String> submodelTags, TaggedSubmodelDescriptor descriptor) {
 		submodelTags.stream().forEach(t -> addSubmodelTag(t, descriptor));
 	}
 
@@ -205,8 +211,8 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 		}
 	}
 
-	private void addTags(Set<String> tags, TaggedAASDescriptor descriptor) {
-		tags.stream().forEach(t -> addTag(t, descriptor));
+	protected void addTags(TaggedAASDescriptor descriptor) {
+		(descriptor.getTags()).stream().forEach(t -> addTag(t, descriptor));
 	}
 
 	private synchronized void addTag(String tag, TaggedAASDescriptor descriptor) {
