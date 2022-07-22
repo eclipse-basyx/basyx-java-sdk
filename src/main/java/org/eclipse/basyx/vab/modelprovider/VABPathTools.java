@@ -411,7 +411,7 @@ public class VABPathTools {
 	 * 
 	 * @param path
 	 * @param elementToStrip
-	 * @return path without last element "invoke" or unchanged path
+	 * @return path without last element or unchanged path
 	 */
 	public static String stripFromPath(String path, String elementToStrip) {
 		if (path == null)

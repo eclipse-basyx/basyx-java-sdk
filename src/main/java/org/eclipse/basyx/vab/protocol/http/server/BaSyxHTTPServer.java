@@ -74,7 +74,7 @@ import org.springframework.security.web.util.matcher.AnyRequestMatcher;
  * Starter Class for Apache Tomcat HTTP server that adds the provided servlets
  * and respective mappings on startup.
  * 
- * @author pschorn, espen, haque
+ * @author pschorn, espen, haque, danish
  * 
  */
 public class BaSyxHTTPServer {
@@ -128,20 +128,37 @@ public class BaSyxHTTPServer {
 
 		context.getJwtBearerTokenAuthenticationConfiguration().ifPresent(jwtBearerTokenAuthenticationConfiguration -> addSecurityFiltersToContext(rootCtx, jwtBearerTokenAuthenticationConfiguration));
 
-		// Iterate all servlets in context
-		Iterator<Entry<String, HttpServlet>> it = context.entrySet().iterator();
-		while (it.hasNext()) {
-			// Servlet entry
-			Entry<String, HttpServlet> entry = it.next();
-
-			// Servlet mapping
-			String mapping = entry.getKey();
-			HttpServlet servlet = entry.getValue();
-
-			// Add new Servlet and Mapping to tomcat environment
-			Tomcat.addServlet(rootCtx, Integer.toString(servlet.hashCode()), servlet);
-			rootCtx.addServletMappingDecoded(mapping, Integer.toString(servlet.hashCode()));
+		Iterator<Entry<String, HttpServlet>> servletIterator = context.entrySet().iterator();
+		
+		while (servletIterator.hasNext()) {
+			addNewServletAndMappingToTomcatEnvironment(context, rootCtx, servletIterator.next());
 		}
+	}
+
+	private void addNewServletAndMappingToTomcatEnvironment(BaSyxContext context, final Context rootCtx, Entry<String, HttpServlet> entry) {
+		String mapping = entry.getKey();
+		HttpServlet servlet = entry.getValue();
+		
+		configureCorsOrigin(context, servlet);
+
+		Tomcat.addServlet(rootCtx, Integer.toString(servlet.hashCode()), servlet);
+		rootCtx.addServletMappingDecoded(mapping, Integer.toString(servlet.hashCode()));
+	}
+
+	private void configureCorsOrigin(BaSyxContext context, HttpServlet servlet) {
+		if(!isCorsOriginDefined(context)) {
+			return;
+		}
+		
+		try {
+			((BasysHTTPServlet) servlet).setCorsOrigin(context.getAccessControlAllowOrigin());
+		} catch (RuntimeException e) {
+			logger.info("DefaultServlet cannot be cast to BasysHTTPServlet " + e);
+		}
+	}
+
+	private boolean isCorsOriginDefined(BaSyxContext context) {
+		return context.getAccessControlAllowOrigin() != null;
 	}
 
 	private void addSecurityFiltersToContext(final Context context, final JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration) {
@@ -282,7 +299,7 @@ public class BaSyxHTTPServer {
 
 		Thread serverThread = new Thread(() -> {
 			try {
-				tomcat.stop();
+				stopTomcatServerIfRunningAlready();
 
 				// Adds listener that notifies the tomcat object when the server has started
 				tomcat.getServer().addLifecycleListener(new LifecycleListener() {
@@ -296,6 +313,7 @@ public class BaSyxHTTPServer {
 					}
 				});
 
+				tomcat.getConnector();
 				tomcat.start();
 
 				// Keeps the server thread alive until the server is shut down
@@ -322,6 +340,18 @@ public class BaSyxHTTPServer {
 				shutdown();
 			}
 		}
+	}
+
+	private void stopTomcatServerIfRunningAlready() throws LifecycleException {
+		if(!isTomcatServerRunning()) {
+			return;
+		}
+		
+		tomcat.stop();
+	}
+
+	private boolean isTomcatServerRunning() {
+		return tomcat != null && tomcat.getServer().getState() == LifecycleState.STARTED;
 	}
 
 	/**

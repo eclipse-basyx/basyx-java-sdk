@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,43 +22,31 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelelement.dataelement.range;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.Range;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.RangeValue;
-import org.junit.Test;
+package org.eclipse.basyx.testsuite.regression.submodel.aggregator;
+
+import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
+import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
+import org.junit.BeforeClass;
 
 /**
- * Test for Range
  * 
- * @author conradi
+ * @author schnicke
  *
  */
-public class TestRange {
-	@Test
-	public void getValue() {
-		int MIN = 0;
-		int MAX = 10;
-		Range range = new Range(ValueType.Int32, MIN, MAX);
-		assertEquals(MIN, range.getMin());
-		assertEquals(MAX, range.getMax());
+public class TestInMemorySubmodelAggregator extends SubmodelAggregatorSuite {
 
-		RangeValue value = range.getValue();
-		assertEquals(MIN, value.getMin());
-		assertEquals(MAX, value.getMax());
+	private static ISubmodelAggregator aggregator;
+
+	@Override
+	protected ISubmodelAggregator getSubmodelAggregator() {
+		return aggregator;
 	}
+
 	
-	@Test
-	public void getNullValue() {
-		Range rangeOpenUpperLimit = new Range(ValueType.String, "a", "");
-		assertNull(rangeOpenUpperLimit.getMax());
-
-		Range rangeOpenLowerLimit = new Range(ValueType.String, "  ", "z");
-		assertNull(rangeOpenLowerLimit.getMin());
+	@BeforeClass
+	public static void initialize() {
+		aggregator = new SubmodelAggregator();
 	}
-
 }

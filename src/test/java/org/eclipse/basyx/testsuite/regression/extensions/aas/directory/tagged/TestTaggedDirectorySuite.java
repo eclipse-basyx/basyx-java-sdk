@@ -45,10 +45,12 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	protected final IIdentifier taggedAAS3 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:taggedDirectoryAAS#003");
 	protected final IIdentifier taggedAAS4 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:taggedDirectoryAAS#004");
 	protected final IIdentifier taggedAAS5 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:taggedDirectoryAAS#005");
+	protected final IIdentifier taggedAAS6 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:taggedDirectoryAAS#006");
 
 	protected IIdentifier taggedSmId1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:taggedSM#001");
 	protected IIdentifier taggedSmId2 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:taggedSM#002");
 	protected IIdentifier taggedSmId3 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:taggedSM#003");
+	protected IIdentifier taggedSmId4 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:taggedSM#004");
 	protected IIdentifier submodelId1 = new ModelUrn("urn:de.FHG:devices.es.iese/test:aas:1.0:1:submodel#001");
 
 	// IdShorts used in test cases
@@ -57,10 +59,12 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	protected final String taggedAasIdShort3 = "taggedAasIdShort3";
 	protected final String taggedAasIdShort4 = "taggedAasIdShort4";
 	protected final String taggedAasIdShort5 = "taggedAasIdShort5";
+	protected final String taggedAasIdShort6 = "taggedAasIdShort6";
 
 	protected final String taggedSmIdShort1 = "taggedSubmodelIdShort1";
 	protected final String taggedSmIdShort2 = "taggedSubmodelIdShort2";
 	protected final String taggedSmIdShort3 = "taggedSubmodelIdShort3";
+	protected final String taggedSmIdShort4 = "taggedSubmodelIdShort4";
 	protected final String submodelIdShort1 = "submodelIdShort1";
 
 	// Endpoints used in test cases
@@ -69,10 +73,12 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	protected final String taggedAasEndpoint3 = "http://www.registrytest.de/aas03/taggedaas";
 	protected final String taggedAasEndpoint4 = "http://www.registrytest.de/aas04/taggedaas";
 	protected final String taggedAasEndpoint5 = "http://www.registrytest.de/aas05/taggedaas";
+	protected final String taggedAasEndpoint6 = "http://www.registrytest.de/aas06/taggedaas";
 
 	protected String taggedSmEndpoint1 = "http://www.registrytest.de/aas01/taggedAas/submodel";
 	protected String taggedSmEndpoint2 = "http://www.registrytest.de/aas02/taggedAas/submodel";
 	protected String taggedSmEndpoint3 = "http://www.registrytest.de/aas03/taggedAas/submodel";
+	protected String taggedSmEndpoint4 = "http://www.registrytest.de/aas05/taggedAas/taggedsubmodel";
 	protected String submodelEndpoint1 = "http://www.registrytest.de/aas01/taggedAas/submodel_not_tagged";
 
 	// Tags used in test cases
@@ -87,6 +93,7 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	protected final String MACHINE = "machine";
 	protected final String KEY = "key";
 	protected final String COMPONENT = "component";
+	protected final String SM_ONLY = "smOnly";
 
 	/**
 	 * This method is not included in @Before to not interfere with test cases of
@@ -132,6 +139,12 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 		TaggedSubmodelDescriptor taggedSmDesc3 = new TaggedSubmodelDescriptor(taggedSmIdShort3, taggedSmId3, taggedSmEndpoint3);
 		taggedSmDesc3.addTags(Arrays.asList(INTEGRATOR, KEY, COMPONENT));
 		directory.registerSubmodel(taggedAAS5, taggedSmDesc3);
+		
+		TaggedAASDescriptor desc6 = new TaggedAASDescriptor(taggedAasIdShort6, taggedAAS6, taggedAasEndpoint6);
+		TaggedSubmodelDescriptor taggedSmDesc4 = new TaggedSubmodelDescriptor(taggedSmIdShort4, taggedSmId4, taggedSmEndpoint4);
+		taggedSmDesc4.addTags(Arrays.asList(SM_ONLY));
+		desc6.addSubmodelDescriptor(taggedSmDesc4);
+		directory.register(desc6);
 	}
 
 	/**
@@ -142,49 +155,59 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	public void tearDown() {
 		try {
 			directory.delete(taggedAAS1);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS2);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS3);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
+
 		}
 		try {
 			directory.delete(taggedAAS4, taggedSmId1);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS4);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS5);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS5, taggedSmId2);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS5, taggedSmId3);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+
 		try {
 			directory.delete(taggedAAS5, submodelId1);
-		} catch (ResourceNotFoundException e) {
-			// Does not matter
+		} catch (ResourceNotFoundException doesntMatter) {
 		}
+		
+		try {
+			directory.delete(taggedAAS6);
+		} catch (ResourceNotFoundException doesntMatter) {
+		}
+
+		try {
+			directory.delete(taggedAAS6, taggedSmId4);
+		} catch (ResourceNotFoundException doesntMatter) {
+		}
+
 	}
 
 	@Test
@@ -310,6 +333,11 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 
 		Set<TaggedSubmodelDescriptor> taggedSmDescriptors1 = directory.lookupBothAasAndSubmodelTags(aasTags1, submodelTags1);
 		assertEquals(2, taggedSmDescriptors1.size());
+		
+		Set<String> aasTagWildcard = new HashSet<>(Arrays.asList("*"));
+		Set<String> submodelTags2 = new HashSet<>(Arrays.asList(SM_ONLY));
+		Set<TaggedSubmodelDescriptor> taggedSmDescriptors2 = directory.lookupBothAasAndSubmodelTags(aasTagWildcard, submodelTags2);
+		assertEquals(1, taggedSmDescriptors2.size());
 	}
 
 	@Test

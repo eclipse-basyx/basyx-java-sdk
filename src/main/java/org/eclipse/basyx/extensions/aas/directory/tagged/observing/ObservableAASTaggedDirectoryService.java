@@ -24,52 +24,43 @@
 * SPDX-License-Identifier: MIT
 ******************************************************************************/
 
-package org.eclipse.basyx.aas.aggregator;
+package org.eclipse.basyx.extensions.aas.directory.tagged.observing;
 
-import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.vab.modelprovider.VABPathTools;
+import java.util.Set;
+
+import org.eclipse.basyx.aas.registration.observing.IAASRegistryServiceObserver;
+import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryService;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 
 /**
- * API helper for AAS Aggregator
- * 
- * @author haque
+ *
+ * Implementation of {@link IAASTaggedDirectory} that calls back registered
+ * {@link IAASRegistryServiceObserver} when changes on Registry occur
+ *
+ * @author espen
  *
  */
-public class AASAggregatorAPIHelper {
-	public static final String AAS_SUFFIX = "aas";
+public class ObservableAASTaggedDirectoryService extends ObservableAASRegistryService implements IAASTaggedDirectory {
+	private IAASTaggedDirectory taggedDirectory;
 
-	public static String getAggregatorPath() {
-		return AASAggregatorProvider.PREFIX;
+	public ObservableAASTaggedDirectoryService(IAASTaggedDirectory taggedDirectory) {
+		super(taggedDirectory);
+		this.taggedDirectory = taggedDirectory;
 	}
 
-	/**
-	 * Retrieves access path for creating, updating, deleting single AAS
-	 * 
-	 * @param aasId
-	 * @return
-	 */
-	public static String getAASEntryPath(IIdentifier aasId) {
-		return VABPathTools.concatenatePaths(getAggregatorPath(), VABPathTools.encodePathElement(aasId.getId()));
+	@Override
+	public void register(TaggedAASDescriptor descriptor) {
+		taggedDirectory.register(descriptor);
 	}
 
-	/**
-	 * Retrieves access path for getting single AAS
-	 * 
-	 * @param aasId
-	 * @return
-	 */
-	public static String getAASAccessPath(IIdentifier aasId) {
-		return VABPathTools.concatenatePaths(getAASEntryPath(aasId), AASAggregatorAPIHelper.AAS_SUFFIX);
+	@Override
+	public Set<TaggedAASDescriptor> lookupTag(String tag) {
+		return taggedDirectory.lookupTag(tag);
 	}
 
-	/**
-	 * Removes the "/shells" suffix if it exists
-	 * 
-	 * @param url
-	 * @return
-	 */
-	public static String harmonizeURL(String url) {
-		return VABPathTools.stripFromPath(url, AASAggregatorProvider.PREFIX);
+	@Override
+	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags) {
+		return taggedDirectory.lookupTags(tags);
 	}
 }
