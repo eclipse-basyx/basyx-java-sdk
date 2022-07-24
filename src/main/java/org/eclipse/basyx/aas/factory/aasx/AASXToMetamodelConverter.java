@@ -26,9 +26,9 @@
 package org.eclipse.basyx.aas.factory.aasx;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,6 +50,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleFactory;
+import org.eclipse.basyx.aas.factory.exception.MultipleThumbnailFoundException;
 import org.eclipse.basyx.aas.factory.xml.XMLToMetamodelConverter;
 import org.eclipse.basyx.aas.metamodel.map.AasEnv;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -194,11 +195,11 @@ public class AASXToMetamodelConverter {
 		return thumbnailPart.getInputStream();
 	}
 
-	private void checkIfThumbnailExists(PackageRelationshipCollection thumbnailPackageRelationship) {
+	private void checkIfThumbnailExists(PackageRelationshipCollection thumbnailPackageRelationship) throws MultipleThumbnailFoundException, FileNotFoundException {
 		if (thumbnailPackageRelationship.size() > 1) {
-			throw new RuntimeException("More than one Thumbnail found in the specified package");
+			throw new MultipleThumbnailFoundException("More than one Thumbnail found in the specified package");
 		} else if (thumbnailPackageRelationship.size() == 0) {
-			throw new RuntimeException("No Thumbnail found in the specified package");
+			throw new FileNotFoundException("No Thumbnail found in the specified package");
 		}
 	}
 

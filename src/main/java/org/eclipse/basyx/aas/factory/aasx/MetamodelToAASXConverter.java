@@ -24,22 +24,21 @@
  ******************************************************************************/
 package org.eclipse.basyx.aas.factory.aasx;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
@@ -52,6 +51,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.RelationshipSource;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
+import org.eclipse.basyx.aas.factory.exception.MultipleThumbnailFoundException;
 import org.eclipse.basyx.aas.factory.xml.MetamodelToXMLConverter;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
@@ -65,8 +65,6 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 
 /**
  * This class can be used to generate an .aasx file from Metamodel Objects and
@@ -91,7 +89,6 @@ public class MetamodelToAASXConverter {
 
 	private static final String AASSUPPL_RELTYPE = "http://www.admin-shell.io/aasx/relationships/aas-suppl";
 	
-	private static final Set<String> SUPPORTED_THUMBNAIL_EXTENSION = Stream.of("png", "jpg", "jpeg").collect(Collectors.toSet());
 	protected static final String THUMBNAIL_TYPE = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail";
 
 	/**
@@ -116,7 +113,7 @@ public class MetamodelToAASXConverter {
 	public static void buildAASX(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Collection<InMemoryFile> files,
 			OutputStream os) throws IOException, TransformerException, ParserConfigurationException {
 		
-		buildAASX(aasList, assetList, conceptDescriptionList, submodelList, files, os, "");
+		buildAASX(aasList, assetList, conceptDescriptionList, submodelList, files, null, os);
 	}
 	
 	/**
@@ -135,6 +132,22 @@ public class MetamodelToAASXConverter {
 	}
 	
 	/**
+	 * Generates the .aasx file and writes it to the given OutputStream
+	 * 
+	 * @param aasEnv
+	 * @param files
+	 * @param thumbnail
+	 * @param os
+	 *            the OutputStream the resulting .aasx is written to
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws ParserConfigurationException
+	 */
+	public static void buildAASX(AasEnv aasEnv, Collection<InMemoryFile> files, Thumbnail thumbnail, OutputStream os) throws IOException, TransformerException, ParserConfigurationException {
+		buildAASX(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(), aasEnv.getSubmodels(), files, thumbnail, os);
+	}
+	
+	/**
 	 * Generates the .aasx file with Thumbnail and writes it to the given OutputStream
 	 * 
 	 * @param aasList
@@ -147,16 +160,15 @@ public class MetamodelToAASXConverter {
 	 *            the Submodels to be saved in the .aasx
 	 * @param files
 	 *            the files referred to in the Submodels
+	 * @param thumbnail
 	 * @param os
 	 *            the OutputStream the resulting .aasx is written to
-	 * @param thumbnailPath
-	 *            the path of thumbnail to be added
 	 * @throws IOException
 	 * @throws TransformerException
 	 * @throws ParserConfigurationException
 	 */
-	public static void buildAASX(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Collection<InMemoryFile> files,
-			OutputStream os, String thumbnailPath) throws TransformerException, ParserConfigurationException, IOException {
+	public static void buildAASX(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Collection<InMemoryFile> files, Thumbnail thumbnail,
+			OutputStream os) throws TransformerException, ParserConfigurationException, IOException {
 		prepareFilePaths(submodelList, files);
 
 		OPCPackage rootPackage = OPCPackage.create(os);
@@ -169,34 +181,27 @@ public class MetamodelToAASXConverter {
 
 		storeFilesInAASX(submodelList, files, rootPackage, xmlPart);
 		
-		addThumbnail(thumbnailPath, rootPackage);
+		addThumbnail(thumbnail, rootPackage);
 
 		saveAASX(os, rootPackage);
 	}
 	
-	public static void addThumbnail(String thumbnailPath, OPCPackage rootPackage) throws IOException {
-		if (!isValid(thumbnailPath)) {
-			logger.info("No thumbnail path has been specified");
+	public static void addThumbnail(Thumbnail thumbnail, OPCPackage rootPackage) throws IOException {
+		if (!isValid(thumbnail)) {
+			logger.info("No thumbnail has been specified");
 			return;
         }
-		validateThumbnailFormat(thumbnailPath);
 		
-        String name = thumbnailPath.substring(thumbnailPath.lastIndexOf(java.io.File.separatorChar) + 1);
-		
-        addThumbnail(name, imageToArray(thumbnailPath), rootPackage);
+        String name = thumbnail.getThumbnailFilename().substring(thumbnail.getThumbnailFilename().lastIndexOf(java.io.File.separatorChar) + 1);
+        
+        addThumbnail(name, thumbnail.getThumbnailStream(), rootPackage);
 	}
 	
-	private static boolean isValid(String path) {
-		return path != null && !path.isEmpty();
+	private static boolean isValid(Thumbnail thumbnail) {
+		return thumbnail != null;
 	}
-	
-	private static void validateThumbnailFormat(String thumbnailPath) {
-		if(!SUPPORTED_THUMBNAIL_EXTENSION.contains(FilenameUtils.getExtension(thumbnailPath))) {
-			throw new RuntimeException("Only png/jpg/jpeg format allowed for thumbnail " + thumbnailPath);
-		}
-	}
-	
-    private static void addThumbnail(String filename, byte[] data, OPCPackage rootPackage) {
+
+	private static void addThumbnail(String filename, InputStream data, OPCPackage rootPackage) throws IOException {
         String contentType = ContentTypes.getContentTypeFromFileExtension(filename);
         
         PackagePartName thumbnailPartName = createThumbnailPackagePartName(filename);
@@ -207,35 +212,26 @@ public class MetamodelToAASXConverter {
 
         rootPackage.addRelationship(thumbnailPartName, TargetMode.EXTERNAL, PackageRelationshipTypes.THUMBNAIL, createUniqueID());
         
-        writeDataToPart(thumbnailPart, data);
+        writeDataToPart(thumbnailPart, IOUtils.toByteArray(data));
         
         rootPackage.registerPartAndContentType(thumbnailPart);
     }
-    
-    private static byte[] imageToArray(String path) throws IOException {
-		BufferedImage bImage = ImageIO.read(new java.io.File(path));
-		
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ImageIO.write(bImage, FilenameUtils.getExtension(path), bos );
-        
-        return bos.toByteArray();
-	}
 
-	private static void checkIfThumbnailAlreadyPresent(String filename, OPCPackage rootPackage,	PackagePartName thumbnailPartName) {
+	private static void checkIfThumbnailAlreadyPresent(String filename, OPCPackage rootPackage,	PackagePartName thumbnailPartName) throws FileAlreadyExistsException, MultipleThumbnailFoundException {
 		checkIfSamePackagePartAlreadyExists(filename, rootPackage, thumbnailPartName);
 		
 		PackageRelationshipCollection thumbnailPackageRelationship = rootPackage.getRelationshipsByType(THUMBNAIL_TYPE);
 		
 		if (thumbnailPackageRelationship.size() > 1) {
-			throw new RuntimeException("More than one Thumbnail found in the specified package");
+			throw new MultipleThumbnailFoundException("More than one Thumbnail found in the specified package");
 		} else if (thumbnailPackageRelationship.size() == 1) {
-			throw new RuntimeException("Thumbnail already present in the specified package");
+			throw new FileAlreadyExistsException("Thumbnail already present in the specified package");
 		}
 	}
 
-	private static void checkIfSamePackagePartAlreadyExists(String filename, OPCPackage rootPackage, PackagePartName thumbnailPartName) {
+	private static void checkIfSamePackagePartAlreadyExists(String filename, OPCPackage rootPackage, PackagePartName thumbnailPartName) throws FileAlreadyExistsException {
 		if (rootPackage.getPart(thumbnailPartName) != null) {
-            throw new InvalidOperationException("Thumbnail already added with name '" + filename + "'");
+            throw new FileAlreadyExistsException("Thumbnail package part already exists with name '" + filename + "'");
         }
 	}
 
@@ -245,7 +241,7 @@ public class MetamodelToAASXConverter {
         try {
             thumbnailPartName = PackagingURIHelper.createPartName("/" + FilenameUtils.getName(filename));
         } catch (InvalidFormatException e) {
-                throw new InvalidOperationException("Can't add a thumbnail file named '" + filename + "'", e);
+        	throw new InvalidOperationException("Can't add a thumbnail file named '" + filename + "'", e);
         }
         
 		return thumbnailPartName;
