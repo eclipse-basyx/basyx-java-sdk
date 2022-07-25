@@ -28,7 +28,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
@@ -40,6 +42,7 @@ import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
  * 
  */
 public class VABPathTools {
+	private static final String DEFAULT_ENCODING = "UTF-8";
 	public static final String SEPERATOR = "/";
 
 	/**
@@ -67,7 +70,7 @@ public class VABPathTools {
 	 */
 	public static String encodePathElement(String elem) {
 		try {
-			return URLEncoder.encode(elem, "UTF-8");
+			return URLEncoder.encode(elem, DEFAULT_ENCODING);
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
@@ -81,7 +84,7 @@ public class VABPathTools {
 	 */
 	public static String decodePathElement(String encodedElem) {
 		try {
-			return URLDecoder.decode(encodedElem, "UTF-8");
+			return URLDecoder.decode(encodedElem, DEFAULT_ENCODING);
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
@@ -475,5 +478,27 @@ public class VABPathTools {
 		} else {
 			return VABPathTools.concatenatePaths(strippedPath, strippedSuffix);
 		}
+	}
+
+	public static Map<String, String> getParametersFromPath(String path) {
+		if (path.contains("?")) {
+			Map<String, String> parameterMap = new HashMap<>();
+			String query = path.split("\\?")[1];
+			String[] parameterPairs = query.split("&");
+			for (String pair : parameterPairs) {
+				String[] keyAndValue = pair.split("=");
+				try {
+					if (keyAndValue.length != 2) {
+						parameterMap.put(URLDecoder.decode(keyAndValue[0], DEFAULT_ENCODING), null);
+					} else {
+						parameterMap.put(URLDecoder.decode(keyAndValue[0], DEFAULT_ENCODING), URLDecoder.decode(keyAndValue[1], DEFAULT_ENCODING));
+					}
+				} catch (UnsupportedEncodingException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			return parameterMap;
+		}
+		return null;
 	}
 }

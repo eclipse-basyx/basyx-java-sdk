@@ -73,3 +73,6 @@ local.properties
 
 .idea
 *.iml
+
+# EclipseLink
+*.jdbc
