@@ -58,14 +58,14 @@ import org.junit.Test;
  *
  */
 public abstract class TestOperationSuite {
-	protected static final String IN_VALUE = "inValue";
+	protected static final int IN_VALUE = 0;
 	protected static final String IN_IDSHORT1 = "testIn1";
 	protected static final String IN_IDSHORT2 = "testIn2";
-	protected static final String OUT_VALUE = "outValue";
+	protected static final int OUT_VALUE = 0;
 	protected static final String OUT_IDSHORT = "testOut";
 	protected static final String INOUT_VALUE = "inOutValue";
 	protected static final String INOUT_IDSHORT = "testInOut";
-	protected static final String SUPPLIER_RETURN_VALUE = "10";
+	protected static final int SUPPLIER_RETURN_VALUE = 10;
 	protected static final boolean RUNNABLE_FLAG = true;
 
 	protected static Collection<OperationVariable> ONE_IN;
@@ -444,7 +444,7 @@ public abstract class TestOperationSuite {
 
 	@Test
 	public void testInvokePropertySupplier() {
-		String operationResult = (String) propertySupplierOperation.invokeSimple();
+		int operationResult = (int) propertySupplierOperation.invokeSimple();
 
 		assertEquals(SUPPLIER_RETURN_VALUE, operationResult);
 	}

@@ -58,6 +58,10 @@ public class AasEnv extends VABModelMap<Object> implements IAasEnv {
 	public AasEnv() {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
+		put(ASSETADMINISTRATIONSHELLS, new ArrayList<IAssetAdministrationShell>());
+		put(SUBMODELS, new ArrayList<ISubmodel>());
+		put(ASSETS, new ArrayList<IAsset>());
+		put(CONCEPTDESCRIPTIONS, new ArrayList<IConceptDescription>());
 	}
 
 	public AasEnv(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList) {

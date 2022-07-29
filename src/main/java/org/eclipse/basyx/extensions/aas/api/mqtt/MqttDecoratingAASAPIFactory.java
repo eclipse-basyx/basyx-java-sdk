@@ -20,7 +20,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 /**
  * Factory decorating AASAPI with MQTT events by wrapping an IAASAPIFactory
  * 
- * @author fried
+ * @author fried, danish
  */
 public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 	private IAASAPIFactory apiFactory;
@@ -35,7 +35,8 @@ public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
 		try {
 			ObservableAASAPI observedAPI = new ObservableAASAPI(apiFactory.create(aas));
-			new MqttAASAPIObserver(observedAPI, client);
+			MqttAASAPIObserver mqttAASAPIObserver = new MqttAASAPIObserver(client, MqttAASAPIHelper.getAASIdShort(observedAPI));
+			observedAPI.addObserver(mqttAASAPIObserver);
 			return observedAPI;
 		} catch (MqttException e) {
 			throw new ProviderException(e);

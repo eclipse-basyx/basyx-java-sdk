@@ -127,8 +127,8 @@ public class ConnectedAsyncInvocation implements IAsyncInvocation {
 		InvocationResponse response = null;
 		if (responseObj instanceof InvocationResponse) {
 			response = (InvocationResponse) responseObj;
-		} else if (result instanceof Map<?, ?>) {
-			response = InvocationResponse.createAsFacade((Map<String, Object>) result);
+		} else if (responseObj instanceof Map<?, ?>) {
+			response = InvocationResponse.createAsFacade((Map<String, Object>) responseObj);
 		} else {
 			// got no valid InvocationResponse
 			throw new ProviderException("Response for requestId " + requestId + " invalid!");

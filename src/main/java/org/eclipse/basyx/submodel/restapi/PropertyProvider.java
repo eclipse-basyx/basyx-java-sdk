@@ -47,36 +47,54 @@ public class PropertyProvider implements IModelProvider {
 		this.proxy = proxy;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue(String path) throws ProviderException {
 		path = VABPathTools.stripSlashes(path);
 
-		// Handle "/value" path
-		if (path.equals(Property.VALUE)) {
-			// return value
-			Map<String, Object> p = (Map<String, Object>) proxy.getValue("");
-			return p.get(Property.VALUE);
+		if (isValuePath(path)) {
+			return ValueTypeHelper.prepareForSerialization(getProperty().getValue());
 
 		} else if (path.isEmpty()) {
-			// Handle "" path by returning complete property
-			return proxy.getValue("");
+			return getProperty();
 		} else {
 			throw new MalformedRequestException("Unknown path: " + path);
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private Property getProperty() {
+		return Property.createAsFacade((Map<String, Object>) proxy.getValue(""));
+	}
+
 	@Override
 	public void setValue(String path, Object newValue) throws ProviderException {
 		path = VABPathTools.stripSlashes(path);
-		// Only handle "/value" paths
-		if (path.equals(Property.VALUE)) {
-			// Set value and type
-			proxy.setValue(Property.VALUE, newValue);
-			proxy.setValue(Property.VALUETYPE, ValueTypeHelper.getType(newValue).toString());
-		} else {
+
+		if (!isValuePath(path)) {
 			throw new MalformedRequestException("Given Set path '" + path + "' does not end in /value");
 		}
+
+		updatePropertyValue(newValue);
+	}
+
+	private boolean isValuePath(String path) {
+		return path.equals(Property.VALUE);
+	}
+
+	private void updatePropertyValue(Object newValue) {
+		proxy.setValue(Property.VALUE, newValue);
+
+		if (isValueTypeSet()) return;
+
+		updateValueType(newValue);
+	}
+
+	private void updateValueType(Object newValue) {
+		proxy.setValue(Property.VALUETYPE, ValueTypeHelper.getType(newValue).toString());
+	}
+
+	private boolean isValueTypeSet() {
+		return proxy.getValue(Property.VALUETYPE) != "";
 	}
 
 	@Override

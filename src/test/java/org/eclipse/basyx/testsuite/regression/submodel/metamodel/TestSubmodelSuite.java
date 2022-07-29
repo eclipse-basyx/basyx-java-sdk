@@ -98,7 +98,7 @@ public abstract class TestSubmodelSuite {
 	public Submodel getReferenceSubmodel() {
 
 		// Create a simple value property
-		Property propertyMeta = new Property(PROP, ValueType.Integer);
+		Property propertyMeta = new Property(PROP, ValueType.Int32);
 		propertyMeta.setValue(100);
 
 		// Create the Submodel using the created property and operation
@@ -336,7 +336,7 @@ public abstract class TestSubmodelSuite {
 		Property property = new Property(PROPERTY_ID2, ValueType.AnySimpleType);
 		ret.put(property.getIdShort(), property);
 
-		Range range = new Range(RANGE_ID, ValueType.Integer);
+		Range range = new Range(RANGE_ID, ValueType.Int32);
 		range.setValue(new RangeValue(-100, +100));
 		ret.put(range.getIdShort(), range);
 

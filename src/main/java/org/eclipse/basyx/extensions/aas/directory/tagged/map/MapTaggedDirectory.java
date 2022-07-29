@@ -58,8 +58,12 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 		addTags(descriptor.getTags(), descriptor);
 
 		Collection<SubmodelDescriptor> submodelDescriptors = descriptor.getSubmodelDescriptors();
-		if (!submodelDescriptors.isEmpty()) {
-			submodelDescriptors.stream().filter(TaggedSubmodelDescriptor.class::isInstance).map(TaggedSubmodelDescriptor.class::cast).forEach(s -> addSubmodelTags(s.getTags(), s));
+		for(SubmodelDescriptor smDesc : submodelDescriptors) {
+			TaggedSubmodelDescriptor taggedSmDesc = TaggedSubmodelDescriptor.createAsFacade(smDesc);
+			Set<String> tags = taggedSmDesc.getTags();
+			if (tags != null && !tags.isEmpty()) {
+				addSubmodelTags(tags, taggedSmDesc);
+			}
 		}
 	}
 

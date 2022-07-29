@@ -30,6 +30,7 @@ import java.util.function.Function;
 
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 
@@ -52,13 +53,13 @@ public class AsyncOperationHelper {
 	public AsyncOperationHelper() {
 		IN = new ArrayList<OperationVariable>();
 		OUT = new ArrayList<OperationVariable>();
-		Property asyncIn1 = new Property("asyncIn1", "");
+		Property asyncIn1 = new Property("asyncIn1", ValueType.Int32);
 		asyncIn1.setKind(ModelingKind.TEMPLATE);
-		Property asyncIn2 = new Property("asyncIn2", "");
+		Property asyncIn2 = new Property("asyncIn2", ValueType.Int32);
 		asyncIn2.setKind(ModelingKind.TEMPLATE);
 		IN.add(new OperationVariable(asyncIn1));
 		IN.add(new OperationVariable(asyncIn2));
-		Property asyncOut = new Property("asyncOut", "");
+		Property asyncOut = new Property("asyncOut", ValueType.Int32);
 		asyncOut.setKind(ModelingKind.TEMPLATE);
 		OUT.add(new OperationVariable(asyncOut));
 	}

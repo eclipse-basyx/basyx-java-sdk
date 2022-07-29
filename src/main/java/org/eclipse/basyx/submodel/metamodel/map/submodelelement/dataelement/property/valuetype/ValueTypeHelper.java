@@ -92,7 +92,7 @@ public class ValueTypeHelper {
 			} else if (c == short.class || c == Short.class) {
 				objectType = ValueType.Int16;
 			} else if (c == int.class || c == Integer.class) {
-				objectType = ValueType.Integer;
+				objectType = ValueType.Int32;
 			} else if (c == long.class || c == Long.class) {
 				objectType = ValueType.Int64;
 			} else if (c == BigInteger.class) {
@@ -102,7 +102,7 @@ public class ValueTypeHelper {
 				} else if (tmp.compareTo(new BigInteger("0")) < 0) {
 					objectType = ValueType.NegativeInteger;
 				} else {
-					objectType = ValueType.NonNegativeInteger;
+					objectType = ValueType.Integer;
 				}
 
 			} else if (c == void.class || c == Void.class) {
@@ -136,6 +136,15 @@ public class ValueTypeHelper {
 	 * 
 	 */
 	public static Object getJavaObject(Object value, ValueType objType) {
+
+		if (value == null) {
+			return null;
+		}
+
+		if (!(value instanceof String)) {
+			value = value.toString();
+		}
+
 		Object target = null;
 		if (objType != null) {
 			switch (objType) {
@@ -171,6 +180,11 @@ public class ValueTypeHelper {
 				}
 				break;
 			case UInt64:
+			case Integer:
+			case PositiveInteger:
+			case NonPositiveInteger:
+			case NonNegativeInteger:
+			case NegativeInteger:
 				if (((String) value).isEmpty()) {
 					target = new BigInteger("NaN");
 				} else {
@@ -204,7 +218,7 @@ public class ValueTypeHelper {
 			case ENTITY:
 			case ID:
 			case IDREF:
-				target = (String) value;
+				target = value;
 				break;
 			case Duration:
 			case DayTimeDuration:

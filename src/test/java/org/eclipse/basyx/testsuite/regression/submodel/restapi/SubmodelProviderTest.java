@@ -534,6 +534,23 @@ public class SubmodelProviderTest {
 	}
 
 	@Test
+	public void testInvokeOperationWithExplicitSync() {
+		VABElementProxy submodelElement = getConnectionManager().connectToVABElement(submodelAddr);
+
+		// Wrap parameters before invoking add-operation
+		Map<String, Object> param1 = wrapParameter("FirstNumber", 5);
+		Map<String, Object> param2 = wrapParameter("SecondNumber", 2);
+
+		// Invoke operation with wrapped parameters and check result
+		Object result = submodelElement.invokeOperation(SMPROVIDER_PATH_PREFIX + "submodelElements/complex/invoke?async=false", param1, param2);
+		assertEquals(3, result);
+
+		// Invoke operation on parent element
+		result = submodelElement.invokeOperation(SMPROVIDER_PATH_PREFIX + "submodelElements/simple/invoke?async=false");
+		assertTrue((boolean) result);
+	}
+
+	@Test
 	public void testInvalidInvokePath() {
 		VABElementProxy smProxy = getConnectionManager().connectToVABElement(submodelAddr);
 		try {

@@ -71,6 +71,7 @@ public class ObservableAASRegistryService extends Observable<IAASRegistryService
 
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
+		aasRegistry.delete(aasId, smId);
 		observers.stream().forEach(o -> o.submodelDeleted(aasId, smId));
 	}
 
