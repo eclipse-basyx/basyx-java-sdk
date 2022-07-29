@@ -26,6 +26,7 @@
 package org.eclipse.basyx.aas.factory.aasx;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -49,6 +50,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleFactory;
+import org.eclipse.basyx.aas.factory.exception.MultipleThumbnailFoundException;
 import org.eclipse.basyx.aas.factory.xml.XMLToMetamodelConverter;
 import org.eclipse.basyx.aas.metamodel.map.AasEnv;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -66,7 +68,7 @@ import org.xml.sax.SAXException;
  * 
  * The aas provides the references to the submodels and assets
  * 
- * @author zhangzai, conradi
+ * @author zhangzai, conradi, danish
  *
  */
 public class AASXToMetamodelConverter {
@@ -103,6 +105,16 @@ public class AASXToMetamodelConverter {
 		XMLToMetamodelConverter converter = new XMLToMetamodelConverter(xmlContent);
 		closeOPCPackage();
 		return converter.parseAasEnv();
+	}
+	
+	public InputStream retrieveThumbnail() throws IOException, InvalidFormatException {
+		loadAASX();
+
+		InputStream thumbnailStream = getThumbnailStream(aasxRoot);
+		
+		closeOPCPackage();
+		
+		return thumbnailStream;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -171,6 +183,24 @@ public class AASXToMetamodelConverter {
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
 		return writer.toString();
+	}
+	
+	private InputStream getThumbnailStream(OPCPackage aasxPackage) throws IOException {
+		PackageRelationshipCollection thumbnailPackageRelationship = aasxPackage.getRelationshipsByType(MetamodelToAASXConverter.THUMBNAIL_TYPE);
+		
+		checkIfThumbnailExists(thumbnailPackageRelationship);
+		
+		PackagePart thumbnailPart = aasxPackage.getPart(thumbnailPackageRelationship.getRelationship(0));
+		
+		return thumbnailPart.getInputStream();
+	}
+
+	private void checkIfThumbnailExists(PackageRelationshipCollection thumbnailPackageRelationship) throws MultipleThumbnailFoundException, FileNotFoundException {
+		if (thumbnailPackageRelationship.size() > 1) {
+			throw new MultipleThumbnailFoundException("More than one Thumbnail found in the specified package");
+		} else if (thumbnailPackageRelationship.size() == 0) {
+			throw new FileNotFoundException("No Thumbnail found in the specified package");
+		}
 	}
 
 	/**
