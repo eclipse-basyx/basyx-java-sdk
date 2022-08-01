@@ -28,6 +28,7 @@ import java.util.Optional;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
@@ -73,6 +74,10 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 
 	@Override
 	public IAssetAdministrationShell getAAS() {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedAASAPI.getAAS();
+		}
+
 		try {
 			return enforceGetAAS();
 		} catch (final InhibitException e) {
@@ -92,6 +97,11 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 
 	@Override
 	public void addSubmodel(final IReference submodel) {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedAASAPI.addSubmodel(submodel);
+			return;
+		}
+
 		try {
 			enforceAddSubmodel(submodel);
 		} catch (final InhibitException e) {
@@ -112,6 +122,11 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 
 	@Override
 	public void removeSubmodel(final String smIdShortPath) {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedAASAPI.removeSubmodel(smIdShortPath);
+			return;
+		}
+
 		try {
 			enforceRemoveSubmodel(smIdShortPath);
 		} catch (final InhibitException e) {

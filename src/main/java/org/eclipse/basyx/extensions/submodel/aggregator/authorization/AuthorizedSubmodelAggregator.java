@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
@@ -96,6 +97,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public Collection<ISubmodel> getSubmodelList() {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedSubmodelAggregator.getSubmodelList();
+		}
+
 		try {
 			return enforceGetSubmodelList();
 		} catch (final InhibitException e) {
@@ -131,6 +136,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public ISubmodel getSubmodel(final IIdentifier identifier) throws ResourceNotFoundException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedSubmodelAggregator.getSubmodel(identifier);
+		}
+
 		try {
 			return enforceGetSubmodel(identifier);
 		} catch (final InhibitException e) {
@@ -149,6 +158,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public ISubmodel getSubmodelbyIdShort(final String smIdShortPath) throws ResourceNotFoundException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedSubmodelAggregator.getSubmodelbyIdShort(smIdShortPath);
+		}
+
 		try {
 			return enforceGetSubmodelbyIdShort(smIdShortPath);
 		} catch (final InhibitException e) {
@@ -169,6 +182,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public ISubmodelAPI getSubmodelAPIById(final IIdentifier identifier) throws ResourceNotFoundException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedSubmodelAggregator.getSubmodelAPIById(identifier);
+		}
+
 		try {
 			return enforceGetSubmodelAPIById(identifier);
 		} catch (final InhibitException e) {
@@ -187,6 +204,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public ISubmodelAPI getSubmodelAPIByIdShort(final String smIdShortPath) throws ResourceNotFoundException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedSubmodelAggregator.getSubmodelAPIByIdShort(smIdShortPath);
+		}
+
 		try {
 			return enforceGetSubmodelAPIByIdShort(smIdShortPath);
 		} catch (final InhibitException e) {
@@ -207,6 +228,11 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public void createSubmodel(final Submodel submodel) {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedSubmodelAggregator.createSubmodel(submodel);
+			return;
+		}
+
 		try {
 			enforceCreateSubmodel(submodel.getIdentification());
 		} catch (final InhibitException e) {
@@ -225,6 +251,11 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public void createSubmodel(final ISubmodelAPI submodelAPI) {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedSubmodelAggregator.createSubmodel(submodelAPI);
+			return;
+		}
+
 		try {
 			enforceCreateSubmodel(submodelAPI);
 		} catch (final InhibitException e) {
@@ -244,6 +275,11 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public void updateSubmodel(final Submodel submodel) throws ResourceNotFoundException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedSubmodelAggregator.updateSubmodel(submodel);
+			return;
+		}
+
 		final IIdentifier smId = Optional.ofNullable(submodel).map(Submodel::getIdentification).orElse(null);
 		try {
 			enforceUpdateSubmodel(smId);
@@ -263,6 +299,11 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public void deleteSubmodelByIdentifier(final IIdentifier identifier) {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedSubmodelAggregator.deleteSubmodelByIdentifier(identifier);
+			return;
+		}
+
 		try {
 			enforceDeleteSubmodelByIdentifier(identifier);
 		} catch (final InhibitException e) {
@@ -281,6 +322,11 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	@Override
 	public void deleteSubmodelByIdShort(final String smIdShortPath) {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedSubmodelAggregator.deleteSubmodelByIdShort(smIdShortPath);
+			return;
+		}
+
 		try {
 			enforceDeleteSubmodelByIdShort(smIdShortPath);
 		} catch (final InhibitException e) {

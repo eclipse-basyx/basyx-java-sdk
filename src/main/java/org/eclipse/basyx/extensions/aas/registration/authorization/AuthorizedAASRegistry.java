@@ -32,6 +32,7 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
@@ -85,6 +86,11 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public void register(final AASDescriptor deviceAASDescriptor) throws ProviderException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedRegistry.register(deviceAASDescriptor);
+			return;
+		}
+
 		try {
 			enforceRegister(deviceAASDescriptor);
 		} catch (final InhibitException e) {
@@ -104,6 +110,11 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public void register(final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws ProviderException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedRegistry.register(aasId, smDescriptor);
+			return;
+		}
+
 		try {
 			enforceRegister(aasId, smDescriptor);
 		} catch (final InhibitException e) {
@@ -124,6 +135,11 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public void delete(final IIdentifier aasId) throws ProviderException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedRegistry.delete(aasId);
+			return;
+		}
+
 		try {
 			enforceDelete(aasId);
 		} catch (final InhibitException e) {
@@ -141,6 +157,11 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public void delete(final IIdentifier aasId, final IIdentifier smId) throws ProviderException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedRegistry.delete(aasId, smId);
+			return;
+		}
+
 		try {
 			enforceDelete(aasId, smId);
 		} catch (final InhibitException e) {
@@ -159,6 +180,10 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public AASDescriptor lookupAAS(final IIdentifier aasId) throws ProviderException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedRegistry.lookupAAS(aasId);
+		}
+
 		try {
 			return enforceLookupAAS(aasId);
 		} catch (final InhibitException e) {
@@ -193,6 +218,10 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public List<AASDescriptor> lookupAll() throws ProviderException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedRegistry.lookupAll();
+		}
+
 		try {
 			return enforceLookupAll();
 		} catch (final InhibitException e) {
@@ -218,6 +247,10 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public List<SubmodelDescriptor> lookupSubmodels(final IIdentifier aasId) throws ProviderException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedRegistry.lookupSubmodels(aasId);
+		}
+
 		try {
 			return enforceLookupSubmodels(aasId);
 		} catch (final InhibitException e) {
@@ -244,6 +277,10 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public SubmodelDescriptor lookupSubmodel(final IIdentifier aasId, final IIdentifier smId) throws ProviderException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedRegistry.lookupSubmodel(aasId, smId);
+		}
+
 		try {
 			return enforceLookupSubmodel(aasId, smId);
 		} catch (final InhibitException e) {

@@ -16,7 +16,7 @@ public class AuthenticationContextProvider implements ISubjectInformationProvide
     return getAuthentication().orElse(null);
   }
 
-  public Optional<Authentication> getAuthentication() {
+  public static Optional<Authentication> getAuthentication() {
     final SecurityContext context = SecurityContextHolder.getContext();
     return Optional.ofNullable(context.getAuthentication());
   }

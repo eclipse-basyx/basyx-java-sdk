@@ -40,6 +40,7 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
@@ -88,6 +89,10 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 
 	@Override
 	public Collection<IAssetAdministrationShell> getAASList() {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedAasAggregator.getAASList();
+		}
+
 		try {
 			return enforceGetAASList();
 		} catch (final InhibitException e) {
@@ -114,6 +119,10 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 
 	@Override
 	public IAssetAdministrationShell getAAS(final IIdentifier shellId) throws ResourceNotFoundException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedAasAggregator.getAAS(shellId);
+		}
+
 		try {
 			return enforceGetAAS(shellId);
 		} catch (final InhibitException e) {
@@ -131,6 +140,10 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 
 	@Override
 	public IModelProvider getAASProvider(final IIdentifier shellId) throws ResourceNotFoundException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			return decoratedAasAggregator.getAASProvider(shellId);
+		}
+
 		try {
 			return enforceGetAASProvider(shellId);
 		} catch (final InhibitException e) {
@@ -149,6 +162,11 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 
 	@Override
 	public void createAAS(final AssetAdministrationShell shell) {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedAasAggregator.createAAS(shell);
+			return;
+		}
+
 		try {
 			enforceCreateAAS(shell);
 		} catch (final InhibitException e) {
@@ -167,6 +185,11 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 
 	@Override
 	public void updateAAS(final AssetAdministrationShell shell) throws ResourceNotFoundException {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedAasAggregator.updateAAS(shell);
+			return;
+		}
+
 		try {
 			enforceUpdateAAS(shell);
 		} catch (final InhibitException e) {
@@ -185,6 +208,11 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 
 	@Override
 	public void deleteAAS(final IIdentifier shellId) {
+		if (CodeAuthentication.isCodeAuthentication()) {
+			decoratedAasAggregator.deleteAAS(shellId);
+			return;
+		}
+
 		try {
 			enforceDeleteAAS(shellId);
 		} catch (final InhibitException e) {

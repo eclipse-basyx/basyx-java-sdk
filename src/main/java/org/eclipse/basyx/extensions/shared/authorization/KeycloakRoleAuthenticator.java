@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ public class KeycloakRoleAuthenticator implements IRoleAuthenticator<Jwt> {
             subjectInformation
         ))
         .map(this::jwtStr2roles)
-        .orElse(Collections.singletonList("anonymous"));
+        .orElse(new ArrayList<>(Collections.singletonList("anonymous")));
   }
 
   private List<String> jwtStr2roles(
@@ -80,6 +81,6 @@ public class KeycloakRoleAuthenticator implements IRoleAuthenticator<Jwt> {
       } catch (final Exception e) {
         logger.error(e.getMessage(), e);
       }
-      return Collections.singletonList("anonymous");
+      return new ArrayList<>(Collections.singletonList("anonymous"));
     }
 }
