@@ -26,23 +26,42 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregatorFactory;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 
 /**
  * Factory decorating AASAggregator for authorization
  * 
- * @author fischer, fried
+ * @author fischer, fried, wege
  */
-public class AuthorizedDecoratingAASAggregatorFactory implements IAASAggregatorFactory {
-	private IAASAggregatorFactory apiFactory;
+public class AuthorizedDecoratingAASAggregatorFactory<SubjectInformationType> implements IAASAggregatorFactory {
+	protected final IAASAggregatorFactory apiFactory;
+	protected final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer;
+	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated) {
+	public AuthorizedDecoratingAASAggregatorFactory(
+			final IAASAggregatorFactory factoryToBeDecorated,
+			final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
+	) {
 		this.apiFactory = factoryToBeDecorated;
+		this.aasAggregatorAuthorizer = aasAggregatorAuthorizer;
+		this.subjectInformationProvider = subjectInformationProvider;
+	}
+
+	public AuthorizedDecoratingAASAggregatorFactory(final IAASAggregatorFactory factoryToBeDecorated) {
+		this(
+				factoryToBeDecorated,
+				(IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
+		);
 	}
 
 	@Override
 	public IAASAggregator create() {
 		IAASAggregator aggregator = apiFactory.create();
-		aggregator = new AuthorizedAASAggregator(aggregator);
+		aggregator = new AuthorizedAASAggregator<>(aggregator, aasAggregatorAuthorizer, subjectInformationProvider);
 		return aggregator;
 	}
 

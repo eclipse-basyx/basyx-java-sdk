@@ -22,21 +22,18 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.registration.authorization;
+package org.eclipse.basyx.extensions.shared.authorization;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}.
+ * Exception that is thrown when an authorization decision point
+ * decides to inhibit some action.
  *
- * @author pneuschwander, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @author wege
  */
-public final class AASRegistryScopes {
-	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:read";
-	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:write";
+public class InhibitException extends Exception {
+  public InhibitException() {}
 
-	private AASRegistryScopes() {
-		// This class should not be instantiated as it serves as a holder for constants
-		// only
-	}
+  public InhibitException(final Exception e) {
+    super(e);
+  }
 }

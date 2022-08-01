@@ -22,21 +22,28 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.registration.authorization;
+package org.eclipse.basyx.extensions.shared.authorization;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}.
+ * Implementation for an {@link GrantedAuthority}-based authenticator that reads from the
+ * (thread-local) {@link SecurityContext}.
  *
- * @author pneuschwander, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @author wege
  */
-public final class AASRegistryScopes {
-	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:read";
-	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:write";
+public class AuthenticationGrantedAuthorityAuthenticator implements IGrantedAuthorityAuthenticator<Authentication> {
+  public AuthenticationGrantedAuthorityAuthenticator() {}
 
-	private AASRegistryScopes() {
-		// This class should not be instantiated as it serves as a holder for constants
-		// only
-	}
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities(final Authentication subjectInformation) {
+    return Optional.ofNullable(subjectInformation)
+        .map(Authentication::getAuthorities)
+        .orElseGet(Collections::emptyList);
+  }
 }

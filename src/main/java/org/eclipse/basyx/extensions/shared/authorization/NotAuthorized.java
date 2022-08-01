@@ -22,21 +22,40 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.registration.authorization;
+package org.eclipse.basyx.extensions.shared.authorization;
+
+import java.util.List;
+import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}.
+ * The unchecked exception that gets thrown when an action must not be conducted due to lacking
+ * authorization. This can be used to translate/further propagate a checked {@link InhibitException}.
  *
- * @author pneuschwander, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @author wege
  */
-public final class AASRegistryScopes {
-	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:read";
-	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:write";
+public class NotAuthorized extends ProviderException {
+  /**
+   * Version information for serialized instances
+   */
+  private static final long serialVersionUID = 1L;
 
-	private AASRegistryScopes() {
-		// This class should not be instantiated as it serves as a holder for constants
-		// only
-	}
+  /**
+   * Constructor
+   */
+  public NotAuthorized(final String msg) {
+    super(msg);
+  }
+
+  public NotAuthorized(final Exception e) {
+    super(e);
+  }
+
+  public NotAuthorized(final List<Message> msgs) {
+    super(msgs);
+  }
+
+  public NotAuthorized() {
+    this("not authorized");
+  }
 }

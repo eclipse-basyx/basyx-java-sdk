@@ -22,21 +22,26 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.registration.authorization;
+package org.eclipse.basyx.extensions.shared.authorization;
+
+import java.util.stream.Collectors;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}.
+ * Utility methods for handling ids.
  *
- * @author pneuschwander, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @author wege
  */
-public final class AASRegistryScopes {
-	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:read";
-	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:write";
+public class IdUtil {
+  private IdUtil() {}
 
-	private AASRegistryScopes() {
-		// This class should not be instantiated as it serves as a holder for constants
-		// only
-	}
+  public static String getIdentifierId(final IIdentifier identifier) {
+    return identifier != null ? identifier.getId() : null;
+  }
+
+  public static String getReferenceId(final IReference reference) {
+    return reference != null ? reference.getKeys().stream().map(IKey::getValue).collect(Collectors.joining(";")) : null;
+  }
 }

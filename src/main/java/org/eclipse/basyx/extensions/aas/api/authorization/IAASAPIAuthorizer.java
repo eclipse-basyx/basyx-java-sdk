@@ -22,21 +22,35 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.registration.authorization;
+package org.eclipse.basyx.extensions.aas.api.authorization;
+
+import java.util.function.Supplier;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}.
+ * Interface for the policy enforcement points used in {@link AuthorizedAASAPI}.
  *
- * @author pneuschwander, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @author wege
  */
-public final class AASRegistryScopes {
-	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:read";
-	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:write";
+public interface IAASAPIAuthorizer<SubjectInformationType> {
+	IAssetAdministrationShell enforceGetAAS(
+			final SubjectInformationType subjectInformation,
+			final IIdentifier aasId,
+			final Supplier<IAssetAdministrationShell> aasSupplier
+  ) throws InhibitException;
 
-	private AASRegistryScopes() {
-		// This class should not be instantiated as it serves as a holder for constants
-		// only
-	}
+	void enforceAddSubmodel(
+			final SubjectInformationType subjectInformation,
+			final IIdentifier aasId,
+			final IReference smId
+  ) throws InhibitException;
+
+	void enforceRemoveSubmodel(
+			final SubjectInformationType subjectInformation,
+			final IIdentifier aasId,
+			final String smIdShortPath
+  ) throws InhibitException;
 }

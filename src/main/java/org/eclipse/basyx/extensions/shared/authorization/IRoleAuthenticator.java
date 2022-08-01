@@ -22,21 +22,16 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.registration.authorization;
+package org.eclipse.basyx.extensions.shared.authorization;
+
+import java.util.List;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}.
+ * Interface for a role provider that should be used in the context of
+ * authorization by authenticating some request.
  *
- * @author pneuschwander, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @author wege
  */
-public final class AASRegistryScopes {
-	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:read";
-	public static final String WRITE_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:write";
-
-	private AASRegistryScopes() {
-		// This class should not be instantiated as it serves as a holder for constants
-		// only
-	}
+public interface IRoleAuthenticator<SubjectInformationType> {
+  List<String> getRoles(final SubjectInformationType subjectInformation);
 }
