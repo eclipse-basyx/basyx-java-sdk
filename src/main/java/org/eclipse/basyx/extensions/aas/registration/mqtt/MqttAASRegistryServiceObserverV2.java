@@ -24,7 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.registration.mqtt;
 
-import org.eclipse.basyx.aas.registration.observing.IAASRegistryServiceObserver;
+import org.eclipse.basyx.aas.registration.observing.IAASRegistryServiceObserverV2;
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @author haque
  *
  */
-public class MqttAASRegistryServiceObserverV2 extends MqttEventService implements IAASRegistryServiceObserver {
+public class MqttAASRegistryServiceObserverV2 extends MqttEventService implements IAASRegistryServiceObserverV2 {
 	private static Logger logger = LoggerFactory.getLogger(MqttAASRegistryServiceObserverV2.class);
 
 	/**
