@@ -36,8 +36,10 @@ import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryService;
+import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryServiceV2;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryHelper;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryServiceObserver;
+import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryServiceObserverV2;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
@@ -70,8 +72,8 @@ public class TestMqttAASRegistryServiceObserverV2 {
 	private static final Identifier SUBMODELIDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODELID);
 
 	private static Server mqttBroker;
-	private static ObservableAASRegistryService observedAPI;
-	private static MqttAASRegistryServiceObserver mqttObserver;
+	private static ObservableAASRegistryServiceV2 observedAPI;
+	private static MqttAASRegistryServiceObserverV2 mqttObserver;
 	private MqttTestListener listener;
 
 	/**
@@ -87,9 +89,9 @@ public class TestMqttAASRegistryServiceObserverV2 {
 
 		// Create underlying registry service
 		IAASRegistry registryService = new InMemoryRegistry();
-		observedAPI = new ObservableAASRegistryService(registryService);
+		observedAPI = new ObservableAASRegistryServiceV2(registryService);
 
-		mqttObserver = new MqttAASRegistryServiceObserver("tcp://localhost:1884", "testClient");
+		mqttObserver = new MqttAASRegistryServiceObserverV2("tcp://localhost:1884", "testClient");
 		observedAPI.addObserver(mqttObserver);
 	}
 
