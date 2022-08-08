@@ -24,9 +24,13 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.registration.mqtt;
 
+import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
 import org.eclipse.basyx.aas.registration.observing.IAASRegistryServiceObserverV2;
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
+import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -126,8 +130,8 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void aasRegistered(String aasId, String registryId) {
-		sendMqttMessage(MqttAASRegistryHelperV2.createCreateAASTopic(registryId), aasId);
+	public void aasRegistered(AASDescriptor aasDescriptor, String registryId) {		
+		sendMqttMessage(MqttAASRegistryHelperV2.createCreateAASTopic(registryId), serializePayload(aasDescriptor));
 	}
 
 	@Override
@@ -143,5 +147,11 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	@Override
 	public void submodelDeleted(IIdentifier aasId, IIdentifier smId, String registryId) {
 		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(registryId), MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
+	}
+	
+	private String serializePayload(ModelDescriptor descriptor) {
+		GSONTools gsonTools = new GSONTools(new DefaultTypeFactory());
+		
+		return gsonTools.serialize(descriptor);
 	}
 }

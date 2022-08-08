@@ -43,6 +43,8 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
+import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
+import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -129,7 +131,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		AASDescriptor aasDescriptor = new AASDescriptor(shell, aasEndpoint);
 		observedAPI.register(aasDescriptor);
 
-		assertEquals(newAASId, listener.lastPayload);
+		assertEquals(aasDescriptor, deserializePayload(listener.lastPayload));
 		assertEquals(MqttAASRegistryHelperV2.createCreateAASTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 
@@ -161,5 +163,11 @@ public class TestMqttAASRegistryServiceObserverV2 {
 
 		assertEquals(MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
 		assertEquals(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
+	}
+	
+	public Object deserializePayload(String payload) {
+		GSONTools tools = new GSONTools(new DefaultTypeFactory());
+		
+		return tools.deserialize(payload);
 	}
 }

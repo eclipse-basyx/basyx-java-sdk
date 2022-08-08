@@ -54,7 +54,7 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
 		aasRegistry.register(deviceAASDescriptor);
-		observers.stream().forEach(o -> o.aasRegistered(deviceAASDescriptor.getIdentifier().getId(), aasRegistry.getRegistryId()));
+		observers.stream().forEach(o -> o.aasRegistered(deviceAASDescriptor, aasRegistry.getRegistryId()));
 	}
 
 	@Override
