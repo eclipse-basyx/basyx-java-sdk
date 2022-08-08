@@ -27,6 +27,7 @@
 package org.eclipse.basyx.aas.registration.observing;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.observer.IObserver;
 
@@ -54,7 +55,7 @@ public interface IAASRegistryServiceObserverV2 extends IObserver {
 	 * @param smId
 	 *            id of the registered submodel
 	 */
-	public void submodelRegistered(IIdentifier aasId, IIdentifier smId, String registryId);
+	public void submodelRegistered(SubmodelDescriptor smId, String registryId);
 
 	/**
 	 * Is called when an AAS is deleted

@@ -26,6 +26,7 @@ package org.eclipse.basyx.extensions.aas.registration.mqtt;
 
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.observing.IAASRegistryServiceObserverV2;
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -135,8 +136,8 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void submodelRegistered(IIdentifier aasId, IIdentifier smId, String registryId) {
-		sendMqttMessage(MqttAASRegistryHelperV2.createCreateSubmodelTopic(registryId), MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
+	public void submodelRegistered(SubmodelDescriptor smDescriptor, String registryId) {
+		sendMqttMessage(MqttAASRegistryHelperV2.createCreateSubmodelTopic(registryId), serializePayload(smDescriptor));
 	}
 
 	@Override
@@ -150,7 +151,7 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 	
 	private String serializePayload(ModelDescriptor descriptor) {
-		GSONTools gsonTools = new GSONTools(new DefaultTypeFactory());
+		GSONTools gsonTools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
 		return gsonTools.serialize(descriptor);
 	}
