@@ -145,7 +145,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 
 		observedAPI.register(AASIDENTIFIER, submodelDescriptor);
 
-		assertEquals(MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(AASIDENTIFIER, newSubmodelIdentifier), listener.lastPayload);
+		assertEquals(submodelDescriptor, deserializePayload(listener.lastPayload));
 		assertEquals(MqttAASRegistryHelperV2.createCreateSubmodelTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 
@@ -166,7 +166,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 	}
 	
 	public Object deserializePayload(String payload) {
-		GSONTools tools = new GSONTools(new DefaultTypeFactory());
+		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
 		return tools.deserialize(payload);
 	}
