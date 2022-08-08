@@ -26,6 +26,7 @@
 
 package org.eclipse.basyx.aas.registration.observing;
 
+import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.observer.IObserver;
 
@@ -40,10 +41,10 @@ public interface IAASRegistryServiceObserverV2 extends IObserver {
 	/**
 	 * Is called when an AAS is registered
 	 * 
-	 * @param aasId
-	 *            id of the registered AAS
+	 * @param aasDescriptor
+	 *            descriptor of the registered AAS
 	 */
-	public void aasRegistered(String aasId, String registryId);
+	public void aasRegistered(AASDescriptor aasDescriptor, String registryId);
 
 	/**
 	 * Is called when a submodel is registered
