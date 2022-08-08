@@ -54,25 +54,25 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
 		aasRegistry.register(deviceAASDescriptor);
-		observers.stream().forEach(o -> o.aasRegistered(deviceAASDescriptor.getIdentifier().getId()));
+		observers.stream().forEach(o -> o.aasRegistered(deviceAASDescriptor.getIdentifier().getId(), aasRegistry.getRegistryId()));
 	}
 
 	@Override
 	public void register(IIdentifier aas, SubmodelDescriptor smDescriptor) throws ProviderException {
 		aasRegistry.register(aas, smDescriptor);
-		observers.stream().forEach(o -> o.submodelRegistered(aas, smDescriptor.getIdentifier()));
+		observers.stream().forEach(o -> o.submodelRegistered(aas, smDescriptor.getIdentifier(), aasRegistry.getRegistryId()));
 	}
 
 	@Override
 	public void delete(IIdentifier aasId) throws ProviderException {
 		aasRegistry.delete(aasId);
-		observers.stream().forEach(o -> o.aasDeleted(aasId.getId()));
+		observers.stream().forEach(o -> o.aasDeleted(aasId.getId(), aasRegistry.getRegistryId()));
 	}
 
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		aasRegistry.delete(aasId, smId);
-		observers.stream().forEach(o -> o.submodelDeleted(aasId, smId));
+		observers.stream().forEach(o -> o.submodelDeleted(aasId, smId, aasRegistry.getRegistryId()));
 	}
 
 	@Override

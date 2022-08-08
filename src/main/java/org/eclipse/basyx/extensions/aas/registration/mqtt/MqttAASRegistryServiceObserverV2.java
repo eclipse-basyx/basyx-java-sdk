@@ -126,22 +126,22 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void aasRegistered(String aasId) {
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERAAS, aasId);
+	public void aasRegistered(String aasId, String registryId) {
+		sendMqttMessage(MqttAASRegistryHelperV2.createCreateAASTopic(registryId), aasId);
 	}
 
 	@Override
-	public void submodelRegistered(IIdentifier aasId, IIdentifier smId) {
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
+	public void submodelRegistered(IIdentifier aasId, IIdentifier smId, String registryId) {
+		sendMqttMessage(MqttAASRegistryHelperV2.createCreateSubmodelTopic(registryId), MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
 	}
 
 	@Override
-	public void aasDeleted(String aasId) {
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETEAAS, aasId);
+	public void aasDeleted(String aasId, String registryId) {
+		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteAASTopic(registryId), aasId);
 	}
 
 	@Override
-	public void submodelDeleted(IIdentifier aasId, IIdentifier smId) {
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
+	public void submodelDeleted(IIdentifier aasId, IIdentifier smId, String registryId) {
+		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(registryId), MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
 	}
 }
