@@ -65,15 +65,16 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 
 	@Override
 	public void delete(IIdentifier aasId) throws ProviderException {
-		AASDescriptor descriptor = lookupAAS(aasId);
+		AASDescriptor aasDescriptor = lookupAAS(aasId);
 		aasRegistry.delete(aasId);
-		observers.stream().forEach(o -> o.aasDeleted(descriptor, aasRegistry.getRegistryId()));
+		observers.stream().forEach(o -> o.aasDeleted(aasDescriptor, aasRegistry.getRegistryId()));
 	}
 
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
+		SubmodelDescriptor smDescriptor = lookupSubmodel(aasId, smId);
 		aasRegistry.delete(aasId, smId);
-		observers.stream().forEach(o -> o.submodelDeleted(aasId, smId, aasRegistry.getRegistryId()));
+		observers.stream().forEach(o -> o.submodelDeleted(smDescriptor, aasRegistry.getRegistryId()));
 	}
 
 	@Override

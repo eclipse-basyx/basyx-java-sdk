@@ -66,11 +66,9 @@ public interface IAASRegistryServiceObserverV2 extends IObserver {
 	/**
 	 * Is called when a submodel is deleted
 	 * 
-	 * @param aasId
-	 *            id of the parent AAS
-	 * @param smId
-	 *            id of the deleted Submodel
+	 * @param smDescriptor
+	 *            descriptor of the deleted Submodel
 	 */
-	public void submodelDeleted(IIdentifier aasId, IIdentifier smId, String registryId);
+	public void submodelDeleted(SubmodelDescriptor smDescriptor, String registryId);
 
 }
