@@ -150,10 +150,11 @@ public class TestMqttAASRegistryServiceObserverV2 {
 	}
 
 	@Test
-	public void testDeleteAAS() {
+	public void testDeleteAAS() {		
+		AASDescriptor aasDescriptor = observedAPI.lookupAAS(AASIDENTIFIER);
 		observedAPI.delete(AASIDENTIFIER);
 
-		assertEquals(AASID, listener.lastPayload);
+		assertEquals(aasDescriptor, deserializePayload(listener.lastPayload));
 		assertEquals(MqttAASRegistryHelperV2.createDeleteAASTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 
