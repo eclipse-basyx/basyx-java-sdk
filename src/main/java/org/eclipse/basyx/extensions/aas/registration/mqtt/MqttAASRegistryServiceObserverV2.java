@@ -146,8 +146,8 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void submodelDeleted(IIdentifier aasId, IIdentifier smId, String registryId) {
-		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(registryId), MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
+	public void submodelDeleted(SubmodelDescriptor smDescriptor, String registryId) {
+		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(registryId), serializePayload(smDescriptor));
 	}
 	
 	private String serializePayload(ModelDescriptor descriptor) {

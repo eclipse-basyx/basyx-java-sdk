@@ -160,9 +160,10 @@ public class TestMqttAASRegistryServiceObserverV2 {
 
 	@Test
 	public void testDeleteSubmodel() {
+		SubmodelDescriptor smDescriptor = observedAPI.lookupSubmodel(AASIDENTIFIER, SUBMODELIDENTIFIER);
 		observedAPI.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
-		assertEquals(MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(AASIDENTIFIER, SUBMODELIDENTIFIER), listener.lastPayload);
+		assertEquals(smDescriptor, deserializePayload(listener.lastPayload));
 		assertEquals(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 	
