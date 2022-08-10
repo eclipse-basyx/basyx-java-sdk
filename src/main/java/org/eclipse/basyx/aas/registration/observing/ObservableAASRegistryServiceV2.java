@@ -34,6 +34,7 @@ import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.observer.Observable;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 /**
  *
@@ -53,8 +54,14 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 
 	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
-		aasRegistry.register(deviceAASDescriptor);
-		observers.stream().forEach(o -> o.aasRegistered(deviceAASDescriptor, aasRegistry.getRegistryId()));
+		try {
+			this.aasRegistry.lookupAAS(deviceAASDescriptor.getIdentifier());
+			aasRegistry.register(deviceAASDescriptor);
+			observers.stream().forEach(o -> o.aasUpdated(deviceAASDescriptor, aasRegistry.getRegistryId()));
+		} catch(ResourceNotFoundException e) {
+			aasRegistry.register(deviceAASDescriptor);
+			observers.stream().forEach(o -> o.aasRegistered(deviceAASDescriptor, aasRegistry.getRegistryId()));
+		}
 	}
 
 	@Override

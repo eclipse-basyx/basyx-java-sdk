@@ -56,6 +56,14 @@ public interface IAASRegistryServiceObserverV2 extends IObserver {
 	public void submodelRegistered(SubmodelDescriptor smDescriptor, String registryId);
 
 	/**
+	 * Is called when an AAS is updated
+	 * 
+	 * @param aasDescriptor
+	 *			  descriptor of the updated AAS
+	 */
+	public void aasUpdated(AASDescriptor aasDescriptor, String registryId);
+	
+	/**
 	 * Is called when an AAS is deleted
 	 * 
 	 * @param aasDescriptor

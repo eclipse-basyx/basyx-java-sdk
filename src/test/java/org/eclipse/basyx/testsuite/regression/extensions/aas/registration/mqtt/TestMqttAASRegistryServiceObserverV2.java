@@ -132,7 +132,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		observedAPI.register(aasDescriptor);
 
 		assertEquals(aasDescriptor, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASRegistryHelperV2.createCreateAASTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
+		assertEquals(MqttAASRegistryHelperV2.createCreateAASTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -146,7 +146,25 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		observedAPI.register(AASIDENTIFIER, submodelDescriptor);
 
 		assertEquals(submodelDescriptor, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASRegistryHelperV2.createCreateSubmodelTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
+		assertEquals(MqttAASRegistryHelperV2.createCreateSubmodelTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
+	}
+	
+	@Test
+	public void testUpdateAAS() {
+		String updatedAASId = "aasid3";
+		Identifier aasIdentifier = new Identifier(IdentifierType.IRI, updatedAASId);
+		AssetAdministrationShell shell = new AssetAdministrationShell(updatedAASId, aasIdentifier, new Asset("assetid1", new Identifier(IdentifierType.IRI, "assetid2"), AssetKind.INSTANCE));
+		String aasEndpoint = "http://localhost:8080/aasList/" + updatedAASId + "/aas";
+		
+		AASDescriptor aasDescriptor = new AASDescriptor(shell, aasEndpoint);
+		observedAPI.register(aasDescriptor);
+		
+		//is called again to update AAS
+		observedAPI.register(aasDescriptor);
+		
+		assertEquals(aasDescriptor, deserializePayload(listener.lastPayload));
+		assertEquals(MqttAASRegistryHelperV2.createUpdateAASTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
+		
 	}
 
 	@Test
@@ -155,7 +173,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		observedAPI.delete(AASIDENTIFIER);
 
 		assertEquals(aasDescriptor, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASRegistryHelperV2.createDeleteAASTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
+		assertEquals(MqttAASRegistryHelperV2.createDeleteAASTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -164,7 +182,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		observedAPI.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
 		assertEquals(smDescriptor, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(this.observedAPI.getRegistryId()), listener.lastTopic);
+		assertEquals(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 	
 	public Object deserializePayload(String payload) {
