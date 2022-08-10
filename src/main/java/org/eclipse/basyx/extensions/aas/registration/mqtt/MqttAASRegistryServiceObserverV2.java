@@ -143,6 +143,10 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	public void aasUpdated(AASDescriptor aasDescriptor, String registryId) {
 		sendMqttMessage(MqttAASRegistryHelperV2.createUpdateAASTopic(registryId), serializePayload(aasDescriptor));
 	}
+	
+	public void submodelUpdated(SubmodelDescriptor smDescriptor, String registryId) {
+		sendMqttMessage(MqttAASRegistryHelperV2.createUpdateSubmodelTopic(registryId), serializePayload(smDescriptor));
+	}
 
 	@Override
 	public void aasDeleted(AASDescriptor aasDescriptor, String registryId) {

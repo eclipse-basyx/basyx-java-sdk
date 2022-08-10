@@ -166,6 +166,23 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		assertEquals(MqttAASRegistryHelperV2.createUpdateAASTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
 		
 	}
+	
+	@Test
+	public void testUpdateSubmodel() {
+		String submodelid = "submodelid3";
+		Identifier submodelIdentifier = new Identifier(IdentifierType.IRI, submodelid);
+		Submodel submodel = new Submodel(submodelid, submodelIdentifier);
+		String submodelEndpoint = AASENDPOINT + "/submodels/" + submodelid + "/submodel";
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(submodel, submodelEndpoint);
+
+		observedAPI.register(AASIDENTIFIER, submodelDescriptor);
+		
+		//is called again to update submodel
+		observedAPI.register(AASIDENTIFIER, submodelDescriptor);
+
+		assertEquals(submodelDescriptor, deserializePayload(listener.lastPayload));
+		assertEquals(MqttAASRegistryHelperV2.createUpdateSubmodelTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
+	}
 
 	@Test
 	public void testDeleteAAS() {		

@@ -55,7 +55,7 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
 		try {
-			this.aasRegistry.lookupAAS(deviceAASDescriptor.getIdentifier());
+			aasRegistry.lookupAAS(deviceAASDescriptor.getIdentifier());
 			aasRegistry.register(deviceAASDescriptor);
 			observers.stream().forEach(o -> o.aasUpdated(deviceAASDescriptor, aasRegistry.getRegistryId()));
 		} catch(ResourceNotFoundException e) {
@@ -66,8 +66,15 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 
 	@Override
 	public void register(IIdentifier aas, SubmodelDescriptor smDescriptor) throws ProviderException {
-		aasRegistry.register(aas, smDescriptor);
-		observers.stream().forEach(o -> o.submodelRegistered(smDescriptor, aasRegistry.getRegistryId()));
+		
+		try {
+			aasRegistry.lookupSubmodel(aas, smDescriptor.getIdentifier());
+			aasRegistry.register(aas, smDescriptor);
+			observers.stream().forEach(o -> o.submodelUpdated(smDescriptor, aasRegistry.getRegistryId()));
+		} catch(ResourceNotFoundException e) {			
+			aasRegistry.register(aas, smDescriptor);
+			observers.stream().forEach(o -> o.submodelRegistered(smDescriptor, aasRegistry.getRegistryId()));
+		}
 	}
 
 	@Override
