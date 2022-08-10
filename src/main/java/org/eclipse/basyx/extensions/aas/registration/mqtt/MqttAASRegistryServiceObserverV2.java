@@ -141,8 +141,8 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void aasDeleted(String aasId, String registryId) {
-		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteAASTopic(registryId), aasId);
+	public void aasDeleted(AASDescriptor aasDescriptor, String registryId) {
+		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteAASTopic(registryId), serializePayload(aasDescriptor));
 	}
 
 	@Override
