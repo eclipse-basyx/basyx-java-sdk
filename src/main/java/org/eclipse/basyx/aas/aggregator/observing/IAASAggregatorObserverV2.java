@@ -49,9 +49,9 @@ public interface IAASAggregatorObserverV2 extends IObserver {
 	 * Is called when an AAS is updated
 	 * 
 	 * @param aasId
-	 *            id of the updated AAS
+	 *             the updated AAS
 	 */
-	public void aasUpdated(String aasId);
+	public void aasUpdated(AssetAdministrationShell aas);
 
 	/**
 	 * Is called when an AAS is deleted

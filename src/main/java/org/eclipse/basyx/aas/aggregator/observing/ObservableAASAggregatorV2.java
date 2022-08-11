@@ -76,7 +76,7 @@ public class ObservableAASAggregatorV2 extends Observable<IAASAggregatorObserver
 	@Override
 	public void updateAAS(AssetAdministrationShell aas) throws ResourceNotFoundException {
 		aasAggregator.updateAAS(aas);
-		observers.stream().forEach(o -> o.aasUpdated(aas.getIdentification().getId()));
+		observers.stream().forEach(o -> o.aasUpdated(aas));
 	}
 
 	@Override
