@@ -124,8 +124,8 @@ public class TestMqttAASAggregatorObserverV2 {
 		shell.setCategory("newCategory");
 		observedAPI.updateAAS(shell);
 
-		assertEquals(AASID, listener.lastPayload);
-		assertEquals(MqttAASAggregatorHelper.TOPIC_UPDATEAAS, listener.lastTopic);
+		assertEquals(shell, deserializePayload(listener.lastPayload));
+		assertEquals(MqttAASAggregatorHelperV2.createUpdateAASTopic(), listener.lastTopic);
 	}
 
 	@Test

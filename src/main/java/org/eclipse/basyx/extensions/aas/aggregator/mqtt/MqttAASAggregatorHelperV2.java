@@ -38,12 +38,21 @@ public class MqttAASAggregatorHelperV2 {
 	public static final String AASREPOSITORY = "aas-repository";
 	public static final String SHELLS = "shells";
 	public static final String CREATED = "created";
+	public static final String UPDATED = "updated";
 	
 	public static String createCreateAASTopic() {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(SHELLS)
 				.add(CREATED)
+				.toString();
+	}
+	
+	public static String createUpdateAASTopic() {
+		return new StringJoiner("/", "/", "")
+				.add(AASREPOSITORY)
+				.add(SHELLS)
+				.add(UPDATED)
 				.toString();
 	}
 }

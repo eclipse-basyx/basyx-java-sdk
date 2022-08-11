@@ -132,8 +132,8 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	}
 
 	@Override
-	public void aasUpdated(String shellId) {
-		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_UPDATEAAS, shellId);
+	public void aasUpdated(AssetAdministrationShell shell) {
+		sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(), serializePayload(shell));
 	}
 
 	@Override
