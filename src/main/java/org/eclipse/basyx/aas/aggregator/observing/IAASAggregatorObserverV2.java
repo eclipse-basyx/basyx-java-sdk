@@ -26,6 +26,7 @@
 
 package org.eclipse.basyx.aas.aggregator.observing;
 
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.submodel.observer.IObserver;
 
@@ -48,16 +49,16 @@ public interface IAASAggregatorObserverV2 extends IObserver {
 	/**
 	 * Is called when an AAS is updated
 	 * 
-	 * @param aasId
-	 *             the updated AAS
+	 * @param aas
+	 *            the updated AAS
 	 */
 	public void aasUpdated(AssetAdministrationShell aas);
 
 	/**
 	 * Is called when an AAS is deleted
 	 * 
-	 * @param aasId
-	 *            id of the deleted AAS
+	 * @param aas
+	 *            the deleted AAS
 	 */
-	public void aasDeleted(String aasId);
+	public void aasDeleted(IAssetAdministrationShell aas);
 }

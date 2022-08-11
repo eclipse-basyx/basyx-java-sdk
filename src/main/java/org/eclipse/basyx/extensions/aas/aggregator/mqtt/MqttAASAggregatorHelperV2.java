@@ -32,13 +32,11 @@ import java.util.StringJoiner;
  * 
  */
 public class MqttAASAggregatorHelperV2 {
-	public static final String TOPIC_CREATEAAS = "BaSyxAggregator_createdAAS";
-	public static final String TOPIC_DELETEAAS = "BaSyxAggregator_deletedAAS";
-	public static final String TOPIC_UPDATEAAS = "BaSyxAggregator_updatedAAS";
 	public static final String AASREPOSITORY = "aas-repository";
 	public static final String SHELLS = "shells";
 	public static final String CREATED = "created";
 	public static final String UPDATED = "updated";
+	public static final String DELETED = "deleted";
 	
 	public static String createCreateAASTopic() {
 		return new StringJoiner("/", "/", "")
@@ -53,6 +51,14 @@ public class MqttAASAggregatorHelperV2 {
 				.add(AASREPOSITORY)
 				.add(SHELLS)
 				.add(UPDATED)
+				.toString();
+	}
+	
+	public static String createDeleteAASTopic() {
+		return new StringJoiner("/", "/", "")
+				.add(AASREPOSITORY)
+				.add(SHELLS)
+				.add(DELETED)
 				.toString();
 	}
 }

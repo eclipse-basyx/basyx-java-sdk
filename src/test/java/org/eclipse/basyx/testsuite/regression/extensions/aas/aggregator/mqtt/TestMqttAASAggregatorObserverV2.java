@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import org.eclipse.basyx.aas.aggregator.AASAggregatorFactory;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
@@ -130,10 +131,11 @@ public class TestMqttAASAggregatorObserverV2 {
 
 	@Test
 	public void testDeleteAAS() {
+		IAssetAdministrationShell aas = observedAPI.getAAS(AASIDENTIFIER);
 		observedAPI.deleteAAS(AASIDENTIFIER);
 
-		assertEquals(AASID, listener.lastPayload);
-		assertEquals(MqttAASAggregatorHelper.TOPIC_DELETEAAS, listener.lastTopic);
+		assertEquals(aas, deserializePayload(listener.lastPayload));
+		assertEquals(MqttAASAggregatorHelperV2.createDeleteAASTopic(), listener.lastTopic);
 	}
 	
 	public Object deserializePayload(String payload) {
