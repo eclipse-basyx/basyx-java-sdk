@@ -26,6 +26,7 @@ package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
 import org.eclipse.basyx.aas.aggregator.observing.IAASAggregatorObserver;
 import org.eclipse.basyx.aas.aggregator.observing.IAASAggregatorObserverV2;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
@@ -137,11 +138,11 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	}
 
 	@Override
-	public void aasDeleted(String shellId) {
-		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_DELETEAAS, shellId);
+	public void aasDeleted(IAssetAdministrationShell shell) {
+		sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(), serializePayload(shell));
 	}
 	
-	private String serializePayload(AssetAdministrationShell shell) {
+	private String serializePayload(IAssetAdministrationShell shell) {
 		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
 		return tools.serialize(shell);

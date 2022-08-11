@@ -81,7 +81,8 @@ public class ObservableAASAggregatorV2 extends Observable<IAASAggregatorObserver
 
 	@Override
 	public void deleteAAS(IIdentifier aasId) {
+		IAssetAdministrationShell aas = aasAggregator.getAAS(aasId);
 		aasAggregator.deleteAAS(aasId);
-		observers.stream().forEach(o -> o.aasDeleted(aasId.getId()));
+		observers.stream().forEach(o -> o.aasDeleted(aas));
 	}
 }
