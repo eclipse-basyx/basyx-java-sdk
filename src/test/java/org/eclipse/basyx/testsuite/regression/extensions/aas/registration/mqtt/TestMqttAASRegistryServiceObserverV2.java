@@ -146,7 +146,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		observedAPI.register(AASIDENTIFIER, submodelDescriptor);
 
 		assertEquals(submodelDescriptor, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASRegistryHelperV2.createCreateSubmodelTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
+		assertEquals(MqttAASRegistryHelperV2.createCreateSubmodelTopicWithAASId(AASIDENTIFIER.getId(), TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 	
 	@Test
@@ -181,7 +181,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		observedAPI.register(AASIDENTIFIER, submodelDescriptor);
 
 		assertEquals(submodelDescriptor, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASRegistryHelperV2.createUpdateSubmodelTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
+		assertEquals(MqttAASRegistryHelperV2.createUpdateSubmodelTopicWithAASId(AASIDENTIFIER.getId(), TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -199,7 +199,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		observedAPI.delete(AASIDENTIFIER, SUBMODELIDENTIFIER);
 
 		assertEquals(smDescriptor, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
+		assertEquals(MqttAASRegistryHelperV2.createDeleteSubmodelTopicWithAASId(AASIDENTIFIER.getId(), TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 	
 	public Object deserializePayload(String payload) {

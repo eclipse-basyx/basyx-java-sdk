@@ -53,7 +53,7 @@ public interface IAASRegistryServiceObserverV2 extends IObserver {
 	 * @param smDescriptor
 	 *            descriptor of the registered submodel
 	 */
-	public void submodelRegistered(SubmodelDescriptor smDescriptor, String registryId);
+	public void submodelRegistered(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId);
 
 	/**
 	 * Is called when an AAS is updated
@@ -69,7 +69,7 @@ public interface IAASRegistryServiceObserverV2 extends IObserver {
 	 * @param smDescriptor
 	 * 			  descriptor of the updated submodel
 	 */
-	public void submodelUpdated(SubmodelDescriptor smDescriptor, String registryId);
+	public void submodelUpdated(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId);
 	
 	/**
 	 * Is called when an AAS is deleted
@@ -85,6 +85,6 @@ public interface IAASRegistryServiceObserverV2 extends IObserver {
 	 * @param smDescriptor
 	 *            descriptor of the deleted Submodel
 	 */
-	public void submodelDeleted(SubmodelDescriptor smDescriptor, String registryId);
+	public void submodelDeleted(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId);
 
 }

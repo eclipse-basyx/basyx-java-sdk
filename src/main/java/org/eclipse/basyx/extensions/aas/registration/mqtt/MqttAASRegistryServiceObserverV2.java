@@ -136,8 +136,9 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void submodelRegistered(SubmodelDescriptor smDescriptor, String registryId) {
+	public void submodelRegistered(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId) {
 		sendMqttMessage(MqttAASRegistryHelperV2.createCreateSubmodelTopic(registryId), serializePayload(smDescriptor));
+		sendMqttMessage(MqttAASRegistryHelperV2.createCreateSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
 	}
 	@Override
 	public void aasUpdated(AASDescriptor aasDescriptor, String registryId) {
@@ -145,8 +146,9 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 	
 	@Override
-	public void submodelUpdated(SubmodelDescriptor smDescriptor, String registryId) {
+	public void submodelUpdated(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId) {
 		sendMqttMessage(MqttAASRegistryHelperV2.createUpdateSubmodelTopic(registryId), serializePayload(smDescriptor));
+		sendMqttMessage(MqttAASRegistryHelperV2.createUpdateSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
 	}
 
 	@Override
@@ -155,8 +157,9 @@ public class MqttAASRegistryServiceObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void submodelDeleted(SubmodelDescriptor smDescriptor, String registryId) {
+	public void submodelDeleted(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId) {
 		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteSubmodelTopic(registryId), serializePayload(smDescriptor));
+		sendMqttMessage(MqttAASRegistryHelperV2.createDeleteSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
 	}
 	
 	private String serializePayload(ModelDescriptor descriptor) {
