@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -19,46 +19,45 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
-import java.util.StringJoiner;
+package org.eclipse.basyx.submodel.aggregator.observing;
+
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
- * A helper class containing methods that create topics used by the
- * AASAggregator.
- * 
+ * Interface for an observer of {@link ObservableSubmodelAggregator}
+ *
+ * @author fischer, jungjan, fried
+ *
  */
-public class MqttAASAggregatorHelperV2 {
-	private static final String AASREPOSITORY = "aas-repository";
-	private static final String SHELLS = "shells";
-	private static final String CREATED = "created";
-	private static final String UPDATED = "updated";
-	private static final String DELETED = "deleted";
-	
-	public static String createCreateAASTopic() {
-		return new StringJoiner("/", "/", "")
-				.add(AASREPOSITORY)
-				.add(SHELLS)
-				.add(CREATED)
-				.toString();
-	}
-	
-	public static String createUpdateAASTopic() {
-		return new StringJoiner("/", "/", "")
-				.add(AASREPOSITORY)
-				.add(SHELLS)
-				.add(UPDATED)
-				.toString();
-	}
-	
-	public static String createDeleteAASTopic() {
-		return new StringJoiner("/", "/", "")
-				.add(AASREPOSITORY)
-				.add(SHELLS)
-				.add(DELETED)
-				.toString();
-	}
+public interface ISubmodelAggregatorObserverV2 extends IObserver {
+
+	/**
+	 * Is called when an submodel is created
+	 *
+	 * @param submodelId
+	 *            id of the created submodel
+	 */
+	public void submodelCreated(String shellId, ISubmodel submodel);
+
+	/**
+	 * Is called when an submodel is updated
+	 *
+	 * @param submodelId
+	 *            id of the updated submodel
+	 */
+	public void submodelUpdated(String shellId, String submodelId);
+
+	/**
+	 * Is called when an submodel is deleted
+	 *
+	 * @param submodelId
+	 *            id of the deleted submodel
+	 */
+	public void submodelDeleted(String shellId, String submodelId);
 }
