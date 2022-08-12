@@ -22,43 +22,47 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
+package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.StringJoiner;
 
 /**
  * A helper class containing methods that create topics used by the
- * AASAggregator.
- * 
+ * SubmodelAggregator.
+ *
  */
-public class MqttAASAggregatorHelperV2 {
+public class MqttSubmodelAggregatorHelperV2 {
+	public static final String TOPIC_CREATESUBMODEL = "BaSyxAggregator_createdSubmodel";
+	public static final String TOPIC_DELETESUBMODEL = "BaSyxAggregator_deletedSubmodel";
+	public static final String TOPIC_UPDATESUBMODEL = "BaSyxAggregator_updatedSubmodel";
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
+	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
 	
-	public static String createCreateAASTopic() {
+	
+	public static String getCombinedMessage(String shellId, String submodelId) {
+		return "(" + shellId + "," + submodelId + ")";
+	}
+	
+	public static String createCreateSubmodelTopic(String aasId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(SHELLS)
+				.add(encodeAASId(aasId))
+				.add(SUBMODELS)
 				.add(CREATED)
-				.toString();
+				.toString();		
 	}
 	
-	public static String createUpdateAASTopic() {
-		return new StringJoiner("/", "/", "")
-				.add(AASREPOSITORY)
-				.add(SHELLS)
-				.add(UPDATED)
-				.toString();
-	}
-	
-	public static String createDeleteAASTopic() {
-		return new StringJoiner("/", "/", "")
-				.add(AASREPOSITORY)
-				.add(SHELLS)
-				.add(DELETED)
-				.toString();
+	private static String encodeAASId(String aasId) {
+		if (aasId == null) {
+			return "";
+		}
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(aasId.getBytes(StandardCharsets.UTF_8));
 	}
 }
