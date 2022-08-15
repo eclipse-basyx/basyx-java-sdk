@@ -40,16 +40,16 @@ public interface ISubmodelAggregatorObserverV2 extends IObserver {
 	/**
 	 * Is called when an submodel is created
 	 *
-	 * @param submodelId
-	 *            id of the created submodel
+	 * @param submodel
+	 *             the created submodel
 	 */
 	public void submodelCreated(String shellId, ISubmodel submodel);
 
 	/**
 	 * Is called when an submodel is updated
 	 *
-	 * @param submodelId
-	 *            id of the updated submodel
+	 * @param submodel
+	 *             the updated submodel
 	 */
 	public void submodelUpdated(String shellId, ISubmodel submodel);
 
