@@ -51,7 +51,7 @@ public interface ISubmodelAggregatorObserverV2 extends IObserver {
 	 * @param submodelId
 	 *            id of the updated submodel
 	 */
-	public void submodelUpdated(String shellId, String submodelId);
+	public void submodelUpdated(String shellId, ISubmodel submodel);
 
 	/**
 	 * Is called when an submodel is deleted

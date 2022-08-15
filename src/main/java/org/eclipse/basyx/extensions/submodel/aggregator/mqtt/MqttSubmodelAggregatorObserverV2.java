@@ -132,8 +132,8 @@ public class MqttSubmodelAggregatorObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void submodelUpdated(String shellId, String submodelId) {
-		sendMqttMessage(MqttSubmodelAggregatorHelper.TOPIC_UPDATESUBMODEL, MqttSubmodelAggregatorHelper.getCombinedMessage(shellId, submodelId));
+	public void submodelUpdated(String shellId, ISubmodel submodel) {
+		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(shellId), serializePayload(submodel));
 	}
 
 	@Override

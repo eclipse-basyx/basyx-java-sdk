@@ -59,6 +59,16 @@ public class MqttSubmodelAggregatorHelperV2 {
 				.toString();		
 	}
 	
+	public static String createUpdateSubmodelTopic(String aasId) {
+		return new StringJoiner("/", "/", "")
+				.add(AASREPOSITORY)
+				.add(SHELLS)
+				.add(encodeAASId(aasId))
+				.add(SUBMODELS)
+				.add(UPDATED)
+				.toString();		
+	}
+	
 	private static String encodeAASId(String aasId) {
 		if (aasId == null) {
 			return "";
