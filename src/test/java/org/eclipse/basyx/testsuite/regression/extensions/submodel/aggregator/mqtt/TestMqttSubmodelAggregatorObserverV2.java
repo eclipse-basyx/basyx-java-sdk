@@ -126,8 +126,8 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		submodel.setCategory("newCategory");
 		observedSubmodelAggregator.updateSubmodel(submodel);
 
-		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_IDSHORT), listener.lastPayload);
-		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_UPDATESUBMODEL, listener.lastTopic);
+		assertEquals(submodel, deserializePayload(listener.lastPayload));
+		assertEquals(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(null), listener.lastTopic);
 	}
 
 	@Test
