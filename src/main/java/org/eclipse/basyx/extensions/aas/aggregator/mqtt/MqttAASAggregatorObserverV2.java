@@ -128,18 +128,18 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	}
 
 	@Override
-	public void aasCreated(AssetAdministrationShell shell) {
-		sendMqttMessage(MqttAASAggregatorHelperV2.createCreateAASTopic(), serializePayload(shell));
+	public void aasCreated(AssetAdministrationShell shell, String repoId) {
+		sendMqttMessage(MqttAASAggregatorHelperV2.createCreateAASTopic(repoId), serializePayload(shell));
 	}
 
 	@Override
-	public void aasUpdated(AssetAdministrationShell shell) {
-		sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(), serializePayload(shell));
+	public void aasUpdated(AssetAdministrationShell shell, String repoId) {
+		sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(repoId), serializePayload(shell));
 	}
 
 	@Override
-	public void aasDeleted(IAssetAdministrationShell shell) {
-		sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(), serializePayload(shell));
+	public void aasDeleted(IAssetAdministrationShell shell, String repoId) {
+		sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(repoId), serializePayload(shell));
 	}
 	
 	private String serializePayload(IAssetAdministrationShell shell) {
