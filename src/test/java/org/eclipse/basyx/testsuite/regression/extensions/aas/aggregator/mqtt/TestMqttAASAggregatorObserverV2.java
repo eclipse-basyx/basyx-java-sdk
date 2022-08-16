@@ -117,7 +117,7 @@ public class TestMqttAASAggregatorObserverV2 {
 		observedAPI.createAAS(newShell);
 
 		assertEquals(newShell, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASAggregatorHelperV2.createCreateAASTopic(), listener.lastTopic);
+		assertEquals(MqttAASAggregatorHelperV2.createCreateAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -126,7 +126,7 @@ public class TestMqttAASAggregatorObserverV2 {
 		observedAPI.updateAAS(shell);
 
 		assertEquals(shell, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASAggregatorHelperV2.createUpdateAASTopic(), listener.lastTopic);
+		assertEquals(MqttAASAggregatorHelperV2.createUpdateAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -135,7 +135,7 @@ public class TestMqttAASAggregatorObserverV2 {
 		observedAPI.deleteAAS(AASIDENTIFIER);
 
 		assertEquals(aas, deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASAggregatorHelperV2.createDeleteAASTopic(), listener.lastTopic);
+		assertEquals(MqttAASAggregatorHelperV2.createDeleteAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 	
 	public Object deserializePayload(String payload) {

@@ -38,25 +38,28 @@ public class MqttAASAggregatorHelperV2 {
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
 	
-	public static String createCreateAASTopic() {
+	public static String createCreateAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(CREATED)
 				.toString();
 	}
 	
-	public static String createUpdateAASTopic() {
+	public static String createUpdateAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(UPDATED)
 				.toString();
 	}
 	
-	public static String createDeleteAASTopic() {
+	public static String createDeleteAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(DELETED)
 				.toString();

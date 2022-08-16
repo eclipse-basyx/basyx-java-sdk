@@ -70,19 +70,19 @@ public class ObservableAASAggregatorV2 extends Observable<IAASAggregatorObserver
 	@Override
 	public void createAAS(AssetAdministrationShell aas) {
 		aasAggregator.createAAS(aas);
-		observers.stream().forEach(o -> o.aasCreated(aas));
+		observers.stream().forEach(o -> o.aasCreated(aas, aasAggregator.getRepositoryId()));
 	}
 
 	@Override
 	public void updateAAS(AssetAdministrationShell aas) throws ResourceNotFoundException {
 		aasAggregator.updateAAS(aas);
-		observers.stream().forEach(o -> o.aasUpdated(aas));
+		observers.stream().forEach(o -> o.aasUpdated(aas, aasAggregator.getRepositoryId()));
 	}
 
 	@Override
 	public void deleteAAS(IIdentifier aasId) {
 		IAssetAdministrationShell aas = aasAggregator.getAAS(aasId);
 		aasAggregator.deleteAAS(aasId);
-		observers.stream().forEach(o -> o.aasDeleted(aas));
+		observers.stream().forEach(o -> o.aasDeleted(aas, aasAggregator.getRepositoryId()));
 	}
 }

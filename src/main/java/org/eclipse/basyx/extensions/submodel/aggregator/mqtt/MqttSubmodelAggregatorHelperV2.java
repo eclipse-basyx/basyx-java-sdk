@@ -52,6 +52,7 @@ public class MqttSubmodelAggregatorHelperV2 {
 	public static String createCreateSubmodelTopic(String aasId, String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(encodeAASId(aasId))
 				.add(SUBMODELS)
@@ -62,6 +63,7 @@ public class MqttSubmodelAggregatorHelperV2 {
 	public static String createUpdateSubmodelTopic(String aasId, String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(encodeAASId(aasId))
 				.add(SUBMODELS)
@@ -72,6 +74,7 @@ public class MqttSubmodelAggregatorHelperV2 {
 	public static String createDeleteSubmodelTopic(String aasId, String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(encodeAASId(aasId))
 				.add(SUBMODELS)

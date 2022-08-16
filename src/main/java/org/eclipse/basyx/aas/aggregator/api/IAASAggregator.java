@@ -41,6 +41,9 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
  */
 public interface IAASAggregator {
 
+	public default String getRepositoryId() {
+		return "aas-repository";
+	}
 	/**
 	 * Retrieves all Asset Administration Shells from the endpoint
 	 * 

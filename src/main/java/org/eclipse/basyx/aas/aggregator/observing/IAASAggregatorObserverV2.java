@@ -44,7 +44,7 @@ public interface IAASAggregatorObserverV2 extends IObserver {
 	 * @param aas
 	 *            the created AAS
 	 */
-	public void aasCreated(AssetAdministrationShell aas);
+	public void aasCreated(AssetAdministrationShell aas, String repoId);
 
 	/**
 	 * Is called when an AAS is updated
@@ -52,7 +52,7 @@ public interface IAASAggregatorObserverV2 extends IObserver {
 	 * @param aas
 	 *            the updated AAS
 	 */
-	public void aasUpdated(AssetAdministrationShell aas);
+	public void aasUpdated(AssetAdministrationShell aas, String repoId);
 
 	/**
 	 * Is called when an AAS is deleted
@@ -60,5 +60,5 @@ public interface IAASAggregatorObserverV2 extends IObserver {
 	 * @param aas
 	 *            the deleted AAS
 	 */
-	public void aasDeleted(IAssetAdministrationShell aas);
+	public void aasDeleted(IAssetAdministrationShell aas, String repoId);
 }
