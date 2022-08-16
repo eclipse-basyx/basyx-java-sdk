@@ -56,8 +56,8 @@ public interface ISubmodelAggregatorObserverV2 extends IObserver {
 	/**
 	 * Is called when an submodel is deleted
 	 *
-	 * @param submodelId
-	 *            id of the deleted submodel
+	 * @param submodel
+	 *             the deleted submodel
 	 */
-	public void submodelDeleted(String shellId, String submodelId);
+	public void submodelDeleted(String shellId, ISubmodel submodel);
 }
