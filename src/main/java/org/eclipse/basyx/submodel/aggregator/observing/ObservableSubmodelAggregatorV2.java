@@ -99,9 +99,10 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 
 	@Override
 	public void deleteSubmodelByIdentifier(IIdentifier submodelIdentifier) {
-		String parentAASId = getParentAASId(submodelAggregator.getSubmodel(submodelIdentifier));
+		ISubmodel submodel = submodelAggregator.getSubmodel(submodelIdentifier);
+		String parentAASId = getParentAASId(submodel);
 		submodelAggregator.deleteSubmodelByIdentifier(submodelIdentifier);
-		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodelIdentifier.getId()));
+		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel));
 	}
 
 	@Override
@@ -109,7 +110,7 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 		ISubmodel submodel = submodelAggregator.getSubmodelbyIdShort(submodelIdShort);
 		String parentAASId = getParentAASId(submodel);
 		submodelAggregator.deleteSubmodelByIdShort(submodelIdShort);
-		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel.getIdentification().getId()));
+		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel));
 	}
 
 	private String getParentAASId(ISubmodel submodel) {

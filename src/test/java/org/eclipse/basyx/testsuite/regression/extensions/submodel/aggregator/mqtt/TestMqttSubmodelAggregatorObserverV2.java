@@ -134,16 +134,16 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 	public void testDeleteSubmodelByIdentifier() {
 		observedSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 
-		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_IDSHORT), listener.lastPayload);
-		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
+		assertEquals(submodel, deserializePayload(listener.lastPayload));
+		assertEquals(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(null), listener.lastTopic);
 	}
 
 	@Test
 	public void testDeleteSubmodelByIdShort() {
 		observedSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 
-		assertEquals(MqttSubmodelAggregatorHelper.getCombinedMessage(null, SUBMODEL_IDSHORT), listener.lastPayload);
-		assertEquals(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, listener.lastTopic);
+		assertEquals(submodel, deserializePayload(listener.lastPayload));
+		assertEquals(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(null), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

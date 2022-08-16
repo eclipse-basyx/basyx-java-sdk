@@ -137,8 +137,8 @@ public class MqttSubmodelAggregatorObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void submodelDeleted(String shellId, String submodelId) {
-		sendMqttMessage(MqttSubmodelAggregatorHelper.TOPIC_DELETESUBMODEL, MqttSubmodelAggregatorHelper.getCombinedMessage(shellId, submodelId));
+	public void submodelDeleted(String shellId, ISubmodel submodel) {
+		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(shellId), serializePayload(submodel));
 	}
 	
 	private String serializePayload(ISubmodel submodel) {
