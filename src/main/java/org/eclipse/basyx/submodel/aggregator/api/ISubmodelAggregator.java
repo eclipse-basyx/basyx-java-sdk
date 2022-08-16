@@ -40,6 +40,11 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
  *
  */
 public interface ISubmodelAggregator {
+	
+	public default String getRepositoryId() {
+		return "submodel-repository";
+	}
+	
 	/**
 	 * Retrieves all Submodels from the endpoint
 	 * 

@@ -118,7 +118,7 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		observedSubmodelAggregator.createSubmodel(newSubmodel);
 
 		assertEquals(newSubmodel, deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAggregatorHelperV2.createCreateSubmodelTopic(null), listener.lastTopic);
+		assertEquals(MqttSubmodelAggregatorHelperV2.createCreateSubmodelTopic(null, observedSubmodelAggregator.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		observedSubmodelAggregator.updateSubmodel(submodel);
 
 		assertEquals(submodel, deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(null), listener.lastTopic);
+		assertEquals(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(null, observedSubmodelAggregator.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -135,7 +135,7 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		observedSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 
 		assertEquals(submodel, deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(null), listener.lastTopic);
+		assertEquals(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(null, observedSubmodelAggregator.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -143,7 +143,7 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		observedSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 
 		assertEquals(submodel, deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(null), listener.lastTopic);
+		assertEquals(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(null, observedSubmodelAggregator.getRepositoryId()), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

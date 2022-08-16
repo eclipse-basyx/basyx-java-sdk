@@ -127,18 +127,18 @@ public class MqttSubmodelAggregatorObserverV2 extends MqttEventService implement
 	}
 
 	@Override
-	public void submodelCreated(String shellId, ISubmodel submodel) {
-		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createCreateSubmodelTopic(shellId), serializePayload(submodel));
+	public void submodelCreated(String shellId, ISubmodel submodel, String repoId) {
+		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createCreateSubmodelTopic(shellId, repoId), serializePayload(submodel));
 	}
 
 	@Override
-	public void submodelUpdated(String shellId, ISubmodel submodel) {
-		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(shellId), serializePayload(submodel));
+	public void submodelUpdated(String shellId, ISubmodel submodel, String repoId) {
+		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(shellId, repoId), serializePayload(submodel));
 	}
 
 	@Override
-	public void submodelDeleted(String shellId, ISubmodel submodel) {
-		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(shellId), serializePayload(submodel));
+	public void submodelDeleted(String shellId, ISubmodel submodel, String repoId) {
+		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(shellId, repoId), serializePayload(submodel));
 	}
 	
 	private String serializePayload(ISubmodel submodel) {
