@@ -119,7 +119,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String TARGET_PATH_REGEX_FULL = "Target=\"/.*";
 	private static final String DOCPROPS_PATH_REGEX = "Target=\"docProps.*";
 	
-	private static final byte[] TEST_CONTENT = { 22, 23, 24, 25, 26 };
+	private static final byte[] THUMBNAIL = { 22, 23, 24, 25, 26 };
 
 	private int bundleSize;
 	private int submodelSize;
@@ -136,7 +136,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	
 	@Test
 	public void thumbnailInPackage() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException {
-		assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(TEST_CONTENT), packageManager.retrieveThumbnail()));
+		assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(THUMBNAIL), packageManager.retrieveThumbnail()));
 	}
 
 	/**
@@ -429,7 +429,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		fileList.add(createInMemoryFile(PDF_PATH));
 		submodelElementsSize = 7;
 		
-        Thumbnail thumbnail = new Thumbnail(ThumbnailExtension.PNG, new ByteArrayInputStream(TEST_CONTENT));
+        Thumbnail thumbnail = new Thumbnail(ThumbnailExtension.PNG, new ByteArrayInputStream(THUMBNAIL));
 		
 		try (FileOutputStream out = new FileOutputStream(filePath)) {
 			MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, thumbnail, out);

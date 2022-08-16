@@ -192,13 +192,17 @@ public class MetamodelToAASXConverter {
 			return;
         }
 		
-        String name = thumbnail.getThumbnailFilename().substring(thumbnail.getThumbnailFilename().lastIndexOf(java.io.File.separatorChar) + 1);
+        String name = extractFilenameFromPath(thumbnail);
         
         addThumbnail(name, thumbnail.getThumbnailStream(), rootPackage);
 	}
 	
 	private static boolean isValid(Thumbnail thumbnail) {
 		return thumbnail != null;
+	}
+	
+	private static String extractFilenameFromPath(Thumbnail thumbnail) {
+		return thumbnail.getThumbnailFilename().substring(thumbnail.getThumbnailFilename().lastIndexOf(java.io.File.separatorChar) + 1);
 	}
 
 	private static void addThumbnail(String filename, InputStream data, OPCPackage rootPackage) throws IOException {

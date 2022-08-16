@@ -42,6 +42,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.factory.aasx.AASXToMetamodelConverter;
@@ -88,6 +89,7 @@ public class TestMetamodelToAASXConverter {
 	private static final String COLLECTION_ID_SHORT = "collection";
 	
 	private static final String THUMBNAIL_FILENAME = "Thumbnail.png";
+	private static final byte[] THUMBNAIL = { 22, 23, 24, 25, 26 };
 
 	private AssetAdministrationShell aas;
 	private Submodel sm1;
@@ -153,12 +155,13 @@ public class TestMetamodelToAASXConverter {
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
-		byte[] testContent = { 22, 23, 24, 25, 26 };
-		Thumbnail thumbnail = new Thumbnail(ThumbnailExtension.PNG, new ByteArrayInputStream(testContent));
+		Thumbnail thumbnail = new Thumbnail(ThumbnailExtension.PNG, new ByteArrayInputStream(THUMBNAIL));
 		
 		MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, thumbnail, out);
 		
 		assertAASXThumbnailIsPresent(out);
+		
+		assertAASXThumbnailContentIsSame(out);
 	}
 
 	@Test
@@ -184,6 +187,10 @@ public class TestMetamodelToAASXConverter {
 		ArrayList<String> filePaths = getFilePaths(out);
 		
 		assertTrue(filePaths.contains(FilenameUtils.getName(THUMBNAIL_FILENAME)));
+	}
+	
+	public void assertAASXThumbnailContentIsSame(ByteArrayOutputStream out) throws InvalidFormatException, IOException, ParserConfigurationException, SAXException {
+		assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(THUMBNAIL), getThumbnailStreamFromAASX(out)));
 	}
 
 	private ArrayList<String> getFilePaths(ByteArrayOutputStream byteStream) throws IOException {
@@ -228,10 +235,22 @@ public class TestMetamodelToAASXConverter {
 	}
 
 	private Set<AASBundle> deserializeAASX(ByteArrayOutputStream byteStream) throws IOException, InvalidFormatException, ParserConfigurationException, SAXException {
+		AASXToMetamodelConverter aasxDeserializer = getDeserializedAASX(byteStream);
+		
+		return aasxDeserializer.retrieveAASBundles();
+	}
+	
+	private InputStream getThumbnailStreamFromAASX(ByteArrayOutputStream byteStream) throws IOException, InvalidFormatException, ParserConfigurationException, SAXException {
+		AASXToMetamodelConverter aasxDeserializer = getDeserializedAASX(byteStream);
+		
+		return aasxDeserializer.retrieveThumbnail();
+	}
+
+	private AASXToMetamodelConverter getDeserializedAASX(ByteArrayOutputStream byteStream) {
 		InputStream in = new ByteArrayInputStream(byteStream.toByteArray());
 
 		AASXToMetamodelConverter aasxDeserializer = new AASXToMetamodelConverter(in);
-		return aasxDeserializer.retrieveAASBundles();
+		return aasxDeserializer;
 	}
 
 	private void assertFilepathsAreCorrect(Set<AASBundle> aasBundles) {
