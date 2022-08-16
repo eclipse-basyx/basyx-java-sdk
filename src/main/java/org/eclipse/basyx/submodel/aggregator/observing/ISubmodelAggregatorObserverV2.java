@@ -43,7 +43,7 @@ public interface ISubmodelAggregatorObserverV2 extends IObserver {
 	 * @param submodel
 	 *             the created submodel
 	 */
-	public void submodelCreated(String shellId, ISubmodel submodel);
+	public void submodelCreated(String shellId, ISubmodel submodel, String repoId);
 
 	/**
 	 * Is called when an submodel is updated
@@ -51,7 +51,7 @@ public interface ISubmodelAggregatorObserverV2 extends IObserver {
 	 * @param submodel
 	 *             the updated submodel
 	 */
-	public void submodelUpdated(String shellId, ISubmodel submodel);
+	public void submodelUpdated(String shellId, ISubmodel submodel, String repoId);
 
 	/**
 	 * Is called when an submodel is deleted
@@ -59,5 +59,5 @@ public interface ISubmodelAggregatorObserverV2 extends IObserver {
 	 * @param submodel
 	 *             the deleted submodel
 	 */
-	public void submodelDeleted(String shellId, ISubmodel submodel);
+	public void submodelDeleted(String shellId, ISubmodel submodel, String repoId);
 }

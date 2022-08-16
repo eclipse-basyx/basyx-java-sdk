@@ -82,19 +82,19 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 	@Override
 	public void createSubmodel(Submodel submodel) {
 		submodelAggregator.createSubmodel(submodel);
-		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodel), submodel));
+		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodel), submodel, submodelAggregator.getRepositoryId()));
 	}
 
 	@Override
 	public void createSubmodel(ISubmodelAPI submodelAPI) {
 		submodelAggregator.createSubmodel(submodelAPI);
-		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodelAPI.getSubmodel()), submodelAPI.getSubmodel()));
+		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodelAPI.getSubmodel()), submodelAPI.getSubmodel(), submodelAggregator.getRepositoryId()));
 	}
 
 	@Override
 	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
 		submodelAggregator.updateSubmodel(submodel);
-		observers.stream().forEach(observer -> observer.submodelUpdated(getParentAASId(submodel), submodel));
+		observers.stream().forEach(observer -> observer.submodelUpdated(getParentAASId(submodel), submodel, submodelAggregator.getRepositoryId()));
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 		ISubmodel submodel = submodelAggregator.getSubmodel(submodelIdentifier);
 		String parentAASId = getParentAASId(submodel);
 		submodelAggregator.deleteSubmodelByIdentifier(submodelIdentifier);
-		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel));
+		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel, submodelAggregator.getRepositoryId()));
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 		ISubmodel submodel = submodelAggregator.getSubmodelbyIdShort(submodelIdShort);
 		String parentAASId = getParentAASId(submodel);
 		submodelAggregator.deleteSubmodelByIdShort(submodelIdShort);
-		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel));
+		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel, submodelAggregator.getRepositoryId()));
 	}
 
 	private String getParentAASId(ISubmodel submodel) {
