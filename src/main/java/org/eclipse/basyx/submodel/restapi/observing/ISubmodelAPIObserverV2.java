@@ -43,7 +43,7 @@ public interface ISubmodelAPIObserverV2 extends IObserver {
 	 * @param newValue
 	 *            the value of the new element
 	 */
-	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId);
+	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId, String repoId);
 
 	/**
 	 * Is called when a SubmodelElement is deleted
@@ -51,7 +51,7 @@ public interface ISubmodelAPIObserverV2 extends IObserver {
 	 * @param idShortPath
 	 *            the idShortPath of the deleted element
 	 */
-	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId);
+	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId);
 
 	/**
 	 * Is called when a SubmodelElement is updated
@@ -59,6 +59,6 @@ public interface ISubmodelAPIObserverV2 extends IObserver {
 	 * @param idShortPath
 	 *            the idShortPath of the updated element
 	 */
-	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId);
+	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId);
 
 }

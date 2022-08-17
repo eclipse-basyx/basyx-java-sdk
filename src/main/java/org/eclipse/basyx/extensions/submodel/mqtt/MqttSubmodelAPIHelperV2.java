@@ -60,11 +60,12 @@ public class MqttSubmodelAPIHelperV2 {
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
 	
-	public static String createCreateSubmodelElementTopic(String aasId, String submodelId, String idShortPath) {
+	public static String createCreateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(encodeId(aasId))
 				.add(SUBMODELS)
@@ -75,11 +76,12 @@ public class MqttSubmodelAPIHelperV2 {
 				.toString();
 	}
 	
-	public static String createUpdateSubmodelElementTopic(String aasId, String submodelId, String idShortPath) {
+	public static String createUpdateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(encodeId(aasId))
 				.add(SUBMODELS)
@@ -90,11 +92,12 @@ public class MqttSubmodelAPIHelperV2 {
 				.toString();
 	}
 	
-	public static String createDeleteSubmodelElementTopic(String aasId, String submodelId, String idShortPath) {
+	public static String createDeleteSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
+				.add(repoId)
 				.add(SHELLS)
 				.add(encodeId(aasId))
 				.add(SUBMODELS)

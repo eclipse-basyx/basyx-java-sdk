@@ -58,13 +58,13 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 	@Override
 	public void addSubmodelElement(ISubmodelElement elem) {
 		submodelAPI.addSubmodelElement(elem);
-		observers.stream().forEach(o -> o.elementAdded(elem.getIdShort(), elem, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId()));
+		observers.stream().forEach(o -> o.elementAdded(elem.getIdShort(), elem, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), submodelAPI.getRepositoryId()));
 	}
 
 	@Override
 	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
 		submodelAPI.addSubmodelElement(idShortPath, elem);
-		observers.stream().forEach(o -> o.elementAdded(idShortPath, elem, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId()));
+		observers.stream().forEach(o -> o.elementAdded(idShortPath, elem, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), submodelAPI.getRepositoryId()));
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 	public void deleteSubmodelElement(String idShortPath) {
 		ISubmodelElement submodelElement = submodelAPI.getSubmodelElement(idShortPath);
 		submodelAPI.deleteSubmodelElement(idShortPath);
-		observers.stream().forEach(o -> o.elementDeleted(idShortPath, submodelElement, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId()));
+		observers.stream().forEach(o -> o.elementDeleted(idShortPath, submodelElement, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), submodelAPI.getRepositoryId()));
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
 		submodelAPI.updateSubmodelElement(idShortPath, newValue);
 		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
-		observers.stream().forEach(o -> o.elementUpdated(idShortPath, submodelElement, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId()));
+		observers.stream().forEach(o -> o.elementUpdated(idShortPath, submodelElement, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), submodelAPI.getRepositoryId()));
 	}
 
 	@Override
