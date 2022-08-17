@@ -43,7 +43,7 @@ public interface ISubmodelAPIObserverV2 extends IObserver {
 	 * @param newValue
 	 *            the value of the new element
 	 */
-	public void elementAdded(String idShortPath, Object newValue);
+	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId);
 
 	/**
 	 * Is called when a SubmodelElement is deleted

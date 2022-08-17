@@ -127,7 +127,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.addSubmodelElement(prop);
 
 		assertEquals(prop, deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(elemIdShort), listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort), listener.lastTopic);
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.addSubmodelElement(idShortPath, prop);
 
 		assertEquals(prop, deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(idShortPath), listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath), listener.lastTopic);
 	}
 
 	@Test
@@ -154,7 +154,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.deleteSubmodelElement(idShortPath);
 
 		assertEquals(prop, deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(AASID, submodel.getIdentification().getId(), idShortPath), listener.lastTopic);
+		assertEquals(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath), listener.lastTopic);
 	}
 
 	@Test
