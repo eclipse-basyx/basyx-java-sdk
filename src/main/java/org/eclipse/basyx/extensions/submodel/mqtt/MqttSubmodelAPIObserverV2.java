@@ -236,23 +236,23 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	}
 
 	@Override
-	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId) {
+	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId, String repoId) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(aasId, submodelId, idShortPath), serializePayload(newValue));
+			sendMqttMessage(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(newValue));
 		}
 	}
 
 	@Override
-	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId) {
+	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(aasId, submodelId, idShortPath), serializePayload(submodelElement));
+			sendMqttMessage(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(submodelElement));
 		}
 	}
 
 	@Override
-	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId) {
+	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelperV2.createUpdateSubmodelElementTopic(aasId, submodelId, idShortPath), serializePayload(submodelElement));
+			sendMqttMessage(MqttSubmodelAPIHelperV2.createUpdateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(submodelElement));
 		}
 	}
 
