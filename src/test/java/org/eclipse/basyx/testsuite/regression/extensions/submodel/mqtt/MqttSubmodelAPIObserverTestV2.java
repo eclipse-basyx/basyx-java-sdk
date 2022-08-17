@@ -166,8 +166,8 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.updateSubmodelElement(idShortPath, false);
 
 		assertFalse((boolean) observableAPI.getSubmodelElementValue(idShortPath));
-		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
-		assertEquals(MqttSubmodelAPIHelper.TOPIC_UPDATEELEMENT, listener.lastTopic);
+		assertEquals(prop, deserializePayload(listener.lastPayload));
+		assertEquals(MqttSubmodelAPIHelperV2.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

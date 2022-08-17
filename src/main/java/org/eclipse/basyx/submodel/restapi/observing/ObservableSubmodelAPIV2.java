@@ -92,7 +92,8 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
 		submodelAPI.updateSubmodelElement(idShortPath, newValue);
-		observers.stream().forEach(o -> o.elementUpdated(idShortPath, newValue));
+		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
+		observers.stream().forEach(o -> o.elementUpdated(idShortPath, submodelElement, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId()));
 	}
 
 	@Override
