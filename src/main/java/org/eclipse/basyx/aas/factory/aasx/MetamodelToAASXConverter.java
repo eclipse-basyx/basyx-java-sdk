@@ -25,25 +25,33 @@
 package org.eclipse.basyx.aas.factory.aasx;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.RelationshipSource;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
+import org.eclipse.basyx.aas.factory.exception.MultipleThumbnailFoundException;
 import org.eclipse.basyx.aas.factory.xml.MetamodelToXMLConverter;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
@@ -62,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * This class can be used to generate an .aasx file from Metamodel Objects and
  * the Files referred to in the Submodels
  * 
- * @author conradi
+ * @author conradi, danish
  *
  */
 public class MetamodelToAASXConverter {
@@ -80,6 +88,8 @@ public class MetamodelToAASXConverter {
 	private static final String XML_PATH = "/aasx/xml/content.xml";
 
 	private static final String AASSUPPL_RELTYPE = "http://www.admin-shell.io/aasx/relationships/aas-suppl";
+	
+	protected static final String THUMBNAIL_TYPE = "http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail";
 
 	/**
 	 * Generates the .aasx file and writes it to the given OutputStream
@@ -102,22 +112,10 @@ public class MetamodelToAASXConverter {
 	 */
 	public static void buildAASX(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Collection<InMemoryFile> files,
 			OutputStream os) throws IOException, TransformerException, ParserConfigurationException {
-
-		prepareFilePaths(submodelList, files);
-
-		OPCPackage rootPackage = OPCPackage.create(os);
-
-		PackagePart origin = createAASXPart(rootPackage, rootPackage, ORIGIN_PATH, MIME_PLAINTXT, ORIGIN_RELTYPE, ORIGIN_CONTENT.getBytes());
-
-		String xml = convertToXML(aasList, assetList, conceptDescriptionList, submodelList);
-
-		PackagePart xmlPart = createAASXPart(rootPackage, origin, XML_PATH, MIME_XML, AASSPEC_RELTYPE, xml.getBytes());
-
-		storeFilesInAASX(submodelList, files, rootPackage, xmlPart);
-
-		saveAASX(os, rootPackage);
+		
+		buildAASX(aasList, assetList, conceptDescriptionList, submodelList, files, null, os);
 	}
-
+	
 	/**
 	 * Generates the .aasx file and writes it to the given OutputStream
 	 * 
@@ -131,6 +129,126 @@ public class MetamodelToAASXConverter {
 	 */
 	public static void buildAASX(AasEnv aasEnv, Collection<InMemoryFile> files, OutputStream os) throws IOException, TransformerException, ParserConfigurationException {
 		buildAASX(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(), aasEnv.getSubmodels(), files, os);
+	}
+	
+	/**
+	 * Generates the .aasx file and writes it to the given OutputStream
+	 * 
+	 * @param aasEnv
+	 * @param files
+	 * @param thumbnail
+	 * @param os
+	 *            the OutputStream the resulting .aasx is written to
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws ParserConfigurationException
+	 */
+	public static void buildAASX(AasEnv aasEnv, Collection<InMemoryFile> files, Thumbnail thumbnail, OutputStream os) throws IOException, TransformerException, ParserConfigurationException {
+		buildAASX(aasEnv.getAssetAdministrationShells(), aasEnv.getAssets(), aasEnv.getConceptDescriptions(), aasEnv.getSubmodels(), files, thumbnail, os);
+	}
+	
+	/**
+	 * Generates the .aasx file with Thumbnail and writes it to the given OutputStream
+	 * 
+	 * @param aasList
+	 *            the AASs to be saved in the .aasx
+	 * @param assetList
+	 *            the Assets to be saved in the .aasx
+	 * @param conceptDescriptionList
+	 *            the ConceptDescriptions to be saved in the .aasx
+	 * @param submodelList
+	 *            the Submodels to be saved in the .aasx
+	 * @param files
+	 *            the files referred to in the Submodels
+	 * @param thumbnail
+	 * @param os
+	 *            the OutputStream the resulting .aasx is written to
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws ParserConfigurationException
+	 */
+	public static void buildAASX(Collection<IAssetAdministrationShell> aasList, Collection<IAsset> assetList, Collection<IConceptDescription> conceptDescriptionList, Collection<ISubmodel> submodelList, Collection<InMemoryFile> files, Thumbnail thumbnail,
+			OutputStream os) throws TransformerException, ParserConfigurationException, IOException {
+		prepareFilePaths(submodelList, files);
+
+		OPCPackage rootPackage = OPCPackage.create(os);
+
+		PackagePart origin = createAASXPart(rootPackage, rootPackage, ORIGIN_PATH, MIME_PLAINTXT, ORIGIN_RELTYPE, ORIGIN_CONTENT.getBytes());
+
+		String xml = convertToXML(aasList, assetList, conceptDescriptionList, submodelList);
+
+		PackagePart xmlPart = createAASXPart(rootPackage, origin, XML_PATH, MIME_XML, AASSPEC_RELTYPE, xml.getBytes());
+
+		storeFilesInAASX(submodelList, files, rootPackage, xmlPart);
+		
+		addThumbnail(thumbnail, rootPackage);
+
+		saveAASX(os, rootPackage);
+	}
+	
+	public static void addThumbnail(Thumbnail thumbnail, OPCPackage rootPackage) throws IOException {
+		if (!isValid(thumbnail)) {
+			logger.info("No thumbnail has been specified");
+			return;
+        }
+		
+        String name = extractFilenameFromPath(thumbnail);
+        
+        addThumbnail(name, thumbnail.getThumbnailStream(), rootPackage);
+	}
+	
+	private static boolean isValid(Thumbnail thumbnail) {
+		return thumbnail != null;
+	}
+	
+	private static String extractFilenameFromPath(Thumbnail thumbnail) {
+		return thumbnail.getThumbnailFilename().substring(thumbnail.getThumbnailFilename().lastIndexOf(java.io.File.separatorChar) + 1);
+	}
+
+	private static void addThumbnail(String filename, InputStream data, OPCPackage rootPackage) throws IOException {
+        String contentType = ContentTypes.getContentTypeFromFileExtension(filename);
+        
+        PackagePartName thumbnailPartName = createThumbnailPackagePartName(filename);
+        
+        checkIfThumbnailAlreadyPresent(filename, rootPackage, thumbnailPartName);
+
+        PackagePart thumbnailPart = createAASXPart(rootPackage, thumbnailPartName, contentType);
+
+        rootPackage.addRelationship(thumbnailPartName, TargetMode.EXTERNAL, PackageRelationshipTypes.THUMBNAIL, createUniqueID());
+        
+        writeDataToPart(thumbnailPart, IOUtils.toByteArray(data));
+        
+        rootPackage.registerPartAndContentType(thumbnailPart);
+    }
+
+	private static void checkIfThumbnailAlreadyPresent(String filename, OPCPackage rootPackage,	PackagePartName thumbnailPartName) throws FileAlreadyExistsException, MultipleThumbnailFoundException {
+		checkIfSamePackagePartAlreadyExists(filename, rootPackage, thumbnailPartName);
+		
+		PackageRelationshipCollection thumbnailPackageRelationship = rootPackage.getRelationshipsByType(THUMBNAIL_TYPE);
+		
+		if (thumbnailPackageRelationship.size() > 1) {
+			throw new MultipleThumbnailFoundException("More than one Thumbnail found in the specified package");
+		} else if (thumbnailPackageRelationship.size() == 1) {
+			throw new FileAlreadyExistsException("Thumbnail already present in the specified package");
+		}
+	}
+
+	private static void checkIfSamePackagePartAlreadyExists(String filename, OPCPackage rootPackage, PackagePartName thumbnailPartName) throws FileAlreadyExistsException {
+		if (rootPackage.getPart(thumbnailPartName) != null) {
+            throw new FileAlreadyExistsException("Thumbnail package part already exists with name '" + filename + "'");
+        }
+	}
+
+	private static PackagePartName createThumbnailPackagePartName(String filename) {
+		PackagePartName thumbnailPartName;
+		
+        try {
+            thumbnailPartName = PackagingURIHelper.createPartName("/" + FilenameUtils.getName(filename));
+        } catch (InvalidFormatException e) {
+        	throw new InvalidOperationException("Can't add a thumbnail file named '" + filename + "'", e);
+        }
+        
+		return thumbnailPartName;
 	}
 
 	/**
@@ -202,6 +320,22 @@ public class MetamodelToAASXConverter {
 		// old AASX Package Explorer versions expect a leading R
 		return "Rid_" + UUID.randomUUID().toString();
 	}
+	
+	private static PackagePart createAASXPart(OPCPackage root, PackagePartName partName, String contentType) {
+		if (partName == null) {
+			throw new IllegalArgumentException("Partname shouldn't be null");
+		}
+
+		if (contentType == null || contentType.isEmpty()) {
+			throw new IllegalArgumentException("No MIME_TYPE specified");
+		}
+
+        try {
+            return new MemoryPackagePart(root, partName, contentType);
+        } catch (InvalidFormatException e) {
+            return null;
+        }
+	}
 
 	/**
 	 * Creates a Part (a file in the .aasx) of the .aasx and adds it to the Package
@@ -236,11 +370,13 @@ public class MetamodelToAASXConverter {
 			// This occurs if the given MIME-Type is not valid according to RFC2046
 			throw new RuntimeException("Could not create AASX Part '" + path + "'", e);
 		}
+		
 		writeDataToPart(part, content);
 		root.registerPartAndContentType(part);
 		// set TargetMode to EXTERNAL to force absolute file paths
 		// this step is necessary for compatibility reasons with AASXPackageExplorer
 		relateTo.addRelationship(partName, TargetMode.EXTERNAL, relType, createUniqueID());
+		
 		return part;
 	}
 

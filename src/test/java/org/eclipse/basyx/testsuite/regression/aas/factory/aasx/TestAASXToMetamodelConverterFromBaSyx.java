@@ -27,7 +27,6 @@ package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,11 +42,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.factory.aasx.AASXToMetamodelConverter;
 import org.eclipse.basyx.aas.factory.aasx.InMemoryFile;
 import org.eclipse.basyx.aas.factory.aasx.MetamodelToAASXConverter;
+import org.eclipse.basyx.aas.factory.aasx.Thumbnail;
+import org.eclipse.basyx.aas.factory.aasx.Thumbnail.ThumbnailExtension;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
@@ -71,7 +73,7 @@ import org.xml.sax.SAXException;
 /**
  * J-Unit tests AASX-Files created by the BaSyx middleware itself.
  * 
- * @author zhangzai, conradi, fischer, jungjan
+ * @author zhangzai, conradi, fischer, jungjan, danish
  *
  */
 public class TestAASXToMetamodelConverterFromBaSyx {
@@ -116,6 +118,8 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String TARGET_PATH_REGEX_START = "Target=.*";
 	private static final String TARGET_PATH_REGEX_FULL = "Target=\"/.*";
 	private static final String DOCPROPS_PATH_REGEX = "Target=\"docProps.*";
+	
+	private static final byte[] THUMBNAIL = { 22, 23, 24, 25, 26 };
 
 	private int bundleSize;
 	private int submodelSize;
@@ -128,6 +132,11 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		createAASXFile(CREATED_AASX_FILE_PATH);
 
 		packageManager = new AASXToMetamodelConverter(CREATED_AASX_FILE_PATH);
+	}
+	
+	@Test
+	public void thumbnailInPackage() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException {
+		assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(THUMBNAIL), packageManager.retrieveThumbnail()));
 	}
 
 	/**
@@ -419,9 +428,11 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		fileList.add(createInMemoryFile(IMAGE_PATH));
 		fileList.add(createInMemoryFile(PDF_PATH));
 		submodelElementsSize = 7;
-
+		
+        Thumbnail thumbnail = new Thumbnail(ThumbnailExtension.PNG, new ByteArrayInputStream(THUMBNAIL));
+		
 		try (FileOutputStream out = new FileOutputStream(filePath)) {
-			MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
+			MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, thumbnail, out);
 		}
 	}
 
