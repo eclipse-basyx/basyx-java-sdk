@@ -75,6 +75,21 @@ public class MqttSubmodelAPIHelperV2 {
 				.toString();
 	}
 	
+	public static String createUpdateSubmodelElementTopic(String aasId, String submodelId, String idShortPath) {
+		idShortPath = VABPathTools.stripSlashes(idShortPath);
+		
+		return new StringJoiner("/", "/", "")
+				.add(AASREPOSITORY)
+				.add(SHELLS)
+				.add(encodeId(aasId))
+				.add(SUBMODELS)
+				.add(encodeId(submodelId))
+				.add(SUBMODELELEMENTS)
+				.add(idShortPath)
+				.add(UPDATED)
+				.toString();
+	}
+	
 	public static String createDeleteSubmodelElementTopic(String aasId, String submodelId, String idShortPath) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		

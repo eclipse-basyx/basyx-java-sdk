@@ -61,6 +61,6 @@ public interface ISubmodelAPIObserverV2 extends IObserver {
 	 * @param newValue
 	 *            the new value of the updated element
 	 */
-	public void elementUpdated(String idShortPath, Object newValue);
+	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId);
 
 }
