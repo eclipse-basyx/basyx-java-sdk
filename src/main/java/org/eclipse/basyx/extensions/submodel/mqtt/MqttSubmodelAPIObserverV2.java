@@ -236,9 +236,9 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	}
 
 	@Override
-	public void elementAdded(String idShortPath, Object newValue) {
+	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(idShortPath), serializePayload(newValue));
+			sendMqttMessage(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(aasId, submodelId, idShortPath), serializePayload(newValue));
 		}
 	}
 

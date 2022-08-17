@@ -60,13 +60,15 @@ public class MqttSubmodelAPIHelperV2 {
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
 	
-	public static String createCreateSubmodelElementTopic(String idShortPath) {
+	public static String createCreateSubmodelElementTopic(String aasId, String submodelId, String idShortPath) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(SHELLS)
+				.add(encodeId(aasId))
 				.add(SUBMODELS)
+				.add(encodeId(submodelId))
 				.add(SUBMODELELEMENTS)
 				.add(idShortPath)
 				.add(CREATED)
