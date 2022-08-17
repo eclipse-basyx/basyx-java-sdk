@@ -24,6 +24,7 @@
 ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi.observing;
 
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
@@ -50,7 +51,7 @@ public interface ISubmodelAPIObserverV2 extends IObserver {
 	 * @param idShortPath
 	 *            the idShortPath of the deleted element
 	 */
-	public void elementDeleted(String idShortPath);
+	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId);
 
 	/**
 	 * Is called when a SubmodelElement is updated

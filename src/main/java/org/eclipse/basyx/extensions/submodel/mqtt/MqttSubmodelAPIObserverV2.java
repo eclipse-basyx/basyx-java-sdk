@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserver;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserverV2;
 import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
@@ -242,9 +243,9 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	}
 
 	@Override
-	public void elementDeleted(String idShortPath) {
+	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_DELETEELEMENT, getCombinedMessage(aasIdentifier.getId(), submodelIdentifier.getId(), idShortPath));
+			sendMqttMessage(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(aasId, submodelId, idShortPath), serializePayload(submodelElement));
 		}
 	}
 
