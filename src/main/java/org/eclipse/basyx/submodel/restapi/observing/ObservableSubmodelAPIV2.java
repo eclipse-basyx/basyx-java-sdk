@@ -25,8 +25,11 @@
 package org.eclipse.basyx.submodel.restapi.observing;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.observer.Observable;
@@ -71,8 +74,9 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 
 	@Override
 	public void deleteSubmodelElement(String idShortPath) {
+		ISubmodelElement submodelElement = submodelAPI.getSubmodelElement(idShortPath);
 		submodelAPI.deleteSubmodelElement(idShortPath);
-		observers.stream().forEach(o -> o.elementDeleted(idShortPath));
+		observers.stream().forEach(o -> o.elementDeleted(idShortPath, submodelElement, getParentAASId(submodelAPI.getSubmodel()), submodelAPI.getSubmodel().getIdentification().getId()));
 	}
 
 	@Override
@@ -109,6 +113,18 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 	@Override
 	public Object getOperationResult(String idShort, String requestId) {
 		return submodelAPI.getOperationResult(idShort, requestId);
+	}
+	
+	private String getParentAASId(ISubmodel submodel) {
+		IReference parentReference = submodel.getParent();
+		if (parentReference == null) {
+			return null;
+		}
+		List<IKey> keys = parentReference.getKeys();
+		if (keys != null && keys.size() > 0) {
+			return keys.get(0).getValue();
+		}
+		return null;
 	}
 
 }

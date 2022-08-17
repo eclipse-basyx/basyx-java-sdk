@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.mqtt;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -53,6 +55,7 @@ public class MqttSubmodelAPIHelperV2 {
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";
+	private static final String SUBMODELELEMENTS = "submodelElements";
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
@@ -64,11 +67,34 @@ public class MqttSubmodelAPIHelperV2 {
 				.add(AASREPOSITORY)
 				.add(SHELLS)
 				.add(SUBMODELS)
+				.add(SUBMODELELEMENTS)
 				.add(idShortPath)
 				.add(CREATED)
 				.toString();
 	}
 	
+	public static String createDeleteSubmodelElementTopic(String aasId, String submodelId, String idShortPath) {
+		idShortPath = VABPathTools.stripSlashes(idShortPath);
+		
+		return new StringJoiner("/", "/", "")
+				.add(AASREPOSITORY)
+				.add(SHELLS)
+				.add(encodeId(aasId))
+				.add(SUBMODELS)
+				.add(encodeId(submodelId))
+				.add(SUBMODELELEMENTS)
+				.add(idShortPath)
+				.add(DELETED)
+				.toString();
+	}
+	
+	private static String encodeId(String id) {
+		if (id == null) {
+			return "";
+		}
+		
+		return Base64.getUrlEncoder().withoutPadding().encodeToString(id.getBytes(StandardCharsets.UTF_8));
+	}
 	
 	public static IIdentifier getSubmodelId(ObservableSubmodelAPIV2 observedAPI) {
 		ISubmodel submodel = observedAPI.getSubmodel();
