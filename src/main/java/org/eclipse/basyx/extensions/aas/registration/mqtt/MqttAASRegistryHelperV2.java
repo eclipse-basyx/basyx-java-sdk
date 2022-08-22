@@ -38,10 +38,6 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  *
  */
 public class MqttAASRegistryHelperV2 {
-	public static final String TOPIC_REGISTERAAS = "BaSyxRegistry_registeredAAS";
-	public static final String TOPIC_REGISTERSUBMODEL = "BaSyxRegistry_registeredSubmodel";
-	public static final String TOPIC_DELETEAAS = "BaSyxRegistry_deletedAAS";
-	public static final String TOPIC_DELETESUBMODEL = "BaSyxRegistry_deletedSubmodel";
 	private static final String AASREGISTRY = "aas-registry";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";
