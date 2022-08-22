@@ -201,7 +201,7 @@ public class TestMqttAASRegistryServiceObserverV2 {
 		assertEquals(MqttAASRegistryHelperV2.createDeleteSubmodelTopicWithAASId(AASIDENTIFIER.getId(), TestMqttAASRegistryServiceObserverV2.observedAPI.getRegistryId()), listener.lastTopic);
 	}
 	
-	public Object deserializePayload(String payload) {
+	private Object deserializePayload(String payload) {
 		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
 		return tools.deserialize(payload);
