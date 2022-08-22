@@ -45,12 +45,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
  * @author danish
  *
  */
-public class MqttSubmodelAPIHelperV2 {
-	public static final String TOPIC_CREATESUBMODEL = "BaSyxSubmodel_createdSubmodel";
-	public static final String TOPIC_ADDELEMENT = "BaSyxSubmodel_addedSubmodelElement";
-	public static final String TOPIC_DELETEELEMENT = "BaSyxSubmodel_removedSubmodelElement";
-	public static final String TOPIC_UPDATEELEMENT = "BaSyxSubmodel_updatedSubmodelElement";
-	
+public class MqttSubmodelAPIHelperV2 {	
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";

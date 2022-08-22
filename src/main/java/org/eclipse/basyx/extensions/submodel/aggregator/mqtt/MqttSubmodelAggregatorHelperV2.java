@@ -34,9 +34,6 @@ import java.util.StringJoiner;
  *
  */
 public class MqttSubmodelAggregatorHelperV2 {
-	public static final String TOPIC_CREATESUBMODEL = "BaSyxAggregator_createdSubmodel";
-	public static final String TOPIC_DELETESUBMODEL = "BaSyxAggregator_deletedSubmodel";
-	public static final String TOPIC_UPDATESUBMODEL = "BaSyxAggregator_updatedSubmodel";
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";
