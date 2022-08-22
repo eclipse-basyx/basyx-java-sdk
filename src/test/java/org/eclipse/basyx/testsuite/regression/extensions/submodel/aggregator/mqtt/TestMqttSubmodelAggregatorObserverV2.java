@@ -28,13 +28,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregatorHelper;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregatorHelperV2;
-import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregatorObserver;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregatorObserverV2;
 import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
-import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregatorV2;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;

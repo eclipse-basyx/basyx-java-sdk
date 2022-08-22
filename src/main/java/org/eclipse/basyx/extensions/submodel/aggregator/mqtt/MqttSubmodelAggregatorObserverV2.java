@@ -25,7 +25,6 @@
 package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
 
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
-import org.eclipse.basyx.submodel.aggregator.observing.ISubmodelAggregatorObserver;
 import org.eclipse.basyx.submodel.aggregator.observing.ISubmodelAggregatorObserverV2;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;

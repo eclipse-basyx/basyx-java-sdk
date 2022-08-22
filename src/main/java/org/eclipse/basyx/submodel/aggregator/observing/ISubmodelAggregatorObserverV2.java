@@ -26,7 +26,6 @@
 package org.eclipse.basyx.submodel.aggregator.observing;
 
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
-import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**

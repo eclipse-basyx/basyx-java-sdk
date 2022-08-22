@@ -26,7 +26,6 @@ package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregatorFactory;
-import org.eclipse.basyx.aas.aggregator.observing.ObservableAASAggregator;
 import org.eclipse.basyx.aas.aggregator.observing.ObservableAASAggregatorV2;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.paho.client.mqttv3.MqttClient;

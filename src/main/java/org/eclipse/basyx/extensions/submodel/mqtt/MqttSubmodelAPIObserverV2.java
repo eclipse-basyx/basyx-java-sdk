@@ -32,7 +32,6 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserver;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserverV2;
-import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPIV2;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;

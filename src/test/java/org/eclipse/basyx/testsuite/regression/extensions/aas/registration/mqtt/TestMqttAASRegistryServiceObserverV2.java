@@ -36,7 +36,6 @@ import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryServiceV2;
-import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryHelper;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryHelperV2;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryServiceObserverV2;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;

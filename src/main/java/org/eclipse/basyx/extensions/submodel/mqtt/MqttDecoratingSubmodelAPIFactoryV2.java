@@ -27,7 +27,6 @@ package org.eclipse.basyx.extensions.submodel.mqtt;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
-import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPIV2;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.paho.client.mqttv3.MqttClient;

@@ -29,11 +29,8 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 
-import org.eclipse.basyx.extensions.submodel.mqtt.MqttDecoratingSubmodelAPIFactory;
 import org.eclipse.basyx.extensions.submodel.mqtt.MqttDecoratingSubmodelAPIFactoryV2;
-import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelper;
 import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelperV2;
-import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
