@@ -70,8 +70,7 @@ public class MqttAASRegistryHelperV2 {
 				.add(registryId)
 				.add(SHELLS)
 				.add(CREATED)
-				.toString();
-				
+				.toString();		
 	}
 	
 	/**
@@ -85,7 +84,6 @@ public class MqttAASRegistryHelperV2 {
 				.add(SUBMODELS)
 				.add(CREATED)
 				.toString();
-				
 	}
 
 	/**
@@ -101,7 +99,6 @@ public class MqttAASRegistryHelperV2 {
 				.add(SUBMODELS)
 				.add(CREATED)
 				.toString();
-				
 	}
 
 	/**
