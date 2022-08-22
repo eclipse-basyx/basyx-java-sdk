@@ -136,7 +136,7 @@ public class TestMqttAASAggregatorObserverV2 {
 		assertEquals(MqttAASAggregatorHelperV2.createDeleteAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 	
-	public Object deserializePayload(String payload) {
+	private Object deserializePayload(String payload) {
 		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
 		return tools.deserialize(payload);
