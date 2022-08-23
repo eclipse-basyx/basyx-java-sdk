@@ -24,9 +24,14 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.aggregator.observing.ISubmodelAggregatorObserverV2;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -127,17 +132,45 @@ public class MqttSubmodelAggregatorObserverV2 extends MqttEventService implement
 
 	@Override
 	public void submodelCreated(String shellId, ISubmodel submodel, String repoId) {
-		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createCreateSubmodelTopic(shellId, repoId), serializePayload(submodel));
+		if (submodel instanceof Map<?, ?>) {
+			ISubmodel copy = removeSubmodelElements(submodel);
+			sendMqttMessage(MqttSubmodelAggregatorHelperV2.createCreateSubmodelTopic(shellId, repoId), serializePayload(copy));
+		} else {			
+			sendMqttMessage(MqttSubmodelAggregatorHelperV2.createCreateSubmodelTopic(shellId, repoId), serializePayload(submodel));
+		}
+		
 	}
 
 	@Override
 	public void submodelUpdated(String shellId, ISubmodel submodel, String repoId) {
-		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(shellId, repoId), serializePayload(submodel));
+		if (submodel instanceof Map<?, ?>) {
+			ISubmodel copy = removeSubmodelElements(submodel);
+			sendMqttMessage(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(shellId, repoId), serializePayload(copy));
+		} else {			
+			sendMqttMessage(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(shellId, repoId), serializePayload(submodel));
+		}
 	}
 
 	@Override
 	public void submodelDeleted(String shellId, ISubmodel submodel, String repoId) {
-		sendMqttMessage(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(shellId, repoId), serializePayload(submodel));
+		if (submodel instanceof Map<?, ?>) {
+			ISubmodel copy = removeSubmodelElements(submodel);
+			sendMqttMessage(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(shellId, repoId), serializePayload(copy));
+		} else {			
+			sendMqttMessage(MqttSubmodelAggregatorHelperV2.createDeleteSubmodelTopic(shellId, repoId), serializePayload(submodel));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private ISubmodel removeSubmodelElements(ISubmodel submodel) {
+		Map<String, Object> map = (Map<String, Object>) submodel;
+		Submodel copy = Submodel.createAsFacade(map);
+		Map<String, ISubmodelElement> smes = new LinkedHashMap<>(copy.getSubmodelElements());
+		for (ISubmodelElement sme: smes.values()) {
+			copy.deleteSubmodelElement(sme.getIdShort());
+		}
+		
+		return copy;
 	}
 	
 	private String serializePayload(ISubmodel submodel) {
