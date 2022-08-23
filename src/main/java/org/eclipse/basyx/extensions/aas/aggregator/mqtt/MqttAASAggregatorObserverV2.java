@@ -25,6 +25,7 @@
 package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
 import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.basyx.aas.aggregator.observing.IAASAggregatorObserverV2;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
@@ -140,9 +141,17 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 		sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(repoId), serializePayload(shell));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void aasDeleted(IAssetAdministrationShell shell, String repoId) {
-		sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(repoId), serializePayload(shell));
+		if (shell instanceof Map<?, ?>) {
+			Map<String, Object> map = (Map<String, Object>) shell;
+			AssetAdministrationShell copy = AssetAdministrationShell.createAsFacade(map);
+			copy.setConceptDictionary(Collections.emptyList());
+			sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(repoId), serializePayload(copy));
+		} else {			
+			sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(repoId), serializePayload(shell));
+		}
 	}
 			
 	private String serializePayload(IAssetAdministrationShell shell) {
