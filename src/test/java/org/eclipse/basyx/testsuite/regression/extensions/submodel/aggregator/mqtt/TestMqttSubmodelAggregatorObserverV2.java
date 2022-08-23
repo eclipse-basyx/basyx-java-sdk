@@ -36,6 +36,8 @@ import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggrega
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
@@ -112,6 +114,8 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		String newSubmodelId = "newSubmodelId";
 		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRDI, newSubmodelId);
 		Submodel newSubmodel = new Submodel(newSubmodelIdShort, newSubmodelIdentifier);
+		newSubmodel.addSubmodelElement(new SubmodelElementCollection("smeColl"));
+		newSubmodel.addSubmodelElement(new Property("prop", false));
 		observedSubmodelAggregator.createSubmodel(newSubmodel);
 
 		assertEquals(newSubmodel, deserializePayload(listener.lastPayload));
@@ -121,6 +125,7 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 	@Test
 	public void testUpdateSubmodel() {
 		submodel.setCategory("newCategory");
+		submodel.addSubmodelElement(new Property("prop", false));
 		observedSubmodelAggregator.updateSubmodel(submodel);
 
 		assertEquals(submodel, deserializePayload(listener.lastPayload));
