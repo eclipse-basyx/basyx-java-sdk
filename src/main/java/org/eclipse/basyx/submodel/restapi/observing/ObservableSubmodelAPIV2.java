@@ -98,7 +98,10 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 
 	@Override
 	public Object getSubmodelElementValue(String idShortPath) {
-		return submodelAPI.getSubmodelElementValue(idShortPath);
+		Object value = submodelAPI.getSubmodelElementValue(idShortPath);
+		observers.stream().forEach(o -> o.elementValue(idShortPath, value, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), submodelAPI.getRepositoryId()));
+		
+		return value;
 	}
 
 	@Override

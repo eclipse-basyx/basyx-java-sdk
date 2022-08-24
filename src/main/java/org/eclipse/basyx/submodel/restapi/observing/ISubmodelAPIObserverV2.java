@@ -61,4 +61,10 @@ public interface ISubmodelAPIObserverV2 extends IObserver {
 	 */
 	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId);
 
+	/**
+	 * Is called when a SubmodelElement value is fetched
+	 * 
+	 * @param value
+	 */
+	public void elementValue(String idShortPath, Object value, String aasId, String submodelId, String repoId);
 }
