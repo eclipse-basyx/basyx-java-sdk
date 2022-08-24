@@ -254,6 +254,13 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 			sendMqttMessage(MqttSubmodelAPIHelperV2.createUpdateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(submodelElement));
 		}
 	}
+	
+	@Override
+	public void elementValue(String idShortPath, Object value, String aasId, String submodelId, String repoId) {
+		if (filter(idShortPath)) {
+			sendMqttMessage(MqttSubmodelAPIHelperV2.createSubmodelElementValueTopic(aasId, submodelId, idShortPath, repoId), serializePayload(value));			
+		}
+	}
 
 	public static String getCombinedMessage(String aasId, String submodelId, String elementPart) {
 		elementPart = VABPathTools.stripSlashes(elementPart);

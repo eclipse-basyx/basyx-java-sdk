@@ -53,6 +53,7 @@ public class MqttSubmodelAPIHelperV2 {
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
+	private static final String VALUE = "value";
 	
 	public static String createCreateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
@@ -100,6 +101,22 @@ public class MqttSubmodelAPIHelperV2 {
 				.add(idShortPath)
 				.add(DELETED)
 				.toString();
+	}
+	
+	public static String createSubmodelElementValueTopic(String aasId, String submodelId, String idShortPath, String repoId) {
+		idShortPath = VABPathTools.stripSlashes(idShortPath);
+		
+		return new StringJoiner("/", "/", "")
+				.add(AASREPOSITORY)
+				.add(repoId)
+				.add(SHELLS)
+				.add(encodeId(aasId))
+				.add(SUBMODELS)
+				.add(encodeId(submodelId))
+				.add(SUBMODELELEMENTS)
+				.add(idShortPath)
+				.add(VALUE)
+				.toString();	
 	}
 	
 	private static String encodeId(String id) {
