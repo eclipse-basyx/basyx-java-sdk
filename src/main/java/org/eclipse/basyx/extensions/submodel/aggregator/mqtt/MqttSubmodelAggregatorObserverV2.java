@@ -31,6 +31,7 @@ import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.aggregator.observing.ISubmodelAggregatorObserverV2;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
@@ -163,14 +164,14 @@ public class MqttSubmodelAggregatorObserverV2 extends MqttEventService implement
 	
 	@SuppressWarnings("unchecked")
 	private ISubmodel removeSubmodelElements(ISubmodel submodel) {
-		Map<String, Object> map = (Map<String, Object>) submodel;
-		Submodel copy = Submodel.createAsFacade(map);
-		Map<String, ISubmodelElement> smes = new LinkedHashMap<>(copy.getSubmodelElements());
-		for (ISubmodelElement sme: smes.values()) {
-			copy.deleteSubmodelElement(sme.getIdShort());
+		Map<String, Object> copy = SubmodelElementMapCollectionConverter.smToMap((Submodel) submodel);
+		Submodel sm =  Submodel.createAsFacade(copy);
+			
+		for (ISubmodelElement sme: submodel.getSubmodelElements().values()) {
+			sm.deleteSubmodelElement(sme.getIdShort());
 		}
 		
-		return copy;
+		return sm;
 	}
 	
 	private String serializePayload(ISubmodel submodel) {
