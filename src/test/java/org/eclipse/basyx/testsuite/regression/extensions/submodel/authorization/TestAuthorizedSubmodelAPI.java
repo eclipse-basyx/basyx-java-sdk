@@ -28,15 +28,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
-import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.extensions.submodel.authorization.AuthorizedSubmodelAPI;
-import org.eclipse.basyx.extensions.submodel.authorization.SimpleAbacSubmodelAPIAuthorizer;
+import org.eclipse.basyx.extensions.submodel.authorization.SimpleRbacSubmodelAPIAuthorizer;
 import org.eclipse.basyx.extensions.submodel.authorization.SubmodelAPIScopes;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -49,7 +48,6 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operat
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,7 +67,7 @@ public class TestAuthorizedSubmodelAPI {
 	private ISubmodelAPI apiMock;
 	private AuthorizedSubmodelAPI<?> authorizedSubmodelAPI;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
-	private AbacRuleSet abacRuleSet = new AbacRuleSet();
+	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 	private final String adminRole = "admin";
 	private final String readerRole = "reader";
@@ -93,35 +91,35 @@ public class TestAuthorizedSubmodelAPI {
 
 	@Before
 	public void setUp() {
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				SubmodelAPIScopes.READ_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				SubmodelAPIScopes.WRITE_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				SubmodelAPIScopes.EXECUTE_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				SubmodelAPIScopes.READ_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				executorRole,
 				SubmodelAPIScopes.EXECUTE_SCOPE,
 				"*",
@@ -130,8 +128,8 @@ public class TestAuthorizedSubmodelAPI {
 		));
 		authorizedSubmodelAPI = new AuthorizedSubmodelAPI<>(
 				apiMock,
-				new SimpleAbacSubmodelAPIAuthorizer<>(
-						new PredefinedSetAbacRuleChecker(abacRuleSet),
+				new SimpleRbacSubmodelAPIAuthorizer<>(
+						new PredefinedSetRbacRuleChecker(rbacRuleSet),
 						new KeycloakRoleAuthenticator()
 				),
 				new JWTAuthenticationContextProvider()
@@ -259,24 +257,16 @@ public class TestAuthorizedSubmodelAPI {
 		assertEquals(PROPERTY, returnedProperty);
 	}
 
-	@Test
+	@Test(expected = NotAuthorized.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetOperations_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
-		final Collection<IOperation> operationList = Collections.singletonList(OPERATION);
-		Mockito.when(apiMock.getOperations()).thenReturn(operationList);
-		Mockito.when(apiMock.getSubmodelElement(OPERATION_IDSHORT)).thenReturn(OPERATION);
-		final Collection<IOperation> returnedOperationCollection = authorizedSubmodelAPI.getOperations();
-		Assert.assertEquals(Collections.emptyList(), returnedOperationCollection);
+		authorizedSubmodelAPI.getOperations();
 	}
 
-	@Test
-	public void givenSecurityContextIsEmpty_whenGetOperations_ThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetOperations_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
-		final Collection<IOperation> operationList = Collections.singletonList(OPERATION);
-		Mockito.when(apiMock.getOperations()).thenReturn(operationList);
-		Mockito.when(apiMock.getSubmodelElement(OPERATION_IDSHORT)).thenReturn(OPERATION);
-		final Collection<IOperation> returnedOperationCollection = authorizedSubmodelAPI.getOperations();
-		Assert.assertEquals(Collections.emptyList(), returnedOperationCollection);
+		authorizedSubmodelAPI.getOperations();
 	}
 
 	@Test
@@ -290,25 +280,16 @@ public class TestAuthorizedSubmodelAPI {
 		assertEquals(expectedOperations, returnedOperations);
 	}
 
-	@Test
-	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelElements_thenReturnEmptyCollection() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelElements_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
-		final Collection<ISubmodelElement> submodelElementList = Collections.singletonList(PROPERTY);
-		Mockito.when(apiMock.getSubmodelElements()).thenReturn(submodelElementList);
-		Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
-		final Collection<ISubmodelElement> returnedSubmodelElementCollection = authorizedSubmodelAPI.getSubmodelElements();
-		Assert.assertEquals(Collections.emptyList(), returnedSubmodelElementCollection);
+		authorizedSubmodelAPI.getSubmodelElements();
 	}
 
-	@Test
-	public void givenSecurityContextIsEmpty_whenGetSubmodelElements_thenReturnEmptyCollection() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodelElements_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
-		securityContextProvider.setSecurityContextWithoutRoles();
-		final Collection<ISubmodelElement> submodelElementList = Collections.singletonList(PROPERTY);
-		Mockito.when(apiMock.getSubmodelElements()).thenReturn(submodelElementList);
-		Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
-		final Collection<ISubmodelElement> returnedSubmodelElementCollection = authorizedSubmodelAPI.getSubmodelElements();
-		Assert.assertEquals(Collections.emptyList(), returnedSubmodelElementCollection);
+		authorizedSubmodelAPI.getSubmodelElements();
 	}
 
 	@Test

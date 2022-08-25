@@ -33,13 +33,13 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorScopes;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.AuthorizedAASAggregator;
-import org.eclipse.basyx.extensions.aas.aggregator.authorization.SimpleAbacAASAggregatorAuthorizer;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
+import org.eclipse.basyx.extensions.aas.aggregator.authorization.SimpleRbacAASAggregatorAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
-import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
 import org.junit.After;
@@ -62,28 +62,28 @@ public class TestAuthorizedAASAggregator {
 	private IAASAggregator aggregatorMock;
 	private AuthorizedAASAggregator<?> testSubject;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
-	private AbacRuleSet abacRuleSet = new AbacRuleSet();
+	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 	private final String adminRole = "admin";
 	private final String readerRole = "reader";
 
 	@Before
 	public void setUp() {
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASAggregatorScopes.READ_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASAggregatorScopes.WRITE_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				AASAggregatorScopes.READ_SCOPE,
 				"*",
@@ -92,8 +92,8 @@ public class TestAuthorizedAASAggregator {
 		));
 		testSubject = new AuthorizedAASAggregator<>(
 				aggregatorMock,
-				new SimpleAbacAASAggregatorAuthorizer<>(
-						new PredefinedSetAbacRuleChecker(abacRuleSet),
+				new SimpleRbacAASAggregatorAuthorizer<>(
+						new PredefinedSetRbacRuleChecker(rbacRuleSet),
 						new KeycloakRoleAuthenticator()
 				),
 				new JWTAuthenticationContextProvider()

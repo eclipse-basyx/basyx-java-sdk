@@ -32,8 +32,8 @@ import java.util.List;
  *
  * @author wege
  */
-public interface IAbacRuleChecker {
-  boolean checkAbacRuleIsSatisfied(
+public interface IRbacRuleChecker {
+  boolean checkRbacRuleIsSatisfied(
       final List<String> roles,
       final String right,
       final String aasId,

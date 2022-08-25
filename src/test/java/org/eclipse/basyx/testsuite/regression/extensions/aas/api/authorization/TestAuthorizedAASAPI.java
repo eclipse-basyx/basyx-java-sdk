@@ -33,13 +33,13 @@ import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.aas.api.authorization.AASAPIScopes;
 import org.eclipse.basyx.extensions.aas.api.authorization.AuthorizedAASAPI;
-import org.eclipse.basyx.extensions.aas.api.authorization.SimpleAbacAASAPIAuthorizer;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
+import org.eclipse.basyx.extensions.aas.api.authorization.SimpleRbacAASAPIAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
-import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -64,7 +64,7 @@ public class TestAuthorizedAASAPI {
 	private IAASAPI apiMock;
 	private AuthorizedAASAPI<?> testSubject;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
-	private AbacRuleSet abacRuleSet = new AbacRuleSet();
+	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 	private final String adminRole = "admin";
 	private final String readerRole = "reader";
@@ -82,21 +82,21 @@ public class TestAuthorizedAASAPI {
 
 	@Before
 	public void setUp() {
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASAPIScopes.READ_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASAPIScopes.WRITE_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				AASAPIScopes.READ_SCOPE,
 				"*",
@@ -105,8 +105,8 @@ public class TestAuthorizedAASAPI {
 		));
 		testSubject = new AuthorizedAASAPI<>(
 				apiMock,
-				new SimpleAbacAASAPIAuthorizer<>(
-						new PredefinedSetAbacRuleChecker(abacRuleSet),
+				new SimpleRbacAASAPIAuthorizer<>(
+						new PredefinedSetRbacRuleChecker(rbacRuleSet),
 						new KeycloakRoleAuthenticator()
 				),
 				new JWTAuthenticationContextProvider()

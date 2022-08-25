@@ -28,15 +28,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
-import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.AuthorizedSubmodelAggregator;
-import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SimpleAbacSubmodelAggregatorAuthorizer;
+import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SimpleRbacSubmodelAggregatorAuthorizer;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SubmodelAggregatorScopes;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -48,7 +47,6 @@ import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
 import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,7 +66,7 @@ public class TestAuthorizedSubmodelAggregator {
 	private ISubmodelAggregator aggregatorMock;
 	private AuthorizedSubmodelAggregator<?> authorizedSubmodelAggregator;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
-	private AbacRuleSet abacRuleSet = new AbacRuleSet();
+	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 	private final String adminRole = "admin";
 	private final String readerRole = "reader";
@@ -87,21 +85,21 @@ public class TestAuthorizedSubmodelAggregator {
 
 	@Before
 	public void setUp() {
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				SubmodelAggregatorScopes.READ_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				SubmodelAggregatorScopes.WRITE_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				SubmodelAggregatorScopes.READ_SCOPE,
 				"*",
@@ -110,8 +108,8 @@ public class TestAuthorizedSubmodelAggregator {
 		));
 		authorizedSubmodelAggregator = new AuthorizedSubmodelAggregator<>(
 				aggregatorMock,
-				new SimpleAbacSubmodelAggregatorAuthorizer<>(
-						new PredefinedSetAbacRuleChecker(abacRuleSet),
+				new SimpleRbacSubmodelAggregatorAuthorizer<>(
+						new PredefinedSetRbacRuleChecker(rbacRuleSet),
 						new KeycloakRoleAuthenticator()
 				),
 				new JWTAuthenticationContextProvider()
@@ -123,16 +121,16 @@ public class TestAuthorizedSubmodelAggregator {
 		securityContextProvider.clearContext();
 	}
 
-	@Test
+	@Test(expected = NotAuthorized.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelList_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
-		Assert.assertEquals(Collections.emptyList(), authorizedSubmodelAggregator.getSubmodelList());
+		authorizedSubmodelAggregator.getSubmodelList();
 	}
 
-	@Test
-	public void givenSecurityContextIsEmpty_whenGetSubmodelList_ThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodelList_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
-		Assert.assertEquals(Collections.emptyList(), authorizedSubmodelAggregator.getSubmodelList());
+		authorizedSubmodelAggregator.getSubmodelList();
 	}
 
 	@Test

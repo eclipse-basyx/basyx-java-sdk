@@ -29,19 +29,19 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * A single attribute based access control rule consisting of
+ * A single role based access control rule consisting of
  * role x action x (aas id, submodel id, submodel element id).
  *
  * @author wege
  */
-public class AbacRule {
+public class RbacRule {
 	private final String role;
 	private final String action;
 	private final String aasId;
 	private final String smId;
 	private final String smElIdShortPath;
 
-	private AbacRule(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
+	private RbacRule(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
 		if (Objects.isNull(role)) {
 			throw new IllegalArgumentException("role must not be null");
 		}
@@ -55,8 +55,8 @@ public class AbacRule {
 		this.smElIdShortPath = smElIdShortPath;
 	}
 
-	public static AbacRule of(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
-		return new AbacRule(role, action, aasId, smId, smElIdShortPath);
+	public static RbacRule of(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
+		return new RbacRule(role, action, aasId, smId, smElIdShortPath);
 	}
 
 	public String getRole() {
@@ -84,17 +84,17 @@ public class AbacRule {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof AbacRule))
+		if (!(o instanceof RbacRule))
 			return false;
 
-		AbacRule abacRule = (AbacRule) o;
+		RbacRule rbacRule = (RbacRule) o;
 
 		return new EqualsBuilder()
-				.append(getRole(), abacRule.getRole())
-				.append(getAction(), abacRule.getAction())
-				.append(getAasId(), abacRule.getAasId())
-				.append(getSmId(), abacRule.getSmId())
-				.append(getSmElIdShortPath(), abacRule.getSmElIdShortPath())
+				.append(getRole(), rbacRule.getRole())
+				.append(getAction(), rbacRule.getAction())
+				.append(getAasId(), rbacRule.getAasId())
+				.append(getSmId(), rbacRule.getSmId())
+				.append(getSmElIdShortPath(), rbacRule.getSmElIdShortPath())
 				.isEquals();
 	}
 
@@ -111,7 +111,7 @@ public class AbacRule {
 
 	@Override
 	public String toString() {
-		return new StringBuilder("AbacRule{")
+		return new StringBuilder("RbacRule{")
 				.append("role='").append(role).append('\'')
 				.append(", action='").append(action).append('\'')
 				.append(", aasId='").append(aasId).append('\'')

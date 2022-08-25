@@ -26,7 +26,7 @@ package org.eclipse.basyx.extensions.submodel.authorization;
 
 import java.util.Collection;
 import java.util.function.Supplier;
-import org.eclipse.basyx.extensions.shared.authorization.IAbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.IRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
@@ -40,18 +40,18 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOpera
  *
  * @author wege
  */
-public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements ISubmodelAPIAuthorizer<SubjectInformationType> {
-  protected IAbacRuleChecker abacRuleChecker;
+public class SimpleRbacSubmodelAPIAuthorizer<SubjectInformationType> implements ISubmodelAPIAuthorizer<SubjectInformationType> {
+  protected IRbacRuleChecker rbacRuleChecker;
   protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
 
-  public SimpleAbacSubmodelAPIAuthorizer(final IAbacRuleChecker abacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
-    this.abacRuleChecker = abacRuleChecker;
+  public SimpleRbacSubmodelAPIAuthorizer(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
+    this.rbacRuleChecker = rbacRuleChecker;
     this.roleAuthenticator = roleAuthenticator;
   }
 
   @Override
   public Collection<ISubmodelElement> enforceGetSubmodelElements(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<Collection<ISubmodelElement>> smElListSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -65,7 +65,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public ISubmodelElement enforceGetSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final Supplier<ISubmodelElement> smElSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -79,7 +79,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public ISubmodel enforceGetSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -93,7 +93,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public void enforceAddSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -106,7 +106,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public void enforceDeleteSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -119,7 +119,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public void enforceUpdateSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -132,7 +132,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public Object enforceGetSubmodelElementValue(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final Supplier<Object> valueSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -146,7 +146,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public Collection<IOperation> enforceGetOperations(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<Collection<IOperation>> operationListSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -160,7 +160,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public void enforceInvokeOperation(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.EXECUTE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -173,7 +173,7 @@ public class SimpleAbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
 
   @Override
   public Object enforceGetOperationResult(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final String requestId, final Supplier<Object> operationResultSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         SubmodelAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),

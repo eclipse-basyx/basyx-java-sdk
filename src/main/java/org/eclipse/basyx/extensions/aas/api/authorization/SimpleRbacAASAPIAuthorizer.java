@@ -26,7 +26,7 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.IAbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.IRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
@@ -38,18 +38,18 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  *
  * @author wege
  */
-public class SimpleAbacAASAPIAuthorizer<SubjectInformationType> implements IAASAPIAuthorizer<SubjectInformationType> {
-  protected IAbacRuleChecker abacRuleChecker;
+public class SimpleRbacAASAPIAuthorizer<SubjectInformationType> implements IAASAPIAuthorizer<SubjectInformationType> {
+  protected IRbacRuleChecker rbacRuleChecker;
   protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
 
-  public SimpleAbacAASAPIAuthorizer(final IAbacRuleChecker abacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
-    this.abacRuleChecker = abacRuleChecker;
+  public SimpleRbacAASAPIAuthorizer(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
+    this.rbacRuleChecker = rbacRuleChecker;
     this.roleAuthenticator = roleAuthenticator;
   }
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         AASAPIScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -63,7 +63,7 @@ public class SimpleAbacAASAPIAuthorizer<SubjectInformationType> implements IAASA
 
   @Override
   public void enforceAddSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IReference smId) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         AASAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -76,7 +76,7 @@ public class SimpleAbacAASAPIAuthorizer<SubjectInformationType> implements IAASA
 
   @Override
   public void enforceRemoveSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final String smIdShortPath) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         AASAPIScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),

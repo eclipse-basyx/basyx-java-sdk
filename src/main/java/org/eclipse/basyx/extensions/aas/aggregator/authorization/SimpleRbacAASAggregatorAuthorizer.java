@@ -27,7 +27,7 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 import java.util.Collection;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.IAbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.IRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
@@ -39,12 +39,12 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
  *
  * @author wege
  */
-public class SimpleAbacAASAggregatorAuthorizer<SubjectInformationType> implements IAASAggregatorAuthorizer<SubjectInformationType> {
-  protected IAbacRuleChecker abacRuleChecker;
+public class SimpleRbacAASAggregatorAuthorizer<SubjectInformationType> implements IAASAggregatorAuthorizer<SubjectInformationType> {
+  protected IRbacRuleChecker rbacRuleChecker;
   protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
 
-  public SimpleAbacAASAggregatorAuthorizer(final IAbacRuleChecker abacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
-    this.abacRuleChecker = abacRuleChecker;
+  public SimpleRbacAASAggregatorAuthorizer(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
+    this.rbacRuleChecker = rbacRuleChecker;
     this.roleAuthenticator = roleAuthenticator;
   }
 
@@ -55,7 +55,7 @@ public class SimpleAbacAASAggregatorAuthorizer<SubjectInformationType> implement
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         AASAggregatorScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -69,7 +69,7 @@ public class SimpleAbacAASAggregatorAuthorizer<SubjectInformationType> implement
 
   @Override
   public IModelProvider enforceGetAASProvider(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IModelProvider> modelProviderSupplier) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         AASAggregatorScopes.READ_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -83,7 +83,7 @@ public class SimpleAbacAASAggregatorAuthorizer<SubjectInformationType> implement
 
   @Override
   public void enforceCreateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         AASAggregatorScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -96,7 +96,7 @@ public class SimpleAbacAASAggregatorAuthorizer<SubjectInformationType> implement
 
   @Override
   public void enforceUpdateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         AASAggregatorScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),
@@ -109,7 +109,7 @@ public class SimpleAbacAASAggregatorAuthorizer<SubjectInformationType> implement
 
   @Override
   public void enforceDeleteAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!abacRuleChecker.checkAbacRuleIsSatisfied(
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
         roleAuthenticator.getRoles(subjectInformation),
         AASAggregatorScopes.WRITE_SCOPE,
         IdUtil.getIdentifierId(aasId),

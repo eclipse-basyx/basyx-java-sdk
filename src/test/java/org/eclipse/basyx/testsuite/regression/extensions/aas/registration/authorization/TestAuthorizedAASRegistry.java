@@ -32,13 +32,13 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistryScopes;
 import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAASRegistry;
-import org.eclipse.basyx.extensions.aas.registration.authorization.SimpleAbacAASRegistryAuthorizer;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRule;
-import org.eclipse.basyx.extensions.shared.authorization.AbacRuleSet;
+import org.eclipse.basyx.extensions.aas.registration.authorization.SimpleRbacAASRegistryAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
-import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetAbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
 import org.junit.After;
@@ -62,28 +62,28 @@ public class TestAuthorizedAASRegistry {
 	private IAASRegistry registryMock;
 	private AuthorizedAASRegistry<?> testSubject;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
-	private AbacRuleSet abacRuleSet = new AbacRuleSet();
+	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 	private final String adminRole = "admin";
 	private final String readerRole = "reader";
 
 	@Before
 	public void setUp() {
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASRegistryScopes.READ_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASRegistryScopes.WRITE_SCOPE,
 				"*",
 				"*",
 				"*"
 		));
-		abacRuleSet.addRule(AbacRule.of(
+		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				AASRegistryScopes.READ_SCOPE,
 				"*",
@@ -91,8 +91,8 @@ public class TestAuthorizedAASRegistry {
 				"*"
 		));
 		testSubject = new AuthorizedAASRegistry<>(registryMock,
-				new SimpleAbacAASRegistryAuthorizer<>(
-						new PredefinedSetAbacRuleChecker(abacRuleSet),
+				new SimpleRbacAASRegistryAuthorizer<>(
+						new PredefinedSetRbacRuleChecker(rbacRuleSet),
 						new KeycloakRoleAuthenticator()
 				),
 				new JWTAuthenticationContextProvider()
@@ -224,13 +224,11 @@ public class TestAuthorizedAASRegistry {
 		Assert.assertEquals(expectedAASDescriptorList, aasDescriptorList);
 	}
 
-	@Test
+	@Test(expected = NotAuthorized.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupAll_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
-		final List<AASDescriptor> aasDescriptorList = testSubject.lookupAll();
-
-		Assert.assertEquals(Collections.emptyList(), aasDescriptorList);
+		testSubject.lookupAll();
 	}
 
 	@Test
@@ -248,15 +246,13 @@ public class TestAuthorizedAASRegistry {
 		Assert.assertEquals(expectedSubmodelDescriptorList, submodelDescriptorList);
 	}
 
-	@Test
+	@Test(expected = NotAuthorized.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodels_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		final IIdentifier aasId = new ModelUrn("urn:test1");
 
-		final List<SubmodelDescriptor> submodelDescriptorList = testSubject.lookupSubmodels(aasId);
-
-		Assert.assertEquals(Collections.emptyList(), submodelDescriptorList);
+		testSubject.lookupSubmodels(aasId);
 	}
 
 	@Test
