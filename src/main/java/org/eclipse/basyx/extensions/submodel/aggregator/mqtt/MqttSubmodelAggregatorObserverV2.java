@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
@@ -162,16 +161,15 @@ public class MqttSubmodelAggregatorObserverV2 extends MqttEventService implement
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private ISubmodel removeSubmodelElements(ISubmodel submodel) {
-		Map<String, Object> copy = SubmodelElementMapCollectionConverter.smToMap((Submodel) submodel);
-		Submodel sm =  Submodel.createAsFacade(copy);
+		Map<String, Object> map = SubmodelElementMapCollectionConverter.smToMap((Submodel) submodel);
+		Submodel copy =  Submodel.createAsFacade(map);
 			
 		for (ISubmodelElement sme: submodel.getSubmodelElements().values()) {
-			sm.deleteSubmodelElement(sme.getIdShort());
+			copy.deleteSubmodelElement(sme.getIdShort());
 		}
 		
-		return sm;
+		return copy;
 	}
 	
 	private String serializePayload(ISubmodel submodel) {

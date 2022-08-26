@@ -25,7 +25,6 @@
 package org.eclipse.basyx.testsuite.regression.extensions.submodel.mqtt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 
