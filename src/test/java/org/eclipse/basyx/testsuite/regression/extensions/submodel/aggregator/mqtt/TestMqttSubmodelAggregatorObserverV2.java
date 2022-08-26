@@ -27,6 +27,7 @@ package org.eclipse.basyx.testsuite.regression.extensions.submodel.aggregator.mq
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregatorHelperV2;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttSubmodelAggregatorObserverV2;
@@ -34,6 +35,8 @@ import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregatorV2;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
@@ -118,7 +121,7 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		newSubmodel.addSubmodelElement(new Property("prop", false));
 		observedSubmodelAggregator.createSubmodel(newSubmodel);
 
-		assertEquals(newSubmodel, deserializePayload(listener.lastPayload));
+		assertEquals(removeSubmodelElements(newSubmodel), deserializePayload(listener.lastPayload));
 		assertEquals(MqttSubmodelAggregatorHelperV2.createCreateSubmodelTopic(null, observedSubmodelAggregator.getRepositoryId()), listener.lastTopic);
 	}
 
@@ -128,7 +131,7 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		submodel.addSubmodelElement(new Property("prop", false));
 		observedSubmodelAggregator.updateSubmodel(submodel);
 
-		assertEquals(submodel, deserializePayload(listener.lastPayload));
+		assertEquals(removeSubmodelElements(submodel), deserializePayload(listener.lastPayload));
 		assertEquals(MqttSubmodelAggregatorHelperV2.createUpdateSubmodelTopic(null, observedSubmodelAggregator.getRepositoryId()), listener.lastTopic);
 	}
 
@@ -152,5 +155,16 @@ public class TestMqttSubmodelAggregatorObserverV2 {
 		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
 		return tools.deserialize(payload);
+	}
+	
+	private Submodel removeSubmodelElements(Submodel submodel) {
+		Map<String, Object> map = SubmodelElementMapCollectionConverter.smToMap(submodel);
+		Submodel copy = Submodel.createAsFacade(map);
+		
+		for (ISubmodelElement sme: submodel.getSubmodelElements().values()) {
+			copy.deleteSubmodelElement(sme.getIdShort());
+		}
+		
+		return copy;
 	}
 }
