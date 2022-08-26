@@ -36,6 +36,7 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -122,7 +123,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		prop.setIdShort(elemIdShort);
 		observableAPI.addSubmodelElement(prop);
 
-		assertEquals(prop, deserializePayload(listener.lastPayload));
+		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
 		assertEquals(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 
@@ -137,7 +138,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		prop.setIdShort("testAddProp");
 		observableAPI.addSubmodelElement(idShortPath, prop);
 
-		assertEquals(prop, deserializePayload(listener.lastPayload));
+		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
 		assertEquals(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 	
@@ -162,7 +163,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.addSubmodelElement(prop);
 		observableAPI.deleteSubmodelElement(idShortPath);
 
-		assertEquals(prop, deserializePayload(listener.lastPayload));
+		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
 		assertEquals(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 
@@ -174,7 +175,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.addSubmodelElement(prop);
 		observableAPI.updateSubmodelElement(idShortPath, false);
 
-		assertEquals(prop, deserializePayload(listener.lastPayload));
+		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
 		assertEquals(MqttSubmodelAPIHelperV2.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 	
@@ -182,5 +183,11 @@ public class MqttSubmodelAPIObserverTestV2 {
 		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
 		return tools.deserialize(payload);
+	}
+	
+	private SubmodelElement setValueNull(SubmodelElement submodelElement) {
+		submodelElement.setValue(null);
+		
+		return submodelElement;
 	}
 }
