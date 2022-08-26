@@ -25,12 +25,14 @@
 package org.eclipse.basyx.extensions.submodel.mqtt;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserver;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserverV2;
@@ -239,7 +241,7 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	@Override
 	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId, String repoId) {	
 		if (newValue instanceof Map<?, ?> && filter(idShortPath)) {
-			ISubmodelElement submodelElement = removeValue(newValue);
+			ISubmodelElement submodelElement = setValueNull(newValue);
 			sendMqttMessage(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(submodelElement));
 		}
 	}
@@ -247,7 +249,7 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	@Override
 	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId) {
 		if (submodelElement instanceof Map<?, ?> && filter(idShortPath)) {
-			ISubmodelElement sme = removeValue(submodelElement);
+			ISubmodelElement sme = setValueNull(submodelElement);
 			sendMqttMessage(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
 		}
 	}
@@ -255,7 +257,7 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	@Override
 	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId) {
 		if (submodelElement instanceof Map<?, ?> && filter(idShortPath)) {
-			ISubmodelElement sme = removeValue(submodelElement);
+			ISubmodelElement sme = setValueNull(submodelElement);
 			sendMqttMessage(MqttSubmodelAPIHelperV2.createUpdateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
 		}
 	}
@@ -278,12 +280,13 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	}
 	
 	@SuppressWarnings("unchecked")
-	private ISubmodelElement removeValue(Object submodelElement) {
-		Map<String, Object> map = (Map<String, Object>) submodelElement;	
-		ISubmodelElement sme = SubmodelElementFacadeFactory.createSubmodelElement(map);
-		sme.setValue(null);
+	private ISubmodelElement setValueNull(Object submodelElement) {
+		Map<String, Object> map = SubmodelElementMapCollectionConverter.smElementToMap((Map<String, Object>) submodelElement);	
+		Map<String, Object> copy = new LinkedHashMap<>(map);
+		ISubmodelElement newSubmodelElement = SubmodelElementFacadeFactory.createSubmodelElement(copy);
+		newSubmodelElement.setValue(null);
 		
-		return sme;
+		return newSubmodelElement;
 	}
 
 	private String serializePayload(Object payload) {
