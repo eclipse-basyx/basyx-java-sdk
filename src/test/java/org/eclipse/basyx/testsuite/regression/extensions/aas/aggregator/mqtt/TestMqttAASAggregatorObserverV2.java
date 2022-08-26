@@ -27,13 +27,19 @@ package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.mqtt;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.basyx.aas.aggregator.AASAggregatorFactory;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.api.parts.IConceptDictionary;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
+import org.eclipse.basyx.aas.metamodel.map.parts.ConceptDictionary;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorHelperV2;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttDecoratingAASAggregatorFactoryV2;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -112,27 +118,36 @@ public class TestMqttAASAggregatorObserverV2 {
 		String newAASId = "newAASId";
 		Identifier newAASIdentifier = new Identifier(IdentifierType.IRDI, newAASId);
 		AssetAdministrationShell newShell = new AssetAdministrationShell(newAASId, newAASIdentifier, new Asset("newAssetId", new Identifier(IdentifierType.IRI, "newAssetId"), AssetKind.INSTANCE));
+		Collection<IConceptDictionary> dict = new ArrayList<IConceptDictionary>();
+		dict.add(new ConceptDictionary("conceptDict"));
+		newShell.setConceptDictionary(dict);
 		observedAPI.createAAS(newShell);
 
-		assertEquals(newShell, deserializePayload(listener.lastPayload));
+		assertEquals(removeConceptDictionaries(newShell), deserializePayload(listener.lastPayload));
 		assertEquals(MqttAASAggregatorHelperV2.createCreateAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
 	public void testUpdateAAS() {
+		Collection<IConceptDictionary> dict = new ArrayList<IConceptDictionary>();
+		dict.add(new ConceptDictionary("conceptDict"));
+		shell.setConceptDictionary(dict);
 		shell.setCategory("newCategory");
 		observedAPI.updateAAS(shell);
 
-		assertEquals(shell, deserializePayload(listener.lastPayload));
+		assertEquals(removeConceptDictionaries(shell), deserializePayload(listener.lastPayload));
 		assertEquals(MqttAASAggregatorHelperV2.createUpdateAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
 	public void testDeleteAAS() {
+		Collection<IConceptDictionary> dict = new ArrayList<IConceptDictionary>();
+		dict.add(new ConceptDictionary("conceptDict"));
+		shell.setConceptDictionary(dict);
 		IAssetAdministrationShell aas = observedAPI.getAAS(AASIDENTIFIER);
 		observedAPI.deleteAAS(AASIDENTIFIER);
 
-		assertEquals(aas, deserializePayload(listener.lastPayload));
+		assertEquals(removeConceptDictionaries(aas), deserializePayload(listener.lastPayload));
 		assertEquals(MqttAASAggregatorHelperV2.createDeleteAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 	
@@ -140,5 +155,14 @@ public class TestMqttAASAggregatorObserverV2 {
 		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
 		return tools.deserialize(payload);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private AssetAdministrationShell removeConceptDictionaries(IAssetAdministrationShell shell) {
+		Map<String, Object> map = (Map<String, Object>) shell;
+		AssetAdministrationShell aas = AssetAdministrationShell.createAsFacade(map);
+		aas.setConceptDictionary(Collections.emptyList());
+		
+		return aas;
 	}
 }

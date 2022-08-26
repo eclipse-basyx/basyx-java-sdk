@@ -25,6 +25,7 @@
 package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.aggregator.observing.IAASAggregatorObserverV2;
@@ -131,29 +132,44 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 
 	@Override
 	public void aasCreated(AssetAdministrationShell shell, String repoId) {
-		shell.setConceptDictionary(Collections.emptyList());		
-		sendMqttMessage(MqttAASAggregatorHelperV2.createCreateAASTopic(repoId), serializePayload(shell));
+		if (shell instanceof Map<?, ?>) {
+			IAssetAdministrationShell copy = removeConceptDictionaries(shell);		
+			sendMqttMessage(MqttAASAggregatorHelperV2.createCreateAASTopic(repoId), serializePayload(copy));
+		} else {
+			sendMqttMessage(MqttAASAggregatorHelperV2.createCreateAASTopic(repoId), serializePayload(shell));
+		}
 	}
 
 	@Override
 	public void aasUpdated(AssetAdministrationShell shell, String repoId) {
-		shell.setConceptDictionary(Collections.emptyList());
-		sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(repoId), serializePayload(shell));
+		if (shell instanceof Map<?, ?>) {
+			IAssetAdministrationShell copy = removeConceptDictionaries(shell);
+			sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(repoId), serializePayload(copy));
+		} else {
+			sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(repoId), serializePayload(shell));
+		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void aasDeleted(IAssetAdministrationShell shell, String repoId) {
 		if (shell instanceof Map<?, ?>) {
-			Map<String, Object> map = (Map<String, Object>) shell;
-			AssetAdministrationShell copy = AssetAdministrationShell.createAsFacade(map);
-			copy.setConceptDictionary(Collections.emptyList());
+			IAssetAdministrationShell copy = removeConceptDictionaries(shell);
 			sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(repoId), serializePayload(copy));
 		} else {			
 			sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(repoId), serializePayload(shell));
 		}
 	}
-			
+	
+	@SuppressWarnings("unchecked")
+	private IAssetAdministrationShell removeConceptDictionaries(IAssetAdministrationShell shell) {
+		Map<String, Object> map = (Map<String, Object>) shell;
+		Map<String, Object> copy = new LinkedHashMap<>(map);
+		AssetAdministrationShell aas = AssetAdministrationShell.createAsFacade(copy);
+		aas.setConceptDictionary(Collections.emptyList());
+		
+		return aas;
+	}
+	
 	private String serializePayload(IAssetAdministrationShell shell) {
 		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
 		
