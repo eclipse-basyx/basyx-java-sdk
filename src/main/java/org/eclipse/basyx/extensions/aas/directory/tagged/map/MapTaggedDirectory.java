@@ -206,9 +206,13 @@ public class MapTaggedDirectory extends AASRegistry implements IAASTaggedDirecto
 		AASDescriptor desc = super.lookupAAS(aasIdentifier);
 		super.delete(aasIdentifier);
 
-		if (desc instanceof TaggedAASDescriptor) {
-			((TaggedAASDescriptor) desc).getTags().stream().forEach(t -> tagMap.get(t).remove(desc));
+		if (isTaggedAASDescriptor(desc)) {
+			TaggedAASDescriptor.createAsFacade(desc).getTags().stream().forEach(t -> tagMap.get(t).remove(desc));
 		}
+	}
+
+	private boolean isTaggedAASDescriptor(AASDescriptor desc) {
+		return desc.containsKey(TaggedAASDescriptor.TAGS);
 	}
 
 	protected void addTags(TaggedAASDescriptor descriptor) {
