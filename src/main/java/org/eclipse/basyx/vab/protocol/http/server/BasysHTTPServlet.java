@@ -91,7 +91,7 @@ public abstract class BasysHTTPServlet extends HttpServlet {
 	private void addCorsHeaderToResponse(HttpServletResponse response) {
 		response.addHeader("Access-Control-Allow-Origin", getCorsOrigin());
 		response.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH");
-		response.addHeader("Access-Control-Allow-Headers", "X-Requested-With");
+		response.addHeader("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
 	}
 
 	/**
