@@ -96,7 +96,7 @@ public class TestHttpCors {
 	public void allowSpecificHeaders() {
 		createAndStartHttpServerWithCORS(ALLOW_SPECIFIC_ORIGIN);
 		
-		String allowHeaders = "X-Requested-With";
+		String allowHeaders = "X-Requested-With, Content-Type";
 
 		assertEquals(allowHeaders, getAccessControlAllowHeadersResponseHeader());
 	}
