@@ -34,7 +34,7 @@ public class TestMqttSubmodelAPI {
 	private static Server mqttBroker;
 
 	@BeforeClass
-	private static void startMqttBroker() throws IOException {
+	public static void startMqttBroker() throws IOException {
 		mqttBroker = new Server();
 
 		IResourceLoader classpathLoader = new ClasspathResourceLoader();
@@ -59,7 +59,6 @@ public class TestMqttSubmodelAPI {
 		sm.setParent(null);
 		return sm;
 	}
-
 
 	@AfterClass
 	public static void stopMqttBroker() {
