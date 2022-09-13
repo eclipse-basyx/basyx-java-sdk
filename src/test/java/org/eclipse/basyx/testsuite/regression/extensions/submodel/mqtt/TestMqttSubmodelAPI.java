@@ -21,6 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import io.moquette.broker.Server;
@@ -29,48 +30,42 @@ import io.moquette.broker.config.IConfig;
 import io.moquette.broker.config.IResourceLoader;
 import io.moquette.broker.config.ResourceLoaderConfig;
 
-public class MqttSubmodelAPIHelper {
-	private static final String CLIENT_ID = "testClient";
-	private static final String SERVER_URI = "tcp://localhost:1884";
-	private static final String SUBMODELID = "testsubmodelid";
-
-	private static Submodel submodel;
+public class TestMqttSubmodelAPI {
 	private static Server mqttBroker;
 
-	@Test
-	public void getAASIdReturnsNull() {
-		mqttBroker = startMqttBroker();
+	@BeforeClass
+	private static void startMqttBroker() throws IOException {
+		mqttBroker = new Server();
+
 		IResourceLoader classpathLoader = new ClasspathResourceLoader();
 		final IConfig classPathConfig = new ResourceLoaderConfig(classpathLoader);
-		try {
-			mqttBroker.startServer(classPathConfig);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 
-		submodel = createSubmodel();
-
-		try {
-			createObservableSubmodelAPI();
-		} catch (MqttException e) {
-			throw new RuntimeException(e);
-		}
+		mqttBroker.startServer(classPathConfig);
 	}
 
-	private static ISubmodelAPI createObservableSubmodelAPI() throws MqttException {
-		return new MqttDecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence())).getSubmodelAPI(submodel);
+	@Test
+	public void submodelWithEmptyParentReferenceDoesNotCrashServer() throws MqttException {
+		Submodel submodelWithEmptyParentReference = createSubmodelWithEmptyParentReference();
+
+		createMqttSubmodelAPI(submodelWithEmptyParentReference);
 	}
 
-	private Submodel createSubmodel() {
-		return new Submodel(SUBMODELID, new Identifier(IdentifierType.CUSTOM, SUBMODELID));
+	private static ISubmodelAPI createMqttSubmodelAPI(Submodel submodel) throws MqttException {
+		return new MqttDecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient("tcp://localhost:1884", "testClient", new MqttDefaultFilePersistence())).getSubmodelAPI(submodel);
 	}
 
-	private Server startMqttBroker() {
-		return new Server();
+	private Submodel createSubmodelWithEmptyParentReference() {
+		Submodel sm = new Submodel("testsubmodelid", new Identifier(IdentifierType.CUSTOM, "testsubmodelid"));
+		sm.setParent(null);
+		return sm;
 	}
+
 
 	@AfterClass
-	public static void tearDownClass() {
+	public static void stopMqttBroker() {
+		if (mqttBroker == null)
+			return;
+
 		mqttBroker.stopServer();
 	}
 }
