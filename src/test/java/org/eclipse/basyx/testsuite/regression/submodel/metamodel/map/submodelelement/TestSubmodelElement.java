@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelelement;
 
+import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
@@ -60,6 +61,11 @@ public class TestSubmodelElement {
 	@Before
 	public void buidSubmodelElement() {
 		submodelElement = new Property("testIdShort", "testId");
+	}
+
+	@Test
+	public void testDataSpecificationReferencesInitialization() {
+	  assertEquals(emptySet(), submodelElement.getDataSpecificationReferences());
 	}
 
 	@Test

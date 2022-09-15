@@ -56,6 +56,7 @@ public class SubmodelElement extends VABModelMap<Object> implements ISubmodelEle
 	protected SubmodelElement() {
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
+		putAll(new HasDataSpecification());
 		setModelingKind(ModelingKind.INSTANCE);
 	}
 
