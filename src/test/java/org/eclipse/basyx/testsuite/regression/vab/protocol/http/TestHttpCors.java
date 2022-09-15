@@ -27,12 +27,12 @@ package org.eclipse.basyx.testsuite.regression.vab.protocol.http;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Invocation.Builder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxHTTPServer;
@@ -96,7 +96,7 @@ public class TestHttpCors {
 	public void allowSpecificHeaders() {
 		createAndStartHttpServerWithCORS(ALLOW_SPECIFIC_ORIGIN);
 		
-		String allowHeaders = "X-Requested-With";
+		String allowHeaders = "X-Requested-With, Content-Type";
 
 		assertEquals(allowHeaders, getAccessControlAllowHeadersResponseHeader());
 	}

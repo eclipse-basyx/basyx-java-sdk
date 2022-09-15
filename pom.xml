@@ -5,7 +5,7 @@
 
 	<groupId>org.eclipse.basyx</groupId>
 	<artifactId>basyx.sdk</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<name>BaSyx SDK</name>
 	<description>BaSyx Software Development Kit</description>
 	<url>https://www.eclipse.org/basyx/</url>
@@ -211,30 +211,36 @@
 
 		<!-- Java Servlet API (for HTTP provider) -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>4.0.1</version>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
 		</dependency>
 
 		<!-- Java REST API (for WebServiceRawClient) -->
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.1.1</version>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.activation</groupId>
+			<artifactId>jakarta.activation-api</artifactId>
+			<version>2.1.0</version>
 		</dependency>
 
 		<!-- Java REST Jersey client (for WebServiceRawClient) -->
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>2.30</version>
+			<version>3.0.8</version>
 		</dependency>
 
 		<!-- Jersey InjectionManager (for Jersey client)  -->
 		<dependency>
 			<groupId>org.glassfish.jersey.inject</groupId>
 			<artifactId>jersey-hk2</artifactId>
-			<version>2.30.1</version>
+			<version>3.0.8</version>
 		</dependency>
 
 		<!-- Tomcat 8 for HTTP server resource -->
