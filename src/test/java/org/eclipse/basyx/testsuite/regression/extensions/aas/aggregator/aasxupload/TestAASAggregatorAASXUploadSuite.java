@@ -62,10 +62,26 @@ public abstract class TestAASAggregatorAASXUploadSuite extends AASAggregatorSuit
 	public static void checkAASX(Collection<IAssetAdministrationShell> shells) {
 		assertEquals(2, shells.size());
 
-		Iterator<IAssetAdministrationShell> iterator = shells.iterator();
-		IAssetAdministrationShell shell1 = iterator.next();
+		checkAAS1(shells);
 
-		assertEquals("smart.festo.com/demo/aas/1/1/454576463545648365874", shell1.getIdentification().getId());
+		checkAAS2(shells);
+	}
+
+	private static void checkAAS2(Collection<IAssetAdministrationShell> shells) {
+		String aasId2Identifier = "www.admin-shell.io/aas-sample/1/1";
+
+		IAssetAdministrationShell shell2 = getShellByIdentifier(shells, aasId2Identifier);
+		assertEquals("test_asset_aas", shell2.getIdShort());
+
+		Iterator<IReference> smIteratorShell2 = shell2.getSubmodelReferences().iterator();
+		IReference shell2Sm1 = smIteratorShell2.next();
+		assertEquals("de.iese.com/ids/sm/0000_000_000_001", shell2Sm1.getKeys().get(0).getValue());
+	}
+
+	private static void checkAAS1(Collection<IAssetAdministrationShell> shells) {
+		String aasId1Identifier = "smart.festo.com/demo/aas/1/1/454576463545648365874";
+		IAssetAdministrationShell shell1 = getShellByIdentifier(shells, aasId1Identifier);
+
 		assertEquals("Festo_3S7PM0CP4BD", shell1.getIdShort());
 
 		Iterator<IReference> smIteratorShell1 = shell1.getSubmodelReferences().iterator();
@@ -79,13 +95,9 @@ public abstract class TestAASAggregatorAASXUploadSuite extends AASAggregatorSuit
 		assertEquals("www.company.com/ids/sm/6053_5072_7091_5102", shell1Sm4.getKeys().get(0).getValue());
 		IReference shell1Sm5 = smIteratorShell1.next();
 		assertEquals("www.company.com/ids/sm/6563_5072_7091_4267", shell1Sm5.getKeys().get(0).getValue());
+	}
 
-		IAssetAdministrationShell shell2 = iterator.next();
-		assertEquals("www.admin-shell.io/aas-sample/1/1", shell2.getIdentification().getId());
-		assertEquals("test_asset_aas", shell2.getIdShort());
-
-		Iterator<IReference> smIteratorShell2 = shell2.getSubmodelReferences().iterator();
-		IReference shell2Sm1 = smIteratorShell2.next();
-		assertEquals("de.iese.com/ids/sm/0000_000_000_001", shell2Sm1.getKeys().get(0).getValue());
+	private static IAssetAdministrationShell getShellByIdentifier(Collection<IAssetAdministrationShell> shells, String aasId1Identifier) {
+		return shells.stream().filter(s -> s.getIdentification().getId().equals(aasId1Identifier)).findFirst().get();
 	}
 }
