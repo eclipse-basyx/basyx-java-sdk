@@ -27,18 +27,25 @@
 package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.aasxupload;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.http.client.ClientProtocolException;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.aas.aggregator.aasxupload.api.IAASAggregatorAASXUpload;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
+import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyType;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.testsuite.regression.aas.aggregator.AASAggregatorSuite;
 import org.junit.Test;
 
@@ -73,9 +80,10 @@ public abstract class TestAASAggregatorAASXUploadSuite extends AASAggregatorSuit
 		IAssetAdministrationShell shell2 = getShellByIdentifier(shells, aasId2Identifier);
 		assertEquals("test_asset_aas", shell2.getIdShort());
 
-		Iterator<IReference> smIteratorShell2 = shell2.getSubmodelReferences().iterator();
-		IReference shell2Sm1 = smIteratorShell2.next();
-		assertEquals("de.iese.com/ids/sm/0000_000_000_001", shell2Sm1.getKeys().get(0).getValue());
+		List<IReference> expectedSmReference = Arrays.asList(
+		    createReference("de.iese.com/ids/sm/0000_000_000_001"));
+		checkSmReferences(expectedSmReference, shell2);
+
 	}
 
 	private static void checkAAS1(Collection<IAssetAdministrationShell> shells) {
@@ -84,20 +92,29 @@ public abstract class TestAASAggregatorAASXUploadSuite extends AASAggregatorSuit
 
 		assertEquals("Festo_3S7PM0CP4BD", shell1.getIdShort());
 
-		Iterator<IReference> smIteratorShell1 = shell1.getSubmodelReferences().iterator();
-		IReference shell1Sm1 = smIteratorShell1.next();
-		assertEquals("www.company.com/ids/sm/4343_5072_7091_3242", shell1Sm1.getKeys().get(0).getValue());
-		IReference shell1Sm2 = smIteratorShell1.next();
-		assertEquals("www.company.com/ids/sm/2543_5072_7091_2660", shell1Sm2.getKeys().get(0).getValue());
-		IReference shell1Sm3 = smIteratorShell1.next();
-		assertEquals("smart.festo.com/demo/sm/instance/1/1/13B7CCD9BF7A3F24", shell1Sm3.getKeys().get(0).getValue());
-		IReference shell1Sm4 = smIteratorShell1.next();
-		assertEquals("www.company.com/ids/sm/6053_5072_7091_5102", shell1Sm4.getKeys().get(0).getValue());
-		IReference shell1Sm5 = smIteratorShell1.next();
-		assertEquals("www.company.com/ids/sm/6563_5072_7091_4267", shell1Sm5.getKeys().get(0).getValue());
+
+		List<IReference> expectedSmReference = Arrays.asList(
+		    createReference("www.company.com/ids/sm/2543_5072_7091_2660"),
+		    createReference("www.company.com/ids/sm/4343_5072_7091_3242"),
+		    createReference("smart.festo.com/demo/sm/instance/1/1/13B7CCD9BF7A3F24"),
+		    createReference("www.company.com/ids/sm/6053_5072_7091_5102"),
+		    createReference("www.company.com/ids/sm/6563_5072_7091_4267"));
+		checkSmReferences(expectedSmReference, shell1);
+
 	}
 
 	private static IAssetAdministrationShell getShellByIdentifier(Collection<IAssetAdministrationShell> shells, String aasId1Identifier) {
 		return shells.stream().filter(s -> s.getIdentification().getId().equals(aasId1Identifier)).findFirst().get();
 	}
+
+	private static void checkSmReferences(Collection<IReference> expectedSmReference, IAssetAdministrationShell shell1) {
+	  assertEquals(expectedSmReference.size(), shell1.getSubmodelReferences().size());
+	  assertTrue(shell1.getSubmodelReferences().containsAll(expectedSmReference));
+	}
+
+	private static IReference createReference(String id) {
+	  Key key = new Key(KeyElements.SUBMODEL, true, id, KeyType.IRI);
+	  return new Reference(key);
+	}
+
 }
