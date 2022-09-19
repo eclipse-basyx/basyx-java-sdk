@@ -9,7 +9,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.mqtt;
 
-import org.eclipse.basyx.extensions.shared.mqtt.PayloadParser;
+import org.eclipse.basyx.extensions.shared.mqtt.PayloadParserHelper;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
 /**
@@ -18,10 +18,12 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  * @author fried
  *
  */
-public class MqttSubmodelAPIPayloadParser extends PayloadParser {
+public class MqttSubmodelAPIPayloadParser extends PayloadParserHelper {
+
+	private String payload;
 
 	public MqttSubmodelAPIPayloadParser(String payload) {
-		super(payload);
+		this.payload = payload;
 	}
 
 	public String extractSubmodelId() {

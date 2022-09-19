@@ -10,24 +10,19 @@
 package org.eclipse.basyx.extensions.shared.mqtt;
 
 /**
- * Abstract class containing basic functionality to parse Payloads
+ * Class Containing helper methods for Payload Parsing
  * 
  * @author fried
  *
  */
-public abstract class PayloadParser {
-	protected String payload;
+public class PayloadParserHelper {
 
-	public PayloadParser(String payload) {
-		this.payload = payload;
-	}
-
-	protected String[] extractIds(String payload) {
+	public static String[] extractIds(String payload) {
 		String tmpPayload = removeOuterBrackets(payload);
 		return tmpPayload.split(",");
 	}
 
-	protected static String removeOuterBrackets(String str) {
+	public static String removeOuterBrackets(String str) {
 		if (!(str.startsWith("(") && str.endsWith(")"))) {
 			return str;
 		}

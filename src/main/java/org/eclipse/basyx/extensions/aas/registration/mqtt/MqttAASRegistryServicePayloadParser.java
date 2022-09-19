@@ -9,7 +9,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.registration.mqtt;
 
-import org.eclipse.basyx.extensions.shared.mqtt.PayloadParser;
+import static org.eclipse.basyx.extensions.shared.mqtt.PayloadParserHelper.extractIds;
+
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
 /**
@@ -18,9 +19,11 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  * @author fried
  *
  */
-public class MqttAASRegistryServicePayloadParser extends PayloadParser {
+public class MqttAASRegistryServicePayloadParser {
+	private String payload;
+
 	public MqttAASRegistryServicePayloadParser(String payload) {
-		super(payload);
+		this.payload = payload;
 	}
 
 	public String extractShellId() {
