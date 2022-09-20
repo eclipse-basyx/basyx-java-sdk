@@ -18,12 +18,11 @@ import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.extensions.aas.aggregator.MqttAASAggregatorPayloadParser;
+import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorPayloadParser;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttDecoratingAASAggregatorFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.AfterClass;
@@ -83,12 +82,6 @@ public class TestMqttAASAggregatorPayloadParser {
 		MqttAASAggregatorPayloadParser parser = createPayloadParser(listener.lastPayload);
 		aggregator.deleteAAS(shell.getIdentification());
 		assertEquals(parser.extractShellId(), shell.getIdentification().getId());
-	}
-
-	@Test(expected = ProviderException.class)
-	public void povidedWrongPayload() {
-		MqttAASAggregatorPayloadParser parser = createPayloadParser("('test')");
-		parser.extractShellId();
 	}
 
 	private static void startMqttBrokerAndAddListener() throws IOException {

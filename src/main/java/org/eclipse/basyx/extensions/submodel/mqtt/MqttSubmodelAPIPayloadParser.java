@@ -21,29 +21,38 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
 public class MqttSubmodelAPIPayloadParser extends PayloadParserHelper {
 
 	private String payload;
+	private String submodelId;
+	private String shellId;
+	private String submodelElementIdShort;
 
 	public MqttSubmodelAPIPayloadParser(String payload) {
 		this.payload = payload;
+		if (this.payload.startsWith("(")) {
+			this.submodelId = getSubmodelIdFromPayload();
+			this.shellId = getShellIdFromPayload();
+			this.submodelElementIdShort = getSubmodelElementIdShortFromPayload();
+			return;
+		}
+		this.submodelId = payload;
+
 	}
 
 	public String extractSubmodelId() {
-		if (!this.payload.startsWith("("))
-			return payload;
-		return getSubmodelIdFromPayload();
+		return this.submodelId;
 	}
 
 	public String extractShellId() {
 		if (!this.payload.startsWith("(")) {
 			throw new ProviderException("Payload '" + payload + "' does not conatin a shellId.");
 		}
-		return getShellIdFromPayload();
+		return this.shellId;
 	}
 
 	public String extractSubmodelElementIdShort() {
 		if (!this.payload.startsWith("(")) {
 			throw new ProviderException("Payload '" + payload + "' does not conatin a Submodel Element ID short.");
 		}
-		return getSubmodelElementIdShortFromPayload();
+		return this.submodelElementIdShort;
 	}
 
 	private String getShellIdFromPayload() {

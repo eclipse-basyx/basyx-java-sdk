@@ -21,23 +21,28 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  */
 public class MqttAASRegistryServicePayloadParser {
 	private String payload;
+	private String submodelId;
+	private String shellId;
 
 	public MqttAASRegistryServicePayloadParser(String payload) {
 		this.payload = payload;
+		if (this.payload.startsWith("(")) {
+			this.shellId = getShellIdFromPayload();
+			this.submodelId = getSubmodelIdFromPayload();
+			return;
+		}
+		this.shellId = payload;
 	}
 
 	public String extractShellId() {
-		if (this.payload.startsWith("(")) {
-			return getShellIdFromPayload();
-		}
-		return payload;
+		return this.shellId;
 	}
 
 	public String extractSubmodelId() {
 		if (!this.payload.startsWith("(")) {
 			throw new ProviderException("The payload '" + payload + "' does not contain a Submodel ID");
 		}
-		return getSubmodelIdFromPayload();
+		return this.submodelId;
 	}
 
 	private String getShellIdFromPayload() {

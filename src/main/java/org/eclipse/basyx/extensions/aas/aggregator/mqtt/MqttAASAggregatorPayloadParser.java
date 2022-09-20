@@ -7,9 +7,7 @@
  * 
  * SPDX-License-Identifier: EPL-2.0
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.aggregator;
-
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
+package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
 /**
  * Parser for Payloads sent by MqttAASAggregator
@@ -25,9 +23,6 @@ public class MqttAASAggregatorPayloadParser {
 	}
 
 	public String extractShellId() {
-		if (payload.startsWith("(")) {
-			throw new ProviderException("The payload '" + payload + "' is invalid for Payloads sent by MqttAASAggregator");
-		}
 		return payload;
 	}
 }
