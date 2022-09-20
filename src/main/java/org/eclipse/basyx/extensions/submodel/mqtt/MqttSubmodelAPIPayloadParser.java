@@ -31,10 +31,9 @@ public class MqttSubmodelAPIPayloadParser extends PayloadParserHelper {
 			this.submodelId = getSubmodelIdFromPayload();
 			this.shellId = getShellIdFromPayload();
 			this.submodelElementIdShort = getSubmodelElementIdShortFromPayload();
-			return;
+		} else {
+			this.submodelId = payload;
 		}
-		this.submodelId = payload;
-
 	}
 
 	public String extractSubmodelId() {

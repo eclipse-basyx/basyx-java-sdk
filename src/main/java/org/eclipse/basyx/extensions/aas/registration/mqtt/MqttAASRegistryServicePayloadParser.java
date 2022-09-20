@@ -29,9 +29,9 @@ public class MqttAASRegistryServicePayloadParser {
 		if (this.payload.startsWith("(")) {
 			this.shellId = getShellIdFromPayload();
 			this.submodelId = getSubmodelIdFromPayload();
-			return;
+		} else {
+			this.shellId = payload;
 		}
-		this.shellId = payload;
 	}
 
 	public String extractShellId() {
