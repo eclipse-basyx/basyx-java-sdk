@@ -10,10 +10,10 @@ import java.util.LinkedHashMap;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.security.auth.x500.X500Principal;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.client.Invocation.Builder;
-import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.MediaType;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.eclipse.basyx.testsuite.regression.vab.protocol.http.AASHTTPServerResource;
@@ -58,7 +58,7 @@ public class TestHTTPSVerification {
 	public AASHTTPServerResource res = new AASHTTPServerResource(new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir"), "localhost", 8080, true, "resources/ssl.cert", "pass123")
 			.addServletMapping("/Testsuite/SimpleVAB/*", new SimpleVABElementServlet()).addServletMapping("/Testsuite/Recorder/*", new VABHTTPInterface<RecordingProvider>(recorder)));
 
-	@Test(expected = jakarta.ws.rs.ProcessingException.class)
+	@Test(expected = javax.ws.rs.ProcessingException.class)
 	public void testValidation() throws KeyManagementException, NoSuchAlgorithmException {
 		performRequest("https://localhost:8080/basys.sdk/Testsuite/SimpleVAB");
 	}
