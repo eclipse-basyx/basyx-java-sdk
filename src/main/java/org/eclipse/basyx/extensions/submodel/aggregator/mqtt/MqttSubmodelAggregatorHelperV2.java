@@ -81,7 +81,7 @@ public class MqttSubmodelAggregatorHelperV2 {
 	
 	private static String encodeAASId(String aasId) {
 		if (aasId == null) {
-			return "";
+			return "<empty>";
 		}
 		return Base64.getUrlEncoder().withoutPadding().encodeToString(aasId.getBytes(StandardCharsets.UTF_8));
 	}
