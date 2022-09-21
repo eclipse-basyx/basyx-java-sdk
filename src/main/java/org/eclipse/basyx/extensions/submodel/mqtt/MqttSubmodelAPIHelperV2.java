@@ -121,7 +121,7 @@ public class MqttSubmodelAPIHelperV2 {
 	
 	private static String encodeId(String id) {
 		if (id == null) {
-			return "";
+			return "<empty>";
 		}
 		
 		return Base64.getUrlEncoder().withoutPadding().encodeToString(id.getBytes(StandardCharsets.UTF_8));
