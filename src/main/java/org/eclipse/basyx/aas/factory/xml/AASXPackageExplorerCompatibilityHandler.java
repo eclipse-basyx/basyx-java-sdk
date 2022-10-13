@@ -59,8 +59,7 @@ public class AASXPackageExplorerCompatibilityHandler {
 		} else if (xmlObject instanceof List) {
 			return handleInvalidVariableList((List<?>) xmlObject);
 		} else if (xmlObject instanceof Map) {
-			Map<String, Object> map = (Map<String, Object>) xmlObject;
-			return map.isEmpty() ? map : handleInvalidVariableMap(map);
+			return handleInvalidVariableMap((Map<String, Object>) xmlObject);
 		} else {
 			throw createUnexpectedObjectRuntimeException(xmlObject);
 		}
@@ -68,6 +67,9 @@ public class AASXPackageExplorerCompatibilityHandler {
 	}
 
 	private static Map<String, Object> handleInvalidVariableMap(Map<String, Object> map) throws RuntimeException {
+		if (map.isEmpty()) {
+			return map;
+		}
 		if (hasValueTag(map)) {
 			return insertOperationVariableTag(map);
 		} else {
