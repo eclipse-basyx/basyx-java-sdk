@@ -67,6 +67,9 @@ public class AASXPackageExplorerCompatibilityHandler {
 	}
 
 	private static Map<String, Object> handleInvalidVariableMap(Map<String, Object> map) throws RuntimeException {
+		if (map.isEmpty()) {
+			return map;
+		}
 		if (hasValueTag(map)) {
 			return insertOperationVariableTag(map);
 		} else {
