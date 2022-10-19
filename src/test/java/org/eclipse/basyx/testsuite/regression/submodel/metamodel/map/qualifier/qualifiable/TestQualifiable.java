@@ -25,12 +25,16 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.qualifier.qualifiable;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IConstraint;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Constraint;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Formula;
@@ -72,5 +76,33 @@ public class TestQualifiable {
 
 		qualifiable.setQualifiers(Collections.singleton(FORMULA2));
 		assertEquals(Collections.singleton(FORMULA2), qualifiable.getQualifiers());
+	}
+
+	@Test
+	public void testGetQualifierOrder() {
+		Collection<Constraint> constraints = new LinkedHashSet<Constraint>();
+		constraints.add(FORMULA2);
+		constraints.add(FORMULA1);
+
+		Qualifiable qualifiable = new Qualifiable(constraints);
+
+		Iterator<IConstraint> actual = qualifiable.getQualifiers().iterator();
+		assertEquals(FORMULA2, actual.next());
+		assertEquals(FORMULA1, actual.next());
+		assertFalse("There should be only two Constraints", actual.hasNext());
+	}
+
+	@Test
+	public void testGetQualifierOrderInverted() {
+		Collection<Constraint> constraints = new LinkedHashSet<Constraint>();
+		constraints.add(FORMULA1);
+		constraints.add(FORMULA2);
+
+		Qualifiable qualifiable = new Qualifiable(constraints);
+
+		Iterator<IConstraint> actual = qualifiable.getQualifiers().iterator();
+		assertEquals(FORMULA1, actual.next());
+		assertEquals(FORMULA2, actual.next());
+		assertFalse("There should be only two Constraints", actual.hasNext());
 	}
 }
