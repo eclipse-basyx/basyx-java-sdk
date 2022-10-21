@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -33,6 +34,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -61,9 +64,14 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.parts.IConceptDescription;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IFile;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperationVariable;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,12 +96,18 @@ public class TestMetamodelToAASXConverter {
 	private static final String FILE_ID_SHORT_3 = "file3";
 	private static final String COLLECTION_ID_SHORT = "collection";
 	
+	private static final String PROPERTY_ID_SHORT_IV = "input-variable";
+	private static final String PROPERTY_ID_SHORT_OV = "output-variable";
+	private static final String PROPERTY_ID_SHORT_IOV = "input-output-variable";
+	private static final String OPERATION_ID_SHORT = "operation";
+
 	private static final String THUMBNAIL_FILENAME = "Thumbnail.png";
 	private static final byte[] THUMBNAIL = { 22, 23, 24, 25, 26 };
 
 	private AssetAdministrationShell aas;
 	private Submodel sm1;
 	private Submodel sm2;
+	private Submodel sm3;
 
 	private List<IAssetAdministrationShell> aasList = new ArrayList<>();
 	private List<ISubmodel> submodelList = new ArrayList<>();
@@ -109,6 +123,7 @@ public class TestMetamodelToAASXConverter {
 
 		sm1 = new Submodel("sm1", new ModelUrn("SM1_ID"));
 		sm2 = new Submodel("sm2", new ModelUrn("SM2_ID"));
+		sm3 = new Submodel("sm3", new ModelUrn("SM3_ID"));
 
 		File file1 = new File(EXTERNAL_FILE_URL, "image/png");
 		file1.setIdShort(FILE_ID_SHORT_1);
@@ -120,16 +135,24 @@ public class TestMetamodelToAASXConverter {
 		SubmodelElementCollection collection = new SubmodelElementCollection(COLLECTION_ID_SHORT);
 		collection.addSubmodelElement(file2);
 
+		Operation operation = new Operation(OPERATION_ID_SHORT);
+		operation.setInputVariables(singletonList(createOperationVariable(PROPERTY_ID_SHORT_IV)));
+		operation.setOutputVariables(singletonList(createOperationVariable(PROPERTY_ID_SHORT_OV)));
+		operation.setInOutputVariables(singletonList(createOperationVariable(PROPERTY_ID_SHORT_IOV)));
+
 		sm1.addSubmodelElement(file1);
 		sm1.addSubmodelElement(collection);
 		sm2.addSubmodelElement(file3);
+		sm3.addSubmodelElement(operation);
 
 		aas.addSubmodel(sm1);
 		aas.addSubmodel(sm2);
+		aas.addSubmodel(sm3);
 
 		aasList.add(aas);
 		submodelList.add(sm1);
 		submodelList.add(sm2);
+		submodelList.add(sm3);
 		assetList.add(asset);
 
 		byte[] content1 = { 5, 6, 7, 8, 9 };
@@ -174,6 +197,61 @@ public class TestMetamodelToAASXConverter {
 		assertFilepathsAreCorrect(aasBundle);
 	}
 	
+	@Test
+	public void testOperationWithVariables() throws Exception {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
+
+		Set<AASBundle> aasBundles = deserializeAASX(out);
+		assertOperationContainsExpectedVariables(aasBundles);
+	}
+
+	@Test
+	public void testOperationWithoutVariables() throws Exception {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Operation operation = findOperation(submodelList);
+		operation.setInputVariables(Collections.emptyList());
+		operation.setOutputVariables(Collections.emptyList());
+		operation.setInOutputVariables(Collections.emptyList());
+		MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, out);
+
+		Set<AASBundle> aasBundles = deserializeAASX(out);
+		assertOperationContainsNoVariables(aasBundles);
+	}
+
+	private void assertOperationContainsNoVariables(Set<AASBundle> aasBundles) {
+		AASBundle aasBundle = extractAASBundleFromAASBundleSet(aasBundles, aas.getIdentification());
+		Operation operation = findOperation(aasBundle.getSubmodels());
+		assertEquals(0L, countOperationVariables(operation.getInputVariables(), PROPERTY_ID_SHORT_IV));
+		assertEquals(0L, countOperationVariables(operation.getOutputVariables(), PROPERTY_ID_SHORT_OV));
+		assertEquals(0L, countOperationVariables(operation.getInOutputVariables(), PROPERTY_ID_SHORT_IOV));
+	}
+
+	private void assertOperationContainsExpectedVariables(Set<AASBundle> aasBundles) {
+		AASBundle aasBundle = extractAASBundleFromAASBundleSet(aasBundles, aas.getIdentification());
+		Operation operation = findOperation(aasBundle.getSubmodels());
+		assertEquals(1L, countOperationVariables(operation.getInputVariables(), PROPERTY_ID_SHORT_IV));
+		assertEquals(1L, countOperationVariables(operation.getOutputVariables(), PROPERTY_ID_SHORT_OV));
+		assertEquals(1L, countOperationVariables(operation.getInOutputVariables(), PROPERTY_ID_SHORT_IOV));
+	}
+
+	private long countOperationVariables(Collection<? extends IOperationVariable> operationVariables, String propertyIdShort) {
+		return operationVariables.stream().map(IOperationVariable::getValue).filter(sme -> sme.getIdShort().equals(propertyIdShort)).count();
+	}
+
+	private OperationVariable createOperationVariable(String propertyIdShort) {
+		Property property = new Property(propertyIdShort, ValueType.String);
+		return new OperationVariable(property);
+	}
+
+	private Operation findOperation(Collection<ISubmodel> submodelCollection) {
+		return (Operation) submodelCollection.stream()
+			.filter(sm -> "sm3".equals(sm.getIdShort()))
+			.map(sm -> sm.getSubmodelElement(OPERATION_ID_SHORT))
+			.findAny()
+			.orElseThrow(IllegalArgumentException::new);
+	}
+
 	private void assertAASXContainsExpectedElements(ByteArrayOutputStream out) throws IOException {
 		List<String> filePaths = getFilePaths(out);
 		
@@ -254,7 +332,7 @@ public class TestMetamodelToAASXConverter {
 	}
 
 	private void assertFilepathsAreCorrect(Set<AASBundle> aasBundles) {
-		AASBundle aasBundle = extractedAASBundleFromAASBundleSet(aasBundles, aas.getIdentification());
+		AASBundle aasBundle = extractAASBundleFromAASBundleSet(aasBundles, aas.getIdentification());
 		Set<ISubmodel> deserializedSubmodels = aasBundle.getSubmodels();
 
 		ISubmodel deserializedSm1 = extractSubmodelFromSubmodelSet(deserializedSubmodels, sm1.getIdentification());
@@ -271,7 +349,7 @@ public class TestMetamodelToAASXConverter {
 		assertEquals(harmonizePrefixSlash(INTERNAL_FILE_PATH_2), deserializedFile3.getValue());
 	}
 
-	private AASBundle extractedAASBundleFromAASBundleSet(Set<AASBundle> aasBundles, IIdentifier identifier) {
+	private AASBundle extractAASBundleFromAASBundleSet(Set<AASBundle> aasBundles, IIdentifier identifier) {
 		return aasBundles.stream().filter(aasB -> aasB.getAAS().getIdentification().equals(identifier)).findAny().get();
 	}
 
