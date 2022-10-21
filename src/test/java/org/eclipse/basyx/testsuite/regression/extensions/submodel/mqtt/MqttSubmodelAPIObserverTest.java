@@ -73,7 +73,7 @@ public class MqttSubmodelAPIObserverTest {
 	private static Server mqttBroker;
 	private static ISubmodelAPI observableAPI;
 	private MqttTestListener listener;
-	
+
 	private static Submodel submodel;
 
 	/**
@@ -91,7 +91,7 @@ public class MqttSubmodelAPIObserverTest {
 		submodel = new Submodel(SUBMODELID, new Identifier(IdentifierType.CUSTOM, SUBMODELID));
 		Reference parentRef = new Reference(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID, IdentifierType.IRDI));
 		submodel.setParent(parentRef);
-		
+
 		observableAPI = createObservableSubmodelAPI();
 	}
 
@@ -113,6 +113,15 @@ public class MqttSubmodelAPIObserverTest {
 	@After
 	public void tearDown() {
 		mqttBroker.removeInterceptHandler(listener);
+	}
+
+	@Test
+	public void testAddSubmodelElementToSubmodelWithoutParent() throws MqttException {
+		Submodel testSubmodel = new Submodel("testSmId", new Identifier(IdentifierType.CUSTOM, "customSmIdentifier"));
+		ISubmodelAPI submodelAPI = new MqttDecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient("tcp://localhost:1884", "submodelTestsClientID", new MqttDefaultFilePersistence())).getSubmodelAPI(testSubmodel);
+		Property prop = new Property(true);
+		prop.setIdShort("testBooleanProperty");
+		submodelAPI.addSubmodelElement(prop);
 	}
 
 	@Test
