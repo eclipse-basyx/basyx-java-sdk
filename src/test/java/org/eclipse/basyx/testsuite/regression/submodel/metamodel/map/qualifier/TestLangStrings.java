@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangString;
@@ -118,9 +119,19 @@ public class TestLangStrings {
 	@Test
 	public void testFromStringPairs() {
 		LangStrings langStrings = LangStrings.fromStringPairs(LANGUAGE1, TEXT1, LANGUAGE2, TEXT2);
-		assertEquals(2, langStrings.getLanguages().size());
-		assertEquals(TEXT1, langStrings.get(LANGUAGE1));
-		assertEquals(TEXT2, langStrings.get(LANGUAGE2));
+		Iterator<String> actual = langStrings.getLanguages().iterator();
+		assertEquals(TEXT1, langStrings.get(actual.next()));
+		assertEquals(TEXT2, langStrings.get(actual.next()));
+		assertFalse("There should be only two LangStrings", actual.hasNext());
+	}
+
+	@Test
+	public void testFromStringPairsInverted() {
+		LangStrings langStrings = LangStrings.fromStringPairs(LANGUAGE2, TEXT2, LANGUAGE1, TEXT1);
+		Iterator<String> actual = langStrings.getLanguages().iterator();
+		assertEquals(TEXT2, langStrings.get(actual.next()));
+		assertEquals(TEXT1, langStrings.get(actual.next()));
+		assertFalse("There should be only two LangStrings", actual.hasNext());
 	}
 
 	@Test
