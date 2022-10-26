@@ -33,6 +33,8 @@ import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryService
 import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryServiceV2;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  *
@@ -52,7 +54,12 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 
 	@Override
 	public void register(TaggedAASDescriptor descriptor) {
-		taggedDirectory.register(descriptor);
+		super.register(descriptor);
+	}
+	
+	@Override
+	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor) {
+	    super.register(aas, descriptor);
 	}
 
 	@Override
@@ -63,5 +70,20 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 	@Override
 	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags) {
 		return taggedDirectory.lookupTags(tags);
+	}
+	
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(String submodelTag) {
+	    return taggedDirectory.lookupSubmodelTag(submodelTag);
+	}
+	
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(Set<String> submodelTags) {
+	    return taggedDirectory.lookupSubmodelTags(submodelTags);
+	}
+	
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(Set<String> aasTags, Set<String> submodelTags) {
+	    return taggedDirectory.lookupBothAasAndSubmodelTags(aasTags, submodelTags);
 	}
 }
