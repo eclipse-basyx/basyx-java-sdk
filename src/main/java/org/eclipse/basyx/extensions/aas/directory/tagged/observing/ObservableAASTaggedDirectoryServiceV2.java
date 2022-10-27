@@ -35,6 +35,7 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 /**
  *
@@ -54,14 +55,26 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 
 	@Override
 	public void register(TaggedAASDescriptor descriptor) {
-		taggedDirectory.register(descriptor);
-		observers.stream().forEach(o -> o.aasRegistered(descriptor, aasRegistry.getRegistryId()));
+	  try {
+        aasRegistry.lookupAAS(descriptor.getIdentifier());
+        taggedDirectory.register(descriptor);
+        observers.stream().forEach(o -> o.aasUpdated(descriptor, aasRegistry.getRegistryId()));
+      } catch(ResourceNotFoundException e) {
+        aasRegistry.register(descriptor);
+        observers.stream().forEach(o -> o.aasRegistered(descriptor, aasRegistry.getRegistryId()));
+      }
 	}
 	
 	@Override
 	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor) {
-	    taggedDirectory.register(aas, descriptor);
-	    observers.stream().forEach(o -> o.submodelRegistered(aas, descriptor, aasRegistry.getRegistryId()));
+	    try {	      
+	      aasRegistry.lookupSubmodel(aas, descriptor.getIdentifier());
+	      taggedDirectory.register(aas, descriptor);
+	      observers.stream().forEach(o -> o.submodelUpdated(aas, descriptor, aasRegistry.getRegistryId()));
+	    } catch (ResourceNotFoundException e) {
+	      taggedDirectory.register(aas, descriptor);
+          observers.stream().forEach(o -> o.submodelRegistered(aas, descriptor, aasRegistry.getRegistryId()));
+	    }
 	}
 
 	@Override
