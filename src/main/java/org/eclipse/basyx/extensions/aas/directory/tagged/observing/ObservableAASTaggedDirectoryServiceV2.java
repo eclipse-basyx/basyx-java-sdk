@@ -54,12 +54,14 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 
 	@Override
 	public void register(TaggedAASDescriptor descriptor) {
-		super.register(descriptor);
+		taggedDirectory.register(descriptor);
+		observers.stream().forEach(o -> o.aasRegistered(descriptor, aasRegistry.getRegistryId()));
 	}
 	
 	@Override
 	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor) {
-	    super.register(aas, descriptor);
+	    taggedDirectory.register(aas, descriptor);
+	    observers.stream().forEach(o -> o.submodelRegistered(aas, descriptor, aasRegistry.getRegistryId()));
 	}
 
 	@Override
