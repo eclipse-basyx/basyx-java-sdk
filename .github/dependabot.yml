@@ -11,9 +11,11 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    target-branch: "development"
 
   # Maintain dependencies for Maven
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
       interval: "daily"
+    target-branch: "development"
