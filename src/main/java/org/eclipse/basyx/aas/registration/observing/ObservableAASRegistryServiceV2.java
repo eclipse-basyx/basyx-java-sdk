@@ -46,7 +46,7 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
  */
 public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServiceObserverV2> implements IAASRegistry {
 
-	protected IAASRegistry aasRegistry;
+	private IAASRegistry aasRegistry;
 
 	public ObservableAASRegistryServiceV2(IAASRegistry registry) {
 		this.aasRegistry = registry;

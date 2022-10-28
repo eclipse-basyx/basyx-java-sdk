@@ -56,24 +56,24 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 	@Override
 	public void register(TaggedAASDescriptor descriptor) {
 	  try {
-        aasRegistry.lookupAAS(descriptor.getIdentifier());
+        taggedDirectory.lookupAAS(descriptor.getIdentifier());
         taggedDirectory.register(descriptor);
-        observers.stream().forEach(o -> o.aasUpdated(descriptor, aasRegistry.getRegistryId()));
+        observers.stream().forEach(o -> o.aasUpdated(descriptor, taggedDirectory.getRegistryId()));
       } catch(ResourceNotFoundException e) {
-        aasRegistry.register(descriptor);
-        observers.stream().forEach(o -> o.aasRegistered(descriptor, aasRegistry.getRegistryId()));
+        taggedDirectory.register(descriptor);
+        observers.stream().forEach(o -> o.aasRegistered(descriptor, taggedDirectory.getRegistryId()));
       }
 	}
 	
 	@Override
 	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor) {
 	    try {	      
-	      aasRegistry.lookupSubmodel(aas, descriptor.getIdentifier());
+	      taggedDirectory.lookupSubmodel(aas, descriptor.getIdentifier());
 	      taggedDirectory.register(aas, descriptor);
-	      observers.stream().forEach(o -> o.submodelUpdated(aas, descriptor, aasRegistry.getRegistryId()));
+	      observers.stream().forEach(o -> o.submodelUpdated(aas, descriptor, taggedDirectory.getRegistryId()));
 	    } catch (ResourceNotFoundException e) {
 	      taggedDirectory.register(aas, descriptor);
-          observers.stream().forEach(o -> o.submodelRegistered(aas, descriptor, aasRegistry.getRegistryId()));
+          observers.stream().forEach(o -> o.submodelRegistered(aas, descriptor, taggedDirectory.getRegistryId()));
 	    }
 	}
 
