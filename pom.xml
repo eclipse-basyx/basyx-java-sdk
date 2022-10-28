@@ -262,7 +262,7 @@
 		<dependency>
     		<groupId>org.codehaus.janino</groupId>
     		<artifactId>janino</artifactId>
-    		<version>2.7.5</version>
+    		<version>3.1.8</version>
 		</dependency>
 		
 		<!-- Paho Java Client for MQTT -->
