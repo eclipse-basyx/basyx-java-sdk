@@ -41,8 +41,10 @@ import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.LifecycleState;
+import org.apache.catalina.Valve;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.valves.HealthCheckValve;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.slf4j.Logger;
@@ -119,6 +121,8 @@ public class BaSyxHTTPServer {
 
 		tomcat.setHostname(context.hostname);
 		tomcat.getHost().setAppBase(".");
+		
+		configureHealthEndpoint();
 
 		// Create servlet context
 		// - Base path for resource files
@@ -133,6 +137,12 @@ public class BaSyxHTTPServer {
 		while (servletIterator.hasNext()) {
 			addNewServletAndMappingToTomcatEnvironment(context, rootCtx, servletIterator.next());
 		}
+	}
+
+	private void configureHealthEndpoint() {
+		Valve valve = new HealthCheckValve();
+		
+		tomcat.getHost().getPipeline().addValve(valve);
 	}
 
 	private void addNewServletAndMappingToTomcatEnvironment(BaSyxContext context, final Context rootCtx, Entry<String, HttpServlet> entry) {

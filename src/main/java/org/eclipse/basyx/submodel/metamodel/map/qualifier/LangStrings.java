@@ -25,7 +25,7 @@
 package org.eclipse.basyx.submodel.metamodel.map.qualifier;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +36,7 @@ import java.util.Set;
  * @author conradi, haque
  *
  */
-public class LangStrings extends HashSet<LangString> {
+public class LangStrings extends LinkedHashSet<LangString> {
 	private static final long serialVersionUID = 1L;
 
 	public LangStrings() {
@@ -167,7 +167,7 @@ public class LangStrings extends HashSet<LangString> {
 	 * @return A Set of Strings containing all languages of this LangStrings Object
 	 */
 	public Set<String> getLanguages() {
-		HashSet<String> languageSet = new HashSet<>();
+		LinkedHashSet<String> languageSet = new LinkedHashSet<>();
 		for (LangString langString : this) {
 			languageSet.add(langString.getLanguage());
 		}
