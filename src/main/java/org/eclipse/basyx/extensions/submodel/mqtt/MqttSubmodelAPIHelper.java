@@ -33,6 +33,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
+import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 /**
@@ -62,6 +63,15 @@ public class MqttSubmodelAPIHelper {
 			}
 		}
 		return null;
+	}
+
+	public static String createChangedSubmodelPayload(String submodelId) {
+		return submodelId;
+	}
+
+	public static String createChangedSubmodelElementPayload(String aasId, String submodelId, String elementPart) {
+		elementPart = VABPathTools.stripSlashes(elementPart);
+		return "(" + aasId + "," + submodelId + "," + elementPart + ")";
 	}
 
 	private static boolean doesKeysExists(List<IKey> keys) {

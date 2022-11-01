@@ -24,8 +24,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.registration.mqtt;
 
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-
 /**
  * A helper class containing method and string constants of topics used by the
  * AASRegistry.
@@ -46,7 +44,17 @@ public class MqttAASRegistryHelper {
 	 * @param aasId
 	 * @param smId
 	 */
-	public static String createSubmodelDescriptorOfAASChangedPayload(IIdentifier aasId, IIdentifier smId) {
-		return "(" + aasId.getId() + "," + smId.getId() + ")";
+	public static String createSubmodelDescriptorOfAASChangedPayload(String aasId, String smId) {
+		return "(" + aasId + "," + smId + ")";
+	}
+
+	/**
+	 * This function creates the payload for changed aas for a mqtt message
+	 * 
+	 * @param aasId
+	 * @return
+	 */
+	public static String createRegisteredAASChangedPayload(String aasId) {
+		return aasId;
 	}
 }

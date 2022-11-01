@@ -35,4 +35,8 @@ public class MqttAASAggregatorHelper {
 	public static final String TOPIC_CREATEAAS = "BaSyxAggregator_createdAAS";
 	public static final String TOPIC_DELETEAAS = "BaSyxAggregator_deletedAAS";
 	public static final String TOPIC_UPDATEAAS = "BaSyxAggregator_updatedAAS";
+
+	public static String createAASChangedPayload(String aasId) {
+		return aasId;
+	}
 }
