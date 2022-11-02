@@ -227,7 +227,7 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>2.30</version>
+			<version>2.37</version>
 		</dependency>
 
 		<!-- Jersey InjectionManager (for Jersey client)  -->
