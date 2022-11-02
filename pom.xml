@@ -234,7 +234,7 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.inject</groupId>
 			<artifactId>jersey-hk2</artifactId>
-			<version>2.30.1</version>
+			<version>3.0.8</version>
 		</dependency>
 
 		<!-- Tomcat 8 for HTTP server resource -->
