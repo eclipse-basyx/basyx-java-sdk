@@ -1,3 +1,5 @@
+[![javadoc](https://javadoc.io/badge2/org.eclipse.basyx/basyx.sdk/javadoc.svg)](https://javadoc.io/doc/org.eclipse.basyx/basyx.sdk) 
+
 # Eclipse BaSyx Java SDK
 [![BaSyx Logo](https://www.eclipse.org/basyx/img/basyxlogo.png)](https://www.eclipse.org/basyx/)
 
