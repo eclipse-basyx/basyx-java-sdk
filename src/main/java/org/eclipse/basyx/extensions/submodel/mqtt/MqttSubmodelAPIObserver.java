@@ -251,7 +251,19 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		}
 	}
 
-
+	/**
+	 * This method will be removed from this class. MqttSubmodelAPIHelper is used to
+	 * create the payload.
+	 *
+	 * @deprecated Use
+	 *             {@link org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelper#createChangedSubmodelElementPayload(String, String, String)}
+	 *             instead.
+	 */
+	@Deprecated
+	public static String getCombinedMessage(String aasId, String submodelId, String elementPart) {
+		elementPart = VABPathTools.stripSlashes(elementPart);
+		return "(" + aasId + "," + submodelId + "," + elementPart + ")";
+	}
 
 	private boolean filter(String idShort) {
 		idShort = VABPathTools.stripSlashes(idShort);

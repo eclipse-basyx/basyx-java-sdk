@@ -113,7 +113,7 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	@Override
 	public void register(IIdentifier aas, SubmodelDescriptor smDescriptor) throws ProviderException {
 		this.observedRegistryService.register(aas, smDescriptor);
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aas.getId(), smDescriptor.getIdentifier().getId()));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aas, smDescriptor.getIdentifier()));
 	}
 
 	@Override
@@ -125,7 +125,7 @@ public class MqttAASRegistryService extends MqttEventService implements IAASRegi
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		this.observedRegistryService.delete(aasId, smId);
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId.getId(), smId.getId()));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
 	}
 
 	@Override

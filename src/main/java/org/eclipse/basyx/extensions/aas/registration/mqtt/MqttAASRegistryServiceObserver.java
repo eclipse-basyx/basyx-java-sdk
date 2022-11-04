@@ -132,7 +132,7 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 
 	@Override
 	public void submodelRegistered(IIdentifier aasId, IIdentifier smId) {
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId.getId(), smId.getId()));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_REGISTERSUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
 	}
 
 	@Override
@@ -142,6 +142,6 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 
 	@Override
 	public void submodelDeleted(IIdentifier aasId, IIdentifier smId) {
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId.getId(), smId.getId()));
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETESUBMODEL, MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, smId));
 	}
 }

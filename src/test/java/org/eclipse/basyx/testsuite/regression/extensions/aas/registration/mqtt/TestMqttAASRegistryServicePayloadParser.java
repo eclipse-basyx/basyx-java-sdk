@@ -11,8 +11,10 @@ package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.mqtt;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.basyx.aas.metamodel.map.descriptor.CustomId;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryHelper;
 import org.eclipse.basyx.extensions.aas.registration.mqtt.MqttAASRegistryServicePayloadParser;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.junit.Test;
 
 /**
@@ -24,6 +26,8 @@ import org.junit.Test;
 public class TestMqttAASRegistryServicePayloadParser {
 	private static final String AAS_ID = "aas001";
 	private static final String SUBMODEL_ID = "submodel001";
+	private static IIdentifier aasId = new CustomId(AAS_ID);
+	private static IIdentifier submodelId = new CustomId(SUBMODEL_ID);
 
 	@Test
 	public void registeredAASPayloadIsCorrectlyParsed() {
@@ -35,7 +39,7 @@ public class TestMqttAASRegistryServicePayloadParser {
 
 	@Test
 	public void registeredSubmodelPayloadIsCorrectlyParsed() {
-		String payload = MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(AAS_ID, SUBMODEL_ID);
+		String payload = MqttAASRegistryHelper.createSubmodelDescriptorOfAASChangedPayload(aasId, submodelId);
 
 		MqttAASRegistryServicePayloadParser parser = createPayloadParser(payload);
 		assertEquals(parser.extractShellId(), AAS_ID);
