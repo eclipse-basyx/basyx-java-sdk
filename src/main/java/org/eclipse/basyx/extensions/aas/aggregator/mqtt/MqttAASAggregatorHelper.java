@@ -36,6 +36,14 @@ public class MqttAASAggregatorHelper {
 	public static final String TOPIC_DELETEAAS = "BaSyxAggregator_deletedAAS";
 	public static final String TOPIC_UPDATEAAS = "BaSyxAggregator_updatedAAS";
 
+	/***
+	 * Create payload for changed aas which includes creating, deleting, and
+	 * updating the corresponding aas.
+	 * 
+	 * @param aasId
+	 *            - the id of the changed aas
+	 * @return Mqtt-message payload
+	 */
 	public static String createAASChangedPayload(String aasId) {
 		return aasId;
 	}
