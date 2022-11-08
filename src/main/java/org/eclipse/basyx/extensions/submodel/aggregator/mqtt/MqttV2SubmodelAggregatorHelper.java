@@ -42,10 +42,6 @@ public class MqttV2SubmodelAggregatorHelper {
 	private static final String DELETED = "deleted";
 	
 	
-	public static String getCombinedMessage(String shellId, String submodelId) {
-		return "(" + shellId + "," + submodelId + ")";
-	}
-	
 	public static String createCreateSubmodelTopic(String aasId, String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
