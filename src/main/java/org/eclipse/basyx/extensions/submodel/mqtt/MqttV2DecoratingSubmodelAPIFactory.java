@@ -51,7 +51,7 @@ public class MqttV2DecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
 		try {
 			ObservableSubmodelAPIV2 observedAPI = new ObservableSubmodelAPIV2(apiFactory.create(submodel));
-			MqttV2SubmodelAPIObserver mqttSubmodelAPIObserver = new MqttV2SubmodelAPIObserver(client, MqttV2SubmodelAPIHelper.getAASId(observedAPI), MqttV2SubmodelAPIHelper.getSubmodelId(observedAPI));
+			MqttV2SubmodelAPIObserver mqttSubmodelAPIObserver = new MqttV2SubmodelAPIObserver(client, MqttV2SubmodelAPIHelper.getAASId(observedAPI), MqttV2SubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI.getRepositoryId());
 			observedAPI.addObserver(mqttSubmodelAPIObserver);
 			return observedAPI;
 		} catch (MqttException e) {
