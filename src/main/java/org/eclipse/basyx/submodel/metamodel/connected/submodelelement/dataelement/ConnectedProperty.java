@@ -80,6 +80,12 @@ public class ConnectedProperty extends ConnectedDataElement implements IProperty
 	}
 
 	@Override
+	public void setValue(Object value) {
+		Object preparedValue = ValueTypeHelper.prepareForSerialization(value);
+		super.setValue(preparedValue);
+	}
+
+	@Override
 	public Property getLocalCopy() {
 		return Property.createAsFacade(getElem()).getLocalCopy();
 	}
