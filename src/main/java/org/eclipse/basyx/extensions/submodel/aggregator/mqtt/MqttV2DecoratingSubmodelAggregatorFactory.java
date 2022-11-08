@@ -38,7 +38,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * Factory decorating SubmodelAggregator with MQTT events by wrapping an
  * ISubmodelAggregatorFactory
  * 
- * @author fried
+ * @author fried, siebert
  */
 public class MqttV2DecoratingSubmodelAggregatorFactory implements ISubmodelAggregatorFactory {
 	private ISubmodelAggregatorFactory submodelAggregatorFactory;

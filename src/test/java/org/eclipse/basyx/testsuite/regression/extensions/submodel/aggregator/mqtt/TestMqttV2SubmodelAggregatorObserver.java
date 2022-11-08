@@ -60,7 +60,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 /**
  * Tests events emitting with the MqttSubmodelAggregatorObserver
  *
- * @author fischer, jungjan
+ * @author fischer, jungjan, siebert
  *
  */
 public class TestMqttV2SubmodelAggregatorObserver {

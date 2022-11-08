@@ -63,7 +63,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 /**
  * Tests events emitting with the MqttAASAggregatorObserver
  *
- * @author haque
+ * @author haque, siebert
  *
  */
 public class TestMqttV2AASAggregatorObserver {

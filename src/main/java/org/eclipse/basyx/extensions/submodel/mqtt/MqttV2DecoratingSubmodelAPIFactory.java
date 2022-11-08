@@ -36,7 +36,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * Factory decorating SubmodelAPI with MQTT events by wrapping an
  * ISubmodelAPIFactory
  * 
- * @author fried, danish
+ * @author fried, danish, siebert
  */
 public class MqttV2DecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Observer for the AASAggregator that triggers MQTT events for different
  * operations on the aggregator.
  *
- * @author haque, jungjan, fischer
+ * @author haque, jungjan, fischer, siebert
  *
  */
 public class MqttV2AASAggregatorObserver extends MqttEventService implements IAASAggregatorObserverV2 {

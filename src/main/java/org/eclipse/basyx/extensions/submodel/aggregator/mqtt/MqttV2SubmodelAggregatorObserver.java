@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * Observer for the SubmodelAggregator that triggers MQTT events for different
  * operations on the aggregator.
  *
- * @author fischer, jungjan, fried
+ * @author fischer, jungjan, fried, siebert
  *
  */
 public class MqttV2SubmodelAggregatorObserver extends MqttEventService implements ISubmodelAggregatorObserverV2 {

@@ -49,10 +49,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link ISubmodelAPIObserver} Triggers MQTT events for
+ * Implementation of {@link ISubmodelAPIObserverV2} Triggers MQTT events for
  * different CRUD operations on the submodel.
  * 
- * @author conradi, danish
+ * @author conradi, danish, siebert
  *
  */
 public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubmodelAPIObserverV2 {

@@ -37,9 +37,9 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 /**
  * Implementation of {@link ISubmodelAPI} that calls back registered
- * {@link ISubmodelAPIObserver} when changes on SubmodelElements occur
+ * {@link ISubmodelAPIObserverV2} when changes on SubmodelElements occur
  * 
- * @author conradi
+ * @author conradi, siebert
  *
  */
 public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> implements ISubmodelAPI {

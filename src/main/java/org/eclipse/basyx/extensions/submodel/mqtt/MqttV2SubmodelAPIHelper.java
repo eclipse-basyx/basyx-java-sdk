@@ -42,7 +42,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 /**
  * A helper class containing string constants of topics used by the SubmodelAPI.
  * 
- * @author danish
+ * @author danish, siebert
  *
  */
 public class MqttV2SubmodelAPIHelper {	

@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * Implementation variant for the AASRegistryServiceObserver that triggers MQTT
  * events for different operations on the registry.
  * 
- * @author haque
+ * @author haque, siebert
  *
  */
 public class MqttV2AASRegistryServiceObserver extends MqttEventService implements IAASRegistryServiceObserverV2 {

@@ -62,7 +62,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 /**
  * Test for MqttSubmodelAPIObserver
  * 
- * @author espen, conradi, danish
+ * @author espen, conradi, danish, siebert
  *
  */
 public class MqttV2SubmodelAPIObserverTest {

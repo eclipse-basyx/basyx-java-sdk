@@ -39,7 +39,7 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor
  * Implementation of {@link IAASTaggedDirectory} that calls back registered
  * {@link IAASRegistryServiceObserver} when changes on Registry occur
  *
- * @author espen
+ * @author espen, siebert
  *
  */
 public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistryServiceV2 implements IAASTaggedDirectory {

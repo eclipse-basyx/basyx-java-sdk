@@ -34,7 +34,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  * A helper class containing method and string constants of topics used by the
  * AASRegistry.
  * 
- * @author danish
+ * @author danish, siebert
  *
  */
 public class MqttV2AASRegistryHelper {
