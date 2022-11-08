@@ -131,8 +131,7 @@ public class TestConnectedProperty {
 
 	private IProperty createConnectedProperty(Property prop) {
 		JSONConnector connector = new JSONConnectorFactory().create(new SubmodelElementProvider(new VABMapProvider(prop)));
-		IProperty connectedDateProp = new ConnectedProperty(new VABElementProxy("", connector));
-		return connectedDateProp;
+		return new ConnectedProperty(new VABElementProxy("", connector));
 	}
 
 	private Object getDummyDate() throws DatatypeConfigurationException {
