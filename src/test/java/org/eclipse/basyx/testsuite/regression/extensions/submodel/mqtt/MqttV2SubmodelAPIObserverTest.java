@@ -28,8 +28,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.eclipse.basyx.extensions.submodel.mqtt.MqttDecoratingSubmodelAPIFactoryV2;
-import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelperV2;
+import org.eclipse.basyx.extensions.submodel.mqtt.MqttV2DecoratingSubmodelAPIFactory;
+import org.eclipse.basyx.extensions.submodel.mqtt.MqttV2SubmodelAPIHelper;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -65,7 +65,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
  * @author espen, conradi, danish
  *
  */
-public class MqttSubmodelAPIObserverTestV2 {
+public class MqttV2SubmodelAPIObserverTest {
 	private static final String CLIENT_ID = "testClient";
 	private static final String SERVER_URI = "tcp://localhost:1884";
 	private static final String AASID = "testaasid";
@@ -97,7 +97,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 	}
 
 	private static ISubmodelAPI createObservableSubmodelAPI() throws MqttException {
-		return new MqttDecoratingSubmodelAPIFactoryV2(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence())).getSubmodelAPI(submodel);
+		return new MqttV2DecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence())).getSubmodelAPI(submodel);
 	}
 
 	@AfterClass
@@ -124,7 +124,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.addSubmodelElement(prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, observableAPI.getRepositoryId()), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -139,7 +139,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.addSubmodelElement(idShortPath, prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 	
 	@Test
@@ -152,7 +152,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.getSubmodelElementValue(elemIdShort);
 		
 		assertEquals(prop.getValue(), deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAPIHelperV2.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, observableAPI.getRepositoryId()), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -164,7 +164,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.deleteSubmodelElement(idShortPath);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -176,7 +176,7 @@ public class MqttSubmodelAPIObserverTestV2 {
 		observableAPI.updateSubmodelElement(idShortPath, false);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttSubmodelAPIHelperV2.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observableAPI.getRepositoryId()), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

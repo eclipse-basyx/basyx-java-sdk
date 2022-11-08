@@ -37,7 +37,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  * @author danish
  *
  */
-public class MqttAASRegistryHelperV2 {
+public class MqttV2AASRegistryHelper {
 	private static final String AASREGISTRY = "aas-registry";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";

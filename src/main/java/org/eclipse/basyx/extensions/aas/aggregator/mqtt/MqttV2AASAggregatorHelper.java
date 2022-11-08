@@ -22,67 +22,46 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
+package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.StringJoiner;
 
 /**
  * A helper class containing methods that create topics used by the
- * SubmodelAggregator.
- *
+ * AASAggregator.
+ * 
  */
-public class MqttSubmodelAggregatorHelperV2 {
+public class MqttV2AASAggregatorHelper {
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
-	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
 	
-	
-	public static String getCombinedMessage(String shellId, String submodelId) {
-		return "(" + shellId + "," + submodelId + ")";
-	}
-	
-	public static String createCreateSubmodelTopic(String aasId, String repoId) {
+	public static String createCreateAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
-				.add(SUBMODELS)
 				.add(CREATED)
-				.toString();		
+				.toString();
 	}
 	
-	public static String createUpdateSubmodelTopic(String aasId, String repoId) {
+	public static String createUpdateAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
-				.add(SUBMODELS)
 				.add(UPDATED)
-				.toString();		
+				.toString();
 	}
 	
-	public static String createDeleteSubmodelTopic(String aasId, String repoId) {
+	public static String createDeleteAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
-				.add(SUBMODELS)
 				.add(DELETED)
-				.toString();		
-	}
-	
-	private static String encodeAASId(String aasId) {
-		if (aasId == null) {
-			return "<empty>";
-		}
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(aasId.getBytes(StandardCharsets.UTF_8));
+				.toString();
 	}
 }

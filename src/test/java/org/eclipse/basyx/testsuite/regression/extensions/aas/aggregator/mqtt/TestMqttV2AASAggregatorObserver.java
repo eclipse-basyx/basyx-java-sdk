@@ -40,8 +40,8 @@ import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.metamodel.map.parts.ConceptDictionary;
-import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttAASAggregatorHelperV2;
-import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttDecoratingAASAggregatorFactoryV2;
+import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttV2AASAggregatorHelper;
+import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttV2DecoratingAASAggregatorFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
@@ -66,7 +66,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
  * @author haque
  *
  */
-public class TestMqttAASAggregatorObserverV2 {
+public class TestMqttV2AASAggregatorObserver {
 	protected AssetAdministrationShell shell;
 	private static final String AASID = "aasid1";
 	private static final Identifier AASIDENTIFIER = new Identifier(IdentifierType.IRI, AASID);
@@ -98,7 +98,7 @@ public class TestMqttAASAggregatorObserverV2 {
 	}
 
 	private static IAASAggregator createObservedAASAggregator() throws MqttException {
-		return new MqttDecoratingAASAggregatorFactoryV2(new AASAggregatorFactory(), client).create();
+		return new MqttV2DecoratingAASAggregatorFactory(new AASAggregatorFactory(), client).create();
 	}
 
 	@AfterClass
@@ -124,7 +124,7 @@ public class TestMqttAASAggregatorObserverV2 {
 		observedAPI.createAAS(newShell);
 
 		assertEquals(removeConceptDictionaries(newShell), deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASAggregatorHelperV2.createCreateAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
+		assertEquals(MqttV2AASAggregatorHelper.createCreateAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -136,7 +136,7 @@ public class TestMqttAASAggregatorObserverV2 {
 		observedAPI.updateAAS(shell);
 
 		assertEquals(removeConceptDictionaries(shell), deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASAggregatorHelperV2.createUpdateAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
+		assertEquals(MqttV2AASAggregatorHelper.createUpdateAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class TestMqttAASAggregatorObserverV2 {
 		observedAPI.deleteAAS(AASIDENTIFIER);
 
 		assertEquals(removeConceptDictionaries(aas), deserializePayload(listener.lastPayload));
-		assertEquals(MqttAASAggregatorHelperV2.createDeleteAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
+		assertEquals(MqttV2AASAggregatorHelper.createDeleteAASTopic(observedAPI.getRepositoryId()), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

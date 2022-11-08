@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2022 the Eclipse BaSyx Authors
+ * Copyright (C) 2021 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,38 +22,44 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.submodel.mqtt;
 
-import org.eclipse.basyx.submodel.metamodel.map.Submodel;
-import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
-import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
-import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPIV2;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
+package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
+
+import java.security.ProviderException;
+
+import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
+import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
+import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregator;
+import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregatorV2;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
- * Factory decorating SubmodelAPI with MQTT events by wrapping an
- * ISubmodelAPIFactory
+ * Factory decorating SubmodelAggregator with MQTT events by wrapping an
+ * ISubmodelAggregatorFactory
  * 
- * @author fried, danish
+ * @author fried
  */
-public class MqttDecoratingSubmodelAPIFactoryV2 implements ISubmodelAPIFactory {
-	private ISubmodelAPIFactory apiFactory;
-	private MqttClient client;
+public class MqttV2DecoratingSubmodelAggregatorFactory implements ISubmodelAggregatorFactory {
+	private ISubmodelAggregatorFactory submodelAggregatorFactory;
+	private MqttClient mqttClient;
 
-	public MqttDecoratingSubmodelAPIFactoryV2(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) {
-		this.apiFactory = factoryToBeDecorated;
-		this.client = client;
+	private ObservableSubmodelAggregatorV2 observedSubmodelAggregator;
+	protected MqttV2SubmodelAggregatorObserver observer;
+
+	public MqttV2DecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, MqttClient mqttClient) {
+		this.submodelAggregatorFactory = submodelAggregatorFactory;
+		this.mqttClient = mqttClient;
 	}
 
 	@Override
-	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
+	public ISubmodelAggregator create() {
 		try {
-			ObservableSubmodelAPIV2 observedAPI = new ObservableSubmodelAPIV2(apiFactory.create(submodel));
-			MqttSubmodelAPIObserverV2 mqttSubmodelAPIObserver = new MqttSubmodelAPIObserverV2(client, MqttSubmodelAPIHelperV2.getAASId(observedAPI), MqttSubmodelAPIHelperV2.getSubmodelId(observedAPI));
-			observedAPI.addObserver(mqttSubmodelAPIObserver);
-			return observedAPI;
+			ISubmodelAggregator aggregator = submodelAggregatorFactory.create();
+			observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator);
+			observer = new MqttV2SubmodelAggregatorObserver(mqttClient);
+			observedSubmodelAggregator.addObserver(observer);
+			return observedSubmodelAggregator;
 		} catch (MqttException e) {
 			throw new ProviderException(e);
 		}
