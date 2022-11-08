@@ -27,9 +27,7 @@
 package org.eclipse.basyx.extensions.aas.directory.tagged.observing;
 
 import java.util.Set;
-
 import org.eclipse.basyx.aas.registration.observing.IAASRegistryServiceObserver;
-import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryService;
 import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryServiceV2;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
