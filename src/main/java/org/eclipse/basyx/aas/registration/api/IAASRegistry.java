@@ -40,7 +40,7 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
 public interface IAASRegistry {
 	
 	public default String getRegistryId() {
-		return "default";
+		return "aas-registry";
 	}
 
 	/**
