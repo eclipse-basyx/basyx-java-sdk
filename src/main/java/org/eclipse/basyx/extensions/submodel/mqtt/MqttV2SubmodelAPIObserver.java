@@ -58,8 +58,6 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	protected boolean useWhitelist = false;
 	protected Set<String> whitelist = new HashSet<>();
 	
-	private IIdentifier aasIdentifier;
-	private IIdentifier submodelIdentifier;
 
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
@@ -76,10 +74,7 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 		
 		connectMqttClientIfRequired();
 		
-		this.aasIdentifier = aasId;
-		this.submodelIdentifier = submodelIdentifier;
-		
-		sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), this.submodelIdentifier.getId());
+		sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), submodelIdentifier.getId());
 	}
 	
 	/**
@@ -98,10 +93,7 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 		
 		connectMqttClientIfRequired(options);
 		
-		this.aasIdentifier = aasId;
-		this.submodelIdentifier = submodelIdentifier;
-		
-		sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), this.submodelIdentifier.getId());
+		sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), submodelIdentifier.getId());
 	}
 		
 	private void connectMqttClientIfRequired() throws MqttException {
