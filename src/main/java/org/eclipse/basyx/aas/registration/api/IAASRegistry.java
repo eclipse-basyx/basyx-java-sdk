@@ -26,6 +26,7 @@ package org.eclipse.basyx.aas.registration.api;
 
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -39,9 +40,9 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  */
 public interface IAASRegistry {
 	
-	public default String getRegistryId() {
-		return "default";
-	}
+	public String getRegistryId();
+
+	public void setRegistryId(String id);
 
 	/**
 	 * Register AAS descriptor in registry, delete old registration

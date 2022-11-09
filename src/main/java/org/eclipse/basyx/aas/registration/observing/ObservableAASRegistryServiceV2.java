@@ -53,6 +53,16 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 	}
 
 	@Override
+	public String getRegistryId() {
+		return aasRegistry.getRegistryId();
+	}
+
+	@Override
+	public void setRegistryId(String id) {
+		aasRegistry.setRegistryId(id);
+	}
+
+	@Override
 	public void register(AASDescriptor deviceAASDescriptor) throws ProviderException {
 		try {
 			aasRegistry.lookupAAS(deviceAASDescriptor.getIdentifier());
