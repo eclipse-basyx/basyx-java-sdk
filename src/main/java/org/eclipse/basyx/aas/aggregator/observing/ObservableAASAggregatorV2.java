@@ -47,9 +47,16 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 public class ObservableAASAggregatorV2 extends Observable<IAASAggregatorObserverV2> implements IAASAggregator {
 
 	private IAASAggregator aasAggregator;
+	
+	private String aasServerId = "aas-server";
 
-	public ObservableAASAggregatorV2(IAASAggregator aggregator) {
+	public ObservableAASAggregatorV2(IAASAggregator aggregator, String aasServerId) {
 		this.aasAggregator = aggregator;
+		this.aasServerId = aasServerId;
+	}
+	
+	public String getAasServerId() {
+	  return this.aasServerId;
 	}
 
 	@Override
@@ -70,19 +77,19 @@ public class ObservableAASAggregatorV2 extends Observable<IAASAggregatorObserver
 	@Override
 	public void createAAS(AssetAdministrationShell aas) {
 		aasAggregator.createAAS(aas);
-		observers.stream().forEach(o -> o.aasCreated(aas, aasAggregator.getRepositoryId()));
+		observers.stream().forEach(o -> o.aasCreated(aas, this.aasServerId));
 	}
 
 	@Override
 	public void updateAAS(AssetAdministrationShell aas) throws ResourceNotFoundException {
 		aasAggregator.updateAAS(aas);
-		observers.stream().forEach(o -> o.aasUpdated(aas, aasAggregator.getRepositoryId()));
+		observers.stream().forEach(o -> o.aasUpdated(aas, this.aasServerId));
 	}
 
 	@Override
 	public void deleteAAS(IIdentifier aasId) {
 		IAssetAdministrationShell aas = aasAggregator.getAAS(aasId);
 		aasAggregator.deleteAAS(aasId);
-		observers.stream().forEach(o -> o.aasDeleted(aas, aasAggregator.getRepositoryId()));
+		observers.stream().forEach(o -> o.aasDeleted(aas, this.aasServerId));
 	}
 }

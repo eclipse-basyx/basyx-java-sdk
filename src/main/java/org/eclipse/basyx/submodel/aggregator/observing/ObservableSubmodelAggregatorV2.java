@@ -49,9 +49,11 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregatorObserverV2> implements ISubmodelAggregator {
 
 	private ISubmodelAggregator submodelAggregator;
+	private String aasServerId = "aas-server";
 
-	public ObservableSubmodelAggregatorV2(ISubmodelAggregator aggregator) {
+	public ObservableSubmodelAggregatorV2(ISubmodelAggregator aggregator, String aasServerId) {
 		this.submodelAggregator = aggregator;
+		this.aasServerId = aasServerId;
 	}
 
 	@Override
@@ -82,19 +84,19 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 	@Override
 	public void createSubmodel(Submodel submodel) {
 		submodelAggregator.createSubmodel(submodel);
-		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodel), submodel, submodelAggregator.getRepositoryId()));
+		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodel), submodel, this.aasServerId));
 	}
 
 	@Override
 	public void createSubmodel(ISubmodelAPI submodelAPI) {
 		submodelAggregator.createSubmodel(submodelAPI);
-		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodelAPI.getSubmodel()), submodelAPI.getSubmodel(), submodelAggregator.getRepositoryId()));
+		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodelAPI.getSubmodel()), submodelAPI.getSubmodel(), this.aasServerId));
 	}
 
 	@Override
 	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
 		submodelAggregator.updateSubmodel(submodel);
-		observers.stream().forEach(observer -> observer.submodelUpdated(getParentAASId(submodel), submodel, submodelAggregator.getRepositoryId()));
+		observers.stream().forEach(observer -> observer.submodelUpdated(getParentAASId(submodel), submodel, this.aasServerId));
 	}
 
 	@Override
@@ -102,7 +104,7 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 		ISubmodel submodel = submodelAggregator.getSubmodel(submodelIdentifier);
 		String parentAASId = getParentAASId(submodel);
 		submodelAggregator.deleteSubmodelByIdentifier(submodelIdentifier);
-		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel, submodelAggregator.getRepositoryId()));
+		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel, this.aasServerId));
 	}
 
 	@Override
@@ -110,7 +112,7 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 		ISubmodel submodel = submodelAggregator.getSubmodelbyIdShort(submodelIdShort);
 		String parentAASId = getParentAASId(submodel);
 		submodelAggregator.deleteSubmodelByIdShort(submodelIdShort);
-		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel, submodelAggregator.getRepositoryId()));
+		observers.stream().forEach(observer -> observer.submodelDeleted(parentAASId, submodel, this.aasServerId));
 	}
 
 	private String getParentAASId(ISubmodel submodel) {

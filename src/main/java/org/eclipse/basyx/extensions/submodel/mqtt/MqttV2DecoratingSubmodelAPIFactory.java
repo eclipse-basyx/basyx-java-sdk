@@ -41,17 +41,19 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class MqttV2DecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;
 	private MqttClient client;
+	private String aasServerId;
 
-	public MqttV2DecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) {
+	public MqttV2DecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client, String aasServerId) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
+		this.aasServerId = aasServerId;
 	}
 
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
 		try {
-			ObservableSubmodelAPIV2 observedAPI = new ObservableSubmodelAPIV2(apiFactory.create(submodel));
-			MqttV2SubmodelAPIObserver mqttSubmodelAPIObserver = new MqttV2SubmodelAPIObserver(client, MqttV2SubmodelAPIHelper.getAASId(observedAPI), MqttV2SubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI.getRepositoryId());
+			ObservableSubmodelAPIV2 observedAPI = new ObservableSubmodelAPIV2(apiFactory.create(submodel), this.aasServerId);
+			MqttV2SubmodelAPIObserver mqttSubmodelAPIObserver = new MqttV2SubmodelAPIObserver(client, MqttV2SubmodelAPIHelper.getAASId(observedAPI), MqttV2SubmodelAPIHelper.getSubmodelId(observedAPI), this.aasServerId);
 			observedAPI.addObserver(mqttSubmodelAPIObserver);
 			return observedAPI;
 		} catch (MqttException e) {

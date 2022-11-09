@@ -37,10 +37,6 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOpera
  *
  */
 public interface ISubmodelAPI {
-
-	public default String getRepositoryId() {
-		return "submodelElement-repository";
-	}
 	
 	/**
 	 * Retrieves the underlying submodel

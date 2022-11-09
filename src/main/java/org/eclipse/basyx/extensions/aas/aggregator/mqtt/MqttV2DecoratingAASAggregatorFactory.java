@@ -40,17 +40,19 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 public class MqttV2DecoratingAASAggregatorFactory implements IAASAggregatorFactory {
 	private IAASAggregatorFactory apiFactory;
 	private MqttClient client;
+	private String aasServerId;
 
-	public MqttV2DecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, MqttClient client) {
+	public MqttV2DecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, MqttClient client, String aasServerId) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
+		this.aasServerId = aasServerId;
 	}
 
 	@Override
 	public IAASAggregator create() {
 		try {
 			IAASAggregator aggregator = apiFactory.create();
-			ObservableAASAggregatorV2 observedAASAggregator = new ObservableAASAggregatorV2(aggregator);
+			ObservableAASAggregatorV2 observedAASAggregator = new ObservableAASAggregatorV2(aggregator, this.aasServerId);
 			MqttV2AASAggregatorObserver observer = new MqttV2AASAggregatorObserver(client);
 			observedAASAggregator.addObserver(observer);
 			return observedAASAggregator;

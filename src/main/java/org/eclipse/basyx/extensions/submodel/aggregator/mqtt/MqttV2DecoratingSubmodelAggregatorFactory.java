@@ -46,17 +46,19 @@ public class MqttV2DecoratingSubmodelAggregatorFactory implements ISubmodelAggre
 
 	private ObservableSubmodelAggregatorV2 observedSubmodelAggregator;
 	protected MqttV2SubmodelAggregatorObserver observer;
+	private String aasServerId;
 
-	public MqttV2DecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, MqttClient mqttClient) {
+	public MqttV2DecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, MqttClient mqttClient, String aasServerId) {
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
 		this.mqttClient = mqttClient;
+		this.aasServerId = aasServerId;
 	}
 
 	@Override
 	public ISubmodelAggregator create() {
 		try {
 			ISubmodelAggregator aggregator = submodelAggregatorFactory.create();
-			observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator);
+			observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator, this.aasServerId);
 			observer = new MqttV2SubmodelAggregatorObserver(mqttClient);
 			observedSubmodelAggregator.addObserver(observer);
 			return observedSubmodelAggregator;
