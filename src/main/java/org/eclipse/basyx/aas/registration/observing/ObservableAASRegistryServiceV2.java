@@ -39,9 +39,9 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 /**
  *
  * Implementation of {@link IAASRegistry} that calls back registered
- * {@link IAASRegistryServiceObserver} when changes on Registry occur
+ * {@link IAASRegistryServiceObserverV2} when changes on Registry occur
  *
- * @author haque
+ * @author haque, siebert
  *
  */
 public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServiceObserverV2> implements IAASRegistry {

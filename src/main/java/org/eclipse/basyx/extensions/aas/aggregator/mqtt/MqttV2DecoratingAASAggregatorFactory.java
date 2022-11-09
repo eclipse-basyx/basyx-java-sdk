@@ -35,13 +35,13 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * Factory decorating AASAggregator with MQTT events by wrapping an
  * IAASAggregatorFactory
  * 
- * @author fried
+ * @author fried, siebert
  */
-public class MqttDecoratingAASAggregatorFactoryV2 implements IAASAggregatorFactory {
+public class MqttV2DecoratingAASAggregatorFactory implements IAASAggregatorFactory {
 	private IAASAggregatorFactory apiFactory;
 	private MqttClient client;
 
-	public MqttDecoratingAASAggregatorFactoryV2(IAASAggregatorFactory factoryToBeDecorated, MqttClient client) {
+	public MqttV2DecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, MqttClient client) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 	}
@@ -51,7 +51,7 @@ public class MqttDecoratingAASAggregatorFactoryV2 implements IAASAggregatorFacto
 		try {
 			IAASAggregator aggregator = apiFactory.create();
 			ObservableAASAggregatorV2 observedAASAggregator = new ObservableAASAggregatorV2(aggregator);
-			MqttAASAggregatorObserverV2 observer = new MqttAASAggregatorObserverV2(client);
+			MqttV2AASAggregatorObserver observer = new MqttV2AASAggregatorObserver(client);
 			observedAASAggregator.addObserver(observer);
 			return observedAASAggregator;
 		} catch (MqttException exception) {

@@ -34,27 +34,16 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  * A helper class containing method and string constants of topics used by the
  * AASRegistry.
  * 
- * @author danish
+ * @author danish, siebert
  *
  */
-public class MqttAASRegistryHelperV2 {
+public class MqttV2AASRegistryHelper {
 	private static final String AASREGISTRY = "aas-registry";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
-
-	/**
-	 * This function is for creating a message payload representing a descriptor
-	 * change of a submodel of a specific AAS.
-	 * 
-	 * @param aasId
-	 * @param smId
-	 */
-	public static String createSubmodelDescriptorOfAASChangedPayload(IIdentifier aasId, IIdentifier smId) {
-		return "(" + aasId.getId() + "," + smId.getId() + ")";
-	}
 	
 	/**
 	 * This method creates a Mqtt topic like /aas-registry/default/shells/created

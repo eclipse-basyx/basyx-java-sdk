@@ -28,9 +28,9 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
- * Interface for an observer of {@link ObservableSubmodelAPI}
+ * Interface for an observer of {@link ObservableSubmodelAPIV2}
  * 
- * @author conradi
+ * @author conradi, siebert
  *
  */
 public interface ISubmodelAPIObserverV2 extends IObserver {

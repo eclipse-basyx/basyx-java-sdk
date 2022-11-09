@@ -27,9 +27,7 @@
 package org.eclipse.basyx.extensions.aas.directory.tagged.observing;
 
 import java.util.Set;
-
 import org.eclipse.basyx.aas.registration.observing.IAASRegistryServiceObserver;
-import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryService;
 import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryServiceV2;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
@@ -39,7 +37,7 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor
  * Implementation of {@link IAASTaggedDirectory} that calls back registered
  * {@link IAASRegistryServiceObserver} when changes on Registry occur
  *
- * @author espen
+ * @author espen, siebert
  *
  */
 public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistryServiceV2 implements IAASTaggedDirectory {

@@ -39,9 +39,9 @@ import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 /**
  *
  * Implementation of {@link IAASAggregator} that calls back registered
- * {@link IAASAggregatorObserver} when changes on AAS occur
+ * {@link IAASAggregatorObserverV2} when changes on AAS occur
  *
- * @author haque
+ * @author haque, siebert
  *
  */
 public class ObservableAASAggregatorV2 extends Observable<IAASAggregatorObserverV2> implements IAASAggregator {

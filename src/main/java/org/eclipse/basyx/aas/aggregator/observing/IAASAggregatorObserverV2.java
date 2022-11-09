@@ -31,9 +31,9 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
- * Interface for an observer of {@link ObservableAASAggregator}
+ * Interface for an observer of {@link ObservableAASAggregatorV2}
  * 
- * @author haque
+ * @author haque, siebert
  *
  */
 public interface IAASAggregatorObserverV2 extends IObserver {

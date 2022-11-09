@@ -41,9 +41,9 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 /**
  *
  * Implementation of {@link ISubmodelAggregator} that calls back registered
- * {@link ISubmodelAggregatorObserver} when changes on Submodel occur
+ * {@link ISubmodelAggregatorObserverV2} when changes on Submodel occur
  *
- * @author fischer, jungjan, fried
+ * @author fischer, jungjan, fried, siebert
  *
  */
 public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregatorObserverV2> implements ISubmodelAggregator {

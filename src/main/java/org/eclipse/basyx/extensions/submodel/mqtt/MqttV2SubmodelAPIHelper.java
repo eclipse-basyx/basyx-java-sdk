@@ -42,10 +42,10 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 /**
  * A helper class containing string constants of topics used by the SubmodelAPI.
  * 
- * @author danish
+ * @author danish, siebert
  *
  */
-public class MqttSubmodelAPIHelperV2 {	
+public class MqttV2SubmodelAPIHelper {	
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";

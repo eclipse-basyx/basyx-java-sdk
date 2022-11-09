@@ -32,9 +32,9 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.observer.IObserver;
 
 /**
- * Interface for an observer of {@link ObservableAASRegistryService}
+ * Interface for an observer of {@link ObservableAASRegistryServiceV2}
  * 
- * @author haque
+ * @author haque, siebert
  *
  */
 public interface IAASRegistryServiceObserverV2 extends IObserver {

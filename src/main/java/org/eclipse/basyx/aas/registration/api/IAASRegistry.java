@@ -26,7 +26,6 @@ package org.eclipse.basyx.aas.registration.api;
 
 import java.util.List;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;

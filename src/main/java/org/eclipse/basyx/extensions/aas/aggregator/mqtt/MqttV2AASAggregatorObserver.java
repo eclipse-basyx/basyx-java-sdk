@@ -44,11 +44,11 @@ import org.slf4j.LoggerFactory;
  * Observer for the AASAggregator that triggers MQTT events for different
  * operations on the aggregator.
  *
- * @author haque, jungjan, fischer
+ * @author haque, jungjan, fischer, siebert
  *
  */
-public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAASAggregatorObserverV2 {
-	private static Logger logger = LoggerFactory.getLogger(MqttAASAggregatorObserverV2.class);
+public class MqttV2AASAggregatorObserver extends MqttEventService implements IAASAggregatorObserverV2 {
+	private static Logger logger = LoggerFactory.getLogger(MqttV2AASAggregatorObserver.class);
 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Aggregator Observer
@@ -59,7 +59,7 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	 *            unique client identifier
 	 * @throws MqttException
 	 */
-	public MqttAASAggregatorObserverV2(String serverEndpoint, String clientId) throws MqttException {
+	public MqttV2AASAggregatorObserver(String serverEndpoint, String clientId) throws MqttException {
 		super(serverEndpoint, clientId);
 		logger.info("Create new MQTT AAS Aggregator Observer for endpoint " + serverEndpoint);
 	}
@@ -77,7 +77,7 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	 *            password for authentication with broker
 	 * @throws MqttException
 	 */
-	public MqttAASAggregatorObserverV2(String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
+	public MqttV2AASAggregatorObserver(String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
 		super(serverEndpoint, clientId, user, pw);
 		logger.info("Create new MQTT AAS Aggregator Observer for endpoint " + serverEndpoint);
 	}
@@ -89,7 +89,7 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	 *            already configured client
 	 * @throws MqttException
 	 */
-	public MqttAASAggregatorObserverV2(MqttClient client) throws MqttException {
+	public MqttV2AASAggregatorObserver(MqttClient client) throws MqttException {
 		super(client);
 		logger.info("Create new MQTT AAS Aggregator Observer for endpoint " + client.getServerURI());
 	}
@@ -105,7 +105,7 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	 *            custom persistence strategy
 	 * @throws MqttException
 	 */
-	public MqttAASAggregatorObserverV2(String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
+	public MqttV2AASAggregatorObserver(String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
 		super(serverEndpoint, clientId, persistence);
 		logger.info("Create new MQTT AAS Aggregator Observer for endpoint " + serverEndpoint);
 	}
@@ -125,7 +125,7 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	 *            custom persistence strategy
 	 * @throws MqttException
 	 */
-	public MqttAASAggregatorObserverV2(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
+	public MqttV2AASAggregatorObserver(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
 		super(serverEndpoint, clientId, user, pw, persistence);
 		logger.info("Create new MQTT AAS Aggregator Observer for endpoint " + serverEndpoint);
 	}
@@ -134,9 +134,9 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	public void aasCreated(AssetAdministrationShell shell, String repoId) {
 		if (shell instanceof Map<?, ?>) {
 			IAssetAdministrationShell copy = removeConceptDictionaries(shell);		
-			sendMqttMessage(MqttAASAggregatorHelperV2.createCreateAASTopic(repoId), serializePayload(copy));
+			sendMqttMessage(MqttV2AASAggregatorHelper.createCreateAASTopic(repoId), serializePayload(copy));
 		} else {
-			sendMqttMessage(MqttAASAggregatorHelperV2.createCreateAASTopic(repoId), serializePayload(shell));
+			sendMqttMessage(MqttV2AASAggregatorHelper.createCreateAASTopic(repoId), serializePayload(shell));
 		}
 	}
 
@@ -144,9 +144,9 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	public void aasUpdated(AssetAdministrationShell shell, String repoId) {
 		if (shell instanceof Map<?, ?>) {
 			IAssetAdministrationShell copy = removeConceptDictionaries(shell);
-			sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(repoId), serializePayload(copy));
+			sendMqttMessage(MqttV2AASAggregatorHelper.createUpdateAASTopic(repoId), serializePayload(copy));
 		} else {
-			sendMqttMessage(MqttAASAggregatorHelperV2.createUpdateAASTopic(repoId), serializePayload(shell));
+			sendMqttMessage(MqttV2AASAggregatorHelper.createUpdateAASTopic(repoId), serializePayload(shell));
 		}
 	}
 
@@ -154,9 +154,9 @@ public class MqttAASAggregatorObserverV2 extends MqttEventService implements IAA
 	public void aasDeleted(IAssetAdministrationShell shell, String repoId) {
 		if (shell instanceof Map<?, ?>) {
 			IAssetAdministrationShell copy = removeConceptDictionaries(shell);
-			sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(repoId), serializePayload(copy));
+			sendMqttMessage(MqttV2AASAggregatorHelper.createDeleteAASTopic(repoId), serializePayload(copy));
 		} else {			
-			sendMqttMessage(MqttAASAggregatorHelperV2.createDeleteAASTopic(repoId), serializePayload(shell));
+			sendMqttMessage(MqttV2AASAggregatorHelper.createDeleteAASTopic(repoId), serializePayload(shell));
 		}
 	}
 	

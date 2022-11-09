@@ -36,13 +36,13 @@ import org.eclipse.paho.client.mqttv3.MqttException;
  * Factory decorating SubmodelAPI with MQTT events by wrapping an
  * ISubmodelAPIFactory
  * 
- * @author fried, danish
+ * @author fried, danish, siebert
  */
-public class MqttDecoratingSubmodelAPIFactoryV2 implements ISubmodelAPIFactory {
+public class MqttV2DecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;
 	private MqttClient client;
 
-	public MqttDecoratingSubmodelAPIFactoryV2(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) {
+	public MqttV2DecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 	}
@@ -51,7 +51,7 @@ public class MqttDecoratingSubmodelAPIFactoryV2 implements ISubmodelAPIFactory {
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
 		try {
 			ObservableSubmodelAPIV2 observedAPI = new ObservableSubmodelAPIV2(apiFactory.create(submodel));
-			MqttSubmodelAPIObserverV2 mqttSubmodelAPIObserver = new MqttSubmodelAPIObserverV2(client, MqttSubmodelAPIHelperV2.getAASId(observedAPI), MqttSubmodelAPIHelperV2.getSubmodelId(observedAPI));
+			MqttV2SubmodelAPIObserver mqttSubmodelAPIObserver = new MqttV2SubmodelAPIObserver(client, MqttV2SubmodelAPIHelper.getAASId(observedAPI), MqttV2SubmodelAPIHelper.getSubmodelId(observedAPI), observedAPI.getRepositoryId());
 			observedAPI.addObserver(mqttSubmodelAPIObserver);
 			return observedAPI;
 		} catch (MqttException e) {

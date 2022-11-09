@@ -28,42 +28,36 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
+import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttV2SubmodelAggregatorHelper;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
-import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserver;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserverV2;
-import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPIV2;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link ISubmodelAPIObserver} Triggers MQTT events for
+ * Implementation of {@link ISubmodelAPIObserverV2} Triggers MQTT events for
  * different CRUD operations on the submodel.
  * 
- * @author conradi, danish
+ * @author conradi, danish, siebert
  *
  */
-public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubmodelAPIObserverV2 {
-	private static Logger logger = LoggerFactory.getLogger(MqttSubmodelAPIObserverV2.class);
+public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubmodelAPIObserverV2 {
+	private static Logger logger = LoggerFactory.getLogger(MqttV2SubmodelAPIObserver.class);
 
 	// Submodel Element whitelist for filtering
 	protected boolean useWhitelist = false;
 	protected Set<String> whitelist = new HashSet<>();
 	
-	private IIdentifier aasIdentifier;
-	private IIdentifier submodelIdentifier;
 
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
@@ -75,15 +69,12 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	 * 
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAPIObserverV2(MqttClient client, IIdentifier aasId, IIdentifier submodelIdentifier) throws MqttException {
+	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, IIdentifier submodelIdentifier, String repoId) throws MqttException {
 		super(client);
 		
 		connectMqttClientIfRequired();
 		
-		this.aasIdentifier = aasId;
-		this.submodelIdentifier = submodelIdentifier;
-		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
+		sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), submodelIdentifier.getId());
 	}
 	
 	/**
@@ -97,97 +88,14 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	 * 
 	 * @throws MqttException
 	 */
-	public MqttSubmodelAPIObserverV2(MqttClient client, IIdentifier aasId, IIdentifier submodelIdentifier, MqttConnectOptions options) throws MqttException {
+	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, IIdentifier submodelIdentifier, MqttConnectOptions options, String repoId) throws MqttException {
 		super(client);
 		
 		connectMqttClientIfRequired(options);
 		
-		this.aasIdentifier = aasId;
-		this.submodelIdentifier = submodelIdentifier;
-		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
+		sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), submodelIdentifier.getId());
 	}
-	
-	/**
-	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
-	 * 
-	 * @param observedAPI
-	 *            The underlying submodelAPI
-	 * @throws MqttException
-	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserverV2(MqttClient, IIdentifier, IIdentifier)} instead.
-	 */
-	@Deprecated
-	public MqttSubmodelAPIObserverV2(ObservableSubmodelAPIV2 observedAPI, String serverEndpoint, String clientId) throws MqttException {
-		this(observedAPI, serverEndpoint, clientId, new MqttDefaultFilePersistence());
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension on top of another SubmodelAPI with
-	 * a custom persistence strategy
-	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserverV2(MqttClient, IIdentifier, IIdentifier)} instead.
-	 */
-	@Deprecated
-	public MqttSubmodelAPIObserverV2(ObservableSubmodelAPIV2 observedAPI, String brokerEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
-		this(new MqttClient(brokerEndpoint, clientId, persistence), MqttSubmodelAPIHelperV2.getAASId(observedAPI), MqttSubmodelAPIHelperV2.getSubmodelId(observedAPI));
-		logger.info("Create new MQTT submodel for endpoint " + brokerEndpoint);
 		
-		observedAPI.addObserver(this);
-		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
-	 * 
-	 * @param observedAPI
-	 *            The underlying submodelAPI
-	 * @throws MqttException
-	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserverV2(MqttClient, IIdentifier, IIdentifier, MqttConnectOptions)} instead.
-	 */
-	@Deprecated
-	public MqttSubmodelAPIObserverV2(ObservableSubmodelAPIV2 observedAPI, String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
-		this(observedAPI, serverEndpoint, clientId, user, pw, new MqttDefaultFilePersistence());
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension on top of another SubmodelAPI with
-	 * credentials and persistency strategy
-	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserverV2(MqttClient, IIdentifier, IIdentifier, MqttConnectOptions)} instead.
-	 */
-	@Deprecated
-	public MqttSubmodelAPIObserverV2(ObservableSubmodelAPIV2 observedAPI, String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
-		this(new MqttClient(serverEndpoint, clientId, persistence), MqttSubmodelAPIHelperV2.getAASId(observedAPI), MqttSubmodelAPIHelperV2.getSubmodelId(observedAPI), MqttSubmodelAPIHelper.getMqttConnectOptions(user, pw));
-		logger.info("Create new MQTT submodel for endpoint " + serverEndpoint);
-		
-		observedAPI.addObserver(this);
-		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension on top of another SubmodelAPI.
-	 * 
-	 * @param observedAPI
-	 *            The underlying submodelAPI
-	 * @param client
-	 *            An already connected mqtt client
-	 * @throws MqttException
-	 * 
-	 * @deprecated This constructor is deprecated please use {@link #MqttSubmodelAPIObserverV2(MqttClient, IIdentifier, IIdentifier)} instead.
-	 */
-	@Deprecated
-	public MqttSubmodelAPIObserverV2(ObservableSubmodelAPIV2 observedAPI, MqttClient client) throws MqttException {
-		this(client, MqttSubmodelAPIHelperV2.getAASId(observedAPI), MqttSubmodelAPIHelperV2.getSubmodelId(observedAPI));
-		
-		observedAPI.addObserver(this);
-		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
-	}
-	
 	private void connectMqttClientIfRequired() throws MqttException {
 		if(!mqttClient.isConnected()) {
 			mqttClient.connect();
@@ -242,7 +150,7 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId, String repoId) {	
 		if (newValue instanceof Map<?, ?> && filter(idShortPath)) {
 			ISubmodelElement submodelElement = setValueNull(newValue);
-			sendMqttMessage(MqttSubmodelAPIHelperV2.createCreateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(submodelElement));
+			sendMqttMessage(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(submodelElement));
 		}
 	}
 
@@ -250,7 +158,7 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId) {
 		if (submodelElement instanceof Map<?, ?> && filter(idShortPath)) {
 			ISubmodelElement sme = setValueNull(submodelElement);
-			sendMqttMessage(MqttSubmodelAPIHelperV2.createDeleteSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
+			sendMqttMessage(MqttV2SubmodelAPIHelper.createDeleteSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
 		}
 	}
 
@@ -258,14 +166,14 @@ public class MqttSubmodelAPIObserverV2 extends MqttEventService implements ISubm
 	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId) {
 		if (submodelElement instanceof Map<?, ?> && filter(idShortPath)) {
 			ISubmodelElement sme = setValueNull(submodelElement);
-			sendMqttMessage(MqttSubmodelAPIHelperV2.createUpdateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
+			sendMqttMessage(MqttV2SubmodelAPIHelper.createUpdateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
 		}
 	}
 	
 	@Override
 	public void elementValue(String idShortPath, Object value, String aasId, String submodelId, String repoId) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelperV2.createSubmodelElementValueTopic(aasId, submodelId, idShortPath, repoId), serializePayload(value));			
+			sendMqttMessage(MqttV2SubmodelAPIHelper.createSubmodelElementValueTopic(aasId, submodelId, idShortPath, repoId), serializePayload(value));			
 		}
 	}
 
