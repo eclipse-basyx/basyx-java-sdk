@@ -38,10 +38,6 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  *
  */
 public interface IAASRegistry {
-	
-	public String getRegistryId();
-
-	public void setRegistryId(String id);
 
 	/**
 	 * Register AAS descriptor in registry, delete old registration

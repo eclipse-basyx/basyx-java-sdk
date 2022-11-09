@@ -89,7 +89,7 @@ public class TestMqttV2AASRegistryServiceObserver {
 
 		// Create underlying registry service
 		IAASRegistry registryService = new InMemoryRegistry();
-		observedAPI = new ObservableAASRegistryServiceV2(registryService);
+		observedAPI = new ObservableAASRegistryServiceV2(registryService, "aas-registry");
 
 		mqttObserver = new MqttV2AASRegistryServiceObserver("tcp://localhost:1884", "testClient");
 		observedAPI.addObserver(mqttObserver);

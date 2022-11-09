@@ -42,20 +42,9 @@ import org.slf4j.LoggerFactory;
 public class AASRegistry implements IAASRegistry {
 	private static Logger logger = LoggerFactory.getLogger(AASRegistry.class);
 	protected IRegistryHandler handler;
-	private String registryId = "basyx-registry";
 
 	public AASRegistry(IRegistryHandler handler) {
 		this.handler = handler;
-	}
-
-	@Override
-	public String getRegistryId() {
-		return registryId;
-	}
-
-	@Override
-	public void setRegistryId(String id) {
-		this.registryId = id;
 	}
 
 	@Override

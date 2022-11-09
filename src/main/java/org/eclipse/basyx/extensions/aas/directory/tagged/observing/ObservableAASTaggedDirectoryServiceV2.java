@@ -43,8 +43,8 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor
 public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistryServiceV2 implements IAASTaggedDirectory {
 	private IAASTaggedDirectory taggedDirectory;
 
-	public ObservableAASTaggedDirectoryServiceV2(IAASTaggedDirectory taggedDirectory) {
-		super(taggedDirectory);
+	public ObservableAASTaggedDirectoryServiceV2(IAASTaggedDirectory taggedDirectory, String registryId) {
+		super(taggedDirectory, registryId);
 		this.taggedDirectory = taggedDirectory;
 	}
 

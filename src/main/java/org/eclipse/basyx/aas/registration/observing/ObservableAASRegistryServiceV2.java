@@ -47,19 +47,15 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServiceObserverV2> implements IAASRegistry {
 
 	private IAASRegistry aasRegistry;
+	private String registryId = "aas-registry";
 
-	public ObservableAASRegistryServiceV2(IAASRegistry registry) {
+	public ObservableAASRegistryServiceV2(IAASRegistry registry, String registryId) {
 		this.aasRegistry = registry;
+		this.registryId = registryId;
 	}
-
-	@Override
+	
 	public String getRegistryId() {
-		return aasRegistry.getRegistryId();
-	}
-
-	@Override
-	public void setRegistryId(String id) {
-		aasRegistry.setRegistryId(id);
+	  return this.registryId;
 	}
 
 	@Override
@@ -67,10 +63,10 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 		try {
 			aasRegistry.lookupAAS(deviceAASDescriptor.getIdentifier());
 			aasRegistry.register(deviceAASDescriptor);
-			observers.stream().forEach(o -> o.aasUpdated(deviceAASDescriptor, aasRegistry.getRegistryId()));
+			observers.stream().forEach(o -> o.aasUpdated(deviceAASDescriptor, this.registryId));
 		} catch(ResourceNotFoundException e) {
 			aasRegistry.register(deviceAASDescriptor);
-			observers.stream().forEach(o -> o.aasRegistered(deviceAASDescriptor, aasRegistry.getRegistryId()));
+			observers.stream().forEach(o -> o.aasRegistered(deviceAASDescriptor, this.registryId));
 		}
 	}
 
@@ -80,10 +76,10 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 		try {
 			aasRegistry.lookupSubmodel(aas, smDescriptor.getIdentifier());
 			aasRegistry.register(aas, smDescriptor);
-			observers.stream().forEach(o -> o.submodelUpdated(aas, smDescriptor, aasRegistry.getRegistryId()));
+			observers.stream().forEach(o -> o.submodelUpdated(aas, smDescriptor, this.registryId));
 		} catch(ResourceNotFoundException e) {			
 			aasRegistry.register(aas, smDescriptor);
-			observers.stream().forEach(o -> o.submodelRegistered(aas, smDescriptor, aasRegistry.getRegistryId()));
+			observers.stream().forEach(o -> o.submodelRegistered(aas, smDescriptor, this.registryId));
 		}
 	}
 
@@ -91,14 +87,14 @@ public class ObservableAASRegistryServiceV2 extends Observable<IAASRegistryServi
 	public void delete(IIdentifier aasId) throws ProviderException {
 		AASDescriptor aasDescriptor = lookupAAS(aasId);
 		aasRegistry.delete(aasId);
-		observers.stream().forEach(o -> o.aasDeleted(aasDescriptor, aasRegistry.getRegistryId()));
+		observers.stream().forEach(o -> o.aasDeleted(aasDescriptor, this.registryId));
 	}
 
 	@Override
 	public void delete(IIdentifier aasId, IIdentifier smId) throws ProviderException {
 		SubmodelDescriptor smDescriptor = lookupSubmodel(aasId, smId);
 		aasRegistry.delete(aasId, smId);
-		observers.stream().forEach(o -> o.submodelDeleted(aasId, smDescriptor, aasRegistry.getRegistryId()));
+		observers.stream().forEach(o -> o.submodelDeleted(aasId, smDescriptor, this.registryId));
 	}
 
 	@Override
