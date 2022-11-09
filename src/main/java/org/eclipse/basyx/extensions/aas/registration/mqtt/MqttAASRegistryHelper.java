@@ -49,4 +49,14 @@ public class MqttAASRegistryHelper {
 	public static String createSubmodelDescriptorOfAASChangedPayload(IIdentifier aasId, IIdentifier smId) {
 		return "(" + aasId.getId() + "," + smId.getId() + ")";
 	}
+
+	/**
+	 * This function creates the payload for changed aas for a mqtt message
+	 * 
+	 * @param aasId
+	 * @return
+	 */
+	public static String createRegisteredAASChangedPayload(String aasId) {
+		return aasId;
+	}
 }

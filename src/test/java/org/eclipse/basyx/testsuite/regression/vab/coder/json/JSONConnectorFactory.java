@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,29 +22,23 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
+
+
+package org.eclipse.basyx.testsuite.regression.vab.coder.json;
+
+import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
+import org.eclipse.basyx.vab.coder.json.provider.JSONProvider;
+import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
- * A helper class containing string constants of topics used by the
- * AASAggregator.
+ * Helper class for simulating JSON network transfer
  * 
- * @author danish
+ * @author schnicke
  *
  */
-public class MqttAASAggregatorHelper {
-	public static final String TOPIC_CREATEAAS = "BaSyxAggregator_createdAAS";
-	public static final String TOPIC_DELETEAAS = "BaSyxAggregator_deletedAAS";
-	public static final String TOPIC_UPDATEAAS = "BaSyxAggregator_updatedAAS";
+public class JSONConnectorFactory {
 
-	/***
-	 * Create payload for changed aas which includes creating, deleting, and
-	 * updating the corresponding aas.
-	 * 
-	 * @param aasId
-	 *            - the id of the changed aas
-	 * @return Mqtt-message payload
-	 */
-	public static String createAASChangedPayload(String aasId) {
-		return aasId;
+	public JSONConnector create(IModelProvider provider) {
+		return new JSONConnector(new IBasyxConnectorFacade<>(new JSONProvider<IModelProvider>(provider)));
 	}
 }
