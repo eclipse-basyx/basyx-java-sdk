@@ -58,7 +58,6 @@ public class Qualifier extends Constraint implements IQualifier {
 	 * Constructor
 	 */
 	public Qualifier() {
-		// Add model type
 		putAll(new ModelType(MODELTYPE));
 	}
 
@@ -71,7 +70,7 @@ public class Qualifier extends Constraint implements IQualifier {
 	 */
 	@Deprecated
 	public Qualifier(String type, String valueType) {
-		this(type, null, valueType, null);
+		this(type, null, ValueType.fromString(valueType), null);
 	}
 
 
@@ -86,11 +85,7 @@ public class Qualifier extends Constraint implements IQualifier {
 	 */
 	@Deprecated
 	public Qualifier(String type, String value, String valueType, Reference valueId) {
-		put(TYPE, type);
-		put(VALUE, ValueTypeHelper.prepareForSerialization(value));
-		put(VALUEID, valueId);
-		put(VALUETYPE, valueType);
-		putAll(new ModelType(MODELTYPE));
+		this(type, value, ValueType.fromString(valueType), valueId);
 	}
 
 	public Qualifier(String type, String value, ValueType valueType, Reference valueId) {
