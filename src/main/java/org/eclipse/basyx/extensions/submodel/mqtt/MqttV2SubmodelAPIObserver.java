@@ -77,11 +77,13 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 		
 		connectMqttClientIfRequired();
 		
+		String id = aasId == null ? null : aasId.getId();
+
 		if (submodel instanceof Map<?, ?>) {
           ISubmodel copy = removeSubmodelElements(submodel);
-          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), serializePayload(copy));
+          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(id, repoId), serializePayload(copy));
         } else {            
-          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), serializePayload(submodel));
+          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(id, repoId), serializePayload(submodel));
         }
 	}
 	
