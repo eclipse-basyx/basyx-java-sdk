@@ -56,10 +56,10 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 	  try {
         taggedDirectory.lookupAAS(descriptor.getIdentifier());
         taggedDirectory.register(descriptor);
-        observers.stream().forEach(o -> o.aasUpdated(descriptor, taggedDirectory.getRegistryId()));
+        observers.stream().forEach(o -> o.aasUpdated(descriptor, super.getRegistryId()));
       } catch(ResourceNotFoundException e) {
         taggedDirectory.register(descriptor);
-        observers.stream().forEach(o -> o.aasRegistered(descriptor, taggedDirectory.getRegistryId()));
+        observers.stream().forEach(o -> o.aasRegistered(descriptor, super.getRegistryId()));
       }
 	}
 	
@@ -68,10 +68,10 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 	    try {	      
 	      taggedDirectory.lookupSubmodel(aas, descriptor.getIdentifier());
 	      taggedDirectory.register(aas, descriptor);
-	      observers.stream().forEach(o -> o.submodelUpdated(aas, descriptor, taggedDirectory.getRegistryId()));
+	      observers.stream().forEach(o -> o.submodelUpdated(aas, descriptor, super.getRegistryId()));
 	    } catch (ResourceNotFoundException e) {
 	      taggedDirectory.register(aas, descriptor);
-          observers.stream().forEach(o -> o.submodelRegistered(aas, descriptor, taggedDirectory.getRegistryId()));
+          observers.stream().forEach(o -> o.submodelRegistered(aas, descriptor, super.getRegistryId()));
 	    }
 	}
 
