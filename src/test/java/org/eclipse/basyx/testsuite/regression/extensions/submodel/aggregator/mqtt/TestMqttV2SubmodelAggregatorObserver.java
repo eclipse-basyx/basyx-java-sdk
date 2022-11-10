@@ -122,7 +122,7 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator.createSubmodel(newSubmodel);
 
 		assertEquals(removeSubmodelElements(newSubmodel), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(null, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -132,7 +132,7 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator.updateSubmodel(submodel);
 
 		assertEquals(removeSubmodelElements(submodel), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAggregatorHelper.createUpdateSubmodelTopic(null, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAggregatorHelper.createUpdateSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -140,7 +140,7 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 
 		assertEquals(submodel, deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAggregatorHelper.createDeleteSubmodelTopic(null, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAggregatorHelper.createDeleteSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 
 		assertEquals(submodel, deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAggregatorHelper.createDeleteSubmodelTopic(null, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAggregatorHelper.createDeleteSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

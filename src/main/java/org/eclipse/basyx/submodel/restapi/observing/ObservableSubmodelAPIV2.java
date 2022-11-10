@@ -49,10 +49,13 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 
 	public ObservableSubmodelAPIV2(ISubmodelAPI observerdAPI, String aasServerId) {
 		submodelAPI = observerdAPI;
-		this.aasServerId = aasServerId;
-		
+		this.aasServerId = aasServerId;		
 	}
 
+	public String getAasServerId() {
+	  return this.aasServerId;
+	}
+	
 	@Override
 	public ISubmodel getSubmodel() {
 		return submodelAPI.getSubmodel();

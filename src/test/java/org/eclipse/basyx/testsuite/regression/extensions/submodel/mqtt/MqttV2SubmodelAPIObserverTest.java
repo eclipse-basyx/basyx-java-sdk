@@ -40,6 +40,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPIV2;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
@@ -76,6 +77,7 @@ public class MqttV2SubmodelAPIObserverTest {
 	private MqttTestListener listener;
 	
 	private static Submodel submodel;
+	private static ObservableSubmodelAPIV2 observable;
 
 	/**
 	 * Sets up the MQTT broker and submodelAPI for tests
@@ -94,6 +96,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		submodel.setParent(parentRef);
 		
 		observableAPI = createObservableSubmodelAPI();
+		observable = new ObservableSubmodelAPIV2(observableAPI, "aas-server");
 	}
 
 	private static ISubmodelAPI createObservableSubmodelAPI() throws MqttException {
@@ -124,7 +127,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -139,7 +142,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(idShortPath, prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
 	}
 	
 	@Test
@@ -152,7 +155,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.getSubmodelElementValue(elemIdShort);
 		
 		assertEquals(prop.getValue(), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -164,7 +167,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.deleteSubmodelElement(idShortPath);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -176,7 +179,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.updateSubmodelElement(idShortPath, false);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, "aas-server"), listener.lastTopic);
+		assertEquals(MqttV2SubmodelAPIHelper.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

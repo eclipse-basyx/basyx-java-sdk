@@ -55,6 +55,10 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 		this.submodelAggregator = aggregator;
 		this.aasServerId = aasServerId;
 	}
+	
+	public String getAasServerId() {
+	  return this.aasServerId;
+	}
 
 	@Override
 	public Collection<ISubmodel> getSubmodelList() {
