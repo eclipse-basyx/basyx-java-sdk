@@ -30,10 +30,12 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttV2SubmodelAggregatorHelper;
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserverV2;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
@@ -65,16 +67,22 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	 * @param client
 	 *            An already connected mqtt client
 	 * @param aasId 
-	 * @param submodelIdentifier
+	 * @param submodel
+	 * @param repoId
 	 * 
 	 * @throws MqttException
 	 */
-	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, IIdentifier submodelIdentifier, String repoId) throws MqttException {
+	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, Submodel submodel, String repoId) throws MqttException {
 		super(client);
 		
 		connectMqttClientIfRequired();
 		
-		sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), submodelIdentifier.getId());
+		if (submodel instanceof Map<?, ?>) {
+          ISubmodel copy = removeSubmodelElements(submodel);
+          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), serializePayload(copy));
+        } else {            
+          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), serializePayload(submodel));
+        }
 	}
 	
 	/**
@@ -83,17 +91,23 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	 * @param client
 	 *            An already connected mqtt client
 	 * @param aasId 
-	 * @param submodelIdentifier
+	 * @param submodel
 	 * @param options
+	 * @param repoId
 	 * 
 	 * @throws MqttException
 	 */
-	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, IIdentifier submodelIdentifier, MqttConnectOptions options, String repoId) throws MqttException {
+	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, Submodel submodel, MqttConnectOptions options, String repoId) throws MqttException {
 		super(client);
 		
 		connectMqttClientIfRequired(options);
 		
-		sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), submodelIdentifier.getId());
+		if (submodel instanceof Map<?, ?>) {
+          ISubmodel copy = removeSubmodelElements(submodel);
+          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), serializePayload(copy));
+        } else {            
+          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), serializePayload(submodel));
+        }
 	}
 		
 	private void connectMqttClientIfRequired() throws MqttException {
@@ -202,5 +216,16 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 		
 		return tools.serialize(payload);
 	}
+	
+	private ISubmodel removeSubmodelElements(ISubmodel submodel) {
+      Map<String, Object> map = SubmodelElementMapCollectionConverter.smToMap((Submodel) submodel);
+      Submodel copy =  Submodel.createAsFacade(map);
+          
+      for (ISubmodelElement sme: submodel.getSubmodelElements().values()) {
+          copy.deleteSubmodelElement(sme.getIdShort());
+      }
+      
+      return copy;
+  }
 	
 }
