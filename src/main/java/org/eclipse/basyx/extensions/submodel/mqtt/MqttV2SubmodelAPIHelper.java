@@ -141,7 +141,7 @@ public class MqttV2SubmodelAPIHelper {
 				return createIdentifier(keys);
 			}
 		}
-		throw new RuntimeException("Could not find parent reference for the submodel '" + submodel.getIdShort() + "'");
+		return null;
 	}
 
 	private static boolean doesKeysExists(List<IKey> keys) {

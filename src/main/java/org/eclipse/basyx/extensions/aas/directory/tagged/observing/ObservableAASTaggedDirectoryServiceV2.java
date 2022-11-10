@@ -31,6 +31,9 @@ import org.eclipse.basyx.aas.registration.observing.IAASRegistryServiceObserver;
 import org.eclipse.basyx.aas.registration.observing.ObservableAASRegistryServiceV2;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 /**
  *
@@ -50,7 +53,26 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 
 	@Override
 	public void register(TaggedAASDescriptor descriptor) {
-		taggedDirectory.register(descriptor);
+	  try {
+        taggedDirectory.lookupAAS(descriptor.getIdentifier());
+        taggedDirectory.register(descriptor);
+        observers.stream().forEach(o -> o.aasUpdated(descriptor, taggedDirectory.getRegistryId()));
+      } catch(ResourceNotFoundException e) {
+        taggedDirectory.register(descriptor);
+        observers.stream().forEach(o -> o.aasRegistered(descriptor, taggedDirectory.getRegistryId()));
+      }
+	}
+	
+	@Override
+	public void registerSubmodel(IIdentifier aas, TaggedSubmodelDescriptor descriptor) {
+	    try {	      
+	      taggedDirectory.lookupSubmodel(aas, descriptor.getIdentifier());
+	      taggedDirectory.register(aas, descriptor);
+	      observers.stream().forEach(o -> o.submodelUpdated(aas, descriptor, taggedDirectory.getRegistryId()));
+	    } catch (ResourceNotFoundException e) {
+	      taggedDirectory.register(aas, descriptor);
+          observers.stream().forEach(o -> o.submodelRegistered(aas, descriptor, taggedDirectory.getRegistryId()));
+	    }
 	}
 
 	@Override
@@ -61,5 +83,20 @@ public class ObservableAASTaggedDirectoryServiceV2 extends ObservableAASRegistry
 	@Override
 	public Set<TaggedAASDescriptor> lookupTags(Set<String> tags) {
 		return taggedDirectory.lookupTags(tags);
+	}
+	
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(String submodelTag) {
+	    return taggedDirectory.lookupSubmodelTag(submodelTag);
+	}
+	
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(Set<String> submodelTags) {
+	    return taggedDirectory.lookupSubmodelTags(submodelTags);
+	}
+	
+	@Override
+	public Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(Set<String> aasTags, Set<String> submodelTags) {
+	    return taggedDirectory.lookupBothAasAndSubmodelTags(aasTags, submodelTags);
 	}
 }
