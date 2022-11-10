@@ -48,7 +48,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 public class Entity extends SubmodelElement implements IEntity {
 
 	public static final String MODELTYPE = "Entity";
-	public static final String STATEMENT = "statement";
+	public static final String STATEMENT = "statements";
 	public static final String ENTITY_TYPE = "entityType";
 	public static final String ASSET = "asset";
 
