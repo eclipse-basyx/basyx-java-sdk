@@ -28,14 +28,16 @@ import java.util.Optional;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
-import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
+import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication.CodeAuthenticationAreaHandler;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
+import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 /**
  * Implementation variant for the AASAPI that authorizes each access to the API
@@ -86,12 +88,11 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	}
 
 	protected IAssetAdministrationShell enforceGetAAS() throws InhibitException {
-		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
-		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
+		final IIdentifier aasId = getAasIdUnsecured();
 		return aasAPIAuthorizer.enforceGetAAS(
 				subjectInformationProvider.get(),
 				aasId,
-				() -> aas
+				decoratedAASAPI::getAAS
 		);
 	}
 
@@ -111,8 +112,7 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	}
 
 	protected void enforceAddSubmodel(final IReference smId) throws InhibitException {
-		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
-		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
+		final IIdentifier aasId = getAasIdUnsecured();
 		aasAPIAuthorizer.enforceAddSubmodel(
 				subjectInformationProvider.get(),
 				aasId,
@@ -136,12 +136,23 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	}
 
 	protected void enforceRemoveSubmodel(final String smIdShortPath) throws InhibitException {
-		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
-		final IIdentifier aasId = Optional.ofNullable(aas).map(IIdentifiable::getIdentification).orElse(null);
+		final IIdentifier aasId = getAasIdUnsecured();
 		aasAPIAuthorizer.enforceRemoveSubmodel(
 				subjectInformationProvider.get(),
 				aasId,
 				smIdShortPath
 		);
+	}
+
+	private IIdentifier getAasIdUnsecured() throws ResourceNotFoundException {
+		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
+
+		if (aas == null) {
+			return null;
+		}
+
+		try (final CodeAuthenticationAreaHandler ignored = CodeAuthentication.enterCodeAuthenticationArea()) {
+			return aas.getIdentification();
+		}
 	}
 }

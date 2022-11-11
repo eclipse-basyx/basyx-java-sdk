@@ -33,6 +33,7 @@ import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistryScopes;
 import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAASRegistry;
 import org.eclipse.basyx.extensions.aas.registration.authorization.SimpleRbacAASRegistryAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
@@ -72,23 +73,17 @@ public class TestAuthorizedAASRegistry {
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASRegistryScopes.READ_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASRegistryScopes.WRITE_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				AASRegistryScopes.READ_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		testSubject = new AuthorizedAASRegistry<>(registryMock,
 				new SimpleRbacAASRegistryAuthorizer<>(

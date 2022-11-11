@@ -34,12 +34,13 @@ import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorScopes;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.AuthorizedAASAggregator;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.SimpleRbacAASAggregatorAuthorizer;
-import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
-import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
+import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.KeycloakRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetRbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
+import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
 import org.junit.After;
@@ -72,23 +73,17 @@ public class TestAuthorizedAASAggregator {
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASAggregatorScopes.READ_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASAggregatorScopes.WRITE_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				AASAggregatorScopes.READ_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		testSubject = new AuthorizedAASAggregator<>(
 				aggregatorMock,

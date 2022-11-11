@@ -26,10 +26,12 @@ package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
 import java.util.Collection;
 import java.util.function.Supplier;
+import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.IRbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacUtil;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -50,82 +52,39 @@ public class SimpleRbacSubmodelAggregatorAuthorizer<SubjectInformationType> impl
 
   @Override
   public Collection<ISubmodel> enforceGetSubmodelList(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<Collection<ISubmodel>> smListSupplier) throws InhibitException {
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
+
     return smListSupplier.get();
   }
 
   @Override
   public ISubmodel enforceGetSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException {
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
+
     return smSupplier.get();
   }
 
   @Override
-  public ISubmodelAPI enforceGetSubmodelAPI(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodelAPI> smAPISupplier) throws InhibitException {
-    if(!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
-      throw new InhibitException();
-    }
+  public ISubmodelAPI enforceGetSubmodelAPI(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodelAPI> smAPISupplier) throws InhibitException {
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
+
     return smAPISupplier.get();
   }
 
   @Override
   public void enforceCreateSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    if(!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
   }
 
   @Override
   public void enforceUpdateSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    if(!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
   }
 
   @Override
   public void enforceDeleteSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    if(!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        SubmodelAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        IdUtil.getIdentifierId(smId),
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
   }
 }

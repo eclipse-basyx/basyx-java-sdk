@@ -34,6 +34,7 @@ import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.aas.api.authorization.AASAPIScopes;
 import org.eclipse.basyx.extensions.aas.api.authorization.AuthorizedAASAPI;
 import org.eclipse.basyx.extensions.aas.api.authorization.SimpleRbacAASAPIAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
@@ -85,23 +86,17 @@ public class TestAuthorizedAASAPI {
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASAPIScopes.READ_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				AASAPIScopes.WRITE_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				AASAPIScopes.READ_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		testSubject = new AuthorizedAASAPI<>(
 				apiMock,

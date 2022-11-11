@@ -3,8 +3,12 @@ package org.eclipse.basyx.submodel.aggregator;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
+import org.eclipse.basyx.extensions.submodel.aggregator.authorization.AuthorizedSubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -13,14 +17,18 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class for aggregating local submodels based on the ISubmodelAPI
  * 
- * @author espen
+ * @author espen, wege
  *
  */
 public class SubmodelAggregator implements ISubmodelAggregator {
+	private static final Logger logger = LoggerFactory.getLogger(SubmodelAggregator.class);
+
 	protected Map<String, ISubmodelAPI> smApiMap = new HashMap<>();
 
 	/**
@@ -38,7 +46,14 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 
 	@Override
 	public Collection<ISubmodel> getSubmodelList() {
-		return smApiMap.values().stream().map(ISubmodelAPI::getSubmodel).collect(Collectors.toList());
+		return smApiMap.values().stream().map(smApi -> {
+			try {
+				return smApi.getSubmodel();
+			} catch (final NotAuthorized e) {
+				logger.info(e.getMessage(), e);
+			}
+			return null;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	@Override

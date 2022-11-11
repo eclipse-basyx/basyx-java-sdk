@@ -26,6 +26,9 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.extensions.aas.aggregator.authorization.AuthorizedAASAggregator;
+import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityInhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityUtil;
 import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -46,29 +49,18 @@ public class GrantedAuthorityAASAPIAuthorizer<SubjectInformationType> implements
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAPI.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.READ_AUTHORITY);
+
     return aasSupplier.get();
   }
 
   @Override
   public void enforceAddSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IReference smId) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAPI.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.WRITE_AUTHORITY);
   }
 
   @Override
   public void enforceRemoveSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final String smIdShortPath) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAPI.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.WRITE_AUTHORITY);
   }
 }

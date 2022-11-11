@@ -28,10 +28,10 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityUtil;
 import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Scope based implementation for {@link IAASRegistryAuthorizer}.
@@ -47,77 +47,49 @@ public class GrantedAuthorityAASRegistryAuthorizer<SubjectInformationType> imple
 
   @Override
   public void enforceRegisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASRegistry.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
   }
 
   @Override
   public void enforceRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASRegistry.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
   }
 
   @Override
   public void enforceUnregisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASRegistry.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
   }
 
   @Override
   public void enforceUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASRegistry.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
   }
 
   @Override
   public List<AASDescriptor> enforceLookupAll(final SubjectInformationType subjectInformation, final Supplier<List<AASDescriptor>> aasDescriptorsSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASRegistry.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+
     return aasDescriptorsSupplier.get();
   }
 
   @Override
   public AASDescriptor enforceLookupAas(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<AASDescriptor> aasSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASRegistry.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+
     return aasSupplier.get();
   }
 
   @Override
   public List<SubmodelDescriptor> enforceLookupSubmodels(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<List<SubmodelDescriptor>> submodelDescriptorsSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASRegistry.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+
     return submodelDescriptorsSupplier.get();
   }
 
   @Override
   public SubmodelDescriptor enforceLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASRegistry.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+
     return smSupplier.get();
   }
 }

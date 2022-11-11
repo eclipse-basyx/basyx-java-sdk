@@ -33,11 +33,14 @@ import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
+import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication.CodeAuthenticationAreaHandler;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -198,22 +201,25 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 				() -> decoratedRegistry.lookupAAS(aasId)
 		);
 
-		if (enforcedAAS != null) {
-			final AASDescriptor enforcedAASDescriptor = new AASDescriptor(enforcedAAS);
-			final List<SubmodelDescriptor> submodelDescriptorsToRemove = enforcedAASDescriptor.getSubmodelDescriptors().stream().map(submodelDescriptor -> {
-				final IIdentifier smId = submodelDescriptor.getIdentifier();
-				try {
-					return enforceLookupSubmodel(aasId, smId);
-				} catch (final InhibitException e) {
-					// remove submodel descriptor if enforcement was unsuccessful
-					logger.info(e.getMessage(), e);
-				}
-				return null;
-			}).filter(Objects::nonNull).collect(Collectors.toList());
-			submodelDescriptorsToRemove.forEach(submodelDescriptor -> enforcedAASDescriptor.removeSubmodelDescriptor(submodelDescriptor.getIdentifier()));
-			return enforcedAASDescriptor;
+		if (enforcedAAS == null) {
+			throw new ResourceNotFoundException("AAS with Id " + aasId.getId() + " does not exist");
 		}
-		return enforcedAAS;
+
+		final AASDescriptor enforcedAASDescriptor = new AASDescriptor(enforcedAAS);
+		final List<SubmodelDescriptor> submodelDescriptorsToRemove = enforcedAASDescriptor.getSubmodelDescriptors().stream().map(submodelDescriptor -> {
+			final IIdentifier smId = submodelDescriptor.getIdentifier();
+			try {
+				return enforceLookupSubmodel(aasId, smId);
+			} catch (final InhibitException e) {
+				// remove submodel descriptor if enforcement was unsuccessful
+				logger.info(e.getMessage(), e);
+			}
+			return null;
+		}).filter(Objects::nonNull).collect(Collectors.toList());
+
+		submodelDescriptorsToRemove.forEach(submodelDescriptor -> enforcedAASDescriptor.removeSubmodelDescriptor(submodelDescriptor.getIdentifier()));
+
+		return enforcedAASDescriptor;
 	}
 
 	@Override

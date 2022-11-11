@@ -31,9 +31,17 @@ package org.eclipse.basyx.extensions.shared.authorization;
  * @author wege
  */
 public class InhibitException extends Exception {
-  public InhibitException() {}
+  private InhibitException() {}
 
-  public InhibitException(final Exception e) {
-    super(e);
+  public InhibitException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
+
+  public InhibitException(final String message) {
+    super(message);
+  }
+
+  public InhibitException reductSmIdAsSemanticIdOfSmIdShortPath(final String smIdShortPath) {
+    return this;
   }
 }

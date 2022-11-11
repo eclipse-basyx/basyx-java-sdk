@@ -25,7 +25,9 @@
 package org.eclipse.basyx.extensions.shared.authorization;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,26 +48,27 @@ public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
    * Checks for a given rbac tuple if it exists within the predefined set.
    * @param roles roles of the subject
    * @param action action which needs authorization
-   * @param aasId id of the asset admininstration shell or null
-   * @param smId id of the submodel or null
-   * @param smElIdShortPath id of the submodel element or null
+   * @param targetInformation target attributes
    * @return true if the requested rbac tuple was found, false otherwise
    */
   public boolean checkRbacRuleIsSatisfied(
       final List<String> roles,
       final String action,
-      final String aasId,
-      final String smId,
-      final String smElIdShortPath
+      final ITargetInformation targetInformation
   ) {
-    final Optional<RbacRule> matchingRule = this.rbacRuleSet.getRules().parallelStream()
+    Stream<RbacRule> matchingRules = this.rbacRuleSet.getRules().parallelStream()
         .filter(rbacRule -> rbacRule.getRole().equals("*") || (roles != null && roles.stream().anyMatch(role -> rbacRule.getRole().equals(role))))
-        .filter(rbacRule -> rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action))
-        .filter(rbacRule -> checkRegexStringMatch(rbacRule.getAasId(), aasId))
-        .filter(rbacRule -> checkRegexStringMatch(rbacRule.getSmId(), smId))
-        .filter(rbacRule -> checkRegexStringMatch(rbacRule.getSmElIdShortPath(), smElIdShortPath))
-        .findAny();
-    logger.info("roles: {}, action: {}, aasId: {}, smId: {}, smElIdShortPath: {} - matching-rule?: {}", roles, action, aasId, smId, smElIdShortPath, matchingRule);
+        .filter(rbacRule -> rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action));
+
+    for (Map.Entry<String, String> targetInfo : targetInformation.entrySet()) {
+      final String key = targetInfo.getKey();
+      final String value = targetInfo.getValue();
+
+      matchingRules = matchingRules.filter(rbacRule -> checkRegexStringMatch(rbacRule.getTargetInformation().get(key), value));
+    }
+
+    final Optional<RbacRule> matchingRule = matchingRules.findAny();
+    logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roles, action, targetInformation, matchingRule);
     return matchingRule.isPresent();
   }
 

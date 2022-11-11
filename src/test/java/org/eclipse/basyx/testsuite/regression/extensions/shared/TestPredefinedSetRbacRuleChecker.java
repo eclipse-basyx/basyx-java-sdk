@@ -25,6 +25,7 @@
 package org.eclipse.basyx.testsuite.regression.extensions.shared;
 
 import java.util.Collections;
+import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetRbacRuleChecker;
@@ -59,9 +60,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				null,
 				null,
-				null,
-				null,
-				null
+				new BaSyxObjectTargetInformation(null, null, null)
 		);
 
 		Assert.assertFalse(result);
@@ -74,9 +73,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.emptyList(),
 				null,
-				null,
-				null,
-				null
+				new BaSyxObjectTargetInformation(null, null, null)
 		);
 
 		Assert.assertFalse(result);
@@ -90,9 +87,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						"",
-						null,
-						null,
-						null
+						new BaSyxObjectTargetInformation(null, null, null)
 				)
 		);
 
@@ -101,9 +96,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.emptyList(),
 				null,
-				null,
-				null,
-				null
+				new BaSyxObjectTargetInformation(null, null, null)
 		);
 
 		Assert.assertFalse(result);
@@ -117,9 +110,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						"",
-						null,
-						null,
-						null
+						new BaSyxObjectTargetInformation(null, null, null)
 				)
 		);
 
@@ -128,9 +119,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				null,
-				null,
-				null,
-				null
+				new BaSyxObjectTargetInformation(null, null, null)
 		);
 
 		Assert.assertFalse(result);
@@ -144,9 +133,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						"",
-						null,
-						null,
-						null
+						new BaSyxObjectTargetInformation(null, null, null)
 				)
 		);
 
@@ -155,9 +142,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				readAction,
-				someId,
-				someId,
-				someId
+				new BaSyxObjectTargetInformation(someId, someId, someId)
 		);
 
 		Assert.assertFalse(result);
@@ -171,9 +156,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						readAction,
-						someId,
-						someId,
-						someId
+						new BaSyxObjectTargetInformation(someId, someId, someId)
 				)
 		);
 
@@ -182,9 +165,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				readAction,
-				someId,
-				someId,
-				someId
+				new BaSyxObjectTargetInformation(someId, someId, someId)
 		);
 
 		Assert.assertTrue(result);
@@ -198,9 +179,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						readAction,
-						someId,
-						someId,
-						someId
+						new BaSyxObjectTargetInformation(someId, someId, someId)
 				)
 		);
 
@@ -209,9 +188,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(normalRole),
 				readAction,
-				someId,
-				someId,
-				someId
+				new BaSyxObjectTargetInformation(someId, someId, someId)
 		);
 
 		Assert.assertFalse(result);
@@ -225,9 +202,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						readAction,
-						someId,
-						someId,
-						someId
+						new BaSyxObjectTargetInformation(someId, someId, someId)
 				)
 		);
 
@@ -236,9 +211,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				someId,
-				someId,
-				someId
+				new BaSyxObjectTargetInformation(someId, someId, someId)
 		);
 
 		Assert.assertFalse(result);
@@ -252,9 +225,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						someId,
-						someId,
-						someId
+						new BaSyxObjectTargetInformation(someId, someId, someId)
 				)
 		);
 
@@ -263,9 +234,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				someId,
-				someId
+				new BaSyxObjectTargetInformation(otherId, someId, someId)
 		);
 
 		Assert.assertFalse(result);
@@ -279,9 +248,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						someId,
-						someId
+						new BaSyxObjectTargetInformation(any, someId, someId)
 				)
 		);
 
@@ -290,9 +257,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				someId,
-				someId
+				new BaSyxObjectTargetInformation(otherId, someId, someId)
 		);
 
 		Assert.assertTrue(result);
@@ -306,9 +271,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						someId,
-						someId
+						new BaSyxObjectTargetInformation(any, someId, someId)
 				)
 		);
 
@@ -317,9 +280,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				someId
+				new BaSyxObjectTargetInformation(otherId, otherId, someId)
 		);
 
 		Assert.assertFalse(result);
@@ -333,9 +294,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						someId
+						new BaSyxObjectTargetInformation(any, any, someId)
 				)
 		);
 
@@ -344,9 +303,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				someId
+				new BaSyxObjectTargetInformation(otherId, otherId, someId)
 		);
 
 		Assert.assertTrue(result);
@@ -360,9 +317,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						someId
+						new BaSyxObjectTargetInformation(any, any, someId)
 				)
 		);
 
@@ -371,9 +326,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				otherId
+				new BaSyxObjectTargetInformation(otherId, otherId, otherId)
 		);
 
 		Assert.assertFalse(result);
@@ -387,9 +340,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						any
+						new BaSyxObjectTargetInformation(any, any, any)
 				)
 		);
 
@@ -398,9 +349,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				otherId
+				new BaSyxObjectTargetInformation(otherId, otherId, otherId)
 		);
 
 		Assert.assertTrue(result);
@@ -414,9 +363,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						"foo/" + any
+						new BaSyxObjectTargetInformation(any, any, "foo/" + any)
 				)
 		);
 
@@ -425,9 +372,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				otherId
+				new BaSyxObjectTargetInformation(otherId, otherId, otherId)
 		);
 
 		Assert.assertFalse(result);
@@ -441,9 +386,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						"foo/" + any
+						new BaSyxObjectTargetInformation(any, any, "foo/" + any)
 				)
 		);
 
@@ -452,9 +395,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				"foo/other"
+				new BaSyxObjectTargetInformation(otherId, otherId, "foo/other")
 		);
 
 		Assert.assertTrue(result);
@@ -468,9 +409,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						"foo/" + any + "/bar"
+						new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/bar")
 				)
 		);
 
@@ -479,9 +418,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				"foo/other/foobar"
+				new BaSyxObjectTargetInformation(otherId, otherId, "foo/other/foobar")
 		);
 
 		Assert.assertFalse(result);
@@ -495,9 +432,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						"foo/" + any + "/foobar"
+						new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/foobar")
 				)
 		);
 
@@ -506,9 +441,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				"foo/other/foobar"
+				new BaSyxObjectTargetInformation(otherId, otherId, "foo/other/foobar")
 		);
 
 		Assert.assertTrue(result);
@@ -522,9 +455,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						"foo/" + any + "/foobar"
+						new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/foobar")
 				)
 		);
 
@@ -532,9 +463,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						normalRole,
 						readAction,
-						any,
-						any,
-						any
+						new BaSyxObjectTargetInformation(any, any, any)
 				)
 		);
 
@@ -543,9 +472,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				"foo/other/foobar"
+				new BaSyxObjectTargetInformation(otherId, otherId, "foo/other/foobar")
 		);
 
 		Assert.assertTrue(result);
@@ -559,9 +486,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						adminRole,
 						writeAction,
-						any,
-						any,
-						someId
+						new BaSyxObjectTargetInformation(any, any, someId)
 				)
 		);
 
@@ -569,9 +494,7 @@ public class TestPredefinedSetRbacRuleChecker {
 				RbacRule.of(
 						normalRole,
 						readAction,
-						any,
-						any,
-						any
+						new BaSyxObjectTargetInformation(any, any, any)
 				)
 		);
 
@@ -580,9 +503,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
 				Collections.singletonList(adminRole),
 				writeAction,
-				otherId,
-				otherId,
-				"foo/other/foobar"
+				new BaSyxObjectTargetInformation(otherId, otherId, "foo/other/foobar")
 		);
 
 		Assert.assertFalse(result);

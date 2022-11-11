@@ -27,6 +27,8 @@ package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 import java.util.Collection;
 import java.util.function.Supplier;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacInhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacUtil;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -74,4 +76,10 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
       final IIdentifier aasId,
       final IIdentifier smId
   ) throws InhibitException;
+
+  /*InhibitException createSmIdShortPathInhibitException(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final String smIdShortPath
+  );*/
 }

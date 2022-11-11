@@ -24,7 +24,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -37,26 +42,33 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class RbacRule {
 	private final String role;
 	private final String action;
-	private final String aasId;
-	private final String smId;
-	private final String smElIdShortPath;
+	private final ITargetInformation targetInformation;
 
-	private RbacRule(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
+	private static class EmptyTargetInformation extends HashMap<String, String> implements ITargetInformation { }
+
+	private RbacRule() {
+		role = "";
+		action = "";
+		targetInformation = new EmptyTargetInformation();
+	}
+
+	private RbacRule(final String role, final String action, final ITargetInformation targetInformation) {
 		if (Objects.isNull(role)) {
 			throw new IllegalArgumentException("role must not be null");
 		}
 		if (Objects.isNull(action)) {
 			throw new IllegalArgumentException("action must not be null");
 		}
+		if (Objects.isNull(targetInformation)) {
+			throw new IllegalArgumentException("targetInformation must not be null");
+		}
 		this.role = role;
 		this.action = action;
-		this.aasId = aasId;
-		this.smId = smId;
-		this.smElIdShortPath = smElIdShortPath;
+		this.targetInformation = targetInformation;
 	}
 
-	public static RbacRule of(final String role, final String action, final String aasId, final String smId, final String smElIdShortPath) {
-		return new RbacRule(role, action, aasId, smId, smElIdShortPath);
+	public static RbacRule of(final String role, final String action, final ITargetInformation targetInformation) {
+		return new RbacRule(role, action, targetInformation);
 	}
 
 	public String getRole() {
@@ -67,16 +79,8 @@ public class RbacRule {
 		return action;
 	}
 
-	public String getAasId() {
-		return aasId;
-	}
-
-	public String getSmId() {
-		return smId;
-	}
-
-	public String getSmElIdShortPath() {
-		return smElIdShortPath;
+	public ITargetInformation getTargetInformation() {
+		return targetInformation;
 	}
 
 	@Override
@@ -92,9 +96,7 @@ public class RbacRule {
 		return new EqualsBuilder()
 				.append(getRole(), rbacRule.getRole())
 				.append(getAction(), rbacRule.getAction())
-				.append(getAasId(), rbacRule.getAasId())
-				.append(getSmId(), rbacRule.getSmId())
-				.append(getSmElIdShortPath(), rbacRule.getSmElIdShortPath())
+				.append(getTargetInformation(), rbacRule.getTargetInformation())
 				.isEquals();
 	}
 
@@ -103,9 +105,7 @@ public class RbacRule {
 		return new HashCodeBuilder(17, 37)
 				.append(getRole())
 				.append(getAction())
-				.append(getAasId())
-				.append(getSmId())
-				.append(getSmElIdShortPath())
+				.append(getTargetInformation())
 				.toHashCode();
 	}
 
@@ -114,9 +114,7 @@ public class RbacRule {
 		return new StringBuilder("RbacRule{")
 				.append("role='").append(role).append('\'')
 				.append(", action='").append(action).append('\'')
-				.append(", aasId='").append(aasId).append('\'')
-				.append(", smId='").append(smId).append('\'')
-				.append(", smElIdShortPath='").append(smElIdShortPath).append('\'')
+				.append(", targetInformation='").append(targetInformation).append('\'')
 				.append('}')
 				.toString();
 	}

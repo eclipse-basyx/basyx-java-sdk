@@ -26,13 +26,13 @@ package org.eclipse.basyx.extensions.submodel.authorization;
 
 import java.util.Collection;
 import java.util.function.Supplier;
+import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityUtil;
 import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
-import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Scope based implementation for {@link ISubmodelAPIAuthorizer}.
@@ -49,97 +49,63 @@ public class GrantedAuthoritySubmodelAPIAuthorizer<SubjectInformationType> imple
 
   @Override
   public Collection<ISubmodelElement> enforceGetSubmodelElements(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<Collection<ISubmodelElement>> smElListSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
+
     return smElListSupplier.get();
   }
 
   @Override
   public ISubmodelElement enforceGetSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final Supplier<ISubmodelElement> smElSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
+
     return smElSupplier.get();
   }
 
   @Override
   public ISubmodel enforceGetSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
+
     return smSupplier.get();
   }
 
   @Override
   public void enforceAddSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.WRITE_AUTHORITY);
   }
 
   @Override
   public void enforceDeleteSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.WRITE_AUTHORITY);
   }
 
   @Override
   public void enforceUpdateSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.WRITE_AUTHORITY);
   }
 
   @Override
   public Object enforceGetSubmodelElementValue(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final Supplier<Object> valueSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
+
     return valueSupplier.get();
   }
 
   @Override
   public Collection<IOperation> enforceGetOperations(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<Collection<IOperation>> operationListSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
+
     return operationListSupplier.get();
   }
 
   @Override
   public void enforceInvokeOperation(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.EXECUTE_AUTHORITY);
   }
 
   @Override
   public Object enforceGetOperationResult(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final String requestId, final Supplier<Object> operationResultSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedSubmodelAPI.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
+
     return operationResultSupplier.get();
   }
 }

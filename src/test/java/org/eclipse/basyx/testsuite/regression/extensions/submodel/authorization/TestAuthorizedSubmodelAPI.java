@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.JWTAuthenticationContextProvider;
@@ -94,37 +95,27 @@ public class TestAuthorizedSubmodelAPI {
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				SubmodelAPIScopes.READ_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				SubmodelAPIScopes.WRITE_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				adminRole,
 				SubmodelAPIScopes.EXECUTE_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				readerRole,
 				SubmodelAPIScopes.READ_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		rbacRuleSet.addRule(RbacRule.of(
 				executorRole,
 				SubmodelAPIScopes.EXECUTE_SCOPE,
-				"*",
-				"*",
-				"*"
+				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
 		authorizedSubmodelAPI = new AuthorizedSubmodelAPI<>(
 				apiMock,

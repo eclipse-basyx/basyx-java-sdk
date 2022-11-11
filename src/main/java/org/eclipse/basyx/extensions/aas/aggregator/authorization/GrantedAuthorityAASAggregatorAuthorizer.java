@@ -27,6 +27,9 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 import java.util.Collection;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.extensions.aas.api.authorization.AuthorizedAASAPI;
+import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityInhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -47,61 +50,37 @@ public class GrantedAuthorityAASAggregatorAuthorizer<SubjectInformationType> imp
 
   @Override
   public Collection<IAssetAdministrationShell> enforceGetAASList(SubjectInformationType subjectInformation, Supplier<Collection<IAssetAdministrationShell>> aasListSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
 
     return aasListSupplier.get();
   }
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
 
     return aasSupplier.get();
   }
 
   @Override
   public IModelProvider enforceGetAASProvider(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IModelProvider> modelProviderSupplier) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.READ_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
 
     return modelProviderSupplier.get();
   }
 
   @Override
   public void enforceCreateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
   }
 
   @Override
   public void enforceUpdateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
   }
 
   @Override
   public void enforceDeleteAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(AuthorizedAASAggregator.WRITE_AUTHORITY))) {
-      throw new InhibitException();
-    }
+    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
   }
 }

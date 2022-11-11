@@ -27,10 +27,14 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 import java.util.Collection;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.extensions.aas.api.authorization.AASAPIScopes;
+import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.IRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacInhibitException;
+import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacUtil;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
@@ -55,68 +59,30 @@ public class SimpleRbacAASAggregatorAuthorizer<SubjectInformationType> implement
 
   @Override
   public IAssetAdministrationShell enforceGetAAS(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
+
     return aasSupplier.get();
   }
 
   @Override
   public IModelProvider enforceGetAASProvider(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IModelProvider> modelProviderSupplier) throws InhibitException {
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.READ_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
+
     return modelProviderSupplier.get();
   }
 
   @Override
   public void enforceCreateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
   }
 
   @Override
   public void enforceUpdateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
   }
 
   @Override
   public void enforceDeleteAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roleAuthenticator.getRoles(subjectInformation),
-        AASAggregatorScopes.WRITE_SCOPE,
-        IdUtil.getIdentifierId(aasId),
-        null,
-        null
-    )) {
-      throw new InhibitException();
-    }
+    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
   }
 }

@@ -36,8 +36,6 @@ public interface IRbacRuleChecker {
   boolean checkRbacRuleIsSatisfied(
       final List<String> roles,
       final String right,
-      final String aasId,
-      final String smId,
-      final String smElIdShortPath
+      final ITargetInformation targetInformation
   );
 }
