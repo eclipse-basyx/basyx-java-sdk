@@ -24,14 +24,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.HashMap;
-
 /**
- * Implementation of {@link ITargetInformation} that has no properties.
+ * Specialization of {@link TargetInformation} that has no properties.
  *
  * @author wege
  */
-public class EmptyTargetInformation extends HashMap<String, String> implements ITargetInformation {
+public class EmptyTargetInformation extends TargetInformation {
   public EmptyTargetInformation() {
   }
 }

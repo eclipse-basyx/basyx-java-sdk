@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
 public class SimpleRbacInhibitException extends InhibitException {
   private final List<String> roles;
   private final String right;
-  private final ITargetInformation targetInformation;
+  private final TargetInformation targetInformation;
 
   private static final String MESSAGE_FORMAT = "no rule matching action=${action}, targetInfo=${targetInfo} role=(any of ${roles})";
 
@@ -60,7 +60,7 @@ public class SimpleRbacInhibitException extends InhibitException {
     return message;
   }
 
-  public SimpleRbacInhibitException(final List<String> roles, final String right, final ITargetInformation targetInformation) {
+  public SimpleRbacInhibitException(final List<String> roles, final String right, final TargetInformation targetInformation) {
     this(
         replaceVars(right, targetInformation, roles),
         roles,
@@ -69,7 +69,7 @@ public class SimpleRbacInhibitException extends InhibitException {
     );
   }
 
-  private SimpleRbacInhibitException(final String message, final List<String> roles, final String right, final ITargetInformation targetInformation) {
+  private SimpleRbacInhibitException(final String message, final List<String> roles, final String right, final TargetInformation targetInformation) {
     super(message);
 
     this.roles = roles;

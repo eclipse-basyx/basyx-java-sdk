@@ -24,7 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -36,11 +36,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author wege
  */
 public class RbacRule {
-	private final String role;
-	private final String action;
-	private final ITargetInformation targetInformation;
-
-	private static class EmptyTargetInformation extends HashMap<String, String> implements ITargetInformation { }
+	private String role;
+	private String action;
+	private TargetInformation targetInformation;
 
 	private RbacRule() {
 		role = "";
@@ -48,7 +46,7 @@ public class RbacRule {
 		targetInformation = new EmptyTargetInformation();
 	}
 
-	private RbacRule(final String role, final String action, final ITargetInformation targetInformation) {
+	private RbacRule(final String role, final String action, final TargetInformation targetInformation) {
 		if (Objects.isNull(role)) {
 			throw new IllegalArgumentException("role must not be null");
 		}
@@ -63,7 +61,7 @@ public class RbacRule {
 		this.targetInformation = targetInformation;
 	}
 
-	public static RbacRule of(final String role, final String action, final ITargetInformation targetInformation) {
+	public static RbacRule of(final String role, final String action, final TargetInformation targetInformation) {
 		return new RbacRule(role, action, targetInformation);
 	}
 
@@ -75,7 +73,7 @@ public class RbacRule {
 		return action;
 	}
 
-	public ITargetInformation getTargetInformation() {
+	public Map<String, String> getTargetInformation() {
 		return targetInformation;
 	}
 

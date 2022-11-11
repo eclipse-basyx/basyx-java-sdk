@@ -24,14 +24,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.HashMap;
-
 /**
- * Implementation of {@link ITargetInformation} that uses the tag of tagged directories.
+ * Specialization of {@link TargetInformation} that uses the tag of tagged directories.
  *
  * @author wege
  */
-public class TagTargetInformation extends HashMap<String, String> implements ITargetInformation {
+public class TagTargetInformation extends TargetInformation {
   public String getTag() {
     return get("tag");
   }

@@ -24,13 +24,13 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Interface for target attributes for access control.
  *
  * @author wege
  */
-public interface ITargetInformation extends Map<String, String> {
+public class TargetInformation extends HashMap<String, String> {
 
 }

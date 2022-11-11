@@ -54,13 +54,13 @@ public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
   public boolean checkRbacRuleIsSatisfied(
       final List<String> roles,
       final String action,
-      final ITargetInformation targetInformation
+      final TargetInformation targetInformation
   ) {
     Stream<RbacRule> matchingRules = this.rbacRuleSet.getRules().parallelStream()
         .filter(rbacRule -> rbacRule.getRole().equals("*") || (roles != null && roles.stream().anyMatch(role -> rbacRule.getRole().equals(role))))
         .filter(rbacRule -> rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action));
 
-    for (Map.Entry<String, String> targetInfo : targetInformation.entrySet()) {
+    for (final Map.Entry<String, String> targetInfo : targetInformation.entrySet()) {
       final String key = targetInfo.getKey();
       final String value = targetInfo.getValue();
 

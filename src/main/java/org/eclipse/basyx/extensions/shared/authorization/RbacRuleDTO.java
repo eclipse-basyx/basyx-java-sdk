@@ -24,18 +24,34 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Interface for checking attribute based access rules against some (potentially occurred)
- * role x right x (aas id, submodel id, submodel element id) combination.
+ * DTO for {@link RbacRule} for deserialization.
  *
  * @author wege
  */
-public interface IRbacRuleChecker {
-  boolean checkRbacRuleIsSatisfied(
-      final List<String> roles,
-      final String right,
-      final TargetInformation targetInformation
-  );
+public class RbacRuleDTO {
+	private String role;
+	private String action;
+	private Map<String, String> targetInformation;
+
+	public String getRole() {
+		return role;
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public Map<String, String> getTargetInformation() {
+		return targetInformation;
+	}
+
+	private RbacRuleDTO() {
+		role = "";
+		action = "";
+		targetInformation = new HashMap<>();
+	}
 }

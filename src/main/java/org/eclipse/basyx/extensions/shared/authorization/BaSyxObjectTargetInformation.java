@@ -24,14 +24,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.HashMap;
-
 /**
- * Implementation of {@link ITargetInformation} that uses the aasId/smId/smElIdShortPath tuple.
+ * Specialization of {@link TargetInformation} that uses the aasId/smId/smElIdShortPath tuple.
  *
  * @author wege
  */
-public class BaSyxObjectTargetInformation extends HashMap<String, String> implements ITargetInformation {
+public class BaSyxObjectTargetInformation extends TargetInformation {
   public String getAasId() {
     return get("aasId");
   }
