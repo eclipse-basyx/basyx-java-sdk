@@ -28,6 +28,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
@@ -37,7 +41,10 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.restapi.SubmodelElementProvider;
+import org.eclipse.basyx.testsuite.regression.vab.coder.json.JSONConnectorFactory;
 import org.eclipse.basyx.testsuite.regression.vab.manager.VABConnectionManagerStub;
+import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
+import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
 import org.eclipse.basyx.vab.support.TypeDestroyer;
 import org.junit.Before;
@@ -60,8 +67,7 @@ public class TestConnectedProperty {
 		// Create PropertySingleValued containing the simple value
 		Property propertyMeta = new Property("testProp", VALUE);
 		propertyMeta.setValueId(VALUEID);
-		Map<String, Object> destroyType = TypeDestroyer.destroyType(propertyMeta);
-		prop = new ConnectedProperty(new VABConnectionManagerStub(new SubmodelElementProvider(new VABMapProvider(destroyType))).connectToVABElement(""));
+		prop = createConnectedProperty(propertyMeta);
 	}
 
 	@Test
@@ -93,7 +99,7 @@ public class TestConnectedProperty {
 	@Test
 	public void testValueTypeRetrieval() {
 		ValueType valueType = prop.getValueType();
-		assertEquals(ValueType.Integer, valueType);
+		assertEquals(ValueType.Int32, valueType);
 	}
 
 	/**
@@ -111,6 +117,32 @@ public class TestConnectedProperty {
 	@Test
 	public void testGetValueId() {
 		assertEquals(VALUEID, prop.getValueId());
+	}
+
+	@Test
+	public void testSetDate() throws DatatypeConfigurationException {
+		Property dateProp = new Property("dateProp", getDummyDate());
+		
+		IProperty connectedDateProp = createConnectedProperty(dateProp);
+		connectedDateProp.setValue(getDummyDate());
+
+		assertEquals(getDummyDate(), connectedDateProp.getValue());
+	}
+
+	private IProperty createConnectedProperty(Property prop) {
+		JSONConnector connector = new JSONConnectorFactory().create(new SubmodelElementProvider(new VABMapProvider(prop)));
+		return new ConnectedProperty(new VABElementProxy("", connector));
+	}
+
+	private Object getDummyDate() throws DatatypeConfigurationException {
+		XMLGregorianCalendar initDate = DatatypeFactory.newInstance().newXMLGregorianCalendar();
+		initDate.setYear(1900);
+		initDate.setMonth(1);
+		initDate.setDay(1);
+		initDate.setHour(0);
+		initDate.setMinute(0);
+		initDate.setSecond(0);
+		return initDate;
 	}
 
 }

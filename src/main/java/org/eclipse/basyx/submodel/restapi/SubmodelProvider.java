@@ -26,8 +26,11 @@ package org.eclipse.basyx.submodel.restapi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.regex.Pattern;
 
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -36,6 +39,7 @@ import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionC
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
@@ -137,7 +141,7 @@ public class SubmodelProvider implements IModelProvider {
 			// Request for submodelElements
 			if (splitted.length == 1 && splitted[0].equals(VALUES)) {
 				// Request for values of all submodelElements
-				return submodelAPI.getSubmodel().getValues();
+				return getSubmodelProviderValues();
 			} else if (splitted.length == 1 && splitted[0].equals(MultiSubmodelElementProvider.ELEMENTS)) {
 				return submodelAPI.getSubmodelElements();
 			} else if (splitted.length >= 2 && isQualifier(splitted[0])) { // Request for element with specific idShort
@@ -160,6 +164,39 @@ public class SubmodelProvider implements IModelProvider {
 			}
 		}
 		throw new MalformedRequestException("Unknown path " + path + " was requested");
+	}
+
+	private Object getSubmodelProviderValues() {
+		Map<String, Object> objectValues = submodelAPI.getSubmodel().getValues();
+		prepareValuesForSerialization(objectValues);
+		return objectValues;
+	}
+
+	private void prepareValuesForSerialization(Map<String, Object> objectValues) {
+		Queue<Map<String, Object>> toBeTransformed = new LinkedList<>();
+		toBeTransformed.add(objectValues);
+		while (!toBeTransformed.isEmpty()) {
+			Map<String, Object> currentMap = toBeTransformed.remove();
+			List<Map<String, Object>> nextMaps = transformMapEntries(currentMap);
+			toBeTransformed.addAll(nextMaps);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<Map<String, Object>> transformMapEntries(Map<String, Object> unprocessedMap) {
+		List<Map<String, Object>> unprocessedEntries = new LinkedList<>();
+		for (Entry<String, Object> mapEntry : unprocessedMap.entrySet()) {
+			Object value = mapEntry.getValue();
+
+			if (value instanceof Map<?, ?>) {
+				unprocessedEntries.add((Map<String, Object>) value);
+				continue;
+			}
+
+			Object fixedValue = ValueTypeHelper.prepareForSerialization(value);
+			unprocessedMap.replace(mapEntry.getKey(), fixedValue);
+		}
+		return unprocessedEntries;
 	}
 
 	private List<String> getIdShorts(String[] splitted) {
@@ -282,7 +319,7 @@ public class SubmodelProvider implements IModelProvider {
 	}
 
 	private Object invokeSync(String path, Object... parameters) {
-		String pathWithoutInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE), "");
+		String pathWithoutInvoke = path.substring(0, path.lastIndexOf(Operation.INVOKE));
 		String strippedPathWithoutInvoke = VABPathTools.stripSlashes(pathWithoutInvoke);
 		return submodelAPI.invokeOperation(strippedPathWithoutInvoke, parameters);
 	}

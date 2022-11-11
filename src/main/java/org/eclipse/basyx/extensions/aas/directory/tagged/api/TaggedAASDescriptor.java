@@ -113,7 +113,13 @@ public class TaggedAASDescriptor extends AASDescriptor {
 	 */
 	@SuppressWarnings("unchecked")
 	public Set<String> getTags() {
-		return (Set<String>) get(TAGS);
+		Object tags = get(TAGS);
+		if (tags instanceof Set<?>) {
+			return (Set<String>) tags;
+		}
+		if (tags == null)
+			return null;
+		return new HashSet<String>((List<String>) tags);
 	}
 
 	@Override

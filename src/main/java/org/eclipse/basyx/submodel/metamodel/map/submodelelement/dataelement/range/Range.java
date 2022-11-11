@@ -117,7 +117,7 @@ public class Range extends DataElement implements IRange {
 		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(MIN) && map.containsKey(MAX) && map.containsKey(VALUETYPE)));
 	}
 
-	private void setValueType(ValueType valueType) {
+	public void setValueType(ValueType valueType) {
 		put(Range.VALUETYPE, valueType.toString());
 	}
 
@@ -129,6 +129,9 @@ public class Range extends DataElement implements IRange {
 	@Override
 	public Object getMin() {
 		Object value = get(MIN);
+		
+		if(isNullOrBlank(value)) return null;
+		
 		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
 		} else {
@@ -136,9 +139,24 @@ public class Range extends DataElement implements IRange {
 		}
 	}
 
+	private boolean isNullOrBlank(Object value) {
+		if (value == null)
+			return true;
+
+		if (!(value instanceof String))
+			return false;
+
+		String stringValue = (String) value;
+
+		return stringValue.isBlank();
+	}
+
 	@Override
 	public Object getMax() {
 		Object value = get(MAX);
+
+		if (isNullOrBlank(value)) return null;
+
 		if (value instanceof String) {
 			return ValueTypeHelper.getJavaObject(value, getValueType());
 		} else {

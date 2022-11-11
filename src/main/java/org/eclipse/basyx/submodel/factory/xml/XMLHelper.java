@@ -152,7 +152,7 @@ public class XMLHelper {
 	}
 
 	private static boolean isLegalBooleanString(String booleanString) {
-		return booleanString.equalsIgnoreCase("true") || booleanString.equalsIgnoreCase("false") || booleanString.equalsIgnoreCase("1") || booleanString.equalsIgnoreCase("0");
+		return booleanString.isEmpty() || booleanString.equalsIgnoreCase("true") || booleanString.equalsIgnoreCase("false") || booleanString.equalsIgnoreCase("1") || booleanString.equalsIgnoreCase("0");
 	}
 
 	private static boolean isStringNullOrEmpty(String decimalString) {

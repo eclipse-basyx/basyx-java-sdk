@@ -29,8 +29,8 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 
+import org.eclipse.basyx.extensions.submodel.mqtt.MqttDecoratingSubmodelAPIFactory;
 import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelper;
-import org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIObserver;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -39,11 +39,12 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
-import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPI;
-import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
+import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
-import org.eclipse.basyx.vab.modelprovider.map.VABMapProvider;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -59,16 +60,20 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 /**
  * Test for MqttSubmodelAPIObserver
  * 
- * @author espen, conradi
+ * @author espen, conradi, danish
  *
  */
 public class MqttSubmodelAPIObserverTest {
+	private static final String CLIENT_ID = "testClient";
+	private static final String SERVER_URI = "tcp://localhost:1884";
 	private static final String AASID = "testaasid";
 	private static final String SUBMODELID = "testsubmodelid";
 
 	private static Server mqttBroker;
-	private static ObservableSubmodelAPI observableAPI;
+	private static ISubmodelAPI observableAPI;
 	private MqttTestListener listener;
+
+	private static Submodel submodel;
 
 	/**
 	 * Sets up the MQTT broker and submodelAPI for tests
@@ -82,13 +87,15 @@ public class MqttSubmodelAPIObserverTest {
 		mqttBroker.startServer(classPathConfig);
 
 		// Create submodel
-		Submodel sm = new Submodel(SUBMODELID, new Identifier(IdentifierType.CUSTOM, SUBMODELID));
+		submodel = new Submodel(SUBMODELID, new Identifier(IdentifierType.CUSTOM, SUBMODELID));
 		Reference parentRef = new Reference(new Key(KeyElements.ASSETADMINISTRATIONSHELL, true, AASID, IdentifierType.IRDI));
-		sm.setParent(parentRef);
+		submodel.setParent(parentRef);
 
-		VABSubmodelAPI vabAPI = new VABSubmodelAPI(new VABMapProvider(sm));
-		observableAPI = new ObservableSubmodelAPI(vabAPI);
-		new MqttSubmodelAPIObserver(observableAPI, "tcp://localhost:1884", "testClient");
+		observableAPI = createObservableSubmodelAPI();
+	}
+
+	private static ISubmodelAPI createObservableSubmodelAPI() throws MqttException {
+		return new MqttDecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence())).getSubmodelAPI(submodel);
 	}
 
 	@AfterClass
@@ -108,13 +115,22 @@ public class MqttSubmodelAPIObserverTest {
 	}
 
 	@Test
+	public void testAddSubmodelElementToSubmodelWithoutParent() throws MqttException {
+		Submodel testSubmodel = new Submodel("testSmId", new Identifier(IdentifierType.CUSTOM, "customSmIdentifier"));
+		ISubmodelAPI submodelAPI = new MqttDecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient("tcp://localhost:1884", "submodelTestsClientID", new MqttDefaultFilePersistence())).getSubmodelAPI(testSubmodel);
+		Property prop = new Property(true);
+		prop.setIdShort("testBooleanProperty");
+		submodelAPI.addSubmodelElement(prop);
+	}
+
+	@Test
 	public void testAddSubmodelElement() throws InterruptedException {
 		String elemIdShort = "testAddProp";
 		Property prop = new Property(true);
 		prop.setIdShort(elemIdShort);
 		observableAPI.addSubmodelElement(prop);
 
-		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, elemIdShort), listener.lastPayload);
+		assertEquals(MqttSubmodelAPIHelper.createChangedSubmodelElementPayload(AASID, SUBMODELID, elemIdShort), listener.lastPayload);
 		assertEquals(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, listener.lastTopic);
 	}
 
@@ -129,7 +145,7 @@ public class MqttSubmodelAPIObserverTest {
 		prop.setIdShort("testAddProp");
 		observableAPI.addSubmodelElement(idShortPath, prop);
 
-		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
+		assertEquals(MqttSubmodelAPIHelper.createChangedSubmodelElementPayload(AASID, SUBMODELID, idShortPath), listener.lastPayload);
 		assertEquals(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, listener.lastTopic);
 	}
 
@@ -141,7 +157,7 @@ public class MqttSubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(prop);
 		observableAPI.deleteSubmodelElement(idShortPath);
 
-		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
+		assertEquals(MqttSubmodelAPIHelper.createChangedSubmodelElementPayload(AASID, SUBMODELID, idShortPath), listener.lastPayload);
 		assertEquals(MqttSubmodelAPIHelper.TOPIC_DELETEELEMENT, listener.lastTopic);
 	}
 
@@ -154,7 +170,7 @@ public class MqttSubmodelAPIObserverTest {
 		observableAPI.updateSubmodelElement(idShortPath, false);
 
 		assertFalse((boolean) observableAPI.getSubmodelElementValue(idShortPath));
-		assertEquals(MqttSubmodelAPIObserver.getCombinedMessage(AASID, SUBMODELID, idShortPath), listener.lastPayload);
+		assertEquals(MqttSubmodelAPIHelper.createChangedSubmodelElementPayload(AASID, SUBMODELID, idShortPath), listener.lastPayload);
 		assertEquals(MqttSubmodelAPIHelper.TOPIC_UPDATEELEMENT, listener.lastTopic);
 	}
 }

@@ -62,4 +62,14 @@ public class AASAggregatorAPIHelper {
 	public static String getAASAccessPath(IIdentifier aasId) {
 		return VABPathTools.concatenatePaths(getAASEntryPath(aasId), AASAggregatorAPIHelper.AAS_SUFFIX);
 	}
+
+	/**
+	 * Removes the "/shells" suffix if it exists
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String harmonizeURL(String url) {
+		return VABPathTools.stripFromPath(url, AASAggregatorProvider.PREFIX);
+	}
 }

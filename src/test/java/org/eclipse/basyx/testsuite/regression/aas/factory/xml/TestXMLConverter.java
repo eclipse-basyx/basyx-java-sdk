@@ -30,6 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.StringWriter;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -457,8 +458,8 @@ public class TestXMLConverter {
 		assertTrue(element instanceof Range);
 		Range range = (Range) element;
 		assertEquals(ValueType.Integer, range.getValueType());
-		assertEquals("1", range.getMin());
-		assertEquals("10", range.getMax());
+		assertEquals(BigInteger.valueOf(1), range.getMin());
+		assertEquals(BigInteger.valueOf(10), range.getMax());
 
 		element = submodelElements.get("file_id");
 		assertTrue(element instanceof File);

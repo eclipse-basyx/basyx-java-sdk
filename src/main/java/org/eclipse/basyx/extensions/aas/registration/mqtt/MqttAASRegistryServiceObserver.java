@@ -137,7 +137,7 @@ public class MqttAASRegistryServiceObserver extends MqttEventService implements 
 
 	@Override
 	public void aasDeleted(String aasId) {
-		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETEAAS, aasId);
+		sendMqttMessage(MqttAASRegistryHelper.TOPIC_DELETEAAS, MqttAASRegistryHelper.createRegisteredAASChangedPayload(aasId));
 	}
 
 	@Override
