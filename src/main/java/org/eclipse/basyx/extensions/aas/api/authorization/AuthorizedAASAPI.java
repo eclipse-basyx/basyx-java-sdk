@@ -24,7 +24,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.api.authorization;
 
-import java.util.Optional;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
@@ -35,7 +34,6 @@ import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProv
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 

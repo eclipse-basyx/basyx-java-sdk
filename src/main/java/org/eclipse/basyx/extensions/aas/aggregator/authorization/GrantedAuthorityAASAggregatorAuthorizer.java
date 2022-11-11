@@ -27,14 +27,11 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 import java.util.Collection;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.aas.api.authorization.AuthorizedAASAPI;
-import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityInhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityUtil;
-import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
+import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
-import org.springframework.security.core.GrantedAuthority;
 
 /**
  * Scope based implementation for {@link IAASAggregatorAuthorizer}.
