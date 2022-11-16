@@ -25,7 +25,10 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.qualifier.qualifiable;
 
 import static org.junit.Assert.assertEquals;
+
 import java.util.LinkedHashMap;
+
+import org.eclipse.basyx.aas.metamodel.map.descriptor.CustomId;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
@@ -33,8 +36,6 @@ import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifier;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -45,32 +46,29 @@ import org.junit.Test;
  *
  */
 public class TestQualifier {
-	private static final KeyElements KEY_ELEMENTS = KeyElements.ASSET;
-	private static final boolean IS_LOCAL = false;
-	private static final String VALUE = "testValue";
-	private static final String TYPE = "testType";
-	private static final String VALUE_TYPE = "anyType";
-	private static final IdentifierType ID_TYPE = IdentifierType.CUSTOM;
-	private static final Identifier IDENTIFIER = new Identifier(ID_TYPE, VALUE);
-	private static final Reference VALUE_ID = new Reference(IDENTIFIER, KEY_ELEMENTS, IS_LOCAL);
-
-	private Qualifier qualifier;
-
-	@Before
-	public void buildQualifier() {
-		qualifier = new Qualifier(TYPE, VALUE, VALUE_TYPE, VALUE_ID);
-	}
 
 	@Test
 	public void testConstructor() {
-		assertEquals(TYPE, qualifier.getType());
-		assertEquals(VALUE, qualifier.getValue());
-		assertEquals(ValueTypeHelper.fromName(VALUE_TYPE), qualifier.getValueType());
-		assertEquals(VALUE_ID, qualifier.getValueId());
+		String expectedValue = "testValue";
+		String expectedType = "testType";
+		ValueType expectedValueType = ValueType.AnyType;
+		Reference expectedValueId = createDummyReference();
+
+		Qualifier qualifier = new Qualifier(expectedType, expectedValue, expectedValueType, expectedValueId);
+
+		assertEquals(expectedType, qualifier.getType());
+		assertEquals(expectedValue, qualifier.getValue());
+		assertEquals(expectedValueType, qualifier.getValueType());
+		assertEquals(expectedValueId, qualifier.getValueId());
+	}
+
+	private Reference createDummyReference() {
+		return new Reference(new CustomId("testId"), KeyElements.ASSET, false);
 	}
 
 	@Test
 	public void testSetType() {
+		Qualifier qualifier = createDummyQualifier();
 		String newTypeString = "newType";
 		qualifier.setType(newTypeString);
 		assertEquals(newTypeString, qualifier.getType());
@@ -78,6 +76,7 @@ public class TestQualifier {
 
 	@Test
 	public void testSetValue() {
+		Qualifier qualifier = createDummyQualifier();
 		String newValueString = "newValue";
 		qualifier.setValue(newValueString);
 		assertEquals(newValueString, qualifier.getValue());
@@ -85,6 +84,7 @@ public class TestQualifier {
 
 	@Test
 	public void testSetValueId() {
+		Qualifier qualifier = createDummyQualifier();
 		Reference reference = new Reference(new Identifier(IdentifierType.IRI, "newId"), KeyElements.BLOB, true);
 		qualifier.setValueId(reference);
 		assertEquals(reference, qualifier.getValueId());
@@ -92,6 +92,7 @@ public class TestQualifier {
 
 	@Test
 	public void testSetValueType() {
+		Qualifier qualifier = createDummyQualifier();
 		ValueType newValueTypeString = ValueType.AnyType;
 		qualifier.setValueType(newValueTypeString);
 		assertEquals(newValueTypeString, qualifier.getValueType());
@@ -107,6 +108,7 @@ public class TestQualifier {
 
 	@Test
 	public void testSetSemanticID() {
+		Qualifier qualifier = createDummyQualifier();
 		Reference reference = new Reference(new Identifier(IdentifierType.IRI, "newId"), KeyElements.BLOB, true);
 		qualifier.setSemanticId(reference);
 		assertEquals(reference, qualifier.getSemanticId());
@@ -115,7 +117,12 @@ public class TestQualifier {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testModelType() {
+		Qualifier qualifier = createDummyQualifier();
 		LinkedHashMap<String, Object> modelType = (LinkedHashMap<String, Object>) qualifier.get(ModelType.MODELTYPE);
 		assertEquals(Qualifier.MODELTYPE, modelType.get(ModelType.NAME));
+	}
+
+	private Qualifier createDummyQualifier() {
+		return new Qualifier("dummy", ValueType.AnySimpleType);
 	}
 }
