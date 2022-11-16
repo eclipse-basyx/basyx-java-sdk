@@ -29,8 +29,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Map;
 
-import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttV2SubmodelAggregatorHelper;
+import org.eclipse.basyx.extensions.shared.encoding.Base64URLEncoder;
 import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttV2SubmodelAggregatorObserver;
+import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttV2SubmodelAggregatorTopicFactory;
 import org.eclipse.basyx.submodel.aggregator.SubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregatorV2;
@@ -44,6 +45,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -73,6 +75,8 @@ public class TestMqttV2SubmodelAggregatorObserver {
 	private static MqttV2SubmodelAggregatorObserver mqttSubmodelAggregatorObserver;
 	private MqttTestListener listener;
 
+	private static MqttV2SubmodelAggregatorTopicFactory payloadFactory = new MqttV2SubmodelAggregatorTopicFactory(new Base64URLEncoder());
+
 	/**
 	 * Sets up the MQTT broker and ObservableSubmodelAggregator for tests
 	 */
@@ -89,7 +93,10 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(submodelAggregator, "aas-server");
 
 		// Create mqtt as an observer
-		mqttSubmodelAggregatorObserver = new MqttV2SubmodelAggregatorObserver("tcp://localhost:1884", "testClient");
+		MqttClient client = new MqttClient("tcp://localhost:1884", "testClient");
+		client.connect();
+
+		mqttSubmodelAggregatorObserver = new MqttV2SubmodelAggregatorObserver(client, payloadFactory);
 		observedSubmodelAggregator.addObserver(mqttSubmodelAggregatorObserver);
 	}
 
@@ -122,7 +129,7 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator.createSubmodel(newSubmodel);
 
 		assertEquals(removeSubmodelElements(newSubmodel), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createCreateSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -132,7 +139,7 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator.updateSubmodel(submodel);
 
 		assertEquals(removeSubmodelElements(submodel), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAggregatorHelper.createUpdateSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createUpdateSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -140,7 +147,7 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 
 		assertEquals(submodel, deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAggregatorHelper.createDeleteSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createDeleteSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -148,7 +155,7 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		observedSubmodelAggregator.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 
 		assertEquals(submodel, deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAggregatorHelper.createDeleteSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createDeleteSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

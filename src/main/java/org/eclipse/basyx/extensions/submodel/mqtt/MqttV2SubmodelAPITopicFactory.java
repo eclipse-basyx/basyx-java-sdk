@@ -24,11 +24,11 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.mqtt;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 import java.util.StringJoiner;
 
+import org.eclipse.basyx.extensions.shared.encoding.IEncoder;
+import org.eclipse.basyx.extensions.shared.mqtt.AbstractMqttV2TopicFactory;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -45,7 +45,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
  * @author danish, siebert
  *
  */
-public class MqttV2SubmodelAPIHelper {	
+public class MqttV2SubmodelAPITopicFactory extends AbstractMqttV2TopicFactory {
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";
@@ -54,8 +54,16 @@ public class MqttV2SubmodelAPIHelper {
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
 	private static final String VALUE = "value";
-	
-	public static String createCreateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
+
+	/**
+	 * @param encoder
+	 *            Used for encoding the aasId/submodelId
+	 */
+	public MqttV2SubmodelAPITopicFactory(IEncoder encoder) {
+		super(encoder);
+	}
+
+	public String createCreateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
 		return new StringJoiner("/", "/", "")
@@ -71,7 +79,7 @@ public class MqttV2SubmodelAPIHelper {
 				.toString();
 	}
 	
-	public static String createUpdateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
+	public String createUpdateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
 		return new StringJoiner("/", "/", "")
@@ -87,7 +95,7 @@ public class MqttV2SubmodelAPIHelper {
 				.toString();
 	}
 	
-	public static String createDeleteSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
+	public String createDeleteSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
 		return new StringJoiner("/", "/", "")
@@ -103,7 +111,7 @@ public class MqttV2SubmodelAPIHelper {
 				.toString();
 	}
 	
-	public static String createSubmodelElementValueTopic(String aasId, String submodelId, String idShortPath, String repoId) {
+	public String createSubmodelElementValueTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
 		return new StringJoiner("/", "/", "")
@@ -117,14 +125,6 @@ public class MqttV2SubmodelAPIHelper {
 				.add(idShortPath)
 				.add(VALUE)
 				.toString();	
-	}
-	
-	private static String encodeId(String id) {
-		if (id == null) {
-			return "<empty>";
-		}
-		
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(id.getBytes(StandardCharsets.UTF_8));
 	}
 	
 	public static IIdentifier getSubmodelId(ObservableSubmodelAPIV2 observedAPI) {

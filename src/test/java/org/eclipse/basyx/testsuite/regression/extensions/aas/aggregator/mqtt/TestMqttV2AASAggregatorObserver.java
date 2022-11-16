@@ -41,8 +41,9 @@ import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.metamodel.map.parts.ConceptDictionary;
-import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttV2AASAggregatorHelper;
+import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttV2AASAggregatorTopicFactory;
 import org.eclipse.basyx.extensions.aas.aggregator.mqtt.MqttV2DecoratingAASAggregatorFactory;
+import org.eclipse.basyx.extensions.shared.encoding.Base64URLEncoder;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
@@ -77,6 +78,7 @@ public class TestMqttV2AASAggregatorObserver {
 	private static MqttClient client;
 	private static MqttTestListener listener;
 	private static ObservableAASAggregatorV2 observable;
+	private static MqttV2AASAggregatorTopicFactory topicFactory = new MqttV2AASAggregatorTopicFactory(new Base64URLEncoder());
 
 	/**
 	 * Sets up the MQTT broker and ObservableAASAggregator for tests
@@ -100,7 +102,7 @@ public class TestMqttV2AASAggregatorObserver {
 	}
 
 	private static IAASAggregator createObservedAASAggregator() throws MqttException {
-		return new MqttV2DecoratingAASAggregatorFactory(new AASAggregatorFactory(), client, "aas-server").create();
+		return new MqttV2DecoratingAASAggregatorFactory(new AASAggregatorFactory(), client, "aas-server", topicFactory).create();
 	}
 
 	@AfterClass
@@ -126,7 +128,7 @@ public class TestMqttV2AASAggregatorObserver {
 		observedAPI.createAAS(newShell);
 
 		assertEquals(removeConceptDictionaries(newShell), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2AASAggregatorHelper.createCreateAASTopic(observable.getAasServerId()), listener.lastTopic);
+		assertEquals(topicFactory.createCreateAASTopic(observable.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -138,7 +140,7 @@ public class TestMqttV2AASAggregatorObserver {
 		observedAPI.updateAAS(shell);
 
 		assertEquals(removeConceptDictionaries(shell), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2AASAggregatorHelper.createUpdateAASTopic(observable.getAasServerId()), listener.lastTopic);
+		assertEquals(topicFactory.createUpdateAASTopic(observable.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -150,7 +152,7 @@ public class TestMqttV2AASAggregatorObserver {
 		observedAPI.deleteAAS(AASIDENTIFIER);
 
 		assertEquals(removeConceptDictionaries(aas), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2AASAggregatorHelper.createDeleteAASTopic(observable.getAasServerId()), listener.lastTopic);
+		assertEquals(topicFactory.createDeleteAASTopic(observable.getAasServerId()), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

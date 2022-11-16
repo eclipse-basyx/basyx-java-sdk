@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2022 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,46 +22,34 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
-import java.util.StringJoiner;
+
+package org.eclipse.basyx.extensions.shared.mqtt;
+
+import org.eclipse.basyx.extensions.shared.encoding.IEncoder;
 
 /**
- * A helper class containing methods that create topics used by the
- * AASAggregator.
+ * Abstrac base class for all MqttV2Topic factories
  * 
+ * @author schnicke
+ *
  */
-public class MqttV2AASAggregatorHelper {
-	private static final String AASREPOSITORY = "aas-repository";
-	private static final String SHELLS = "shells";
-	private static final String CREATED = "created";
-	private static final String UPDATED = "updated";
-	private static final String DELETED = "deleted";
-	
-	public static String createCreateAASTopic(String repoId) {
-		return new StringJoiner("/", "/", "")
-				.add(AASREPOSITORY)
-				.add(repoId)
-				.add(SHELLS)
-				.add(CREATED)
-				.toString();
+public abstract class AbstractMqttV2TopicFactory {
+	private IEncoder encoder;
+
+	/**
+	 * @param encoder
+	 *            Used for encoding the aasId/submodelId
+	 */
+	public AbstractMqttV2TopicFactory(IEncoder encoder) {
+		this.encoder = encoder;
 	}
-	
-	public static String createUpdateAASTopic(String repoId) {
-		return new StringJoiner("/", "/", "")
-				.add(AASREPOSITORY)
-				.add(repoId)
-				.add(SHELLS)
-				.add(UPDATED)
-				.toString();
-	}
-	
-	public static String createDeleteAASTopic(String repoId) {
-		return new StringJoiner("/", "/", "")
-				.add(AASREPOSITORY)
-				.add(repoId)
-				.add(SHELLS)
-				.add(DELETED)
-				.toString();
+
+	protected String encodeId(String id) {
+		if (id == null) {
+			return "<empty>";
+		}
+
+		return encoder.encode(id);
 	}
 }

@@ -28,8 +28,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.eclipse.basyx.extensions.shared.encoding.Base64URLEncoder;
 import org.eclipse.basyx.extensions.submodel.mqtt.MqttV2DecoratingSubmodelAPIFactory;
-import org.eclipse.basyx.extensions.submodel.mqtt.MqttV2SubmodelAPIHelper;
+import org.eclipse.basyx.extensions.submodel.mqtt.MqttV2SubmodelAPITopicFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -79,6 +80,8 @@ public class MqttV2SubmodelAPIObserverTest {
 	private static Submodel submodel;
 	private static ObservableSubmodelAPIV2 observable;
 
+	private static MqttV2SubmodelAPITopicFactory payloadFactory = new MqttV2SubmodelAPITopicFactory(new Base64URLEncoder());
+
 	/**
 	 * Sets up the MQTT broker and submodelAPI for tests
 	 */
@@ -100,7 +103,7 @@ public class MqttV2SubmodelAPIObserverTest {
 	}
 
 	private static ISubmodelAPI createObservableSubmodelAPI() throws MqttException {
-		return new MqttV2DecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence()), "aas-server").getSubmodelAPI(submodel);
+		return new MqttV2DecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence()), "aas-server", payloadFactory).getSubmodelAPI(submodel);
 	}
 
 	@AfterClass
@@ -127,7 +130,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -142,7 +145,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(idShortPath, prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
 	}
 	
 	@Test
@@ -155,7 +158,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.getSubmodelElementValue(elemIdShort);
 		
 		assertEquals(prop.getValue(), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -167,7 +170,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.deleteSubmodelElement(idShortPath);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
 	}
 
 	@Test
@@ -179,7 +182,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.updateSubmodelElement(idShortPath, false);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(MqttV2SubmodelAPIHelper.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
 	}
 	
 	private Object deserializePayload(String payload) {

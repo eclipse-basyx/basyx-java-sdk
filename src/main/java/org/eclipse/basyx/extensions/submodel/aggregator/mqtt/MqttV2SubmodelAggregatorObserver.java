@@ -35,7 +35,6 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,37 +49,7 @@ import org.slf4j.LoggerFactory;
 public class MqttV2SubmodelAggregatorObserver extends MqttEventService implements ISubmodelAggregatorObserverV2 {
 	private static Logger logger = LoggerFactory.getLogger(MqttV2SubmodelAggregatorObserver.class);
 
-	/**
-	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
-	 *
-	 * @param serverEndpoint
-	 *            endpoint of mqtt broker
-	 * @param clientId
-	 *            unique client identifier
-	 * @throws MqttException
-	 */
-	public MqttV2SubmodelAggregatorObserver(String serverEndpoint, String clientId) throws MqttException {
-		super(serverEndpoint, clientId);
-		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + serverEndpoint);
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
-	 *
-	 * @param serverEndpoint
-	 *            endpoint of mqtt broker
-	 * @param clientId
-	 *            unique client identifier
-	 * @param user
-	 *            username for authentication with broker
-	 * @param pw
-	 *            password for authentication with broker
-	 * @throws MqttException
-	 */
-	public MqttV2SubmodelAggregatorObserver(String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
-		super(serverEndpoint, clientId, user, pw);
-		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + serverEndpoint);
-	}
+	private MqttV2SubmodelAggregatorTopicFactory topicFactory;
 
 	/**
 	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
@@ -89,54 +58,20 @@ public class MqttV2SubmodelAggregatorObserver extends MqttEventService implement
 	 *            already configured client
 	 * @throws MqttException
 	 */
-	public MqttV2SubmodelAggregatorObserver(MqttClient client) throws MqttException {
+	public MqttV2SubmodelAggregatorObserver(MqttClient client, MqttV2SubmodelAggregatorTopicFactory topicFactory) throws MqttException {
 		super(client);
+		this.topicFactory = topicFactory;
 		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + client.getServerURI());
 	}
 
-	/**
-	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
-	 *
-	 * @param serverEndpoint
-	 *            endpoint of mqtt broker
-	 * @param clientId
-	 *            unique client identifier
-	 * @param persistence
-	 *            custom persistence strategy
-	 * @throws MqttException
-	 */
-	public MqttV2SubmodelAggregatorObserver(String serverEndpoint, String clientId, MqttClientPersistence persistence) throws MqttException {
-		super(serverEndpoint, clientId, persistence);
-		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + serverEndpoint);
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
-	 *
-	 * @param serverEndpoint
-	 *            endpoint of MQTT broker
-	 * @param clientId
-	 *            unique client identifier
-	 * @param user
-	 *            MQTT user
-	 * @param pw
-	 *            MQTT password
-	 * @param persistence
-	 *            custom persistence strategy
-	 * @throws MqttException
-	 */
-	public MqttV2SubmodelAggregatorObserver(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence persistence) throws MqttException {
-		super(serverEndpoint, clientId, user, pw, persistence);
-		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + serverEndpoint);
-	}
 
 	@Override
 	public void submodelCreated(String shellId, ISubmodel submodel, String repoId) {
 		if (submodel instanceof Map<?, ?>) {
 			ISubmodel copy = removeSubmodelElements(submodel);
-			sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(shellId, repoId), serializePayload(copy));
+			sendMqttMessage(topicFactory.createCreateSubmodelTopic(shellId, repoId), serializePayload(copy));
 		} else {			
-			sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(shellId, repoId), serializePayload(submodel));
+			sendMqttMessage(topicFactory.createCreateSubmodelTopic(shellId, repoId), serializePayload(submodel));
 		}
 		
 	}
@@ -145,9 +80,9 @@ public class MqttV2SubmodelAggregatorObserver extends MqttEventService implement
 	public void submodelUpdated(String shellId, ISubmodel submodel, String repoId) {
 		if (submodel instanceof Map<?, ?>) {
 			ISubmodel copy = removeSubmodelElements(submodel);
-			sendMqttMessage(MqttV2SubmodelAggregatorHelper.createUpdateSubmodelTopic(shellId, repoId), serializePayload(copy));
+			sendMqttMessage(topicFactory.createUpdateSubmodelTopic(shellId, repoId), serializePayload(copy));
 		} else {			
-			sendMqttMessage(MqttV2SubmodelAggregatorHelper.createUpdateSubmodelTopic(shellId, repoId), serializePayload(submodel));
+			sendMqttMessage(topicFactory.createUpdateSubmodelTopic(shellId, repoId), serializePayload(submodel));
 		}
 	}
 
@@ -155,9 +90,9 @@ public class MqttV2SubmodelAggregatorObserver extends MqttEventService implement
 	public void submodelDeleted(String shellId, ISubmodel submodel, String repoId) {
 		if (submodel instanceof Map<?, ?>) {
 			ISubmodel copy = removeSubmodelElements(submodel);
-			sendMqttMessage(MqttV2SubmodelAggregatorHelper.createDeleteSubmodelTopic(shellId, repoId), serializePayload(copy));
+			sendMqttMessage(topicFactory.createDeleteSubmodelTopic(shellId, repoId), serializePayload(copy));
 		} else {			
-			sendMqttMessage(MqttV2SubmodelAggregatorHelper.createDeleteSubmodelTopic(shellId, repoId), serializePayload(submodel));
+			sendMqttMessage(topicFactory.createDeleteSubmodelTopic(shellId, repoId), serializePayload(submodel));
 		}
 	}
 	

@@ -47,38 +47,20 @@ import org.slf4j.LoggerFactory;
  */
 public class MqttV2AASRegistryServiceObserver extends MqttEventService implements IAASRegistryServiceObserverV2 {
 	private static Logger logger = LoggerFactory.getLogger(MqttV2AASRegistryServiceObserver.class);
+	private MqttV2AASRegistryTopicFactory topicFactory;
 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
 	 * 
-	 * @param serverEndpoint
-	 *            endpoint of mqtt broker
-	 * @param clientId
-	 *            unique client identifier
+	 * @param client
+	 *            already configured client
+	 * @param 
 	 * @throws MqttException
 	 */
-	public MqttV2AASRegistryServiceObserver(String serverEndpoint, String clientId) throws MqttException {
-		super(serverEndpoint, clientId);
-		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + serverEndpoint);
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension as an AAS Registry Observer with a
-	 * custom mqtt client persistence
-	 * 
-	 * @param serverEndpoint
-	 *            endpoint of mqtt broker
-	 * @param clientId
-	 *            unique client identifier
-	 * @param clientId
-	 *            unique client identifier
-	 * @param mqttPersistence
-	 *            custom mqtt persistence strategy
-	 * @throws MqttException
-	 */
-	public MqttV2AASRegistryServiceObserver(String serverEndpoint, String clientId, MqttClientPersistence mqttPersistence) throws MqttException {
-		super(serverEndpoint, clientId, mqttPersistence);
-		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + serverEndpoint);
+	public MqttV2AASRegistryServiceObserver(MqttClient client, MqttV2AASRegistryTopicFactory topicFactory) throws MqttException {
+		super(client);
+		this.topicFactory = topicFactory;
+		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + client.getServerURI());
 	}
 
 	/**
@@ -95,71 +77,42 @@ public class MqttV2AASRegistryServiceObserver extends MqttEventService implement
 	 *            password for authentication with broker
 	 * @param mqttPersistence
 	 *            custom mqtt persistence strategy
+	 * @param topicFactory
 	 */
-	public MqttV2AASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence mqttPersistence) throws MqttException {
+	public MqttV2AASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence mqttPersistence, MqttV2AASRegistryTopicFactory topicFactory) throws MqttException {
 		super(serverEndpoint, clientId, user, pw, mqttPersistence);
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension as an AAS Registry Observer
-	 * 
-	 * @param serverEndpoint
-	 *            endpoint of mqtt broker
-	 * @param clientId
-	 *            unique client identifier
-	 * @param user
-	 *            username for authentication with broker
-	 * @param pw
-	 *            password for authentication with broker
-	 * @throws MqttException
-	 */
-	public MqttV2AASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw) throws MqttException {
-		super(serverEndpoint, clientId, user, pw);
-		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + serverEndpoint);
-	}
-
-	/**
-	 * Constructor for adding this MQTT extension as an AAS Registry Observer
-	 * 
-	 * @param client
-	 *            already configured client
-	 * @throws MqttException
-	 */
-	public MqttV2AASRegistryServiceObserver(MqttClient client) throws MqttException {
-		super(client);
-		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + client.getServerURI());
 	}
 
 	@Override
 	public void aasRegistered(AASDescriptor aasDescriptor, String registryId) {		
-		sendMqttMessage(MqttV2AASRegistryHelper.createCreateAASTopic(registryId), serializePayload(aasDescriptor));
+		sendMqttMessage(topicFactory.createCreateAASTopic(registryId), serializePayload(aasDescriptor));
 	}
 
 	@Override
 	public void submodelRegistered(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId) {
-		sendMqttMessage(MqttV2AASRegistryHelper.createCreateSubmodelTopic(registryId), serializePayload(smDescriptor));
-		sendMqttMessage(MqttV2AASRegistryHelper.createCreateSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
+		sendMqttMessage(topicFactory.createCreateSubmodelTopic(registryId), serializePayload(smDescriptor));
+		sendMqttMessage(topicFactory.createCreateSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
 	}
 	@Override
 	public void aasUpdated(AASDescriptor aasDescriptor, String registryId) {
-		sendMqttMessage(MqttV2AASRegistryHelper.createUpdateAASTopic(registryId), serializePayload(aasDescriptor));
+		sendMqttMessage(topicFactory.createUpdateAASTopic(registryId), serializePayload(aasDescriptor));
 	}
 	
 	@Override
 	public void submodelUpdated(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId) {
-		sendMqttMessage(MqttV2AASRegistryHelper.createUpdateSubmodelTopic(registryId), serializePayload(smDescriptor));
-		sendMqttMessage(MqttV2AASRegistryHelper.createUpdateSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
+		sendMqttMessage(topicFactory.createUpdateSubmodelTopic(registryId), serializePayload(smDescriptor));
+		sendMqttMessage(topicFactory.createUpdateSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
 	}
 
 	@Override
 	public void aasDeleted(AASDescriptor aasDescriptor, String registryId) {
-		sendMqttMessage(MqttV2AASRegistryHelper.createDeleteAASTopic(registryId), serializePayload(aasDescriptor));
+		sendMqttMessage(topicFactory.createDeleteAASTopic(registryId), serializePayload(aasDescriptor));
 	}
 
 	@Override
 	public void submodelDeleted(IIdentifier aasId, SubmodelDescriptor smDescriptor, String registryId) {
-		sendMqttMessage(MqttV2AASRegistryHelper.createDeleteSubmodelTopic(registryId), serializePayload(smDescriptor));
-		sendMqttMessage(MqttV2AASRegistryHelper.createDeleteSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
+		sendMqttMessage(topicFactory.createDeleteSubmodelTopic(registryId), serializePayload(smDescriptor));
+		sendMqttMessage(topicFactory.createDeleteSubmodelTopicWithAASId(aasId.getId(), registryId), serializePayload(smDescriptor));
 	}
 	
 	private String serializePayload(ModelDescriptor descriptor) {

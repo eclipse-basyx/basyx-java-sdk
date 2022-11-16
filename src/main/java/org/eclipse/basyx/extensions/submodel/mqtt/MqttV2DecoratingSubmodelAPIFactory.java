@@ -42,18 +42,20 @@ public class MqttV2DecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory apiFactory;
 	private MqttClient client;
 	private String aasServerId;
+	private MqttV2SubmodelAPITopicFactory topicFactory;
 
-	public MqttV2DecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client, String aasServerId) {
+	public MqttV2DecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client, String aasServerId, MqttV2SubmodelAPITopicFactory topicFactory) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 		this.aasServerId = aasServerId;
+		this.topicFactory = topicFactory;
 	}
 
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
 		try {
 			ObservableSubmodelAPIV2 observedAPI = new ObservableSubmodelAPIV2(apiFactory.create(submodel), this.aasServerId);
-			MqttV2SubmodelAPIObserver mqttSubmodelAPIObserver = new MqttV2SubmodelAPIObserver(client, MqttV2SubmodelAPIHelper.getAASId(observedAPI), submodel, this.aasServerId);
+			MqttV2SubmodelAPIObserver mqttSubmodelAPIObserver = new MqttV2SubmodelAPIObserver(client, MqttV2SubmodelAPITopicFactory.getAASId(observedAPI), submodel, this.aasServerId, topicFactory);
 			observedAPI.addObserver(mqttSubmodelAPIObserver);
 			return observedAPI;
 		} catch (MqttException e) {

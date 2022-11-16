@@ -24,11 +24,10 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.registration.mqtt;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.StringJoiner;
 
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.extensions.shared.encoding.IEncoder;
+import org.eclipse.basyx.extensions.shared.mqtt.AbstractMqttV2TopicFactory;
 
 /**
  * A helper class containing method and string constants of topics used by the
@@ -37,19 +36,28 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  * @author danish, siebert
  *
  */
-public class MqttV2AASRegistryHelper {
+public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
+
 	private static final String AASREGISTRY = "aas-registry";
 	private static final String SHELLS = "shells";
 	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
+
+	/**
+	 * @param encoder
+	 *            Used for encoding the aasId/submodelId
+	 */
+	public MqttV2AASRegistryTopicFactory(IEncoder encoder) {
+		super(encoder);
+	}
 	
 	/**
 	 * This method creates a Mqtt topic like /aas-registry/default/shells/created
 	 * 
 	 */
-	public static String createCreateAASTopic(String registryId) {
+	public String createCreateAASTopic(String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
@@ -62,7 +70,7 @@ public class MqttV2AASRegistryHelper {
 	 * This method creates a Mqtt topic like /aas-registry/default/submodels/created
 	 * 
 	 */
-	public static String createCreateSubmodelTopic(String registryId) {
+	public String createCreateSubmodelTopic(String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
@@ -75,12 +83,12 @@ public class MqttV2AASRegistryHelper {
 	 * This method creates a Mqtt topic like /aas-registry/default/shells/[encoded aasId]/submodels/created
 	 * 
 	 */
-	public static String createCreateSubmodelTopicWithAASId(String aasId, String registryId) {
+	public String createCreateSubmodelTopicWithAASId(String aasId, String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
+				.add(encodeId(aasId))
 				.add(SUBMODELS)
 				.add(CREATED)
 				.toString();
@@ -90,7 +98,7 @@ public class MqttV2AASRegistryHelper {
 	 * This method creates a Mqtt topic like /aas-registry/default/shells/updated
 	 * 
 	 */
-	public static String createUpdateAASTopic(String registryId) {
+	public String createUpdateAASTopic(String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
@@ -103,7 +111,7 @@ public class MqttV2AASRegistryHelper {
 	 * This method creates a Mqtt topic like /aas-registry/default/submodels/updated
 	 * 
 	 */
-	public static String createUpdateSubmodelTopic(String registryId) {
+	public String createUpdateSubmodelTopic(String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
@@ -116,12 +124,12 @@ public class MqttV2AASRegistryHelper {
 	 * This method creates a Mqtt topic like /aas-registry/default/shells/[encoded aasId]/submodels/updated
 	 * 
 	 */
-	public static String createUpdateSubmodelTopicWithAASId(String aasId, String registryId) {
+	public String createUpdateSubmodelTopicWithAASId(String aasId, String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
+				.add(encodeId(aasId))
 				.add(SUBMODELS)
 				.add(UPDATED)
 				.toString();
@@ -131,7 +139,7 @@ public class MqttV2AASRegistryHelper {
 	 * This method creates a Mqtt topic like /aas-registry/default/shells/deleted
 	 * 
 	 */
-	public static String createDeleteAASTopic(String registryId) {
+	public String createDeleteAASTopic(String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
@@ -144,7 +152,7 @@ public class MqttV2AASRegistryHelper {
 	 * This method creates a Mqtt topic like /aas-registry/default/submodels/deleted
 	 * 
 	 */
-	public static String createDeleteSubmodelTopic(String registryId) {
+	public String createDeleteSubmodelTopic(String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
@@ -157,18 +165,14 @@ public class MqttV2AASRegistryHelper {
 	 * This method creates a Mqtt topic like /aas-registry/default/shells/[encoded aasId]/submodels/deleted
 	 * 
 	 */
-	public static String createDeleteSubmodelTopicWithAASId(String aasId, String registryId) {
+	public String createDeleteSubmodelTopicWithAASId(String aasId, String registryId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
+				.add(encodeId(aasId))
 				.add(SUBMODELS)
 				.add(DELETED)
 				.toString();
-	}
-	
-	private static String encodeAASId(String aasId) {
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(aasId.getBytes(StandardCharsets.UTF_8));
 	}
 }
