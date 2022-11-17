@@ -30,11 +30,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
-import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserverV2;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
@@ -60,13 +58,10 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	 * 
 	 * @param client
 	 *            An already connected mqtt client
-	 * @param aasId
-	 * @param submodel
-	 * @param repoId
 	 * @param topicFactory
 	 * @throws MqttException
 	 */
-	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, Submodel submodel, String repoId, MqttV2SubmodelAPITopicFactory topicFactory)
+	public MqttV2SubmodelAPIObserver(MqttClient client, MqttV2SubmodelAPITopicFactory topicFactory)
 			throws MqttException {
 		super(client);
 		this.payloadFactory = topicFactory;
