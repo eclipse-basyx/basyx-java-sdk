@@ -165,8 +165,12 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	}
 
 	private String serializePayload(Object payload) {
-		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
-		
-		return tools.serialize(payload);
+		if (payload != null && payload instanceof String) {
+			return (String) payload;
+		} else {
+			GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
+
+			return tools.serialize(payload);
+		}
 	}
 }
