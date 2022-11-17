@@ -54,7 +54,7 @@ public class MqttV2AASRegistryServiceObserver extends MqttEventService implement
 	 * 
 	 * @param client
 	 *            already configured client
-	 * @param 
+	 * @param topicFactory
 	 * @throws MqttException
 	 */
 	public MqttV2AASRegistryServiceObserver(MqttClient client, MqttV2AASRegistryTopicFactory topicFactory) throws MqttException {
