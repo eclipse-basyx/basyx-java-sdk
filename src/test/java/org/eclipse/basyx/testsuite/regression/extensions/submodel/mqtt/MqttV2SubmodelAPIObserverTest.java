@@ -149,15 +149,16 @@ public class MqttV2SubmodelAPIObserverTest {
 	}
 	
 	@Test
-	public void testGetSubmodelElementValue() {
+	public void testSetSubmodelElementValue() {
 		String elemIdShort = "testAddProp";
-		Property prop = new Property(true);
-		prop.setIdShort(elemIdShort);
+		Property prop = new Property(elemIdShort, "");
 		observableAPI.addSubmodelElement(prop);
 		
-		observableAPI.getSubmodelElementValue(elemIdShort);
+		String expected = "testVal";
+
+		observableAPI.updateSubmodelElement(elemIdShort, expected);
 		
-		assertEquals(prop.getValue(), deserializePayload(listener.lastPayload));
+		assertEquals(expected, deserializePayload(listener.lastPayload));
 		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
 	}
 
@@ -178,8 +179,11 @@ public class MqttV2SubmodelAPIObserverTest {
 		String idShortPath = "testUpdateProp";
 		Property prop = new Property(true);
 		prop.setIdShort(idShortPath);
+
 		observableAPI.addSubmodelElement(prop);
-		observableAPI.updateSubmodelElement(idShortPath, false);
+
+		// There is no explicit replace function, thus the element has to be re-added
+		observableAPI.addSubmodelElement(prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
 		assertEquals(payloadFactory.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);

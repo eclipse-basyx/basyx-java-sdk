@@ -34,6 +34,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.observer.Observable;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 /**
  * Implementation of {@link ISubmodelAPI} that calls back registered
@@ -63,14 +64,25 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 
 	@Override
 	public void addSubmodelElement(ISubmodelElement elem) {
-		submodelAPI.addSubmodelElement(elem);
-		observers.stream().forEach(o -> o.elementAdded(elem.getIdShort(), elem, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), this.aasServerId));
+		String idShortPath = elem.getIdShort();
+
+		addOrReplaceSubmodelElement(idShortPath, elem);
+	}
+
+	private void addOrReplaceSubmodelElement(String idShortPath, ISubmodelElement elem) {
+		try {
+			submodelAPI.getSubmodelElement(idShortPath);
+			submodelAPI.addSubmodelElement(idShortPath, elem);
+			observers.stream().forEach(o -> o.elementUpdated(idShortPath, elem, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), this.aasServerId));
+		} catch (ResourceNotFoundException e) {
+			submodelAPI.addSubmodelElement(idShortPath, elem);
+			observers.stream().forEach(o -> o.elementAdded(idShortPath, elem, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), this.aasServerId));
+		}
 	}
 
 	@Override
 	public void addSubmodelElement(String idShortPath, ISubmodelElement elem) {
-		submodelAPI.addSubmodelElement(idShortPath, elem);
-		observers.stream().forEach(o -> o.elementAdded(idShortPath, elem, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), this.aasServerId));
+		addOrReplaceSubmodelElement(idShortPath, elem);
 	}
 
 	@Override
@@ -98,16 +110,12 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
 		submodelAPI.updateSubmodelElement(idShortPath, newValue);
-		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
-		observers.stream().forEach(o -> o.elementUpdated(idShortPath, submodelElement, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), this.aasServerId));
+		observers.stream().forEach(o -> o.elementValue(idShortPath, newValue, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), this.aasServerId));
 	}
 
 	@Override
 	public Object getSubmodelElementValue(String idShortPath) {
-		Object value = submodelAPI.getSubmodelElementValue(idShortPath);
-		observers.stream().forEach(o -> o.elementValue(idShortPath, value, getParentAASId(getSubmodel()), getSubmodel().getIdentification().getId(), this.aasServerId));
-		
-		return value;
+		return submodelAPI.getSubmodelElementValue(idShortPath);
 	}
 
 	@Override
