@@ -29,8 +29,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.IElementContainer;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.Entity;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.EntityValue;
 
 /**
  * Helper class for getting the /values Map from a Element Container.
@@ -60,10 +64,28 @@ public class ElementContainerValuesHelper {
 		// Collection)
 		if (value instanceof Collection<?> && !(value instanceof LangStrings)) {
 			return handleValueCollection((Collection<ISubmodelElement>) value);
+		} else if(value instanceof EntityValue) {
+			return handleEntityValue((EntityValue) value);
 		} else {
 			// The value is not a collection -> return it as is
 			return value;
 		}
+	}
+
+	private static Object handleEntityValue(EntityValue value) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		if (value.getAsset() != null) {
+			ret.put(Entity.ASSET, handleReference(value.getAsset()));
+		}
+		ret.put(Entity.STATEMENT, handleValueCollection(value.getStatement()));
+
+		return ret;
+	}
+
+	private static Object handleReference(IReference asset) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		ret.put(Reference.KEY, asset.getKeys());
+		return ret;
 	}
 
 	private static Map<String, Object> handleValueCollection(Collection<ISubmodelElement> collection) {
