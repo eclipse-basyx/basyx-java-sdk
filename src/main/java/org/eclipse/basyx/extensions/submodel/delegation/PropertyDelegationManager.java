@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.shared.delegation;
+package org.eclipse.basyx.extensions.submodel.delegation;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,14 +52,32 @@ public class PropertyDelegationManager {
 
 	private ConnectorFactory connectorProvider;
 
+	/**
+	 * Initializes the connectorProvider, which is used for communicating
+	 * with the delegated endpoint
+	 * 
+	 * @param connectorProvider
+	 */
 	public PropertyDelegationManager(ConnectorFactory connectorProvider) {
 		this.connectorProvider = connectorProvider;
 	}
 
+	/**
+	 * Adds delegation mechanism to the delegated property contained in the 
+	 * provided submodel
+	 * 
+	 * @param submodel
+	 */
 	public void handleSubmodel(ISubmodel submodel) {
 		submodel.getSubmodelElements().values().stream().map(SubmodelElement.class::cast).forEach(this::handleSubmodelElement);
 	}
 
+	/**
+	 * Creates a qualifier with a delegatedTo type
+	 * 
+	 * @param delegationUrl
+	 * 			- URL of the delegation endpoint
+	 */
 	public static IQualifier createDelegationQualifier(String delegationUrl) {
 		Qualifier qualifier = new Qualifier(DELEGATION_TYPE, ValueType.String);
 		qualifier.setValue(delegationUrl);
@@ -67,14 +85,26 @@ public class PropertyDelegationManager {
 		return qualifier;
 	}
 	
-	public void handleSubmodelElement(SubmodelElement element) {
-		if (Property.isProperty(element)) {
-			handleProperty(Property.createAsFacade(element));
-		} else if (SubmodelElementCollection.isSubmodelElementCollection(element)) {
-			handeSubmodelElementCollection(SubmodelElementCollection.createAsFacade(element));
+	/**
+	 * Adds delegation mechanism to the delegated property contained in the
+	 * provided submodel element
+	 * 
+	 * @param submodelElement
+	 */
+	public void handleSubmodelElement(SubmodelElement submodelElement) {
+		if (Property.isProperty(submodelElement)) {
+			handleProperty(Property.createAsFacade(submodelElement));
+		} else if (SubmodelElementCollection.isSubmodelElementCollection(submodelElement)) {
+			handeSubmodelElementCollection(SubmodelElementCollection.createAsFacade(submodelElement));
 		}
 	}
 	
+	/**
+	 * Checks if the provided qualifier is of delegatedTo type
+	 * 
+	 * @param iConstraint
+	 * @return 
+	 */
 	public boolean isDelegationQualifier(IConstraint iConstraint) {
 		return iConstraint instanceof Qualifier && ((Qualifier) iConstraint).getType().equals(DELEGATION_TYPE);
 	}

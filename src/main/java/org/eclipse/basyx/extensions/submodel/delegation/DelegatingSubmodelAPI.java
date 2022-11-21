@@ -27,7 +27,6 @@ package org.eclipse.basyx.extensions.submodel.delegation;
 import java.util.Collection;
 import java.util.Optional;
 
-import org.eclipse.basyx.extensions.shared.delegation.PropertyDelegationManager;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IConstraint;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
