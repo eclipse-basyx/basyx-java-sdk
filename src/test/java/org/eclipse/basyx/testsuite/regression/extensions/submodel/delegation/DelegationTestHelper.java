@@ -37,7 +37,6 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.mockserver.client.MockServerClient;
 import org.mockserver.model.Header;
 
-
 /**
  * Helper class used in delegation test classes
  *
