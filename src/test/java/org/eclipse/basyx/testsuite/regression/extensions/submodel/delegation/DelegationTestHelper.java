@@ -28,7 +28,6 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 import java.util.Collections;
-
 import org.eclipse.basyx.aas.metamodel.map.descriptor.CustomId;
 import org.eclipse.basyx.extensions.submodel.delegation.PropertyDelegationManager;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IQualifier;
@@ -37,6 +36,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.model.Header;
+
 
 /**
  * Helper class used in delegation test classes

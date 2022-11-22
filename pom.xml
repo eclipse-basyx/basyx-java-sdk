@@ -255,7 +255,7 @@
 		<dependency>
     		<groupId>ch.qos.logback</groupId>
     		<artifactId>logback-classic</artifactId>
-    		<version>1.4.4</version>
+    		<version>1.4.5</version>
 		</dependency>
 		
 		<!-- Used by Logback to compile filter expressions from logback.xml -->

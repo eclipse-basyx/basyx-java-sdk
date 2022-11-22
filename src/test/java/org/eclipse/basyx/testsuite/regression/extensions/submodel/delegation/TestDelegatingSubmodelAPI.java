@@ -26,6 +26,7 @@ package org.eclipse.basyx.testsuite.regression.extensions.submodel.delegation;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
+
 import org.eclipse.basyx.extensions.submodel.delegation.DelegatingSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.delegation.PropertyDelegationManager;
 import org.mockserver.client.MockServerClient;
