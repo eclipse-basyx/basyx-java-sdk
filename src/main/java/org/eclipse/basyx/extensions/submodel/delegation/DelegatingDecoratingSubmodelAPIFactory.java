@@ -33,6 +33,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
  * API provider for constructing a new SubmodelAPI which has delegated property
  * 
  * @author danish
+ * 
  */
 public class DelegatingDecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private ISubmodelAPIFactory submodelAPIFactory;
@@ -43,6 +44,6 @@ public class DelegatingDecoratingSubmodelAPIFactory implements ISubmodelAPIFacto
 
 	@Override
 	public ISubmodelAPI getSubmodelAPI(Submodel submodel) {
-		return new DelegatingSubmodelAPI(submodelAPIFactory.create(submodel), new HTTPConnectorFactory());
+		return new DelegatingSubmodelAPI(submodelAPIFactory.create(submodel), new PropertyDelegationManager(new HTTPConnectorFactory()));
 	}
 }

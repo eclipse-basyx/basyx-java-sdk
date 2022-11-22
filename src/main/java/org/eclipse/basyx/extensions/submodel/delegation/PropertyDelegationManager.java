@@ -71,19 +71,6 @@ public class PropertyDelegationManager {
 	public void handleSubmodel(ISubmodel submodel) {
 		submodel.getSubmodelElements().values().stream().map(SubmodelElement.class::cast).forEach(this::handleSubmodelElement);
 	}
-
-	/**
-	 * Creates a qualifier with a delegatedTo type
-	 * 
-	 * @param delegationUrl
-	 * 			- URL of the delegation endpoint
-	 */
-	public static IQualifier createDelegationQualifier(String delegationUrl) {
-		Qualifier qualifier = new Qualifier(DELEGATION_TYPE, ValueType.String);
-		qualifier.setValue(delegationUrl);
-
-		return qualifier;
-	}
 	
 	/**
 	 * Adds delegation mechanism to the delegated property contained in the
@@ -98,6 +85,19 @@ public class PropertyDelegationManager {
 			handeSubmodelElementCollection(SubmodelElementCollection.createAsFacade(submodelElement));
 		}
 	}
+
+	/**
+	 * Creates a qualifier with a delegatedTo type
+	 * 
+	 * @param delegationUrl
+	 *            - URL of the delegation endpoint
+	 */
+	public static IQualifier createDelegationQualifier(String delegationUrl) {
+		Qualifier qualifier = new Qualifier(DELEGATION_TYPE, ValueType.String);
+		qualifier.setValue(delegationUrl);
+
+		return qualifier;
+	}
 	
 	/**
 	 * Checks if the provided qualifier is of delegatedTo type
@@ -105,7 +105,7 @@ public class PropertyDelegationManager {
 	 * @param iConstraint
 	 * @return 
 	 */
-	public boolean isDelegationQualifier(IConstraint iConstraint) {
+	public static boolean isDelegationQualifier(IConstraint iConstraint) {
 		return iConstraint instanceof Qualifier && ((Qualifier) iConstraint).getType().equals(DELEGATION_TYPE);
 	}
 
@@ -116,7 +116,7 @@ public class PropertyDelegationManager {
 
 	private void handleProperty(Property property) {
 		Collection<IConstraint> qualifiers = property.getQualifiers();
-		Optional<IConstraint> optionalConstraint = qualifiers.stream().filter(this::isDelegationQualifier).findAny();
+		Optional<IConstraint> optionalConstraint = qualifiers.stream().filter(PropertyDelegationManager::isDelegationQualifier).findAny();
 
 		if (optionalConstraint.isEmpty())
 			return;

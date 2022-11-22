@@ -22,21 +22,17 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.shared.delegation;
+package org.eclipse.basyx.testsuite.regression.extensions.submodel.delegation;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
+
 import java.util.Collection;
 import java.util.Collections;
-import java.util.function.Function;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.CustomId;
+import org.eclipse.basyx.extensions.submodel.delegation.DelegatingDecoratingSubmodelAPIFactory;
 import org.eclipse.basyx.extensions.submodel.delegation.DelegatingSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.delegation.PropertyDelegationManager;
-import org.eclipse.basyx.extensions.submodel.delegation.DelegatingDecoratingSubmodelAPIFactory;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IConstraint;
-import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IQualifier;
 import org.eclipse.basyx.submodel.metamodel.connected.ConnectedSubmodel;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.ConnectedSubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -45,12 +41,8 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
-import org.eclipse.basyx.submodel.restapi.operation.CallbackResponse;
-import org.eclipse.basyx.submodel.restapi.operation.ExecutionState;
-import org.eclipse.basyx.submodel.restapi.operation.InvocationResponse;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
@@ -72,76 +64,73 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TestPropertyDelegationManager {
-	private static final int EXPECTED_VALUE = 10;
-	private static final String SERVER_URL = "http://localhost:1234";
-	private static final String ENDPOINT = "/valueEndpoint";
 	private static final String SMEC_ID_SHORT = "smc";
 	private static final String INNER_SMEC_ID_SHORT = "innerSmc";
 
 	@Test
 	public void delegatedPropertyIsTransformed() {
-		Property delegated = createDelegatedProperty();
+		Property delegated = DelegationTestHelper.createDelegatedProperty();
 		
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		submodel.addSubmodelElement(delegated);
 
 		PropertyDelegationManager delegatedProvider = createDelegatedProvider();
 		delegatedProvider.handleSubmodel(submodel);
 		
-		assertPropertyValueIsAsExpected(EXPECTED_VALUE, submodel, delegated);
+		assertPropertyValueIsAsExpected(DelegationTestHelper.EXPECTED_VALUE, submodel, delegated);
 	}
 	
 	@Test
 	public void normalPropertyIsNotTransformed() {
-		Property property = new Property("normalProperty", EXPECTED_VALUE);
+		Property property = new Property("normalProperty", DelegationTestHelper.EXPECTED_VALUE);
 
 		property.setQualifiers(createNonDelegatingQualifiers());
 		
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		submodel.addSubmodelElement(property);
 
 		PropertyDelegationManager delegatedProvider = new PropertyDelegationManager(new HTTPConnectorFactory());
 		delegatedProvider.handleSubmodel(submodel);
 		
-		assertPropertyValueIsAsExpected(EXPECTED_VALUE, submodel, property);
+		assertPropertyValueIsAsExpected(DelegationTestHelper.EXPECTED_VALUE, submodel, property);
 	}
 	
 	@Test
 	public void collectionWithDelegatedPropertyIsTransformed() {
-		Property delegated = createDelegatedProperty();
+		Property delegated = DelegationTestHelper.createDelegatedProperty();
 
 		SubmodelElementCollection smc = createSubmodelElementCollection(SMEC_ID_SHORT);
 		smc.addSubmodelElement(delegated);
 		
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		submodel.addSubmodelElement(smc);
 
 		PropertyDelegationManager delegatedProvider = createDelegatedProvider();
 		delegatedProvider.handleSubmodel(submodel);
 
-		assertPropertyWithinCollectionIsDelegated(EXPECTED_VALUE, submodel, delegated, smc);
+		assertPropertyWithinCollectionIsDelegated(DelegationTestHelper.EXPECTED_VALUE, submodel, delegated, smc);
 	}
 	
 	@Test
 	public void nestedCollectionWithDelegatedPropertyIsTransformed() {
-		Property delegated = createDelegatedProperty();
+		Property delegated = DelegationTestHelper.createDelegatedProperty();
 
 		SubmodelElementCollection submodelElementCollection = createNestedSubmodelElementCollection(delegated);
 		
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		submodel.addSubmodelElement(submodelElementCollection);
 
 		PropertyDelegationManager delegatedProvider = createDelegatedProvider();
 		delegatedProvider.handleSubmodel(submodel);
 
-		assertPropertyWithinNestedCollectionIsDelegated(EXPECTED_VALUE, submodel, delegated);
+		assertPropertyWithinNestedCollectionIsDelegated(DelegationTestHelper.EXPECTED_VALUE, submodel, delegated);
 	}
 
 	@Test
 	public void delegatedPropertyWithinSubmodelIsTransformed() {
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		
-		SubmodelElement delegated = createDelegatedProperty();
+		SubmodelElement delegated = DelegationTestHelper.createDelegatedProperty();
 		
 		submodel.addSubmodelElement(delegated);
 		
@@ -149,14 +138,14 @@ public class TestPropertyDelegationManager {
 				
 		ISubmodelAPI submodelAPI = decoratingSubmodelAPIFactory.getSubmodelAPI(submodel);
 		
-		assertEquals(EXPECTED_VALUE, submodelAPI.getSubmodel().getSubmodelElement(delegated.getIdShort()).getValue());
+		assertEquals(DelegationTestHelper.EXPECTED_VALUE, submodelAPI.getSubmodel().getSubmodelElement(delegated.getIdShort()).getValue());
 	}
 	
 	@Test(expected = MalformedRequestException.class)
 	public void exceptionIsThrownWhenUpdateRequestOnDelegatedProperty() {
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		
-		SubmodelElement delegated = createDelegatedProperty();
+		SubmodelElement delegated = DelegationTestHelper.createDelegatedProperty();
 		
 		submodel.addSubmodelElement(delegated);
 		
@@ -169,9 +158,9 @@ public class TestPropertyDelegationManager {
 	
 	@Test
 	public void addPropertyToSubmodelWithDelegatingDecoratedSubmodelAPI() {
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		
-		SubmodelElement delegated = createDelegatedProperty();
+		SubmodelElement delegated = DelegationTestHelper.createDelegatedProperty();
 		
 		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = createMockedDelegationDecoratingSubmodelAPIFactory(submodel);
 				
@@ -179,14 +168,14 @@ public class TestPropertyDelegationManager {
 		
 		submodelAPI.addSubmodelElement(delegated);
 		
-		assertEquals(EXPECTED_VALUE, submodelAPI.getSubmodel().getSubmodelElement(delegated.getIdShort()).getValue());
+		assertEquals(DelegationTestHelper.EXPECTED_VALUE, submodelAPI.getSubmodel().getSubmodelElement(delegated.getIdShort()).getValue());
 	}
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void deleteDelegatedPropertyWithDelegatingDecoratedSubmodelAPI() {		
-		SubmodelElement delegated = createDelegatedProperty();
+		SubmodelElement delegated = DelegationTestHelper.createDelegatedProperty();
 		
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		submodel.addSubmodelElement(delegated);
 		
 		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = createMockedDelegationDecoratingSubmodelAPIFactory(submodel);
@@ -199,24 +188,10 @@ public class TestPropertyDelegationManager {
 	}
 	
 	@Test
-	public void getOperationWithDelegatingDecoratedSubmodelAPI() {		
-		Operation operation = createOperation();
-		
-		Submodel submodel = createSubmodel();
-		submodel.addSubmodelElement(operation);
-		
-		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = createMockedDelegationDecoratingSubmodelAPIFactory(submodel);
-				
-		ISubmodelAPI submodelAPI = decoratingSubmodelAPIFactory.getSubmodelAPI(submodel);
-		
-		assertEquals(EXPECTED_VALUE, submodelAPI.getSubmodel().getOperations().get(operation.getIdShort()).invokeSimple());
-	}
-	
-	@Test
 	public void getSubmodelElementsWithDelegatingDecoratedSubmodelAPI() {		
 		SubmodelElement property = new Property("testProperty", "test");
 		
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		submodel.addSubmodelElement(property);
 		
 		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = createMockedDelegationDecoratingSubmodelAPIFactory(submodel);
@@ -228,85 +203,16 @@ public class TestPropertyDelegationManager {
 	
 	@Test
 	public void getSubmodelElementValueWithDelegatingDecoratedSubmodelAPI() {		
-		SubmodelElement property = new Property("testProperty", EXPECTED_VALUE);
+		SubmodelElement property = new Property("testProperty", DelegationTestHelper.EXPECTED_VALUE);
 		
-		Submodel submodel = createSubmodel();
+		Submodel submodel = DelegationTestHelper.createSubmodel();
 		submodel.addSubmodelElement(property);
 		
 		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = createMockedDelegationDecoratingSubmodelAPIFactory(submodel);
 				
 		ISubmodelAPI submodelAPI = decoratingSubmodelAPIFactory.getSubmodelAPI(submodel);
 		
-		assertEquals(EXPECTED_VALUE, submodelAPI.getSubmodelElementValue(property.getIdShort()));
-	}
-	
-	@Test
-	public void invokeOperationWithDelegatingDecoratedSubmodelAPI() {		
-		Operation operation = createOperation();
-		
-		Submodel submodel = createSubmodel();
-		submodel.addSubmodelElement(operation);
-		
-		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = createMockedDelegationDecoratingSubmodelAPIFactory(submodel);
-				
-		ISubmodelAPI submodelAPI = decoratingSubmodelAPIFactory.getSubmodelAPI(submodel);
-		
-		assertEquals(EXPECTED_VALUE, submodelAPI.invokeOperation(operation.getIdShort()));
-	}
-	
-	@Test
-	public void invokeAsyncWithDelegatingDecoratedSubmodelAPI() {
-		Operation operation = createOperation();
-		
-		Submodel submodel = createSubmodel();
-		submodel.addSubmodelElement(operation);
-		
-		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = createMockedDelegationDecoratingSubmodelAPIFactory(submodel);
-				
-		ISubmodelAPI submodelAPI = decoratingSubmodelAPIFactory.getSubmodelAPI(submodel);
-		
-		CallbackResponse response = (CallbackResponse) submodelAPI.invokeAsync(operation.getIdShort());
-		
-		assertFalse(response.getRequestId().isEmpty());
-	}
-	
-	@Test
-	public void getOperationResultWithDelegatingDecoratedSubmodelAPI() {		
-		Operation operation = createOperation();
-		
-		Submodel submodel = createSubmodel();
-		submodel.addSubmodelElement(operation);
-		
-		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = createMockedDelegationDecoratingSubmodelAPIFactory(submodel);
-				
-		ISubmodelAPI submodelAPI = decoratingSubmodelAPIFactory.getSubmodelAPI(submodel);
-		
-		assertInvocationResponseIsCompleted(operation, submodelAPI);
-	}
-
-	private void assertInvocationResponseIsCompleted(Operation operation, ISubmodelAPI submodelAPI) {
-		CallbackResponse callbackResponse = (CallbackResponse) submodelAPI.invokeAsync(operation.getIdShort());
-		
-		InvocationResponse invocationResponse = (InvocationResponse) submodelAPI.getOperationResult(operation.getIdShort(), callbackResponse.getRequestId());
-		
-		assertSame(ExecutionState.COMPLETED, invocationResponse.getExecutionState());
-	}
-
-	private Operation createOperation() {
-		Function<Object[], Object> function = (args) -> {
-			return EXPECTED_VALUE;
-		};
-
-		Operation operation = new Operation(function);
-		operation.setIdShort("operation");
-		
-		return operation;
-	}
-	
-	private Submodel createSubmodel() {
-		Submodel submodel = new Submodel("testSubmodel", new CustomId("testSM"));
-		
-		return submodel;
+		assertEquals(DelegationTestHelper.EXPECTED_VALUE, submodelAPI.getSubmodelElementValue(property.getIdShort()));
 	}
 	
 	private void assertPropertyValueIsAsExpected(int expectedValue, Submodel submodel, Property delegated) {
@@ -352,11 +258,11 @@ public class TestPropertyDelegationManager {
 	private DelegatingDecoratingSubmodelAPIFactory createMockedDelegationDecoratingSubmodelAPIFactory(Submodel submodel) {
 		DelegatingDecoratingSubmodelAPIFactory decoratingSubmodelAPIFactory = Mockito.mock(DelegatingDecoratingSubmodelAPIFactory.class);
 		
-		HTTPConnectorFactory httpConnectorFactory = createMockedConnectorFactory(EXPECTED_VALUE, SERVER_URL, ENDPOINT);
+		HTTPConnectorFactory httpConnectorFactory = createMockedConnectorFactory(DelegationTestHelper.EXPECTED_VALUE, DelegationTestHelper.SERVER_URL, DelegationTestHelper.ENDPOINT);
 		
 		VABSubmodelAPIFactory vabSubmodelAPIFactory = new VABSubmodelAPIFactory();
 		
-		DelegatingSubmodelAPI delegatingSubmodelAPI = new DelegatingSubmodelAPI(vabSubmodelAPIFactory.create(submodel), httpConnectorFactory);
+		DelegatingSubmodelAPI delegatingSubmodelAPI = new DelegatingSubmodelAPI(vabSubmodelAPIFactory.create(submodel),new PropertyDelegationManager(httpConnectorFactory));
 		
 		Mockito.when(decoratingSubmodelAPIFactory.getSubmodelAPI(submodel)).thenReturn(delegatingSubmodelAPI);
 		
@@ -364,7 +270,7 @@ public class TestPropertyDelegationManager {
 	}
 
 	private PropertyDelegationManager createDelegatedProvider() {
-		HTTPConnectorFactory mockedFactory = createMockedConnectorFactory(EXPECTED_VALUE, SERVER_URL, ENDPOINT);
+		HTTPConnectorFactory mockedFactory = createMockedConnectorFactory(DelegationTestHelper.EXPECTED_VALUE, DelegationTestHelper.SERVER_URL, DelegationTestHelper.ENDPOINT);
 		return new PropertyDelegationManager(mockedFactory);
 	}
 
@@ -380,12 +286,6 @@ public class TestPropertyDelegationManager {
 		return innerSubmodelElementCollection;
 	}
 
-	private Property createDelegatedProperty() {
-		Property delegated = new Property("delegated", ValueType.Int32);
-		delegated.setQualifiers(Collections.singleton(createQualifier(SERVER_URL, ENDPOINT)));
-		return delegated;
-	}
-
 	private HTTPConnectorFactory createMockedConnectorFactory(int expectedValue, String serverUrl, String endpoint) {
 		HTTPConnectorFactory mockedFactory = Mockito.mock(HTTPConnectorFactory.class);
 
@@ -395,9 +295,5 @@ public class TestPropertyDelegationManager {
 
 		Mockito.when(mockedConnector.getValue(endpoint)).thenReturn(String.valueOf(expectedValue));
 		return mockedFactory;
-	}
-
-	private IQualifier createQualifier(String serverUrl, String endpoint) {
-		return PropertyDelegationManager.createDelegationQualifier(serverUrl + endpoint);
 	}
 }

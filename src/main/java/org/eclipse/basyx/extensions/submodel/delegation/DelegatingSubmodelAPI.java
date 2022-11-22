@@ -35,7 +35,6 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
-import org.eclipse.basyx.vab.protocol.api.ConnectorFactory;
 
 /**
  * Implementation variant for the SubmodelAPI which handles the Submodels
@@ -48,8 +47,8 @@ public class DelegatingSubmodelAPI implements ISubmodelAPI {
 	private ISubmodelAPI decoratedSubmodelAPI;
 	private PropertyDelegationManager delegationProvider;
 
-	public DelegatingSubmodelAPI(ISubmodelAPI decoratedSubmodelAPI, ConnectorFactory connectorFactory) {
-		this.delegationProvider = new PropertyDelegationManager(connectorFactory);
+	public DelegatingSubmodelAPI(ISubmodelAPI decoratedSubmodelAPI, PropertyDelegationManager delegationManager) {
+		this.delegationProvider = delegationManager;
 		this.decoratedSubmodelAPI = decoratedSubmodelAPI;
 		
 		handleSubmodel(decoratedSubmodelAPI);
@@ -94,7 +93,7 @@ public class DelegatingSubmodelAPI implements ISubmodelAPI {
 
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
-		handleUpdateSubmodelElementRequest((SubmodelElement) this.decoratedSubmodelAPI.getSubmodelElement(idShortPath));
+		handleUpdateSubmodelElementValueRequest((SubmodelElement) this.decoratedSubmodelAPI.getSubmodelElement(idShortPath));
 		decoratedSubmodelAPI.updateSubmodelElement(idShortPath, newValue);
 	}
 
@@ -125,17 +124,18 @@ public class DelegatingSubmodelAPI implements ISubmodelAPI {
 		submodel.getSubmodelElements().values().stream().forEach(decoratedSubmodelAPI::addSubmodelElement);
 	}
 	
-	private void handleUpdateSubmodelElementRequest(SubmodelElement submodelElement) {
-		if(Property.isProperty(submodelElement)) {
-			throwAnExceptionIfDelegatedQualifierIsPresent(Property.createAsFacade(submodelElement));
-		}
+	private void handleUpdateSubmodelElementValueRequest(SubmodelElement submodelElement) {
+		if (!(Property.isProperty(submodelElement)))
+			return;
+
+		throwAnExceptionIfDelegatedQualifierIsPresent(submodelElement);
 	}
 
-	private void throwAnExceptionIfDelegatedQualifierIsPresent(Property property) {
-		Collection<IConstraint> qualifiers = property.getQualifiers();
-		Optional<IConstraint> optionalConstraint = qualifiers.stream().filter(delegationProvider::isDelegationQualifier).findAny();
+	private void throwAnExceptionIfDelegatedQualifierIsPresent(ISubmodelElement element) {
+		Collection<IConstraint> qualifiers = element.getQualifiers();
+		Optional<IConstraint> optionalConstraint = qualifiers.stream().filter(PropertyDelegationManager::isDelegationQualifier).findAny();
 
 		if (!optionalConstraint.isEmpty())
-			throw new MalformedRequestException("The update request on this Property " + property.getIdShort() + " with delegated qualifier is not allowed");
+			throw new MalformedRequestException("The update request on this SubmodelElement " + element.getIdShort() + " with delegated qualifier is not allowed");
 	}
 }
