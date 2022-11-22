@@ -32,7 +32,7 @@ import static org.mockserver.model.HttpResponse.response;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.basyx.extensions.submodel.delegation.DelegatingSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.delegation.PropertyDelegationManager;
-import org.mockserver.client.server.MockServerClient;
+import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
 import org.mockserver.model.Header;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -51,8 +51,8 @@ import org.junit.Test;
  *
  */
 public class TestDelegatingSubmodelAPI {
-	
 	private static ClientAndServer mockServer;
+	private static MockServerClient mockServerClient;
 	
 	@BeforeClass
 	public static void init() {
@@ -111,7 +111,9 @@ public class TestDelegatingSubmodelAPI {
 	}
 	
 	private static void createExpectationForGet() {
-		new MockServerClient(DelegationTestHelper.SERVER_IP, DelegationTestHelper.SERVER_PORT).when(request().withMethod("GET").withPath(DelegationTestHelper.ENDPOINT))
+		mockServerClient = new MockServerClient(DelegationTestHelper.SERVER_IP, DelegationTestHelper.SERVER_PORT);
+		
+		mockServerClient.when(request().withMethod("GET").withPath(DelegationTestHelper.ENDPOINT))
 				.respond(response().withStatusCode(200)
 						.withHeaders(new Header("Content-Type", "text/plain; charset=utf-8"),
 								new Header("Cache-Control", "public, max-age=86400"))
@@ -121,5 +123,7 @@ public class TestDelegatingSubmodelAPI {
 	@AfterClass
     public static void stopServer() {
         mockServer.stop();
+        
+        mockServerClient.close();
     } 
 }
