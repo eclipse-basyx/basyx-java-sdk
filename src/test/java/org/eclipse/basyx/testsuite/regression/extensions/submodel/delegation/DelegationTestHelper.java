@@ -40,26 +40,26 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
  *
  */
 public class DelegationTestHelper {
-	protected static final int EXPECTED_VALUE = 10;
-	protected static final int SERVER_PORT = 1080;
+	public static final int EXPECTED_VALUE = 10;
+	public static final int SERVER_PORT = 1080;
 	
-	protected static final String SERVER_IP = "127.0.0.1";
-	protected static final String SERVER_URL = "http://" + SERVER_IP + ":" + SERVER_PORT;
-	protected static final String ENDPOINT = "/valueEndpoint";
+	public static final String SERVER_IP = "127.0.0.1";
+	public static final String SERVER_URL = "http://" + SERVER_IP + ":" + SERVER_PORT;
+	public static final String ENDPOINT = "/valueEndpoint";
 	
-	protected static Property createDelegatedProperty() {
+	public static Property createDelegatedProperty() {
 		Property delegated = new Property("delegated", ValueType.Int32);
 		delegated.setQualifiers(Collections.singleton(createQualifier(SERVER_URL, ENDPOINT)));
 		return delegated;
 	}
 	
-	protected static Submodel createSubmodel() {
+	public static Submodel createSubmodel() {
 		Submodel submodel = new Submodel("testSubmodel", new CustomId("testSM"));
 		
 		return submodel;
 	}
 	
-	protected static IQualifier createQualifier(String serverUrl, String endpoint) {
+	public static IQualifier createQualifier(String serverUrl, String endpoint) {
 		return PropertyDelegationManager.createDelegationQualifier(serverUrl + endpoint);
 	}
 }

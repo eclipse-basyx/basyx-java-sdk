@@ -29,7 +29,6 @@ import static org.mockserver.integration.ClientAndServer.startClientAndServer;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
-import java.util.concurrent.TimeUnit;
 import org.eclipse.basyx.extensions.submodel.delegation.DelegatingSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.delegation.PropertyDelegationManager;
 import org.mockserver.client.MockServerClient;
@@ -117,7 +116,7 @@ public class TestDelegatingSubmodelAPI {
 				.respond(response().withStatusCode(200)
 						.withHeaders(new Header("Content-Type", "text/plain; charset=utf-8"),
 								new Header("Cache-Control", "public, max-age=86400"))
-						.withBody(Integer.toString(DelegationTestHelper.EXPECTED_VALUE)).withDelay(TimeUnit.SECONDS, 1));
+						.withBody(Integer.toString(DelegationTestHelper.EXPECTED_VALUE)));
 	}
 	
 	@AfterClass
