@@ -59,7 +59,7 @@ public class MqttV2SubmodelAggregatorObserver extends MqttEventService implement
 	 *
 	 * @param client
 	 *            already configured client
-	 * @param MqttV2SubmodelAggregatorTopicFactory
+	 * @param topicFactory
 	 * @throws MqttException
 	 */
 	public MqttV2SubmodelAggregatorObserver(MqttClient client, MqttV2SubmodelAggregatorTopicFactory topicFactory) throws MqttException {
@@ -71,7 +71,7 @@ public class MqttV2SubmodelAggregatorObserver extends MqttEventService implement
 	 *
 	 * @param client
 	 *            already configured client
-	 * @param MqttV2SubmodelAggregatorTopicFactory
+	 * @param topicFactory
 	 * @param payloadSerializer
 	 * @throws MqttException
 	 */
