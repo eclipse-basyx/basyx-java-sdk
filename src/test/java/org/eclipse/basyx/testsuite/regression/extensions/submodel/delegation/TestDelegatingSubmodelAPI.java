@@ -26,14 +26,10 @@ package org.eclipse.basyx.testsuite.regression.extensions.submodel.delegation;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockserver.integration.ClientAndServer.startClientAndServer;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
-
 import org.eclipse.basyx.extensions.submodel.delegation.DelegatingSubmodelAPI;
 import org.eclipse.basyx.extensions.submodel.delegation.PropertyDelegationManager;
 import org.mockserver.client.MockServerClient;
 import org.mockserver.integration.ClientAndServer;
-import org.mockserver.model.Header;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
@@ -57,7 +53,7 @@ public class TestDelegatingSubmodelAPI {
 	public static void init() {
 		configureAndStartMockHttpServer();
 		
-		createExpectationForGet();
+		mockServerClient = DelegationTestHelper.createExpectationForMockedGet();
 	}
 	
 	@Test
@@ -107,16 +103,6 @@ public class TestDelegatingSubmodelAPI {
 	
 	private static void configureAndStartMockHttpServer() {
 		mockServer = startClientAndServer(DelegationTestHelper.SERVER_PORT);
-	}
-	
-	private static void createExpectationForGet() {
-		mockServerClient = new MockServerClient(DelegationTestHelper.SERVER_IP, DelegationTestHelper.SERVER_PORT);
-		
-		mockServerClient.when(request().withMethod("GET").withPath(DelegationTestHelper.ENDPOINT))
-				.respond(response().withStatusCode(200)
-						.withHeaders(new Header("Content-Type", "text/plain; charset=utf-8"),
-								new Header("Cache-Control", "public, max-age=86400"))
-						.withBody(Integer.toString(DelegationTestHelper.EXPECTED_VALUE)));
 	}
 	
 	@AfterClass
