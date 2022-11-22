@@ -46,7 +46,6 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementC
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.submodel.restapi.observing.ObserableSubmodelAPIV2Helper;
-import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPIV2;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
@@ -77,13 +76,13 @@ public class MqttV2SubmodelAPIObserverTest {
 	private static final String SERVER_URI = "tcp://localhost:1884";
 	private static final String AASID = "testaasid";
 	private static final String SUBMODELID = "testsubmodelid";
+	private static final String AASREPOID = "aas-server";
 
 	private static Server mqttBroker;
 	private static ISubmodelAPI observableAPI;
 	private MqttTestListener listener;
 
 	private static Submodel submodel;
-	private static ObservableSubmodelAPIV2 observable;
 
 	private static MqttV2SubmodelAPITopicFactory payloadFactory = new MqttV2SubmodelAPITopicFactory(new Base64URLEncoder());
 
@@ -104,11 +103,10 @@ public class MqttV2SubmodelAPIObserverTest {
 		submodel.setParent(parentRef);
 
 		observableAPI = createObservableSubmodelAPI();
-		observable = new ObservableSubmodelAPIV2(observableAPI, "aas-server");
 	}
 
 	private static ISubmodelAPI createObservableSubmodelAPI() throws MqttException {
-		return new MqttV2DecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence()), "aas-server", payloadFactory).getSubmodelAPI(submodel);
+		return new MqttV2DecoratingSubmodelAPIFactory(new VABSubmodelAPIFactory(), new MqttClient(SERVER_URI, CLIENT_ID, new MqttDefaultFilePersistence()), AASREPOID, payloadFactory).getSubmodelAPI(submodel);
 	}
 
 	@AfterClass
@@ -135,7 +133,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(payloadFactory.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createCreateSubmodelElementTopic(AASID, SUBMODELID, elemIdShort, AASREPOID), listener.lastTopic);
 	}
 
 	@Test
@@ -150,7 +148,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(idShortPath, prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(payloadFactory.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createCreateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, AASREPOID), listener.lastTopic);
 	}
 
 	@Test
@@ -164,7 +162,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.updateSubmodelElement(elemIdShort, expected);
 
 		assertEquals(expected, deserializePayload(listener.lastPayload));
-		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, elemIdShort, AASREPOID), listener.lastTopic);
 	}
 
 	@Test
@@ -176,7 +174,7 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.deleteSubmodelElement(idShortPath);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(payloadFactory.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createDeleteSubmodelElementTopic(AASID, SUBMODELID, idShortPath, AASREPOID), listener.lastTopic);
 	}
 
 	@Test
@@ -191,46 +189,46 @@ public class MqttV2SubmodelAPIObserverTest {
 		observableAPI.addSubmodelElement(prop);
 
 		assertEquals(setValueNull(prop), deserializePayload(listener.lastPayload));
-		assertEquals(payloadFactory.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, observable.getAasServerId()), listener.lastTopic);
+		assertEquals(payloadFactory.createUpdateSubmodelElementTopic(AASID, SUBMODELID, idShortPath, AASREPOID), listener.lastTopic);
 	}
 
 	@Test
-	public void submodelElementWithEnabledEmptyValueQualifier() {
+	public void updateSubmodelElementWithEnabledEmptyValueEventQualifier() {
 		boolean emptyValueShouldBeSend = true;
 		String propIdShort = "hugeValue";
 
-		triggerUpdateEventOnPropertyWithEmptyValueQualifier(propIdShort, emptyValueShouldBeSend);
+		triggerUpdateEventOnPropertyWithEmptyValueEventQualifier(propIdShort, emptyValueShouldBeSend);
 
-		assertEquals("", listener.lastPayload);
-		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, propIdShort, observable.getAasServerId()), listener.lastTopic);
+		assertEquals("{}", listener.lastPayload);
+		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, propIdShort, AASREPOID), listener.lastTopic);
 	}
 
 	@Test
-	public void submodelElementWithDisabledEmptyValueQualifier() {
+	public void updateSubmodelElementWithDisabledEmptyValueEventQualifier() {
 		boolean emptyValueShouldBeSend = false;
 		String propIdShort = "hugeValue";
 
-		triggerUpdateEventOnPropertyWithEmptyValueQualifier(propIdShort, emptyValueShouldBeSend);
+		triggerUpdateEventOnPropertyWithEmptyValueEventQualifier(propIdShort, emptyValueShouldBeSend);
 
-		assertEquals("aHugeValue", listener.lastPayload);
-		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, propIdShort, observable.getAasServerId()), listener.lastTopic);
+		assertEquals("\"aHugeValue\"", listener.lastPayload);
+		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, propIdShort, AASREPOID), listener.lastTopic);
 	}
 
-	private void triggerUpdateEventOnPropertyWithEmptyValueQualifier(String propIdShort, boolean emptyValueShouldBeSend) {
+	private void triggerUpdateEventOnPropertyWithEmptyValueEventQualifier(String propIdShort, boolean emptyValueShouldBeSend) {
 		Property prop = new Property(propIdShort, "123");
-		prop.setQualifiers(createEmptyUpdateEventQualifier(emptyValueShouldBeSend));
+		prop.setQualifiers(createEmptyValueEventQualifier(emptyValueShouldBeSend));
 
 		observableAPI.addSubmodelElement(prop);
 		observableAPI.updateSubmodelElement(prop.getIdShort(), "aHugeValue");
 	}
 
-	private Collection<IConstraint> createEmptyUpdateEventQualifier(boolean shouldIgnore) {
+	private Collection<IConstraint> createEmptyValueEventQualifier(boolean shouldIgnore) {
 		IQualifier qualifier;
 
 		if (shouldIgnore) {
-			qualifier = ObserableSubmodelAPIV2Helper.createSendEmptyValueQualifierEnabled();
+			qualifier = ObserableSubmodelAPIV2Helper.createEmptyValueEventEnabledQualifier();
 		} else {
-			qualifier = ObserableSubmodelAPIV2Helper.createSendEmptyValueQualifierDisabled();
+			qualifier = ObserableSubmodelAPIV2Helper.createEmptyValueEventDisabledQualifier();
 		}
 
 		return Collections.singleton(qualifier);

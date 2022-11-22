@@ -36,6 +36,7 @@ import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelEleme
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserverV2;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
+import org.eclipse.basyx.vab.coder.json.serialization.Serializer;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -52,6 +53,7 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	protected boolean useWhitelist = false;
 	protected Set<String> whitelist = new HashSet<>();
 	private MqttV2SubmodelAPITopicFactory payloadFactory;
+	private Serializer payloadSerializer;
 
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
@@ -63,12 +65,29 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	 */
 	public MqttV2SubmodelAPIObserver(MqttClient client, MqttV2SubmodelAPITopicFactory topicFactory)
 			throws MqttException {
+		this(client, topicFactory, createGSONTools());
+	}
+
+	/**
+	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
+	 * 
+	 * @param client
+	 * @param topicFactory
+	 * @param payloadSerializer
+	 * @throws MqttException
+	 */
+	public MqttV2SubmodelAPIObserver(MqttClient client, MqttV2SubmodelAPITopicFactory topicFactory, Serializer payloadSerializer) throws MqttException {
 		super(client);
 		this.payloadFactory = topicFactory;
 		
+		this.payloadSerializer = payloadSerializer;
 		connectMqttClientIfRequired();
 	}
-		
+
+	private static GSONTools createGSONTools() {
+		return new GSONTools(new DefaultTypeFactory(), false, false);
+	}
+
 	private void connectMqttClientIfRequired() throws MqttException {
 		if(!mqttClient.isConnected()) {
 			mqttClient.connect();
@@ -160,12 +179,10 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	}
 
 	private String serializePayload(Object payload) {
-		if (payload != null && payload instanceof String) {
-			return (String) payload;
-		} else {
-			GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
-
-			return tools.serialize(payload);
+		if (payload == null) {
+			return "{}";
 		}
+
+		return payloadSerializer.serialize(payload);
 	}
 }

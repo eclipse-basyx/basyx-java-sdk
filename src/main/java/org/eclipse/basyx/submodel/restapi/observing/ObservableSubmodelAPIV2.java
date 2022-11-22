@@ -48,13 +48,15 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 	ISubmodelAPI submodelAPI;
 	private String aasServerId = "aas-server";
 
+	/**
+	 * Constructs an observable ISubmodelAPI wrapping an existing ISubmodelAPI
+	 * 
+	 * @param observerdAPI
+	 * @param aasServerId
+	 */
 	public ObservableSubmodelAPIV2(ISubmodelAPI observerdAPI, String aasServerId) {
 		submodelAPI = observerdAPI;
 		this.aasServerId = aasServerId;		
-	}
-
-	public String getAasServerId() {
-	  return this.aasServerId;
 	}
 	
 	@Override
@@ -70,6 +72,9 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 	}
 
 	private void addOrReplaceSubmodelElement(String idShortPath, ISubmodelElement elem) {
+		// There is no replace possibility in the ISubmodelAPI for submodel elements.
+		// Thus, a check for existence is performed to determine if an existing submodel
+		// element is overwritten.
 		try {
 			submodelAPI.getSubmodelElement(idShortPath);
 			submodelAPI.addSubmodelElement(idShortPath, elem);
@@ -115,7 +120,7 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 
 		Object valueToSend;
 		if (ObserableSubmodelAPIV2Helper.shouldSendEmptyValue(elem)) {
-			valueToSend = "";
+			valueToSend = null;
 		} else {
 			valueToSend = newValue;
 		}

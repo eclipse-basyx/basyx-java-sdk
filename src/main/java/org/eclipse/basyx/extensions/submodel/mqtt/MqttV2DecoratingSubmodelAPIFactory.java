@@ -44,6 +44,15 @@ public class MqttV2DecoratingSubmodelAPIFactory implements ISubmodelAPIFactory {
 	private String aasServerId;
 	private MqttV2SubmodelAPITopicFactory topicFactory;
 
+	/**
+	 * Decorates the passed factory with the MqttV2 feature using the passed
+	 * TopicFactory for topic creation
+	 * 
+	 * @param factoryToBeDecorated
+	 * @param client
+	 * @param aasServerId
+	 * @param topicFactory
+	 */
 	public MqttV2DecoratingSubmodelAPIFactory(ISubmodelAPIFactory factoryToBeDecorated, MqttClient client, String aasServerId, MqttV2SubmodelAPITopicFactory topicFactory) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;

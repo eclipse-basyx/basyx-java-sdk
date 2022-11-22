@@ -43,6 +43,15 @@ public class MqttV2DecoratingAASAggregatorFactory implements IAASAggregatorFacto
 	private String aasServerId;
 	private MqttV2AASAggregatorTopicFactory topicFactory;
 
+	/**
+	 * Decorates the passed factory with the MqttV2 feature using the passed
+	 * TopicFactory for topic creation
+	 * 
+	 * @param factoryToBeDecorated
+	 * @param client
+	 * @param aasServerId
+	 * @param topicFactory
+	 */
 	public MqttV2DecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, MqttClient client, String aasServerId, MqttV2AASAggregatorTopicFactory topicFactory) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;

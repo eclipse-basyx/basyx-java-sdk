@@ -47,8 +47,8 @@ public class ObserableSubmodelAPIV2Helper {
 	 * Creates a qualifier indicating that the annotated element's value should not be propagated via eventing
 	 * @return
 	 */
-	public static Qualifier createSendEmptyValueQualifierEnabled() {
-		return createSendEmptyValueQualifier(true);
+	public static Qualifier createEmptyValueEventEnabledQualifier() {
+		return createEmptyValueEventQualifier(true);
 	}
 
 	/**
@@ -59,11 +59,11 @@ public class ObserableSubmodelAPIV2Helper {
 	 * 
 	 * @return
 	 */
-	public static Qualifier createSendEmptyValueQualifierDisabled() {
-		return createSendEmptyValueQualifier(false);
+	public static Qualifier createEmptyValueEventDisabledQualifier() {
+		return createEmptyValueEventQualifier(false);
 	}
 
-	private static Qualifier createSendEmptyValueQualifier(boolean sendEmptyValue) {
+	private static Qualifier createEmptyValueEventQualifier(boolean sendEmptyValue) {
 		Qualifier emptyValueUpdateEvent = new Qualifier(EMPTYVALUEUPDATE_TYPE, ValueType.Boolean);
 		emptyValueUpdateEvent.setValue(sendEmptyValue);
 

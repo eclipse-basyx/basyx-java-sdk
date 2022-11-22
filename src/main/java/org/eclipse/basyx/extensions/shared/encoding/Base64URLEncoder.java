@@ -29,6 +29,12 @@ package org.eclipse.basyx.extensions.shared.encoding;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+/**
+ * Encoder supporting Base64URL encoding
+ * 
+ * @author schnicke
+ *
+ */
 public class Base64URLEncoder implements IEncoder {
 
 	@Override

@@ -28,6 +28,12 @@ package org.eclipse.basyx.extensions.shared.encoding;
 
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
+/**
+ * Encoder supporting URL encoding
+ * 
+ * @author schnicke
+ *
+ */
 public class URLEncoder implements IEncoder {
 
 	@Override

@@ -34,6 +34,7 @@ import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionC
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
+import org.eclipse.basyx.vab.coder.json.serialization.Serializer;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
@@ -51,17 +52,38 @@ public class MqttV2SubmodelAggregatorObserver extends MqttEventService implement
 
 	private MqttV2SubmodelAggregatorTopicFactory topicFactory;
 
+	private Serializer payloadSerializer;
+
 	/**
 	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
 	 *
 	 * @param client
 	 *            already configured client
+	 * @param MqttV2SubmodelAggregatorTopicFactory
 	 * @throws MqttException
 	 */
 	public MqttV2SubmodelAggregatorObserver(MqttClient client, MqttV2SubmodelAggregatorTopicFactory topicFactory) throws MqttException {
+		this(client, topicFactory, createGSONTools());
+	}
+
+	/**
+	 * Constructor for adding this MQTT extension as an Submodel Aggregator Observer
+	 *
+	 * @param client
+	 *            already configured client
+	 * @param MqttV2SubmodelAggregatorTopicFactory
+	 * @param payloadSerializer
+	 * @throws MqttException
+	 */
+	public MqttV2SubmodelAggregatorObserver(MqttClient client, MqttV2SubmodelAggregatorTopicFactory topicFactory, Serializer payloadSerializer) throws MqttException {
 		super(client);
 		this.topicFactory = topicFactory;
+		this.payloadSerializer = payloadSerializer;
 		logger.info("Create new MQTT Submodel Aggregator Observer for endpoint " + client.getServerURI());
+	}
+
+	private static GSONTools createGSONTools() {
+		return new GSONTools(new DefaultTypeFactory(), false, false);
 	}
 
 
@@ -108,8 +130,6 @@ public class MqttV2SubmodelAggregatorObserver extends MqttEventService implement
 	}
 	
 	private String serializePayload(ISubmodel submodel) {
-		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
-		
-		return tools.serialize(submodel);
+		return payloadSerializer.serialize(submodel);
 	}
 }

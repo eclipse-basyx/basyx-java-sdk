@@ -49,6 +49,12 @@ public class MqttV2AASAggregatorTopicFactory extends AbstractMqttV2TopicFactory 
 		super(encoder);
 	}
 
+	/**
+	 * Creates the hierarchical topic for the create event
+	 * 
+	 * @param repoId
+	 * @return
+	 */
 	public String createCreateAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
@@ -58,6 +64,12 @@ public class MqttV2AASAggregatorTopicFactory extends AbstractMqttV2TopicFactory 
 				.toString();
 	}
 	
+	/**
+	 * Creates the hierarchical topic for the update event
+	 * 
+	 * @param repoId
+	 * @return
+	 */
 	public String createUpdateAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
@@ -67,6 +79,12 @@ public class MqttV2AASAggregatorTopicFactory extends AbstractMqttV2TopicFactory 
 				.toString();
 	}
 	
+	/**
+	 * Creates the hierarchical topic for the delete event
+	 * 
+	 * @param repoId
+	 * @return
+	 */
 	public String createDeleteAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)

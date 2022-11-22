@@ -32,8 +32,8 @@ import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
+import org.eclipse.basyx.vab.coder.json.serialization.Serializer;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 public class MqttV2AASRegistryServiceObserver extends MqttEventService implements IAASRegistryServiceObserverV2 {
 	private static Logger logger = LoggerFactory.getLogger(MqttV2AASRegistryServiceObserver.class);
 	private MqttV2AASRegistryTopicFactory topicFactory;
+	private Serializer payloadSerializer;
 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Registry Observer
@@ -58,29 +59,27 @@ public class MqttV2AASRegistryServiceObserver extends MqttEventService implement
 	 * @throws MqttException
 	 */
 	public MqttV2AASRegistryServiceObserver(MqttClient client, MqttV2AASRegistryTopicFactory topicFactory) throws MqttException {
-		super(client);
-		this.topicFactory = topicFactory;
-		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + client.getServerURI());
+		this(client, topicFactory, createGSONTools());
 	}
 
 	/**
-	 * Constructor for creating an MqttClient with authentication and a custom
-	 * persistence strategy
-	 *
-	 * @param serverEndpoint
-	 *            endpoint of mqtt broker
-	 * @param clientId
-	 *            unique client identifier
-	 * @param user
-	 *            username for authentication with broker
-	 * @param pw
-	 *            password for authentication with broker
-	 * @param mqttPersistence
-	 *            custom mqtt persistence strategy
+	 * Constructor for adding this MQTT extension as an AAS Registry Observer
+	 * 
+	 * @param client
+	 *            already configured client
 	 * @param topicFactory
+	 * @param payloadSerializer
+	 * @throws MqttException
 	 */
-	public MqttV2AASRegistryServiceObserver(String serverEndpoint, String clientId, String user, char[] pw, MqttClientPersistence mqttPersistence, MqttV2AASRegistryTopicFactory topicFactory) throws MqttException {
-		super(serverEndpoint, clientId, user, pw, mqttPersistence);
+	public MqttV2AASRegistryServiceObserver(MqttClient client, MqttV2AASRegistryTopicFactory topicFactory, Serializer payloadSerializer) throws MqttException {
+		super(client);
+		this.topicFactory = topicFactory;
+		this.payloadSerializer = payloadSerializer;
+		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + client.getServerURI());
+	}
+
+	private static GSONTools createGSONTools() {
+		return new GSONTools(new DefaultTypeFactory(), false, false);
 	}
 
 	@Override
@@ -116,8 +115,6 @@ public class MqttV2AASRegistryServiceObserver extends MqttEventService implement
 	}
 	
 	private String serializePayload(ModelDescriptor descriptor) {
-		GSONTools gsonTools = new GSONTools(new DefaultTypeFactory(), false, false);
-		
-		return gsonTools.serialize(descriptor);
+		return payloadSerializer.serialize(descriptor);
 	}
 }

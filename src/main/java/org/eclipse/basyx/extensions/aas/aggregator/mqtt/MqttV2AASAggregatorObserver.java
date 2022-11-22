@@ -34,6 +34,7 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
+import org.eclipse.basyx.vab.coder.json.serialization.Serializer;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
@@ -49,18 +50,37 @@ import org.slf4j.LoggerFactory;
 public class MqttV2AASAggregatorObserver extends MqttEventService implements IAASAggregatorObserverV2 {
 	private static Logger logger = LoggerFactory.getLogger(MqttV2AASAggregatorObserver.class);
 	private MqttV2AASAggregatorTopicFactory topicFactory;
+	private Serializer payloadSerializer;
 
 	/**
 	 * Constructor for adding this MQTT extension as an AAS Aggregator Observer
 	 *
 	 * @param client
 	 *            already configured client
+	 * @param topicFactory
 	 * @throws MqttException
 	 */
 	public MqttV2AASAggregatorObserver(MqttClient client, MqttV2AASAggregatorTopicFactory topicFactory) throws MqttException {
+		this(client, topicFactory, createGSONTools());
+	}
+
+	/**
+	 * Constructor for adding this MQTT extension as an AAS Aggregator Observer
+	 * 
+	 * @param client
+	 * @param topicFactory
+	 * @param payloadSerializer
+	 * @throws MqttException
+	 */
+	public MqttV2AASAggregatorObserver(MqttClient client, MqttV2AASAggregatorTopicFactory topicFactory, Serializer payloadSerializer) throws MqttException {
 		super(client);
 		this.topicFactory = topicFactory;
+		this.payloadSerializer = payloadSerializer;
 		logger.info("Create new MQTT AAS Aggregator Observer for endpoint " + client.getServerURI());
+	}
+
+	private static GSONTools createGSONTools() {
+		return new GSONTools(new DefaultTypeFactory(), false, false);
 	}
 
 	@Override
@@ -104,8 +124,6 @@ public class MqttV2AASAggregatorObserver extends MqttEventService implements IAA
 	}
 	
 	private String serializePayload(IAssetAdministrationShell shell) {
-		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
-		
-		return tools.serialize(shell);
+		return payloadSerializer.serialize(shell);
 	}
 }

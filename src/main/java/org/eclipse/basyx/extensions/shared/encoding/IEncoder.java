@@ -26,6 +26,19 @@
 
 package org.eclipse.basyx.extensions.shared.encoding;
 
+/**
+ * Simple encoder interface used for encoding strings
+ * 
+ * @author schnicke
+ *
+ */
 public interface IEncoder {
+
+	/**
+	 * Encodes the passed string
+	 * 
+	 * @param toEncode
+	 * @return
+	 */
 	public String encode(String toEncode);
 }
