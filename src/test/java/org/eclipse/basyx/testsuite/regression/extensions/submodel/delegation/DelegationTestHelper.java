@@ -24,14 +24,18 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.extensions.submodel.delegation;
 
-import java.util.Collections;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
+import java.util.Collections;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.CustomId;
 import org.eclipse.basyx.extensions.submodel.delegation.PropertyDelegationManager;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IQualifier;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
+import org.mockserver.client.MockServerClient;
+import org.mockserver.model.Header;
 
 /**
  * Helper class used in delegation test classes
@@ -61,5 +65,17 @@ public class DelegationTestHelper {
 	
 	public static IQualifier createQualifier(String serverUrl, String endpoint) {
 		return PropertyDelegationManager.createDelegationQualifier(serverUrl + endpoint);
+	}
+	
+	public static MockServerClient createExpectationForMockedGet() {
+		MockServerClient mockServerClient = new MockServerClient(SERVER_IP, SERVER_PORT);
+		
+		mockServerClient.when(request().withMethod("GET").withPath(ENDPOINT))
+				.respond(response().withStatusCode(200)
+						.withHeaders(new Header("Content-Type", "text/plain; charset=utf-8"),
+								new Header("Cache-Control", "public, max-age=86400"))
+						.withBody(Integer.toString(EXPECTED_VALUE)));
+		
+		return mockServerClient;
 	}
 }
