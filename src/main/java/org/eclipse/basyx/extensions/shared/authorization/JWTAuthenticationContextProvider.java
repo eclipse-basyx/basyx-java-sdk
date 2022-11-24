@@ -44,7 +44,7 @@ public class JWTAuthenticationContextProvider implements ISubjectInformationProv
     return getAuthentication().map(AbstractOAuth2TokenAuthenticationToken::getToken).orElse(null);
   }
 
-  public Optional<JwtAuthenticationToken> getAuthentication() {
+  private Optional<JwtAuthenticationToken> getAuthentication() {
     final SecurityContext context = SecurityContextHolder.getContext();
     return Optional.ofNullable(context.getAuthentication())
         .filter(JwtAuthenticationToken.class::isInstance)

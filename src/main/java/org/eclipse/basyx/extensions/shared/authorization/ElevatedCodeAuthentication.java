@@ -25,8 +25,8 @@
 package org.eclipse.basyx.extensions.shared.authorization;
 
 import java.util.Collections;
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.Set;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +37,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @author wege
  */
 public class ElevatedCodeAuthentication extends AbstractAuthenticationToken {
-  private static final ThreadLocal<Deque<ElevatedCodeAuthenticationAreaHandler>> elevatedCodeAuthenticationAreaHandlerStack = ThreadLocal.withInitial(LinkedList::new);
+  private static final ThreadLocal<Set<ElevatedCodeAuthenticationAreaHandler>> elevatedCodeAuthenticationAreaHandlers = ThreadLocal.withInitial(HashSet::new);
   private static final ThreadLocal<SecurityContext> previousSecurityContext = new ThreadLocal<>();
 
   public ElevatedCodeAuthentication() {
@@ -61,25 +61,30 @@ public class ElevatedCodeAuthentication extends AbstractAuthenticationToken {
   public static class ElevatedCodeAuthenticationAreaHandler implements AutoCloseable {
     @Override
     public void close() {
-      leaveElevatedCodeAuthenticationArea();
+      leaveElevatedCodeAuthenticationArea(this);
     }
   }
 
-  public static void leaveElevatedCodeAuthenticationArea() {
-    elevatedCodeAuthenticationAreaHandlerStack.get().pop();
-    if (elevatedCodeAuthenticationAreaHandlerStack.get().isEmpty()) {
+  private static void leaveElevatedCodeAuthenticationArea(final ElevatedCodeAuthenticationAreaHandler areaHandler) {
+    final var areaHandlers = elevatedCodeAuthenticationAreaHandlers.get();
+    if (!areaHandlers.contains(areaHandler)) {
+      return;
+    }
+
+    areaHandlers.remove(areaHandler);
+    if (areaHandlers.isEmpty()) {
       unsetElevatedCodeAuthentication();
     }
   }
 
   public static ElevatedCodeAuthenticationAreaHandler enterElevatedCodeAuthenticationArea() {
     final ElevatedCodeAuthenticationAreaHandler handler = new ElevatedCodeAuthenticationAreaHandler();
-    elevatedCodeAuthenticationAreaHandlerStack.get().add(handler);
+    elevatedCodeAuthenticationAreaHandlers.get().add(handler);
     setElevatedCodeAuthentication();
     return handler;
   }
 
-  public static void setElevatedCodeAuthentication() {
+  private static void setElevatedCodeAuthentication() {
     if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() instanceof ElevatedCodeAuthentication) {
       return;
     }
@@ -91,7 +96,7 @@ public class ElevatedCodeAuthentication extends AbstractAuthenticationToken {
     SecurityContextHolder.setContext(securityContext);
   }
 
-  public static void unsetElevatedCodeAuthentication() {
+  private static void unsetElevatedCodeAuthentication() {
     SecurityContextHolder.clearContext();
     if (previousSecurityContext.get() != null) {
       SecurityContextHolder.setContext(previousSecurityContext.get());
