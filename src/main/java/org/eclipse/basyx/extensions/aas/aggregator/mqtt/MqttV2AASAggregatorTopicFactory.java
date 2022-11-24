@@ -22,63 +22,75 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.submodel.aggregator.mqtt;
+package org.eclipse.basyx.extensions.aas.aggregator.mqtt;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.StringJoiner;
+
+import org.eclipse.basyx.extensions.shared.encoding.IEncoder;
+import org.eclipse.basyx.extensions.shared.mqtt.AbstractMqttV2TopicFactory;
 
 /**
  * A helper class containing methods that create topics used by the
- * SubmodelAggregator.
- *
+ * AASAggregator.
+ * 
  */
-public class MqttV2SubmodelAggregatorHelper {
+public class MqttV2AASAggregatorTopicFactory extends AbstractMqttV2TopicFactory {
 	private static final String AASREPOSITORY = "aas-repository";
 	private static final String SHELLS = "shells";
-	private static final String SUBMODELS = "submodels";
 	private static final String CREATED = "created";
 	private static final String UPDATED = "updated";
 	private static final String DELETED = "deleted";
 	
-	
-	public static String createCreateSubmodelTopic(String aasId, String repoId) {
+	/**
+	 * @param encoder
+	 *            Used for encoding the aasId/submodelId
+	 */
+	public MqttV2AASAggregatorTopicFactory(IEncoder encoder) {
+		super(encoder);
+	}
+
+	/**
+	 * Creates the hierarchical topic for the create event
+	 * 
+	 * @param repoId
+	 * @return
+	 */
+	public String createCreateAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
-				.add(SUBMODELS)
 				.add(CREATED)
-				.toString();		
+				.toString();
 	}
 	
-	public static String createUpdateSubmodelTopic(String aasId, String repoId) {
+	/**
+	 * Creates the hierarchical topic for the update event
+	 * 
+	 * @param repoId
+	 * @return
+	 */
+	public String createUpdateAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
-				.add(SUBMODELS)
 				.add(UPDATED)
-				.toString();		
+				.toString();
 	}
 	
-	public static String createDeleteSubmodelTopic(String aasId, String repoId) {
+	/**
+	 * Creates the hierarchical topic for the delete event
+	 * 
+	 * @param repoId
+	 * @return
+	 */
+	public String createDeleteAASTopic(String repoId) {
 		return new StringJoiner("/", "/", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
-				.add(encodeAASId(aasId))
-				.add(SUBMODELS)
 				.add(DELETED)
-				.toString();		
-	}
-	
-	private static String encodeAASId(String aasId) {
-		if (aasId == null) {
-			return "<empty>";
-		}
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(aasId.getBytes(StandardCharsets.UTF_8));
+				.toString();
 	}
 }

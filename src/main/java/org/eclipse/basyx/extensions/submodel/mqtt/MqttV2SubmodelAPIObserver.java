@@ -28,23 +28,18 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.basyx.extensions.shared.mqtt.MqttEventService;
-import org.eclipse.basyx.extensions.submodel.aggregator.mqtt.MqttV2SubmodelAggregatorHelper;
-import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
-import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.observing.ISubmodelAPIObserverV2;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
+import org.eclipse.basyx.vab.coder.json.serialization.Serializer;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link ISubmodelAPIObserverV2} Triggers MQTT events for
@@ -54,73 +49,48 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubmodelAPIObserverV2 {
-	private static Logger logger = LoggerFactory.getLogger(MqttV2SubmodelAPIObserver.class);
-
 	// Submodel Element whitelist for filtering
 	protected boolean useWhitelist = false;
 	protected Set<String> whitelist = new HashSet<>();
-	
+	private MqttV2SubmodelAPITopicFactory payloadFactory;
+	private Serializer payloadSerializer;
 
 	/**
 	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
 	 * 
 	 * @param client
 	 *            An already connected mqtt client
-	 * @param aasId 
-	 * @param submodel
-	 * @param repoId
-	 * 
+	 * @param topicFactory
 	 * @throws MqttException
 	 */
-	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, Submodel submodel, String repoId) throws MqttException {
+	public MqttV2SubmodelAPIObserver(MqttClient client, MqttV2SubmodelAPITopicFactory topicFactory)
+			throws MqttException {
+		this(client, topicFactory, createGSONTools());
+	}
+
+	/**
+	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
+	 * 
+	 * @param client
+	 * @param topicFactory
+	 * @param payloadSerializer
+	 * @throws MqttException
+	 */
+	public MqttV2SubmodelAPIObserver(MqttClient client, MqttV2SubmodelAPITopicFactory topicFactory, Serializer payloadSerializer) throws MqttException {
 		super(client);
+		this.payloadFactory = topicFactory;
 		
+		this.payloadSerializer = payloadSerializer;
 		connectMqttClientIfRequired();
-		
-		String id = aasId == null ? null : aasId.getId();
+	}
 
-		if (submodel instanceof Map<?, ?>) {
-          ISubmodel copy = removeSubmodelElements(submodel);
-          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(id, repoId), serializePayload(copy));
-        } else {            
-          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(id, repoId), serializePayload(submodel));
-        }
+	private static GSONTools createGSONTools() {
+		return new GSONTools(new DefaultTypeFactory(), false, false);
 	}
-	
-	/**
-	 * Constructor for adding this MQTT extension on top of another SubmodelAPI
-	 * 
-	 * @param client
-	 *            An already connected mqtt client
-	 * @param aasId 
-	 * @param submodel
-	 * @param options
-	 * @param repoId
-	 * 
-	 * @throws MqttException
-	 */
-	public MqttV2SubmodelAPIObserver(MqttClient client, IIdentifier aasId, Submodel submodel, MqttConnectOptions options, String repoId) throws MqttException {
-		super(client);
-		
-		connectMqttClientIfRequired(options);
-		
-		if (submodel instanceof Map<?, ?>) {
-          ISubmodel copy = removeSubmodelElements(submodel);
-          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), serializePayload(copy));
-        } else {            
-          sendMqttMessage(MqttV2SubmodelAggregatorHelper.createCreateSubmodelTopic(aasId.getId(), repoId), serializePayload(submodel));
-        }
-	}
-		
+
 	private void connectMqttClientIfRequired() throws MqttException {
 		if(!mqttClient.isConnected()) {
 			mqttClient.connect();
-		}
-	}
-	
-	private void connectMqttClientIfRequired(MqttConnectOptions options) throws MqttException {
-		if(!mqttClient.isConnected()) {
-			mqttClient.connect(options);
 		}
 	}
 
@@ -166,7 +136,7 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	public void elementAdded(String idShortPath, Object newValue, String aasId, String submodelId, String repoId) {	
 		if (newValue instanceof Map<?, ?> && filter(idShortPath)) {
 			ISubmodelElement submodelElement = setValueNull(newValue);
-			sendMqttMessage(MqttV2SubmodelAPIHelper.createCreateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(submodelElement));
+			sendMqttMessage(payloadFactory.createCreateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(submodelElement));
 		}
 	}
 
@@ -174,7 +144,7 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	public void elementDeleted(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId) {
 		if (submodelElement instanceof Map<?, ?> && filter(idShortPath)) {
 			ISubmodelElement sme = setValueNull(submodelElement);
-			sendMqttMessage(MqttV2SubmodelAPIHelper.createDeleteSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
+			sendMqttMessage(payloadFactory.createDeleteSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
 		}
 	}
 
@@ -182,20 +152,15 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	public void elementUpdated(String idShortPath, ISubmodelElement submodelElement, String aasId, String submodelId, String repoId) {
 		if (submodelElement instanceof Map<?, ?> && filter(idShortPath)) {
 			ISubmodelElement sme = setValueNull(submodelElement);
-			sendMqttMessage(MqttV2SubmodelAPIHelper.createUpdateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
+			sendMqttMessage(payloadFactory.createUpdateSubmodelElementTopic(aasId, submodelId, idShortPath, repoId), serializePayload(sme));
 		}
 	}
 	
 	@Override
 	public void elementValue(String idShortPath, Object value, String aasId, String submodelId, String repoId) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttV2SubmodelAPIHelper.createSubmodelElementValueTopic(aasId, submodelId, idShortPath, repoId), serializePayload(value));			
+			sendMqttMessage(payloadFactory.createSubmodelElementValueTopic(aasId, submodelId, idShortPath, repoId), serializePayload(value));
 		}
-	}
-
-	public static String getCombinedMessage(String aasId, String submodelId, String elementPart) {
-		elementPart = VABPathTools.stripSlashes(elementPart);
-		return "(" + aasId + "," + submodelId + "," + elementPart + ")";
 	}
 
 	private boolean filter(String idShort) {
@@ -214,20 +179,10 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 	}
 
 	private String serializePayload(Object payload) {
-		GSONTools tools = new GSONTools(new DefaultTypeFactory(), false, false);
-		
-		return tools.serialize(payload);
+		if (payload == null) {
+			return null;
+		}
+
+		return payloadSerializer.serialize(payload);
 	}
-	
-	private ISubmodel removeSubmodelElements(ISubmodel submodel) {
-      Map<String, Object> map = SubmodelElementMapCollectionConverter.smToMap((Submodel) submodel);
-      Submodel copy =  Submodel.createAsFacade(map);
-          
-      for (ISubmodelElement sme: submodel.getSubmodelElements().values()) {
-          copy.deleteSubmodelElement(sme.getIdShort());
-      }
-      
-      return copy;
-  }
-	
 }

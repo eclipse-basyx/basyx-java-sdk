@@ -29,7 +29,6 @@ import java.security.ProviderException;
 
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
-import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregatorV2;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -47,11 +46,13 @@ public class MqttV2DecoratingSubmodelAggregatorFactory implements ISubmodelAggre
 	private ObservableSubmodelAggregatorV2 observedSubmodelAggregator;
 	protected MqttV2SubmodelAggregatorObserver observer;
 	private String aasServerId;
+	private MqttV2SubmodelAggregatorTopicFactory topicFactory;
 
-	public MqttV2DecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, MqttClient mqttClient, String aasServerId) {
+	public MqttV2DecoratingSubmodelAggregatorFactory(ISubmodelAggregatorFactory submodelAggregatorFactory, MqttClient mqttClient, String aasServerId, MqttV2SubmodelAggregatorTopicFactory topicFactory) {
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
 		this.mqttClient = mqttClient;
 		this.aasServerId = aasServerId;
+		this.topicFactory = topicFactory;
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class MqttV2DecoratingSubmodelAggregatorFactory implements ISubmodelAggre
 		try {
 			ISubmodelAggregator aggregator = submodelAggregatorFactory.create();
 			observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator, this.aasServerId);
-			observer = new MqttV2SubmodelAggregatorObserver(mqttClient);
+			observer = new MqttV2SubmodelAggregatorObserver(mqttClient, topicFactory);
 			observedSubmodelAggregator.addObserver(observer);
 			return observedSubmodelAggregator;
 		} catch (MqttException e) {

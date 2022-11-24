@@ -41,11 +41,22 @@ public class MqttV2DecoratingAASAggregatorFactory implements IAASAggregatorFacto
 	private IAASAggregatorFactory apiFactory;
 	private MqttClient client;
 	private String aasServerId;
+	private MqttV2AASAggregatorTopicFactory topicFactory;
 
-	public MqttV2DecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, MqttClient client, String aasServerId) {
+	/**
+	 * Decorates the passed factory with the MqttV2 feature using the passed
+	 * TopicFactory for topic creation
+	 * 
+	 * @param factoryToBeDecorated
+	 * @param client
+	 * @param aasServerId
+	 * @param topicFactory
+	 */
+	public MqttV2DecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated, MqttClient client, String aasServerId, MqttV2AASAggregatorTopicFactory topicFactory) {
 		this.apiFactory = factoryToBeDecorated;
 		this.client = client;
 		this.aasServerId = aasServerId;
+		this.topicFactory = topicFactory;
 	}
 
 	@Override
@@ -53,7 +64,7 @@ public class MqttV2DecoratingAASAggregatorFactory implements IAASAggregatorFacto
 		try {
 			IAASAggregator aggregator = apiFactory.create();
 			ObservableAASAggregatorV2 observedAASAggregator = new ObservableAASAggregatorV2(aggregator, this.aasServerId);
-			MqttV2AASAggregatorObserver observer = new MqttV2AASAggregatorObserver(client);
+			MqttV2AASAggregatorObserver observer = new MqttV2AASAggregatorObserver(client, topicFactory);
 			observedAASAggregator.addObserver(observer);
 			return observedAASAggregator;
 		} catch (MqttException exception) {
