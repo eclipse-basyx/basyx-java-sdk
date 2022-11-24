@@ -180,7 +180,7 @@ public class MqttV2SubmodelAPIObserver extends MqttEventService implements ISubm
 
 	private String serializePayload(Object payload) {
 		if (payload == null) {
-			return "{}";
+			return null;
 		}
 
 		return payloadSerializer.serialize(payload);

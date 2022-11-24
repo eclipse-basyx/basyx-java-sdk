@@ -199,7 +199,7 @@ public class MqttV2SubmodelAPIObserverTest {
 
 		triggerUpdateEventOnPropertyWithEmptyValueEventQualifier(propIdShort, emptyValueShouldBeSend);
 
-		assertEquals("{}", listener.lastPayload);
+		assertEquals("", listener.lastPayload);
 		assertEquals(payloadFactory.createSubmodelElementValueTopic(AASID, SUBMODELID, propIdShort, AASREPOID), listener.lastTopic);
 	}
 

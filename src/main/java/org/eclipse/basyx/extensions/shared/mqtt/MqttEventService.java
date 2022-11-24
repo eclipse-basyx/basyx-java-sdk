@@ -134,7 +134,7 @@ public class MqttEventService {
 	 *            the actual message
 	 */
 	protected void sendMqttMessage(String topic, String payload) {
-		MqttMessage msg = new MqttMessage(payload.getBytes());
+		MqttMessage msg = createMqttMessage(payload);
 		if (this.qos != 1) {
 			msg.setQos(this.qos);
 		}
@@ -145,6 +145,14 @@ public class MqttEventService {
 			logger.error("Could not persist mqtt message", e);
 		} catch (MqttException e) {
 			logger.error("Could not send mqtt message", e);
+		}
+	}
+
+	private MqttMessage createMqttMessage(String payload) {
+		if (payload == null) {
+			return new MqttMessage();
+		} else {
+			return new MqttMessage(payload.getBytes());
 		}
 	}
 }
