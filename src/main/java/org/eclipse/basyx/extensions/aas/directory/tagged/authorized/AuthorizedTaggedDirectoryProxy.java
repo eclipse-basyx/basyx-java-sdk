@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -22,26 +22,32 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.shared.authorization;
+package org.eclipse.basyx.extensions.aas.directory.tagged.authorized;
 
-import java.util.stream.Collectors;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
-import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import org.eclipse.basyx.extensions.aas.directory.tagged.proxy.TaggedDirectoryProxy;
+import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
+import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
+import org.eclipse.basyx.vab.protocol.https.HTTPSConnector;
 
 /**
- * Utility methods for handling ids.
+ * Local proxy class that hides HTTP calls to BaSys registry with enabled
+ * authorization.
  *
  * @author wege
  */
-public class IdUtil {
-  private IdUtil() {}
+public class AuthorizedTaggedDirectoryProxy extends TaggedDirectoryProxy {
 
-  public static String getIdentifierId(final IIdentifier identifier) {
-    return identifier != null ? identifier.getId() : null;
-  }
+	/**
+	 * Constructor for an AAS registry proxy based on a HTTP connection
+	 *
+	 * @param registryUrl
+	 *            The endpoint of the registry with a HTTP-REST interface
+	 * @param authorizationSupplier
+	 *            Supplier for values to be placed in the HTTP Authorization request
+	 *            header
+	 */
+	public AuthorizedTaggedDirectoryProxy(final String registryUrl, final IAuthorizationSupplier authorizationSupplier) {
+		super(new JSONConnector(new HTTPSConnector(harmonizeURL(registryUrl), authorizationSupplier)));
+	}
 
-  public static String getReferenceId(final IReference reference) {
-    return reference != null ? reference.getKeys().stream().map(IKey::getValue).collect(Collectors.joining(";")) : null;
-  }
 }

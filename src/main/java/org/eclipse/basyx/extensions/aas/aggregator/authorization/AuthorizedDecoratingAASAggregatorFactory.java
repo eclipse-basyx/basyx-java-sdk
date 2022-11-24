@@ -50,6 +50,11 @@ public class AuthorizedDecoratingAASAggregatorFactory<SubjectInformationType> im
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	/**
+	 * @deprecated please use {@link AuthorizedDecoratingAASAggregatorFactory#AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory, IAASAggregatorAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
+	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
 	public AuthorizedDecoratingAASAggregatorFactory(final IAASAggregatorFactory factoryToBeDecorated) {
 		this(
 				factoryToBeDecorated,

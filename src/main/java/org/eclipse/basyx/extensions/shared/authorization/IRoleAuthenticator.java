@@ -33,5 +33,12 @@ import java.util.List;
  * @author wege
  */
 public interface IRoleAuthenticator<SubjectInformationType> {
-  List<String> getRoles(final SubjectInformationType subjectInformation);
+  /**
+   * Fetches the authorities from the provider.
+   *
+   * @param subjectInformation
+   *                           the information of the requester from where the roles can be extracted, e.g. a JWT.
+   * @return a list of roles
+   */
+  public List<String> getRoles(final SubjectInformationType subjectInformation);
 }

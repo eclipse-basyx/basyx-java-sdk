@@ -60,7 +60,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author espen, wege
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class TestAuthorizedAASAPI {
+public class TestSimpleRbacAuthorizedAASAPI {
 	@Mock
 	private IAASAPI apiMock;
 	private AuthorizedAASAPI<?> testSubject;
@@ -70,11 +70,11 @@ public class TestAuthorizedAASAPI {
 	private final String adminRole = "admin";
 	private final String readerRole = "reader";
 
-	private static final String SHELL_ID = "shell_one";
+	private static final String SHELL_ID = "shell";
 	private static final Identifier SHELL_IDENTIFIER = new Identifier(IdentifierType.IRI, SHELL_ID);
-	private static final String SUBMODEL_ID = "submodel_1";
+	private static final String SUBMODEL_ID = "submodel";
 	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
-	private static final String ASSET_ID = "asset_one";
+	private static final String ASSET_ID = "asset";
 	private static final Identifier ASSET_IDENTIFIER = new Identifier(IdentifierType.IRI, ASSET_ID);
 	private static final Asset SHELL_ASSET = new Asset(ASSET_ID, ASSET_IDENTIFIER, AssetKind.INSTANCE);
 
@@ -83,17 +83,17 @@ public class TestAuthorizedAASAPI {
 
 	@Before
 	public void setUp() {
-		rbacRuleSet.addRule(RbacRule.of(
+		rbacRuleSet.addRule(new RbacRule(
 				adminRole,
 				AASAPIScopes.READ_SCOPE,
 				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
-		rbacRuleSet.addRule(RbacRule.of(
+		rbacRuleSet.addRule(new RbacRule(
 				adminRole,
 				AASAPIScopes.WRITE_SCOPE,
 				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
-		rbacRuleSet.addRule(RbacRule.of(
+		rbacRuleSet.addRule(new RbacRule(
 				readerRole,
 				AASAPIScopes.READ_SCOPE,
 				new BaSyxObjectTargetInformation("*", "*", "*")
@@ -113,6 +113,7 @@ public class TestAuthorizedAASAPI {
 	@After
 	public void tearDown() {
 		securityContextProvider.clearContext();
+		Mockito.verifyNoMoreInteractions(apiMock);
 	}
 
 	@Test
@@ -127,12 +128,16 @@ public class TestAuthorizedAASAPI {
 	@Test(expected = NotAuthorized.class)
 	public void givenSecurityContextIsEmpty_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getAAS()).thenReturn(null);
+
 		testSubject.getAAS();
 	}
 
 	@Test(expected = NotAuthorized.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
+		Mockito.when(apiMock.getAAS()).thenReturn(null);
+
 		testSubject.getAAS();
 	}
 
@@ -140,6 +145,8 @@ public class TestAuthorizedAASAPI {
 	public void givenPrincipalHasWriteAuthority_whenAddSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
 		final IReference smReference2Add = submodel.getReference();
+		Mockito.when(apiMock.getAAS()).thenReturn(null);
+
 		testSubject.addSubmodel(smReference2Add);
 		Mockito.verify(apiMock).addSubmodel(smReference2Add);
 	}
@@ -147,18 +154,24 @@ public class TestAuthorizedAASAPI {
 	@Test(expected = NotAuthorized.class)
 	public void givenSecurityContextIsEmpty_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getAAS()).thenReturn(null);
+
 		testSubject.addSubmodel(submodel.getReference());
 	}
 
 	@Test(expected = NotAuthorized.class)
 	public void givenPrincipalIsMissingReadAuthority_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
+		Mockito.when(apiMock.getAAS()).thenReturn(null);
+
 		testSubject.addSubmodel(submodel.getReference());
 	}
 
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenRemoveSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
+		Mockito.when(apiMock.getAAS()).thenReturn(null);
+
 		testSubject.removeSubmodel(SUBMODEL_ID);
 		Mockito.verify(apiMock).removeSubmodel(SUBMODEL_ID);
 	}
@@ -166,12 +179,16 @@ public class TestAuthorizedAASAPI {
 	@Test(expected = NotAuthorized.class)
 	public void givenSecurityContextIsEmpty_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getAAS()).thenReturn(null);
+
 		testSubject.removeSubmodel(SUBMODEL_ID);
 	}
 
 	@Test(expected = NotAuthorized.class)
 	public void givenPrincipalIsMissingReadAuthority_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
+		Mockito.when(apiMock.getAAS()).thenReturn(null);
+
 		testSubject.removeSubmodel(SUBMODEL_ID);
 	}
 }

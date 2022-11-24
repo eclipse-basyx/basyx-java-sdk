@@ -26,6 +26,8 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.aas.registration.api.IAASRegistry;
+import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -36,21 +38,51 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  * @author wege
  */
 public interface IAASAPIAuthorizer<SubjectInformationType> {
-	IAssetAdministrationShell enforceGetAAS(
+	/**
+	 * Checks authorization for {@link IAASAPI#getAAS()}.
+	 *
+	 * @param subjectInformation
+	 *                           information of the requester.
+	 * @param aasSupplier
+	 *                           supplier for the AAS.
+	 * @throws InhibitException if authorization failed
+	 */
+	public IAssetAdministrationShell authorizeGetAAS(
 			final SubjectInformationType subjectInformation,
-			final IIdentifier aasId,
 			final Supplier<IAssetAdministrationShell> aasSupplier
   ) throws InhibitException;
 
-	void enforceAddSubmodel(
+	/**
+	 * Checks authorization for {@link IAASAPI#addSubmodel(IReference)}.
+	 *
+	 * @param subjectInformation
+	 *                           information of the requester.
+	 * @param aasSupplier
+	 *                           supplier for the AAS.
+	 * @param submodel
+	 *                           the submodel.
+	 * @throws InhibitException if authorization failed
+	 */
+	public void authorizeAddSubmodel(
 			final SubjectInformationType subjectInformation,
-			final IIdentifier aasId,
-			final IReference smId
+			final Supplier<IAssetAdministrationShell> aasSupplier,
+			final IReference submodel
   ) throws InhibitException;
 
-	void enforceRemoveSubmodel(
+	/**
+	 * Checks authorization for {@link IAASAPI#removeSubmodel(String)}.
+	 *
+	 * @param subjectInformation
+	 *                           information of the requester.
+	 * @param aasSupplier
+	 *                           supplier for the AAS.
+	 * @param smIdShortPath
+	 *                           short path id of the submodel.
+	 * @throws InhibitException if authorization failed
+	 */
+	public void authorizeRemoveSubmodel(
 			final SubjectInformationType subjectInformation,
-			final IIdentifier aasId,
+			final Supplier<IAssetAdministrationShell> aasSupplier,
 			final String smIdShortPath
   ) throws InhibitException;
 }

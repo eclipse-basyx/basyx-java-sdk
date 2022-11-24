@@ -24,23 +24,24 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import org.springframework.security.core.GrantedAuthority;
+import java.util.List;
 
 /**
- * Utility methods for Granted Authority access control scheme.
+ * Helper methods for RBAC access control scheme.
  *
  * @author wege
  */
-public class GrantedAuthorityUtil {
-  private GrantedAuthorityUtil() {}
+public class SimpleRbacHelper {
+  private SimpleRbacHelper() {}
 
-  public static <SubjectInformationType> void checkAuthority(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator, final SubjectInformationType subjectInformation, final String requiredAuthority) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(requiredAuthority))) {
-      //final Supplier<InhibitException> effectiveInhibitExceptionSupplier = inhibitExceptionSupplier == null ? () -> new GrantedAuthorityInhibitException(requiredAuthority) : inhibitExceptionSupplier;
-      //throw inhibitExceptionSupplier.get();
-      throw new GrantedAuthorityInhibitException(requiredAuthority);
+  public static <SubjectInformationType> void checkRule(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator, final SubjectInformationType subjectInformation, final String action, final TargetInformation targetInformation) throws SimpleRbacInhibitException {
+    final List<String> roles = roleAuthenticator.getRoles(subjectInformation);
+    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
+        roles,
+        action,
+        targetInformation
+    )) {
+      throw new SimpleRbacInhibitException(roles, action, targetInformation);
     }
   }
 }

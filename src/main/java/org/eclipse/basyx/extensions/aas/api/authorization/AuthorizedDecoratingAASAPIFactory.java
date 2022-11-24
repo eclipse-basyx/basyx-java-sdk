@@ -51,6 +51,11 @@ public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implement
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	/**
+	 * @deprecated please use {@link AuthorizedDecoratingAASAPIFactory#AuthorizedDecoratingAASAPIFactory(IAASAPIFactory, IAASAPIAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
+	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
 	public AuthorizedDecoratingAASAPIFactory(
 			final IAASAPIFactory factoryToBeDecorated
 	) {

@@ -26,11 +26,13 @@ package org.eclipse.basyx.extensions.submodel.authorization;
 
 import java.util.Collection;
 import java.util.function.Supplier;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
+import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 /**
  * Interface for the policy enforcement points used in {@link AuthorizedSubmodelAPI}.
@@ -38,74 +40,228 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOpera
  * @author wege
  */
 public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
-  Collection<ISubmodelElement> enforceGetSubmodelElements(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#getSubmodelElements()}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smSupplier
+   *                           supplier for the submodel.
+   * @param smElListSupplier
+   *                           supplier for the submodel element list.
+   * @return a list of authorized submodel elements
+   * @throws InhibitException if authorization failed
+   */
+  public Collection<ISubmodelElement> authorizeGetSubmodelElements(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
-      final IIdentifier smId,
+      final IAssetAdministrationShell aas,
+      final Supplier<ISubmodel> smSupplier,
       final Supplier<Collection<ISubmodelElement>> smElListSupplier
   ) throws InhibitException;
 
-  ISubmodelElement enforceGetSubmodelElement(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#getSubmodelElement}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smId
+   *                           id of the submodel.
+   * @param smElIdShortPath
+   *                           short path id of the submodel element.
+   * @param smElSupplier
+   *                           supplier for the submodel element.
+   * @return the authorized submodel element
+   * @throws InhibitException if authorization failed
+   */
+  public ISubmodelElement authorizeGetSubmodelElement(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
+      final IAssetAdministrationShell aas,
       final IIdentifier smId,
       final String smElIdShortPath,
       final Supplier<ISubmodelElement> smElSupplier
   ) throws InhibitException;
 
-  ISubmodel enforceGetSubmodel(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#getSubmodel}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smId
+   *                           id of the submodel.
+   * @param smSupplier
+   *                           supplier for the submodel.
+   * @return the authorized submodel.
+   * @throws InhibitException if authorization failed
+   */
+  public ISubmodel authorizeGetSubmodel(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
+      final IAssetAdministrationShell aas,
       final IIdentifier smId,
       final Supplier<ISubmodel> smSupplier
   ) throws InhibitException;
 
-  void enforceAddSubmodelElement(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#addSubmodelElement(String, ISubmodelElement)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smId
+   *                           id of the submodel.
+   * @param smElIdShortPath
+   *                           short path id of the submodel element.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeAddSubmodelElement(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
+      final IAssetAdministrationShell aas,
       final IIdentifier smId,
       final String smElIdShortPath
   ) throws InhibitException;
 
-  void enforceDeleteSubmodelElement(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#deleteSubmodelElement(String)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smId
+   *                           id of the submodel.
+   * @param smElIdShortPath
+   *                           short path id of the submodel element.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeDeleteSubmodelElement(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
+      final IAssetAdministrationShell aas,
       final IIdentifier smId,
       final String smElIdShortPath
   ) throws InhibitException;
 
-  void enforceUpdateSubmodelElement(
+  /**
+   *Checks authorization for {@link ISubmodelAPI#updateSubmodelElement}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smId
+   *                           id of the submodel.
+   * @param smElIdShortPath
+   *                           short path id of the submodel element.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeUpdateSubmodelElement(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
+      final IAssetAdministrationShell aas,
       final IIdentifier smId,
       final String smElIdShortPath
   ) throws InhibitException;
 
-  Object enforceGetSubmodelElementValue(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#getSubmodelElementValue}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smId
+   *                           id of the submodel.
+   * @param smElIdShortPath
+   *                           short path id of the submodel element.
+   * @param valueSupplier
+   *                           supplier for the submodel element value.
+   * @return the authorized submodel element value.
+   * @throws InhibitException if authorization failed
+   */
+  public Object authorizeGetSubmodelElementValue(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
+      final IAssetAdministrationShell aas,
       final IIdentifier smId,
       final String smElIdShortPath,
       final Supplier<Object> valueSupplier
   ) throws InhibitException;
 
-  Collection<IOperation> enforceGetOperations(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#getOperations}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smSupplier
+   *                           supplier for the submodel.
+   * @param operationListSupplier
+   *                           supplier for the collection of operations.
+   * @return the authorized collection of operations.
+   * @throws InhibitException if authorization failed
+   */
+  public Collection<IOperation> authorizeGetOperations(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
-      final IIdentifier smId,
+      final IAssetAdministrationShell aas,
+      final Supplier<ISubmodel> smSupplier,
       final Supplier<Collection<IOperation>> operationListSupplier
   ) throws InhibitException;
 
-  void enforceInvokeOperation(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#invokeOperation}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smId
+   *                           id of the submodel.
+   * @param smElIdShortPath
+   *                           short path id of the submodel element.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeInvokeOperation(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
+      final IAssetAdministrationShell aas,
       final IIdentifier smId,
       final String smElIdShortPath
   ) throws InhibitException;
 
-  Object enforceGetOperationResult(
+  /**
+   * Checks authorization for {@link ISubmodelAPI#getOperationResult}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aas
+   *                           the aas the submodel belongs to as passed in the constructor
+   *                           of {@link AuthorizedSubmodelAPI}, may be null.
+   * @param smId
+   *                           id of the submodel.
+   * @param smElIdShortPath
+   *                           short path id of the submodel element.
+   * @param requestId
+   *                           id of the operation request.
+   * @param operationResultSupplier
+   *                           supplier for the result of the operation.
+   * @return the authorized result of the operation.
+   * @throws InhibitException if authorization failed
+   */
+  public Object authorizeGetOperationResult(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
+      final IAssetAdministrationShell aas,
       final IIdentifier smId,
       final String smElIdShortPath,
       final String requestId,

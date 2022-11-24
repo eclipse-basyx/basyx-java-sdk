@@ -30,21 +30,25 @@ package org.eclipse.basyx.extensions.shared.authorization;
  * @author wege
  */
 public class BaSyxObjectTargetInformation extends TargetInformation {
+  public static final String AAS_ID_KEY = "aasId";
+  public static final String SM_ID_KEY = "smId";
+  public static final String SM_EL_ID_SHORT_PATH_KEY = "smElIdShortPath";
+
   public String getAasId() {
-    return get("aasId");
+    return get(AAS_ID_KEY);
   }
 
   public String getSmId() {
-    return get("smId");
+    return get(SM_ID_KEY);
   }
 
   public String getSmElIdShortPath() {
-    return get("smElIdShortPath");
+    return get(SM_EL_ID_SHORT_PATH_KEY);
   }
 
   public BaSyxObjectTargetInformation(final String aasId, final String smId, final String smElIdShortPath) {
-    put("aasId", aasId);
-    put("smId", smId);
-    put("smElIdShortPath", smElIdShortPath);
+    put(AAS_ID_KEY, aasId);
+    put(SM_ID_KEY, smId);
+    put(SM_EL_ID_SHORT_PATH_KEY, smElIdShortPath);
   }
 }

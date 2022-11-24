@@ -39,7 +39,7 @@ public class GrantedAuthorityInhibitException extends InhibitException {
   }
 
   @Override
-  public InhibitException reductSmIdAsSemanticIdOfSmIdShortPath(final String smIdShortPath) {
+  public InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath) {
     return this;
   }
 }

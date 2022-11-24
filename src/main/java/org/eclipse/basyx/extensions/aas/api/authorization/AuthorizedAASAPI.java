@@ -28,14 +28,11 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
-import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication.CodeAuthenticationAreaHandler;
+import org.eclipse.basyx.extensions.shared.authorization.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
-import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 /**
  * Implementation variant for the AASAPI that authorizes each access to the API
@@ -62,8 +59,10 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated Please use {@link AuthorizedAASAPI#AuthorizedAASAPI(IAASAPI, IAASAPIAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
 	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
 	public AuthorizedAASAPI(final IAASAPI decoratedAASAPI) {
 		this(
 			decoratedAASAPI,
@@ -74,83 +73,67 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 
 	@Override
 	public IAssetAdministrationShell getAAS() {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAASAPI.getAAS();
 		}
 
 		try {
-			return enforceGetAAS();
+			return authorizeGetAAS();
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
-	protected IAssetAdministrationShell enforceGetAAS() throws InhibitException {
-		final IIdentifier aasId = getAasIdUnsecured();
-		return aasAPIAuthorizer.enforceGetAAS(
+	protected IAssetAdministrationShell authorizeGetAAS() throws InhibitException {
+		return aasAPIAuthorizer.authorizeGetAAS(
 				subjectInformationProvider.get(),
-				aasId,
 				decoratedAASAPI::getAAS
 		);
 	}
 
 	@Override
 	public void addSubmodel(final IReference submodel) {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAASAPI.addSubmodel(submodel);
 			return;
 		}
 
 		try {
-			enforceAddSubmodel(submodel);
+			authorizeAddSubmodel(submodel);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 		decoratedAASAPI.addSubmodel(submodel);
 	}
 
-	protected void enforceAddSubmodel(final IReference smId) throws InhibitException {
-		final IIdentifier aasId = getAasIdUnsecured();
-		aasAPIAuthorizer.enforceAddSubmodel(
+	protected void authorizeAddSubmodel(final IReference smId) throws InhibitException {
+		aasAPIAuthorizer.authorizeAddSubmodel(
 				subjectInformationProvider.get(),
-				aasId,
+				decoratedAASAPI::getAAS,
 				smId
 		);
 	}
 
 	@Override
 	public void removeSubmodel(final String smIdShortPath) {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAASAPI.removeSubmodel(smIdShortPath);
 			return;
 		}
 
 		try {
-			enforceRemoveSubmodel(smIdShortPath);
+			authorizeRemoveSubmodel(smIdShortPath);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 		decoratedAASAPI.removeSubmodel(smIdShortPath);
 	}
 
-	protected void enforceRemoveSubmodel(final String smIdShortPath) throws InhibitException {
-		final IIdentifier aasId = getAasIdUnsecured();
-		aasAPIAuthorizer.enforceRemoveSubmodel(
+	protected void authorizeRemoveSubmodel(final String smIdShortPath) throws InhibitException {
+		aasAPIAuthorizer.authorizeRemoveSubmodel(
 				subjectInformationProvider.get(),
-				aasId,
+				decoratedAASAPI::getAAS,
 				smIdShortPath
 		);
-	}
-
-	private IIdentifier getAasIdUnsecured() throws ResourceNotFoundException {
-		final IAssetAdministrationShell aas = decoratedAASAPI.getAAS();
-
-		if (aas == null) {
-			return null;
-		}
-
-		try (final CodeAuthenticationAreaHandler ignored = CodeAuthentication.enterCodeAuthenticationArea()) {
-			return aas.getIdentification();
-		}
 	}
 }

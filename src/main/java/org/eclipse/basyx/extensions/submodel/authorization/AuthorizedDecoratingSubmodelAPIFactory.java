@@ -55,6 +55,11 @@ public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> impl
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	/**
+	 * @deprecated please use {@link AuthorizedDecoratingSubmodelAPIFactory#AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell, ISubmodelAPIFactory, ISubmodelAPIAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
+	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
 	public AuthorizedDecoratingSubmodelAPIFactory(
 			final ISubmodelAPIFactory submodelAPIFactory
 	) {

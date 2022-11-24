@@ -26,6 +26,7 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 
 /**
  * Constants for the permission scopes related to the {@link AuthorizedAASAPI}.
+ * Used in {@link SimpleRbacAASAPIAuthorizer}, {@link GrantedAuthorityAASAPIAuthorizer}
  *
  * @author jungjan, fried, fischer, wege
  * @see <a href=

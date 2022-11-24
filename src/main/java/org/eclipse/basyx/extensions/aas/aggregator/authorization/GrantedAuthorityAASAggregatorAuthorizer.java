@@ -27,7 +27,8 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 import java.util.Collection;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityUtil;
+import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityHelper;
 import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -46,38 +47,64 @@ public class GrantedAuthorityAASAggregatorAuthorizer<SubjectInformationType> imp
   }
 
   @Override
-  public Collection<IAssetAdministrationShell> enforceGetAASList(SubjectInformationType subjectInformation, Supplier<Collection<IAssetAdministrationShell>> aasListSupplier) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
+  public Collection<IAssetAdministrationShell> authorizeGetAASList(
+      final SubjectInformationType subjectInformation,
+      final Supplier<Collection<IAssetAdministrationShell>> aasListSupplier
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
 
     return aasListSupplier.get();
   }
 
   @Override
-  public IAssetAdministrationShell enforceGetAAS(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
+  public IAssetAdministrationShell authorizeGetAAS(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final Supplier<IAssetAdministrationShell> aasSupplier
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
 
     return aasSupplier.get();
   }
 
   @Override
-  public IModelProvider enforceGetAASProvider(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IModelProvider> modelProviderSupplier) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
+  public IModelProvider authorizeGetAASProvider(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final Supplier<IModelProvider> modelProviderSupplier
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.READ_AUTHORITY);
 
     return modelProviderSupplier.get();
   }
 
   @Override
-  public void enforceCreateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
+  public void authorizeCreateAAS(
+      final SubjectInformationType subjectInformation,
+      final AssetAdministrationShell aas
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
   }
 
   @Override
-  public void enforceUpdateAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
+  public void authorizeUpdateAAS(
+      final SubjectInformationType subjectInformation,
+      final AssetAdministrationShell aas
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
   }
 
   @Override
-  public void enforceDeleteAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
+  public void authorizeDeleteAAS(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAggregator.WRITE_AUTHORITY);
   }
 }

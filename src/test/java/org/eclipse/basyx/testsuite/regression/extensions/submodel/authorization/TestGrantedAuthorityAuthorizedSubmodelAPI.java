@@ -52,7 +52,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * Tests authorization with the AuthorizedSubmodelAggregator
  *
- * @author espen
+ * @author espen, wege
  *
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
@@ -72,7 +72,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   private static final String ASYNC_REQUEST_ID = "requestId";
   private static final IOperation OPERATION = new Operation(OPERATION_IDSHORT);
 
-  private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(AuthorizedSubmodelAPI.READ_AUTHORITY, AuthorizedSubmodelAPI.WRITE_AUTHORITY);
+  private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(AuthorizedSubmodelAPI.READ_AUTHORITY, AuthorizedSubmodelAPI.WRITE_AUTHORITY, AuthorizedSubmodelAPI.EXECUTE_AUTHORITY);
 
   @BeforeClass
   public static void setUpClass() {
@@ -94,18 +94,21 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenGetSubmodel_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.getSubmodel();
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenGetSubmodel_ThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.getSubmodel();
   }
 
   @Test
   public void givenPrincipalHasReadAuthority_whenGetSubmodel_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithReadAuthority();
+
     final ISubmodel returnedSubmodel = authorizedSubmodelAPI.getSubmodel();
     assertEquals(submodel, returnedSubmodel);
   }
@@ -113,18 +116,21 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenAddSubmodelElement_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.addSubmodelElement(PROPERTY);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenAddSubmodelElement_ThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.addSubmodelElement(PROPERTY);
   }
 
   @Test
   public void givenPrincipalHasWriteAuthority_whenAddSubmodelElement_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithWriteAuthority();
+
     authorizedSubmodelAPI.addSubmodelElement(PROPERTY);
     Mockito.verify(apiMock).addSubmodelElement(PROPERTY);
   }
@@ -132,18 +138,21 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenAddSubmodelElementWithPath_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.addSubmodelElement(PROPERTY_IDSHORT, PROPERTY);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenAddSubmodelElementWithPath_ThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.addSubmodelElement(PROPERTY_IDSHORT, PROPERTY);
   }
 
   @Test
   public void givenPrincipalHasWriteAuthority_whenAddSubmodelElementWithPath_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithWriteAuthority();
+
     authorizedSubmodelAPI.addSubmodelElement(PROPERTY_IDSHORT, PROPERTY);
     Mockito.verify(apiMock).addSubmodelElement(PROPERTY_IDSHORT, PROPERTY);
   }
@@ -157,12 +166,14 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenDeleteSubmodelElement_ThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.deleteSubmodelElement(PROPERTY_IDSHORT);
   }
 
   @Test
   public void givenPrincipalHasWriteAuthority_whenDeleteSubmodelElement_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithWriteAuthority();
+
     authorizedSubmodelAPI.deleteSubmodelElement(PROPERTY_IDSHORT);
     Mockito.verify(apiMock).deleteSubmodelElement(PROPERTY_IDSHORT);
   }
@@ -170,18 +181,21 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenUpdateSubmodelElement_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.updateSubmodelElement(PROPERTY_IDSHORT, PROPERTY_VALUE);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenUpdateSubmodelElement_thenThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.updateSubmodelElement(PROPERTY_IDSHORT, PROPERTY_VALUE);
   }
 
   @Test
   public void givenPrincipalHasWriteAuthority_whenUpdateSubmodelElement_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithWriteAuthority();
+
     authorizedSubmodelAPI.updateSubmodelElement(PROPERTY_IDSHORT, PROPERTY_VALUE);
     Mockito.verify(apiMock).updateSubmodelElement(PROPERTY_IDSHORT, PROPERTY_VALUE);
   }
@@ -189,18 +203,21 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelElement_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.getSubmodelElement(PROPERTY_IDSHORT);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenGetSubmodelElement_thenThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.getSubmodelElement(PROPERTY_IDSHORT);
   }
 
   @Test
   public void givenPrincipalHasReadAuthority_whenGetSubmodelElement_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithReadAuthority();
+
     Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
     final ISubmodelElement returnedProperty = authorizedSubmodelAPI.getSubmodelElement(PROPERTY_IDSHORT);
     assertEquals(PROPERTY, returnedProperty);
@@ -209,12 +226,14 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenGetOperations_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.getOperations();
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenGetOperations_thenThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.getOperations();
   }
 
@@ -225,6 +244,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
     expectedOperations.add(OPERATION);
     Mockito.when(apiMock.getOperations()).thenReturn(expectedOperations);
     Mockito.when(apiMock.getSubmodelElement(OPERATION_IDSHORT)).thenReturn(OPERATION);
+
     final Collection<IOperation> returnedOperations = authorizedSubmodelAPI.getOperations();
     assertEquals(expectedOperations, returnedOperations);
   }
@@ -232,12 +252,14 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelElements_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.getSubmodelElements();
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenGetSubmodelElements_thenThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.getSubmodelElements();
   }
 
@@ -248,6 +270,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
     expectedElements.add(PROPERTY);
     Mockito.when(apiMock.getSubmodelElements()).thenReturn(expectedElements);
     Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
+
     final Collection<ISubmodelElement> returnedElements = authorizedSubmodelAPI.getSubmodelElements();
     assertEquals(expectedElements, returnedElements);
   }
@@ -255,12 +278,14 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelElementValue_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.getSubmodelElementValue(PROPERTY_IDSHORT);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenGetSubmodelElementValue_thenThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.getSubmodelElementValue(PROPERTY_IDSHORT);
   }
 
@@ -268,6 +293,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   public void givenPrincipalHasReadAuthority_whenGetSubmodelElementValue_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithReadAuthority();
     Mockito.when(apiMock.getSubmodelElementValue(PROPERTY_IDSHORT)).thenReturn(PROPERTY_VALUE);
+
     final Object returnedValue = authorizedSubmodelAPI.getSubmodelElementValue(PROPERTY_IDSHORT);
     assertEquals(PROPERTY_VALUE, returnedValue);
   }
@@ -275,52 +301,60 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenInvokeOperation_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.invokeOperation(PROPERTY_IDSHORT);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenInvokeOperation_thenThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.invokeOperation(PROPERTY_IDSHORT);
   }
 
   @Test
-  public void givenPrincipalHasReadAuthority_whenInvokeOperation_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithReadAuthority();
+  public void givenPrincipalHasExecuteAuthority_whenInvokeOperation_thenInvocationIsForwarded() {
+    securityContextProvider.setSecurityContextWithExecuteAuthority();
     Mockito.when(apiMock.invokeOperation(PROPERTY_IDSHORT)).thenReturn(PROPERTY_VALUE);
+
     final Object returnedValue = authorizedSubmodelAPI.invokeOperation(PROPERTY_IDSHORT);
     assertEquals(PROPERTY_VALUE, returnedValue);
   }
 
   @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whenInvokeAsync_thenThrowNotAuthorized() {
+  public void givenPrincipalIsMissingExecuteAuthority_whenInvokeAsync_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.invokeAsync(PROPERTY_IDSHORT);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenInvokeAsync_thenThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.invokeAsync(PROPERTY_IDSHORT);
   }
 
   @Test
-  public void givenPrincipalHasReadAuthority_whenInvokeAsync_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithReadAuthority();
+  public void givenPrincipalHasExecuteAuthority_whenInvokeAsync_thenInvocationIsForwarded() {
+    securityContextProvider.setSecurityContextWithExecuteAuthority();
     Mockito.when(apiMock.invokeAsync(PROPERTY_IDSHORT)).thenReturn(PROPERTY_VALUE);
+
     final Object returnedValue = authorizedSubmodelAPI.invokeAsync(PROPERTY_IDSHORT);
     assertEquals(PROPERTY_VALUE, returnedValue);
   }
 
   @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whenGetOperationResult_thenThrowNotAuthorized() {
+  public void givenPrincipalIsMissingExecuteAuthority_whenGetOperationResult_thenThrowNotAuthorized() {
     securityContextProvider.setSecurityContextWithoutAuthorities();
+
     authorizedSubmodelAPI.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenGetOperationResult_thenThrowNotAuthorized() {
     securityContextProvider.setEmptySecurityContext();
+
     authorizedSubmodelAPI.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID);
   }
 
@@ -328,6 +362,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   public void givenPrincipalHasReadAuthority_whenGetOperationResult_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithReadAuthority();
     Mockito.when(apiMock.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID)).thenReturn(PROPERTY_VALUE);
+
     final Object returnedValue = authorizedSubmodelAPI.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID);
     assertEquals(PROPERTY_VALUE, returnedValue);
   }

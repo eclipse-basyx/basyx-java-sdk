@@ -34,6 +34,8 @@ import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistrySc
 import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAASRegistry;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,10 +56,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestGrantedAuthorityAuthorizedAASRegistry {
-
   @Mock
-  private IAASRegistry registryMock;
+  private IAASRegistry apiMock;
   private AuthorizedAASRegistry<?> testSubject;
+
+  private static final String SHELL_ID = "shell";
+  private static final Identifier SHELL_IDENTIFIER = new Identifier(IdentifierType.IRI, SHELL_ID);
+  private static final String SUBMODEL_ID = "submodel";
+  private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
+
+  private AASDescriptor aasDescriptor;
+  private SubmodelDescriptor smDescriptor;
 
   private SecurityContext _getSecurityContextWithAuthorities(final String... authorities) {
     final SecurityContext context = SecurityContextHolder.createEmptyContext();
@@ -84,20 +93,21 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
 
   @Before
   public void setUp() {
-    testSubject = new AuthorizedAASRegistry<>(registryMock);
+    testSubject = new AuthorizedAASRegistry<>(apiMock);
+    aasDescriptor = new AASDescriptor(SHELL_ID, SHELL_IDENTIFIER, "");
+    smDescriptor = new SubmodelDescriptor(SUBMODEL_ID, SUBMODEL_IDENTIFIER, "");
   }
 
   @After
   public void tearDown() {
     SecurityContextHolder.clearContext();
-    Mockito.verifyNoMoreInteractions(registryMock);
+    Mockito.verifyNoMoreInteractions(apiMock);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenSecurityContextIsEmpty_whenRegisterAAS_thenThrowNotAuthorized() {
     SecurityContextHolder.setContext(getEmptySecurityContext());
 
-    final AASDescriptor aasDescriptor = new AASDescriptor("test", new ModelUrn("urn:test"), "http://test.example/aas");
     testSubject.register(aasDescriptor);
   }
 
@@ -105,17 +115,14 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
   public void givenPrincipalHasWriteAuthority_whenRegisterAASDescriptor_thenInvocationIsForwarded() {
     SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
 
-    final AASDescriptor aasDescriptor = new AASDescriptor("test", new ModelUrn("urn:test"), "http://test.example/aas");
     testSubject.register(aasDescriptor);
-
-    Mockito.verify(registryMock).register(aasDescriptor);
+    Mockito.verify(apiMock).register(aasDescriptor);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingWriteAuthority_whenRegisterAASDescriptor_thenThrowNotAuthorized() {
     SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
-    final AASDescriptor aasDescriptor = new AASDescriptor("test", new ModelUrn("urn:test"), "http://test.example/aas");
     testSubject.register(aasDescriptor);
   }
 
@@ -123,70 +130,54 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
   public void givenPrincipalHasWriteAuthority_whenRegisterSubmodelDescriptor_thenInvocationIsForwarded() {
     SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
 
-    final IIdentifier aas = new ModelUrn("urn:test");
-    final SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor("test", new ModelUrn("urn:test"), "http://test.example/submodel");
-    testSubject.register(aas, submodelDescriptor);
-
-    Mockito.verify(registryMock).register(aas, submodelDescriptor);
+    testSubject.register(SHELL_IDENTIFIER, smDescriptor);
+    Mockito.verify(apiMock).register(SHELL_IDENTIFIER, smDescriptor);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodelDescriptor_thenThrowNotAuthorized() {
     SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
-    final IIdentifier aas = new ModelUrn("urn:test");
-    final SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor("test", new ModelUrn("urn:test"), "http://test.example/submodel");
-    testSubject.register(aas, submodelDescriptor);
+    testSubject.register(SHELL_IDENTIFIER, smDescriptor);
   }
 
   @Test
   public void givenPrincipalHasWriteAuthority_whenDeleteAAS_thenInvocationIsForwarded() {
     SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
 
-    final IIdentifier aasId = new ModelUrn("urn:test");
-    testSubject.delete(aasId);
-
-    Mockito.verify(registryMock).delete(aasId);
+    testSubject.delete(SHELL_IDENTIFIER);
+    Mockito.verify(apiMock).delete(SHELL_IDENTIFIER);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
     SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
-    final IIdentifier aasId = new ModelUrn("urn:test");
-    testSubject.delete(aasId);
+    testSubject.delete(SHELL_IDENTIFIER);
   }
 
   @Test
   public void givenPrincipalHasWriteAuthority_whenDeleteSubmodel_thenInvocationIsForwarded() {
     SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
 
-    final IIdentifier aasId = new ModelUrn("urn:test1");
-    final IIdentifier smId = new ModelUrn("urn:test2");
-    testSubject.delete(aasId, smId);
-
-    Mockito.verify(registryMock).delete(aasId, smId);
+    testSubject.delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
+    Mockito.verify(apiMock).delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodel_thenThrowNotAuthorized() {
     SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
-    final IIdentifier aasId = new ModelUrn("urn:test1");
-    final IIdentifier smId = new ModelUrn("urn:test2");
-    testSubject.delete(aasId, smId);
+    testSubject.delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
   }
 
   @Test
   public void givenPrincipalHasReadAuthority_whenLookupAAS_thenInvocationIsForwarded() {
     SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
+    final AASDescriptor expectedAASDescriptor = aasDescriptor;
+    Mockito.when(apiMock.lookupAAS(SHELL_IDENTIFIER)).thenReturn(expectedAASDescriptor);
 
-    final IIdentifier aasId = new ModelUrn("urn:test1");
-    final AASDescriptor expectedAASDescriptor = new AASDescriptor("test", aasId, "http://test.example/aas");
-    Mockito.when(registryMock.lookupAAS(aasId)).thenReturn(expectedAASDescriptor);
-
-    final AASDescriptor aasDescriptor = testSubject.lookupAAS(aasId);
-
+    final AASDescriptor aasDescriptor = testSubject.lookupAAS(SHELL_IDENTIFIER);
     Assert.assertEquals(expectedAASDescriptor, aasDescriptor);
   }
 
@@ -194,24 +185,18 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
   public void givenPrincipalIsMissingReadAuthority_whenLookupAAS_thenThrowNotAuthorized() {
     SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
-    final IIdentifier aasId = new ModelUrn("urn:test1");
-
-    testSubject.lookupAAS(aasId);
+    testSubject.lookupAAS(SHELL_IDENTIFIER);
   }
 
   @Test
   public void givenPrincipalHasReadAuthority_whenLookupAll_thenInvocationIsForwarded() {
     SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
-
-    final IIdentifier aasId = new ModelUrn("urn:test");
-    final AASDescriptor aasDescriptor = new AASDescriptor("test", aasId, "http://test.example/aas");
     final List<AASDescriptor> expectedAASDescriptorList = Collections.singletonList(aasDescriptor);
-    Mockito.when(registryMock.lookupAll()).thenReturn(expectedAASDescriptorList);
-    Mockito.when(registryMock.lookupAAS(aasId)).thenReturn(aasDescriptor);
+    Mockito.when(apiMock.lookupAll()).thenReturn(expectedAASDescriptorList);
+    Mockito.when(apiMock.lookupAAS(SHELL_IDENTIFIER)).thenReturn(aasDescriptor);
 
-    final List<AASDescriptor> aasDescriptorList = testSubject.lookupAll();
-
-    Assert.assertEquals(expectedAASDescriptorList, aasDescriptorList);
+    final List<AASDescriptor> returnedAasDescriptorList = testSubject.lookupAll();
+    Assert.assertEquals(expectedAASDescriptorList, returnedAasDescriptorList);
   }
 
   @Test(expected = NotAuthorized.class)
@@ -224,39 +209,28 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
   @Test
   public void givenPrincipalHasReadAuthority_whenLookupSubmodels_thenInvocationIsForwarded() {
     SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
+    final List<SubmodelDescriptor> expectedSubmodelDescriptorList = Collections.singletonList(smDescriptor);
+    Mockito.when(apiMock.lookupSubmodels(SHELL_IDENTIFIER)).thenReturn(expectedSubmodelDescriptorList);
+    Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 
-    final IIdentifier aasId = new ModelUrn("urn:test1");
-    final IIdentifier submodelId = new ModelUrn("urn:test");
-    final SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor("test", submodelId, "http://test.example/submodel");
-    final List<SubmodelDescriptor> expectedSubmodelDescriptorList = Collections.singletonList(submodelDescriptor);
-    Mockito.when(registryMock.lookupSubmodels(aasId)).thenReturn(expectedSubmodelDescriptorList);
-    Mockito.when(registryMock.lookupSubmodel(aasId, submodelId)).thenReturn(submodelDescriptor);
-
-    final List<SubmodelDescriptor> submodelDescriptorList = testSubject.lookupSubmodels(aasId);
-
-    Assert.assertEquals(expectedSubmodelDescriptorList, submodelDescriptorList);
+    final List<SubmodelDescriptor> returnedSubmodelDescriptorList = testSubject.lookupSubmodels(SHELL_IDENTIFIER);
+    Assert.assertEquals(expectedSubmodelDescriptorList, returnedSubmodelDescriptorList);
   }
 
   @Test(expected = NotAuthorized.class)
   public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodels_thenThrowNotAuthorized() {
     SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
-    final IIdentifier aasId = new ModelUrn("urn:test1");
-
-    testSubject.lookupSubmodels(aasId);
+    testSubject.lookupSubmodels(SHELL_IDENTIFIER);
   }
 
   @Test
   public void givenPrincipalHasReadAuthority_whenLookupSubmodel_thenInvocationIsForwarded() {
     SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
+    final SubmodelDescriptor expectedSubmodelDescriptor = smDescriptor;
+    Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(expectedSubmodelDescriptor);
 
-    final IIdentifier aasId = new ModelUrn("urn:test1");
-    final IIdentifier smId = new ModelUrn("urn:test2");
-    final SubmodelDescriptor expectedSubmodelDescriptor = new SubmodelDescriptor("test", smId, "http://test.example/submodel");
-    Mockito.when(registryMock.lookupSubmodel(aasId, smId)).thenReturn(expectedSubmodelDescriptor);
-
-    final SubmodelDescriptor submodelDescriptor = testSubject.lookupSubmodel(aasId, smId);
-
+    final SubmodelDescriptor submodelDescriptor = testSubject.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
     Assert.assertEquals(expectedSubmodelDescriptor, submodelDescriptor);
   }
 
@@ -264,10 +238,7 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
   public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodel_thenThrowNotAuthorized() {
     SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
-    final IIdentifier aasId = new ModelUrn("urn:test1");
-    final IIdentifier smId = new ModelUrn("urn:test2");
-
-    testSubject.lookupSubmodel(aasId, smId);
+    testSubject.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
   }
 
 }

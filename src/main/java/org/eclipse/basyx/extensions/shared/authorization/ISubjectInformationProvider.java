@@ -29,5 +29,10 @@ package org.eclipse.basyx.extensions.shared.authorization;
  * @param <T> The type to be provided.
  */
 public interface ISubjectInformationProvider<T> {
-  T get();
+  /**
+   * Fetches the value from the provider.
+   *
+   * @return The subject information object of the provider.
+   */
+  public T get();
 }

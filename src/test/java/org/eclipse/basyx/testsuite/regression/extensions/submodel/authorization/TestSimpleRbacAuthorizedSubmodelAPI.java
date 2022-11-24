@@ -63,7 +63,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * @author espen, wege
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class TestAuthorizedSubmodelAPI {
+public class TestSimpleRbacAuthorizedSubmodelAPI {
 	@Mock
 	private ISubmodelAPI apiMock;
 	private AuthorizedSubmodelAPI<?> authorizedSubmodelAPI;
@@ -92,27 +92,27 @@ public class TestAuthorizedSubmodelAPI {
 
 	@Before
 	public void setUp() {
-		rbacRuleSet.addRule(RbacRule.of(
+		rbacRuleSet.addRule(new RbacRule(
 				adminRole,
 				SubmodelAPIScopes.READ_SCOPE,
 				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
-		rbacRuleSet.addRule(RbacRule.of(
+		rbacRuleSet.addRule(new RbacRule(
 				adminRole,
 				SubmodelAPIScopes.WRITE_SCOPE,
 				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
-		rbacRuleSet.addRule(RbacRule.of(
+		rbacRuleSet.addRule(new RbacRule(
 				adminRole,
 				SubmodelAPIScopes.EXECUTE_SCOPE,
 				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
-		rbacRuleSet.addRule(RbacRule.of(
+		rbacRuleSet.addRule(new RbacRule(
 				readerRole,
 				SubmodelAPIScopes.READ_SCOPE,
 				new BaSyxObjectTargetInformation("*", "*", "*")
 		));
-		rbacRuleSet.addRule(RbacRule.of(
+		rbacRuleSet.addRule(new RbacRule(
 				executorRole,
 				SubmodelAPIScopes.EXECUTE_SCOPE,
 				new BaSyxObjectTargetInformation("*", "*", "*")

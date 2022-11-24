@@ -31,7 +31,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * A single role based access control rule consisting of
- * role x action x (aas id, submodel id, submodel element id).
+ * role x action x target information.
  *
  * @author wege
  */
@@ -40,13 +40,7 @@ public class RbacRule {
 	private String action;
 	private TargetInformation targetInformation;
 
-	private RbacRule() {
-		role = "";
-		action = "";
-		targetInformation = new EmptyTargetInformation();
-	}
-
-	private RbacRule(final String role, final String action, final TargetInformation targetInformation) {
+	public RbacRule(final String role, final String action, final TargetInformation targetInformation) {
 		if (Objects.isNull(role)) {
 			throw new IllegalArgumentException("role must not be null");
 		}
@@ -59,10 +53,6 @@ public class RbacRule {
 		this.role = role;
 		this.action = action;
 		this.targetInformation = targetInformation;
-	}
-
-	public static RbacRule of(final String role, final String action, final TargetInformation targetInformation) {
-		return new RbacRule(role, action, targetInformation);
 	}
 
 	public String getRole() {
@@ -85,7 +75,7 @@ public class RbacRule {
 		if (!(o instanceof RbacRule))
 			return false;
 
-		RbacRule rbacRule = (RbacRule) o;
+		final RbacRule rbacRule = (RbacRule) o;
 
 		return new EqualsBuilder()
 				.append(getRole(), rbacRule.getRole())

@@ -25,7 +25,6 @@
 package org.eclipse.basyx.extensions.shared.authorization;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,9 +33,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,17 +91,17 @@ public class RbacRuleSet {
 			final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 			Arrays.stream(rbacRules).forEach(rbacRuleSet::addRule);
 			return rbacRuleSet;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.error(e.getMessage(), e);
 		}
 		return new RbacRuleSet();
 	}
 
 	private static RbacRule convertRbacRuleDTOToRbacRule(final RbacRuleDTO dto) {
-		final TargetInformation targetInformation = new TargetInformation();
+		final TargetInformation targetInformation = new EmptyTargetInformation();
 
 		targetInformation.putAll(dto.getTargetInformation());
 
-		return RbacRule.of(dto.getRole(), dto.getAction(), targetInformation);
+		return new RbacRule(dto.getRole(), dto.getAction(), targetInformation);
 	}
 }

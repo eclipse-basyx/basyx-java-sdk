@@ -31,13 +31,13 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.IRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
+import org.eclipse.basyx.extensions.shared.authorization.IdHelper;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacUtil;
+import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacHelper;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
- * Simple attribute based implementation for {@link IAASRegistryAuthorizer}.
+ * Simple role based implementation for {@link IAASRegistryAuthorizer}.
  *
  * @author wege
  */
@@ -51,49 +51,68 @@ public class SimpleRbacAASRegistryAuthorizer<SubjectInformationType> implements 
   }
 
   @Override
-  public void enforceRegisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
+  public void authorizeRegisterAas(final SubjectInformationType subjectInformation, final AASDescriptor aasDescriptor) throws InhibitException {
+    final IIdentifier aasId = aasDescriptor.getIdentifier();
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), null, null));
   }
 
   @Override
-  public void enforceRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
+  public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException {
+    final IIdentifier smId = smDescriptor.getIdentifier();
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
   }
 
   @Override
-  public void enforceUnregisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
+  public void authorizeUnregisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId) throws InhibitException {
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), null, null));
   }
 
   @Override
-  public void enforceUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
+  public void authorizeUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
   }
 
   @Override
-  public List<AASDescriptor> enforceLookupAll(final SubjectInformationType subjectInformation, final Supplier<List<AASDescriptor>> aasDescriptorsSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(null, null, null));
-
-    return aasDescriptorsSupplier.get();
-  }
-
-  @Override
-  public AASDescriptor enforceLookupAas(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<AASDescriptor> aasSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
+  public AASDescriptor authorizeLookupAAS(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<AASDescriptor> aasSupplier) throws InhibitException {
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), null, null));
 
     return aasSupplier.get();
   }
 
   @Override
-  public List<SubmodelDescriptor> enforceLookupSubmodels(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<List<SubmodelDescriptor>> submodelDescriptorsSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), null, null));
+  public List<AASDescriptor> authorizeLookupAll(final SubjectInformationType subjectInformation, final Supplier<List<AASDescriptor>> aasDescriptorsSupplier) throws InhibitException {
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(null, null, null));
+
+    return aasDescriptorsSupplier.get();
+  }
+
+  @Override
+  public List<SubmodelDescriptor> authorizeLookupSubmodels(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<List<SubmodelDescriptor>> submodelDescriptorsSupplier) throws InhibitException {
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), null, null));
 
     return submodelDescriptorsSupplier.get();
   }
 
   @Override
-  public SubmodelDescriptor enforceLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
+  public SubmodelDescriptor authorizeLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException {
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
 
     return smSupplier.get();
   }

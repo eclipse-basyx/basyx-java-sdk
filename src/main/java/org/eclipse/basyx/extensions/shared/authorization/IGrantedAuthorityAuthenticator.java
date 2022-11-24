@@ -34,5 +34,12 @@ import org.springframework.security.core.GrantedAuthority;
  * @author wege
  */
 public interface IGrantedAuthorityAuthenticator<SubjectInformationType> {
-  Collection<? extends GrantedAuthority> getAuthorities(final SubjectInformationType subjectInformation);
+  /**
+   * Fetches the authorities from the provider.
+   *
+   * @param subjectInformation
+   *                           the information of the requester from where the authorities can be extracted, e.g. a JWT.
+   * @return a collection of authorities
+   */
+  public Collection<? extends GrantedAuthority> getAuthorities(final SubjectInformationType subjectInformation);
 }

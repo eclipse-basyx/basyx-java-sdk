@@ -26,6 +26,7 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
 /**
  * Constants for the permission scopes related to the {@link AuthorizedAASAggregator}.
+ * Used in {@link SimpleRbacAASAggregatorAuthorizer}, {@link GrantedAuthorityAASAggregatorAuthorizer}
  *
  * @author jungjan, fried, fischer, wege
  * @see <a href=

@@ -54,7 +54,7 @@ public class TestPredefinedSetRbacRuleChecker {
 	private final String any = "*";
 
 	@Test
-	public void givenRbacRuleSetIsEmpty_whenCheckRbacRuleIsSatisfiedWithRolesIsNullAndActionIsNullAndAasIdIsNullAndSmIdIsNullAndSmElIdShortPathIsNull_thenReturnFalse() {
+	public void givenNothing_whenCheckForRuleNull$Null$NullNullNull_thenReturnFalse() {
 		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(new RbacRuleSet());
 
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
@@ -67,7 +67,7 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetIsEmpty_whenCheckRbacRuleIsSatisfiedWithRolesIsEmptyAndActionIsNullAndAasIdIsNullAndSmIdIsNullAndSmElIdShortPathIsNull_thenReturnFalse() {
+	public void givenNothing_whenCheckForRuleEmpty$Null$NullNullNull_thenReturnFalse() {
 		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
 
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(
@@ -80,11 +80,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRhAdminRoleAndActionIsEmptyString_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminAndActionIsNullAndAasIdIsNullAndSmIdIsNullAndSmElIdShortPathIsNull_thenReturnFalse() {
+	public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleEmpty$Null$NullNullNull_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						"",
 						new BaSyxObjectTargetInformation(null, null, null)
@@ -103,11 +103,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsEmptyStringAndAasIdIsNullAndSmIdIsNullAndSmElIdShortPathIsNull_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsNullAndAasIdIsNullAndSmIdIsNullAndSmElIdShortPathIsNull_thenReturnFalse() {
+	public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleAdmin$Null$NullNullNull_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						"",
 						new BaSyxObjectTargetInformation(null, null, null)
@@ -126,11 +126,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsEmptyStringAndAasIdIsNullAndSmIdIsNullAndSmElIdShortPathIsNull_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsReadAndAasIdIsSomeIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_thenReturnFalse() {
+	public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleAdmin$Read$SomSomeSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						"",
 						new BaSyxObjectTargetInformation(null, null, null)
@@ -149,11 +149,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndAasIdIsSomeIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsReadAndAasIdIsSomeIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_thenReturnTrue() {
+	public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleAdmin$Read$SomeSomeSome_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						readAction,
 						new BaSyxObjectTargetInformation(someId, someId, someId)
@@ -172,11 +172,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndAasIdIsSomeIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_whenCheckRbacRuleIsSatisfiedWithRoleIsNormalRoleAndActionIsReadAndAasIdIsSomeIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_thenReturnFalse() {
+	public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleNormal$Read$SomeSomeSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						readAction,
 						new BaSyxObjectTargetInformation(someId, someId, someId)
@@ -195,11 +195,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndAasIdIsSomeIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsSomeIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_thenReturnFalse() {
+	public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleAdmin$Write$SomeSomeSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						readAction,
 						new BaSyxObjectTargetInformation(someId, someId, someId)
@@ -218,11 +218,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsSomeIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_thenReturnFalse() {
+	public void givenRuleAdmin$Write$SomeSomeSome_whenCheckForRuleAdmin$Write$OtherSomeSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(someId, someId, someId)
@@ -241,11 +241,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_thenReturnTrue() {
+	public void givenRuleAdmin$Write$AnySomeSome_whenCheckForRuleAdmin$Write$OtherSomeSome_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, someId, someId)
@@ -264,11 +264,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsSomeIdAndSmElIdShortPathIsSomeId_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsSomeId_thenReturnFalse() {
+	public void givenRuleAdmin$Write$AnySomeSome_whenCheckForRuleAdmin$Write$OtherOtherSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, someId, someId)
@@ -287,11 +287,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsSomeId_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsSomeId_thenReturnTrue() {
+	public void givenRuleAdmin$Write$AnyAnySome_whenCheckForRuleAdmin$Write$OtherOtherSome_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, someId)
@@ -310,11 +310,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathAndSomeId_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsOtherId_thenReturnFalse() {
+	public void givenRuleAdmin$Write$AnyAnySome_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, someId)
@@ -333,11 +333,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsAny_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsOtherId_thenReturnTrue() {
+	public void givenRuleAdmin$Write$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, any)
@@ -356,11 +356,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsFooAny_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsOtherId_thenReturnFalse() {
+	public void givenRuleAdmin$Write$AnyAnyFooAny_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, "foo/" + any)
@@ -379,11 +379,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsFooAny_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsFooOtherId_thenReturnTrue() {
+	public void givenRuleAdmin$Write$AnyAnyFooAny_whenCheckForRuleAdmin$Write$OtherOtherFooOther_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, "foo/" + any)
@@ -402,11 +402,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsFooAnyBar_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsFooOtherIdFoobar_thenReturnFalse() {
+	public void givenRuleAdmin$Write$AnyAnyFooAnyBar_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/bar")
@@ -425,11 +425,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsFooAnyFoobar_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndWriteActionAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsFooOtherIdFoobar_thenReturnTrue() {
+	public void givenRuleAdmin$Write$AnyAnyFooAnyFoobar_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/foobar")
@@ -448,11 +448,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsFooAnyFoobarAndRuleWithRoleIsNormalRoleAndActionIsReadAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsAny_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndWriteActionAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsFooOtherIdFoobar_thenReturnTrue() {
+	public void givenRuleAdmin$Write$AnyAnyFooAnyFoobar_and_RuleNormal$Read$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/foobar")
@@ -460,7 +460,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		);
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						normalRole,
 						readAction,
 						new BaSyxObjectTargetInformation(any, any, any)
@@ -479,11 +479,11 @@ public class TestPredefinedSetRbacRuleChecker {
 	}
 
 	@Test
-	public void givenRbacRuleSetContainsRuleWithRoleIsAdminRoleAndActionIsWriteAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsSomeIdAndRuleWithRoleIsNormalRoleAndActionIsReadAndAasIdIsAnyAndSmIdIsAnyAndSmElIdShortPathIsAny_whenCheckRbacRuleIsSatisfiedWithRoleIsAdminRoleAndWriteActionAndAasIdIsOtherIdAndSmIdIsOtherIdAndSmElIdShortPathIsFooOtherIdFoobar_thenReturnFalse() {
+	public void givenRuleAdmin$Write$AnyAnySomeId_and_RuleNormal$Read$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar$_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						adminRole,
 						writeAction,
 						new BaSyxObjectTargetInformation(any, any, someId)
@@ -491,7 +491,7 @@ public class TestPredefinedSetRbacRuleChecker {
 		);
 
 		rbacRuleSet.addRule(
-				RbacRule.of(
+				new RbacRule(
 						normalRole,
 						readAction,
 						new BaSyxObjectTargetInformation(any, any, any)

@@ -34,11 +34,11 @@ public class TestGrantedAuthorityAuthorizedAASAPI {
   private AuthorizedAASAPI<?> testSubject;
   private AuthorizationContextProvider securityContextProvider;
 
-  private static final String SHELL_ID = "shell_one";
+  private static final String SHELL_ID = "shell";
   private static final Identifier SHELL_IDENTIFIER = new Identifier(IdentifierType.IRI, SHELL_ID);
-  private static final String SUBMODEL_ID = "submodel_1";
+  private static final String SUBMODEL_ID = "submodel";
   private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
-  private static final String ASSET_ID = "asset_one";
+  private static final String ASSET_ID = "asset";
   private static final Identifier ASSET_IDENTIFIER = new Identifier(IdentifierType.IRI, ASSET_ID);
   private static final Asset SHELL_ASSET = new Asset(ASSET_ID, ASSET_IDENTIFIER, AssetKind.INSTANCE);
 
@@ -48,7 +48,7 @@ public class TestGrantedAuthorityAuthorizedAASAPI {
   @Before
   public void setUp() {
     testSubject = new AuthorizedAASAPI<>(apiMock);
-    securityContextProvider = new AuthorizationContextProvider(AuthorizedAASAPI.READ_AUTHORITY, AuthorizedAASAPI.WRITE_AUTHORITY);
+    securityContextProvider = new AuthorizationContextProvider(AuthorizedAASAPI.READ_AUTHORITY, AuthorizedAASAPI.WRITE_AUTHORITY, null);
 
     shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
     Mockito.when(apiMock.getAAS()).thenReturn(shell);

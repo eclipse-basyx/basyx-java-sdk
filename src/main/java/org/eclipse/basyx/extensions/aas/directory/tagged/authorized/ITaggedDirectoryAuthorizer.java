@@ -26,7 +26,10 @@ package org.eclipse.basyx.extensions.aas.directory.tagged.authorized;
 
 import java.util.Set;
 import java.util.function.Supplier;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
 import org.eclipse.basyx.extensions.aas.registration.authorization.IAASRegistryAuthorizer;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -37,19 +40,127 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  * @author wege
  */
 public interface ITaggedDirectoryAuthorizer<SubjectInformationType> extends IAASRegistryAuthorizer<SubjectInformationType> {
-  void enforceRegister(
+  /**
+   * Checks authorization for {@link IAASTaggedDirectory#register(AASDescriptor)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param taggedAASDescriptor
+   *                           the AAS descriptor.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeRegister(
       final SubjectInformationType subjectInformation,
-      final IIdentifier aasId
+      final TaggedAASDescriptor taggedAASDescriptor
   ) throws InhibitException;
 
-  Set<TaggedAASDescriptor> enforceLookupTag(
+  /**
+   * Checks authorization for {@link IAASTaggedDirectory#lookupTag(String)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param tag
+   *                           the tag of the AASes.
+   * @param taggedAASDescriptorsSupplier
+   *                           supplier for the set of AAS descriptors.
+   * @return the authorized set of AAS descriptors
+   * @throws InhibitException if authorization failed
+   */
+  public Set<TaggedAASDescriptor> authorizeLookupTag(
       final SubjectInformationType subjectInformation,
       final String tag,
       final Supplier<Set<TaggedAASDescriptor>> taggedAASDescriptorsSupplier
   ) throws InhibitException;
 
-  Set<TaggedAASDescriptor> enforceLookupTags(
+  /**
+   * Checks authorization for {@link IAASTaggedDirectory#lookupTags(Set)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param tags
+   *                           the tags of the AASes.
+   * @param taggedAASDescriptorsSupplier
+   *                           supplier for the set of AAS descriptors.
+   * @return the authorized set of AAS descriptors
+   * @throws InhibitException if authorization failed
+   */
+  public Set<TaggedAASDescriptor> authorizeLookupTags(
       final SubjectInformationType subjectInformation,
+      final Set<String> tags,
       final Supplier<Set<TaggedAASDescriptor>> taggedAASDescriptorsSupplier
+  ) throws InhibitException;
+
+  /**
+   * Checks authorization for {@link IAASTaggedDirectory#registerSubmodel(IIdentifier, TaggedSubmodelDescriptor)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasId
+   *                           id of the AAS.
+   * @param taggedSubmodelDescriptor
+   *                           supplier for the submodel descriptor.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeRegisterSubmodel(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final TaggedSubmodelDescriptor taggedSubmodelDescriptor
+  ) throws InhibitException;
+
+  /**
+   * Checks authorization for {@link IAASTaggedDirectory#lookupSubmodelTag(Set)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param submodelTag
+   *                           tag of the submodel.
+   * @param taggedSubmodelDescriptorsSupplier
+   *                           supplier for the set of submodel descriptors.
+   * @return the authorized set of submodel descriptors
+   * @throws InhibitException if authorization failed
+   */
+  public Set<TaggedSubmodelDescriptor> authorizeLookupSubmodelTag(
+      final SubjectInformationType subjectInformation,
+      final String submodelTag,
+      final Supplier<Set<TaggedSubmodelDescriptor>> taggedSubmodelDescriptorsSupplier
+  ) throws InhibitException;
+
+  /**
+   * Checks authorization for {@link IAASTaggedDirectory#lookupSubmodelTags(Set)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param submodelTags
+   *                           the tags of the submodels.
+   * @param taggedSubmodelDescriptorsSupplier
+   *                           supplier for the set of submodel descriptors.
+   * @return the authorized set of submodel descriptors
+   * @throws InhibitException if authorization failed
+   */
+  public Set<TaggedSubmodelDescriptor> authorizeLookupSubmodelTags(
+      final SubjectInformationType subjectInformation,
+      final Set<String> submodelTags,
+      final Supplier<Set<TaggedSubmodelDescriptor>> taggedSubmodelDescriptorsSupplier
+  ) throws InhibitException;
+
+  /**
+   * Checks authorization for {@link IAASTaggedDirectory#lookupBothAasAndSubmodelTags(Set, Set)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasTags
+   *                           the tags of the AASes.
+   * @param submodelTags
+   *                           the tags of the submodels.
+   * @param taggedSubmodelDescriptorsSupplier
+   *                           supplier for the set of submodel descriptors.
+   * @return the authorized set of submodel descriptors
+   * @throws InhibitException if authorization failed
+   */
+  public Set<TaggedSubmodelDescriptor> authorizeLookupBothAasAndSubmodelTags(
+      final SubjectInformationType subjectInformation,
+      final Set<String> aasTags,
+      final Set<String> submodelTags,
+      final Supplier<Set<TaggedSubmodelDescriptor>> taggedSubmodelDescriptorsSupplier
   ) throws InhibitException;
 }

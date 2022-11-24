@@ -25,12 +25,18 @@
 package org.eclipse.basyx.extensions.shared.authorization;
 
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * Interface for target attributes for access control.
  *
  * @author wege
  */
-public class TargetInformation extends HashMap<String, String> {
-
+public abstract class TargetInformation extends HashMap<String, String> {
+  @Override
+  public String toString() {
+    return keySet().stream()
+        .map(key -> key + "=" + get(key))
+        .collect(Collectors.joining(",", "{", "}"));
+  }
 }

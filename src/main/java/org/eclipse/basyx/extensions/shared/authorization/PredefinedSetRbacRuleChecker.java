@@ -56,27 +56,50 @@ public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
       final String action,
       final TargetInformation targetInformation
   ) {
-    Stream<RbacRule> matchingRules = this.rbacRuleSet.getRules().parallelStream()
-        .filter(rbacRule -> rbacRule.getRole().equals("*") || (roles != null && roles.stream().anyMatch(role -> rbacRule.getRole().equals(role))))
-        .filter(rbacRule -> rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action));
-
-    for (final Map.Entry<String, String> targetInfo : targetInformation.entrySet()) {
-      final String key = targetInfo.getKey();
-      final String value = targetInfo.getValue();
-
-      matchingRules = matchingRules.filter(rbacRule -> checkRegexStringMatch(rbacRule.getTargetInformation().get(key), value));
-    }
-
-    final Optional<RbacRule> matchingRule = matchingRules.findAny();
+    final Optional<RbacRule> matchingRule = getMatchingRules(roles, action, targetInformation).findAny();
     logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roles, action, targetInformation, matchingRule);
     return matchingRule.isPresent();
   }
 
-  private boolean checkRegexStringMatch(final String ruleString, final String actualString) {
-    if (ruleString == null) {
+  private Stream<RbacRule> getMatchingRules(
+      final List<String> roles,
+      final String action,
+      final TargetInformation targetInformation
+  ) {
+    return this.rbacRuleSet.getRules().parallelStream()
+        .filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles))
+        .filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
+        .filter(rbacRule -> checkRbacRuleMatchesTargetInformation(rbacRule, targetInformation));
+  }
+
+  private boolean checkRolesMatchRbacRule(final RbacRule rbacRule, final List<String> roles) {
+    return rbacRule.getRole().equals("*") || (roles != null && roles.stream().anyMatch(role -> rbacRule.getRole().equals(role)));
+  }
+
+  private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final String action) {
+    return rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action);
+  }
+
+  private boolean checkRbacRuleMatchesTargetInformation(final RbacRule rbacRule, final TargetInformation targetInformation) {
+    for (final Map.Entry<String, String> targetInfo : targetInformation.entrySet()) {
+      final String key = targetInfo.getKey();
+      final String targetInfoValue = targetInfo.getValue();
+      final String rbacRuleValue = rbacRule.getTargetInformation().get(key);
+
+      if (!checkRegexStringMatch(rbacRuleValue, targetInfoValue)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private boolean checkRegexStringMatch(final String actualString, final String requiredString) {
+    if (requiredString == null) {
       return true;
     }
-    return ruleString.equals("*") ||
-        (actualString != null && actualString.matches(ruleString.replaceAll("\\*", "[A-Za-z0-9.]+")));
+    if (actualString == null) {
+      return false;
+    }
+    return actualString.equals("*") || requiredString.matches(actualString.replaceAll("\\*", "[A-Za-z0-9.]+"));
   }
 }

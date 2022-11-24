@@ -24,24 +24,21 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Utility methods for RBAC access control scheme.
+ * Helper methods for Granted Authority access control scheme.
  *
  * @author wege
  */
-public class SimpleRbacUtil {
-  private SimpleRbacUtil() {}
+public class GrantedAuthorityHelper {
+  private GrantedAuthorityHelper() {}
 
-  public static <SubjectInformationType> void checkRule(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator, final SubjectInformationType subjectInformation, final String action, final TargetInformation targetInformation) throws SimpleRbacInhibitException {
-    final List<String> roles = roleAuthenticator.getRoles(subjectInformation);
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roles,
-        action,
-        targetInformation
-    )) {
-      throw new SimpleRbacInhibitException(roles, action, targetInformation);
+  public static <SubjectInformationType> void checkAuthority(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator, final SubjectInformationType subjectInformation, final String requiredAuthority) throws InhibitException {
+    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
+        .map(GrantedAuthority::getAuthority)
+        .noneMatch(authority -> authority.equals(requiredAuthority))) {
+      throw new GrantedAuthorityInhibitException(requiredAuthority);
     }
   }
 }

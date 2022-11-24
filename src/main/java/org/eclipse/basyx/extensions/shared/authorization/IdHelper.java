@@ -24,30 +24,24 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.List;
+import java.util.stream.Collectors;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
- * Interface for checking role based access rules against some target information.
+ * Helper methods for handling ids.
  *
  * @author wege
  */
-public interface IRbacRuleChecker {
-  /**
-   * Checks if the given the given roles x action x target information tuple is satisfied
-   * in some context. The context with the rules to match against should originate from
-   * the implementing class.
-   *
-   * @param roles
-   *              a list of user roles as delivered by the auth provider, e.g. in a Keycloak access token.
-   * @param action
-   *              the action to check for like {@link org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorScopes#READ_SCOPE}.
-   * @param targetInformation
-   *              the features of the target object which access should be checked for like {@link BaSyxObjectTargetInformation}.
-   * @return true if the rule is satisfied, false otherwise
-   */
-  public boolean checkRbacRuleIsSatisfied(
-      final List<String> roles,
-      final String action,
-      final TargetInformation targetInformation
-  );
+public class IdHelper {
+  private IdHelper() {}
+
+  public static String getIdentifierId(final IIdentifier identifier) {
+    return identifier != null ? identifier.getId() : null;
+  }
+
+  public static String getReferenceId(final IReference reference) {
+    return reference != null ? reference.getKeys().stream().map(IKey::getValue).collect(Collectors.joining(";")) : null;
+  }
 }

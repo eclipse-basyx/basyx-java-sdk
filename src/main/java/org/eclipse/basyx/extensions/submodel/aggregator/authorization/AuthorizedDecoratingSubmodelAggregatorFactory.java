@@ -25,7 +25,6 @@
 package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
@@ -55,6 +54,11 @@ public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationTyp
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
+	/**
+	 * @deprecated please use {@link AuthorizedDecoratingSubmodelAggregatorFactory#AuthorizedDecoratingSubmodelAggregatorFactory(IAssetAdministrationShell, ISubmodelAggregatorFactory, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
+	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
 	public AuthorizedDecoratingSubmodelAggregatorFactory(
 			final ISubmodelAggregatorFactory submodelAggregatorFactory
 	) {

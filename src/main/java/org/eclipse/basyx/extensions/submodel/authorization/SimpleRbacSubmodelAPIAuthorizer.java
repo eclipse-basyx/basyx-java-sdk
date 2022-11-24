@@ -26,19 +26,22 @@ package org.eclipse.basyx.extensions.submodel.authorization;
 
 import java.util.Collection;
 import java.util.function.Supplier;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
+import org.eclipse.basyx.extensions.shared.authorization.ElevatedCodeAuthentication;
+import org.eclipse.basyx.extensions.shared.authorization.ElevatedCodeAuthentication.ElevatedCodeAuthenticationAreaHandler;
 import org.eclipse.basyx.extensions.shared.authorization.IRbacRuleChecker;
-import org.eclipse.basyx.extensions.shared.authorization.IdUtil;
+import org.eclipse.basyx.extensions.shared.authorization.IdHelper;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.IRoleAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacUtil;
+import org.eclipse.basyx.extensions.shared.authorization.SimpleRbacHelper;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 
 /**
- * Simple attribute based implementation for {@link ISubmodelAPIAuthorizer}.
+ * Simple role based implementation for {@link ISubmodelAPIAuthorizer}.
  *
  * @author wege
  */
@@ -52,64 +55,176 @@ public class SimpleRbacSubmodelAPIAuthorizer<SubjectInformationType> implements 
   }
 
   @Override
-  public Collection<ISubmodelElement> enforceGetSubmodelElements(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<Collection<ISubmodelElement>> smElListSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
+  public Collection<ISubmodelElement> authorizeGetSubmodelElements(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final Supplier<ISubmodel> smSupplier,
+      final Supplier<Collection<ISubmodelElement>> smElListSupplier
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+    final IIdentifier smId = getSmIdUnsecured(smSupplier);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
 
     return smElListSupplier.get();
   }
 
   @Override
-  public ISubmodelElement enforceGetSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final Supplier<ISubmodelElement> smElSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), smElIdShortPath));
+  public ISubmodelElement authorizeGetSubmodelElement(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final IIdentifier smId,
+      final String smElIdShortPath,
+      final Supplier<ISubmodelElement> smElSupplier
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), smElIdShortPath));
 
     return smElSupplier.get();
   }
 
   @Override
-  public ISubmodel enforceGetSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
+  public ISubmodel authorizeGetSubmodel(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final IIdentifier smId,
+      final Supplier<ISubmodel> smSupplier
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
 
     return smSupplier.get();
   }
 
   @Override
-  public void enforceAddSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), smElIdShortPath));
+  public void authorizeAddSubmodelElement(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final IIdentifier smId,
+      final String smElIdShortPath
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), smElIdShortPath));
   }
 
   @Override
-  public void enforceDeleteSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), smElIdShortPath));
+  public void authorizeDeleteSubmodelElement(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final IIdentifier smId,
+      final String smElIdShortPath
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), smElIdShortPath));
   }
 
   @Override
-  public void enforceUpdateSubmodelElement(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), smElIdShortPath));
+  public void authorizeUpdateSubmodelElement(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final IIdentifier smId,
+      final String smElIdShortPath
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), smElIdShortPath));
   }
 
   @Override
-  public Object enforceGetSubmodelElementValue(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final Supplier<Object> valueSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), smElIdShortPath));
+  public Object authorizeGetSubmodelElementValue(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final IIdentifier smId,
+      final String smElIdShortPath,
+      final Supplier<Object> valueSupplier
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), smElIdShortPath));
 
     return valueSupplier.get();
   }
 
   @Override
-  public Collection<IOperation> enforceGetOperations(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<Collection<IOperation>> operationListSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), null));
+  public Collection<IOperation> authorizeGetOperations(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final Supplier<ISubmodel> smSupplier,
+      final Supplier<Collection<IOperation>> operationListSupplier
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+    final IIdentifier smId = getSmIdUnsecured(smSupplier);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
 
     return operationListSupplier.get();
   }
 
   @Override
-  public void enforceInvokeOperation(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.EXECUTE_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), smElIdShortPath));
+  public void authorizeInvokeOperation(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final IIdentifier smId,
+      final String smElIdShortPath
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.EXECUTE_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), smElIdShortPath));
   }
 
   @Override
-  public Object enforceGetOperationResult(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final String smElIdShortPath, final String requestId, final Supplier<Object> operationResultSupplier) throws InhibitException {
-    SimpleRbacUtil.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdUtil.getIdentifierId(aasId), IdUtil.getIdentifierId(smId), smElIdShortPath));
+  public Object authorizeGetOperationResult(
+      final SubjectInformationType subjectInformation,
+      final IAssetAdministrationShell aas,
+      final IIdentifier smId,
+      final String smElIdShortPath,
+      final String requestId,
+      final Supplier<Object> operationResultSupplier
+  ) throws InhibitException {
+    final IIdentifier aasId = getAasId(aas);
+
+    SimpleRbacHelper
+        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
+        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), smElIdShortPath));
 
     return operationResultSupplier.get();
+  }
+
+  private IIdentifier getAasId(final IAssetAdministrationShell aas) {
+    return aas != null ? aas.getIdentification() : null;
+  }
+
+  private IIdentifier getSmIdUnsecured(final Supplier<ISubmodel> smSupplier) {
+    try (final ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+      final ISubmodel sm = smSupplier.get();
+
+      if (sm == null) {
+        return null;
+      }
+
+      return sm.getIdentification();
+    }
   }
 }

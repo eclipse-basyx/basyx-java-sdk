@@ -26,6 +26,7 @@ package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
 /**
  * Constants for the permission scopes related to the {@link AuthorizedSubmodelAggregator}.
+ * Used in {@link SimpleRbacSubmodelAggregatorAuthorizer}, {@link GrantedAuthoritySubmodelAggregatorAuthorizer}
  *
  * @author pneuschwander, wege
  * @see <a href=

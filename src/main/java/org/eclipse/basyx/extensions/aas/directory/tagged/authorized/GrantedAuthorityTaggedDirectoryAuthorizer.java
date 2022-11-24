@@ -27,9 +27,10 @@ package org.eclipse.basyx.extensions.aas.directory.tagged.authorized;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
 import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAASRegistry;
 import org.eclipse.basyx.extensions.aas.registration.authorization.GrantedAuthorityAASRegistryAuthorizer;
-import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityUtil;
+import org.eclipse.basyx.extensions.shared.authorization.GrantedAuthorityHelper;
 import org.eclipse.basyx.extensions.shared.authorization.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -45,21 +46,75 @@ public class GrantedAuthorityTaggedDirectoryAuthorizer<SubjectInformationType> e
   }
 
   @Override
-  public void enforceRegister(final SubjectInformationType subjectInformation, final IIdentifier aasId) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
+  public void authorizeRegister(final SubjectInformationType subjectInformation, final TaggedAASDescriptor taggedAASDescriptorSupplier) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
   }
 
   @Override
-  public Set<TaggedAASDescriptor> enforceLookupTag(final SubjectInformationType subjectInformation, final String tag, final Supplier<Set<TaggedAASDescriptor>> taggedAASDescriptorsSupplier) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+  public Set<TaggedAASDescriptor> authorizeLookupTag(final SubjectInformationType subjectInformation, final String tag, final Supplier<Set<TaggedAASDescriptor>> taggedAASDescriptorsSupplier) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
 
     return taggedAASDescriptorsSupplier.get();
   }
 
   @Override
-  public Set<TaggedAASDescriptor> enforceLookupTags(final SubjectInformationType subjectInformation, final Supplier<Set<TaggedAASDescriptor>> taggedAASDescriptorsSupplier) throws InhibitException {
-    GrantedAuthorityUtil.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+  public Set<TaggedAASDescriptor> authorizeLookupTags(
+      final SubjectInformationType subjectInformation,
+      final Set<String> tags,
+      final Supplier<Set<TaggedAASDescriptor>> taggedAASDescriptorsSupplier
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
 
     return taggedAASDescriptorsSupplier.get();
+  }
+
+  @Override
+  public void authorizeRegisterSubmodel(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final TaggedSubmodelDescriptor taggedSubmodelDescriptor
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
+  }
+
+  @Override
+  public Set<TaggedSubmodelDescriptor> authorizeLookupSubmodelTag(
+      final SubjectInformationType subjectInformation,
+      final String submodelTag,
+      final Supplier<Set<TaggedSubmodelDescriptor>> taggedSubmodelDescriptorsSupplier
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+
+    return taggedSubmodelDescriptorsSupplier.get();
+  }
+
+  @Override
+  public Set<TaggedSubmodelDescriptor> authorizeLookupSubmodelTags(
+      final SubjectInformationType subjectInformation,
+      final Set<String> submodelTags,
+      final Supplier<Set<TaggedSubmodelDescriptor>> taggedSubmodelDescriptorsSupplier
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+
+    return taggedSubmodelDescriptorsSupplier.get();
+  }
+
+  @Override
+  public Set<TaggedSubmodelDescriptor> authorizeLookupBothAasAndSubmodelTags(
+      final SubjectInformationType subjectInformation,
+      final Set<String> aasTags,
+      final Set<String> submodelTags,
+      final Supplier<Set<TaggedSubmodelDescriptor>> taggedSubmodelDescriptorsSupplier
+  ) throws InhibitException {
+    GrantedAuthorityHelper
+        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
+
+    return taggedSubmodelDescriptorsSupplier.get();
   }
 }

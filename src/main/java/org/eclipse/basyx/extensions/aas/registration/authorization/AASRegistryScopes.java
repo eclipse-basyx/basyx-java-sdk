@@ -26,6 +26,8 @@ package org.eclipse.basyx.extensions.aas.registration.authorization;
 
 /**
  * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}.
+ * Used in {@link SimpleRbacAASRegistryAuthorizer}, {@link GrantedAuthorityAASRegistryAuthorizer},
+ * {@link org.eclipse.basyx.extensions.aas.directory.tagged.authorized.SimpleRbacTaggedDirectoryAuthorizer}, {@link org.eclipse.basyx.extensions.aas.directory.tagged.authorized.GrantedAuthorityTaggedDirectoryAuthorizer}
  *
  * @author pneuschwander, wege
  * @see <a href=

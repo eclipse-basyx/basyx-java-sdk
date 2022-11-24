@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
@@ -37,46 +38,134 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  * @author wege
  */
 public interface IAASRegistryAuthorizer<SubjectInformationType> {
-  void enforceRegisterAas(
+  /**
+   * Checks authorization for {@link IAASRegistry#register}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasDescriptor
+   *                           descriptor of the AAS.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeRegisterAas(
+      final SubjectInformationType subjectInformation,
+      final AASDescriptor aasDescriptor
+  ) throws InhibitException;
+
+  /**
+   * Checks authorization for {@link IAASRegistry#register(IIdentifier, SubmodelDescriptor)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasId
+   *                           id of the AAS.
+   * @param smDescriptor
+   *                           the submodel descriptor.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeRegisterSubmodel(
+      final SubjectInformationType subjectInformation,
+      final IIdentifier aasId,
+      final SubmodelDescriptor smDescriptor
+  ) throws InhibitException;
+
+  /**
+   * Checks authorization for {@link IAASRegistry#delete(IIdentifier)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasId
+   *                           id of the AAS.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeUnregisterAas(
       final SubjectInformationType subjectInformation,
       final IIdentifier aasId
   ) throws InhibitException;
 
-  void enforceRegisterSubmodel(
+  /**
+   * Checks authorization for {@link IAASRegistry#delete(IIdentifier, IIdentifier)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasId
+   *                           id of the AAS.
+   * @param smId
+   *                           id of the submodel.
+   * @throws InhibitException if authorization failed
+   */
+  public void authorizeUnregisterSubmodel(
       final SubjectInformationType subjectInformation,
       final IIdentifier aasId,
       final IIdentifier smId
   ) throws InhibitException;
 
-  void enforceUnregisterAas(
-      final SubjectInformationType subjectInformation,
-      final IIdentifier aasId
-  ) throws InhibitException;
-
-  void enforceUnregisterSubmodel(
-      final SubjectInformationType subjectInformation,
-      final IIdentifier aasId,
-      final IIdentifier smId
-  ) throws InhibitException;
-
-  List<AASDescriptor> enforceLookupAll(
-      final SubjectInformationType subjectInformation,
-      final Supplier<List<AASDescriptor>> aasDescriptorsSupplier
-  ) throws InhibitException;
-
-  AASDescriptor enforceLookupAas(
+  /**
+   * Checks authorization for {@link IAASRegistry#lookupAAS(IIdentifier)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasId
+   *                           id of the AAS.
+   * @param aasSupplier
+   *                           supplier for the AAS.
+   * @return the authorized AAS descriptor.
+   * @throws InhibitException if authorization failed
+   */
+  public AASDescriptor authorizeLookupAAS(
       final SubjectInformationType subjectInformation,
       final IIdentifier aasId,
       final Supplier<AASDescriptor> aasSupplier
   ) throws InhibitException;
 
-  List<SubmodelDescriptor> enforceLookupSubmodels(
+  /**
+   * Checks authorization for {@link IAASRegistry#lookupAll()}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasDescriptorsSupplier
+   *                           supplier for the list of AAS descriptors.
+   * @return the authorized list of AAS descriptors.
+   * @throws InhibitException if authorization failed
+   */
+  public List<AASDescriptor> authorizeLookupAll(
+      final SubjectInformationType subjectInformation,
+      final Supplier<List<AASDescriptor>> aasDescriptorsSupplier
+  ) throws InhibitException;
+
+  /**
+   * Checks authorization for {@link IAASRegistry#lookupSubmodels(IIdentifier)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasId
+   *                           id of the AAS.
+   * @param submodelDescriptorsSupplier
+   *                           supplier for the list of submodel descriptors.
+   * @return the authorized list of submodel descriptors.
+   * @throws InhibitException if authorization failed
+   */
+  public List<SubmodelDescriptor> authorizeLookupSubmodels(
       final SubjectInformationType subjectInformation,
       final IIdentifier aasId,
       final Supplier<List<SubmodelDescriptor>> submodelDescriptorsSupplier
   ) throws InhibitException;
 
-  SubmodelDescriptor enforceLookupSubmodel(
+  /**
+   * Checks authorization for {@link IAASRegistry#lookupSubmodel(IIdentifier, IIdentifier)}.
+   *
+   * @param subjectInformation
+   *                           information of the requester.
+   * @param aasId
+   *                           id of the AAS.
+   * @param smId
+   *                           id of the submodel.
+   * @param smSupplier
+   *                           supplier for the submodel.
+   * @return the authorized submodel descriptor.
+   * @throws InhibitException if authorization failed
+   */
+  public SubmodelDescriptor authorizeLookupSubmodel(
       final SubjectInformationType subjectInformation,
       final IIdentifier aasId,
       final IIdentifier smId,

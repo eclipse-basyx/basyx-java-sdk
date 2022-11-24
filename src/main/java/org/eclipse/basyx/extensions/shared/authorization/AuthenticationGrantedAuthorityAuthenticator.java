@@ -42,8 +42,10 @@ public class AuthenticationGrantedAuthorityAuthenticator implements IGrantedAuth
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities(final Authentication subjectInformation) {
-    return Optional.ofNullable(subjectInformation)
-        .map(Authentication::getAuthorities)
-        .orElseGet(Collections::emptyList);
+    if (subjectInformation == null) {
+      return Collections.emptyList();
+    }
+
+    return subjectInformation.getAuthorities();
   }
 }

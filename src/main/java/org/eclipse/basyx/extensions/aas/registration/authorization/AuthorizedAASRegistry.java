@@ -24,15 +24,17 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.registration.authorization;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
+import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.CodeAuthentication;
+import org.eclipse.basyx.extensions.shared.authorization.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
@@ -75,8 +77,10 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 	}
 
 	/**
-	 * @deprecated
+	 * @deprecated Please use {@link AuthorizedAASRegistry#AuthorizedAASRegistry(IAASRegistry, IAASRegistryAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
 	 */
+	@Deprecated
+	@SuppressWarnings("unchecked")
 	public AuthorizedAASRegistry(final IAASRegistry decoratedRegistry) {
 		this(
 			decoratedRegistry,
@@ -87,70 +91,66 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public void register(final AASDescriptor deviceAASDescriptor) throws ProviderException {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.register(deviceAASDescriptor);
 			return;
 		}
 
 		try {
-			enforceRegister(deviceAASDescriptor);
+			authorizeRegister(deviceAASDescriptor);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 		decoratedRegistry.register(deviceAASDescriptor);
 	}
 
-	protected void enforceRegister(final AASDescriptor deviceAASDescriptor) throws InhibitException {
-		final IIdentifier aasId = deviceAASDescriptor.getIdentifier();
-
-		aasRegistryAuthorizer.enforceRegisterAas(
+	protected void authorizeRegister(final AASDescriptor aasDescriptor) throws InhibitException {
+		aasRegistryAuthorizer.authorizeRegisterAas(
 				subjectInformationProvider.get(),
-				aasId
+				aasDescriptor
 		);
 	}
 
 	@Override
 	public void register(final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws ProviderException {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.register(aasId, smDescriptor);
 			return;
 		}
 
 		try {
-			enforceRegister(aasId, smDescriptor);
+			authorizeRegister(aasId, smDescriptor);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 		decoratedRegistry.register(aasId, smDescriptor);
 	}
 
-	protected void enforceRegister(final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException {
-		final IIdentifier smId = smDescriptor.getIdentifier(); // TODO: semantic id? but can be null
-
-		aasRegistryAuthorizer.enforceRegisterSubmodel(
+	protected void authorizeRegister(final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException {
+		aasRegistryAuthorizer.authorizeRegisterSubmodel(
 				subjectInformationProvider.get(),
 				aasId,
-				smId
+				smDescriptor
 		);
 	}
 
 	@Override
 	public void delete(final IIdentifier aasId) throws ProviderException {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.delete(aasId);
 			return;
 		}
 
 		try {
-			enforceDelete(aasId);
+			authorizeDelete(aasId);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 		decoratedRegistry.delete(aasId);
 	}
 
-	protected void enforceDelete(final IIdentifier aasId) throws InhibitException {
-		aasRegistryAuthorizer.enforceUnregisterAas(
+	protected void authorizeDelete(final IIdentifier aasId) throws InhibitException {
+		aasRegistryAuthorizer.authorizeUnregisterAas(
 				subjectInformationProvider.get(),
 				aasId
 		);
@@ -158,21 +158,21 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public void delete(final IIdentifier aasId, final IIdentifier smId) throws ProviderException {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.delete(aasId, smId);
 			return;
 		}
 
 		try {
-			enforceDelete(aasId, smId);
+			authorizeDelete(aasId, smId);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 		decoratedRegistry.delete(aasId, smId);
 	}
 
-	protected void enforceDelete(final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-		aasRegistryAuthorizer.enforceUnregisterSubmodel(
+	protected void authorizeDelete(final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
+		aasRegistryAuthorizer.authorizeUnregisterSubmodel(
 				subjectInformationProvider.get(),
 				aasId,
 				smId
@@ -181,33 +181,29 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 
 	@Override
 	public AASDescriptor lookupAAS(final IIdentifier aasId) throws ProviderException {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedRegistry.lookupAAS(aasId);
 		}
 
 		try {
-			return enforceLookupAAS(aasId);
+			return authorizeLookupAAS(aasId);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
-	protected AASDescriptor enforceLookupAAS(final IIdentifier aasId) throws InhibitException {
-		final AASDescriptor enforcedAAS = aasRegistryAuthorizer.enforceLookupAas(
-				subjectInformationProvider.get(),
-				aasId,
-				() -> decoratedRegistry.lookupAAS(aasId)
-		);
+	protected AASDescriptor authorizeLookupAAS(final IIdentifier aasId) throws InhibitException {
+		final AASDescriptor authorizedAASDescriptor = authorizeAASDescriptorOnly(aasId);
 
-		if (enforcedAAS == null) {
+		if (authorizedAASDescriptor == null) {
 			throw new ResourceNotFoundException("AAS with Id " + aasId.getId() + " does not exist");
 		}
 
-		final AASDescriptor enforcedAASDescriptor = new AASDescriptor(enforcedAAS);
+		final AASDescriptor enforcedAASDescriptor = authorizedAASDescriptor instanceof TaggedAASDescriptor ? TaggedAASDescriptor.createAsFacade(new HashMap<>(authorizedAASDescriptor)) : new AASDescriptor(authorizedAASDescriptor);
 		final List<SubmodelDescriptor> submodelDescriptorsToRemove = enforcedAASDescriptor.getSubmodelDescriptors().stream().map(submodelDescriptor -> {
 			final IIdentifier smId = submodelDescriptor.getIdentifier();
 			try {
-				return enforceLookupSubmodel(aasId, smId);
+				return authorizeLookupSubmodel(aasId, smId);
 			} catch (final InhibitException e) {
 				// remove submodel descriptor if enforcement was unsuccessful
 				logger.info(e.getMessage(), e);
@@ -220,27 +216,31 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		return enforcedAASDescriptor;
 	}
 
+	private AASDescriptor authorizeAASDescriptorOnly(final IIdentifier aasId) throws InhibitException {
+		return aasRegistryAuthorizer.authorizeLookupAAS(
+				subjectInformationProvider.get(),
+				aasId,
+				() -> decoratedRegistry.lookupAAS(aasId)
+		);
+	}
+
 	@Override
 	public List<AASDescriptor> lookupAll() throws ProviderException {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedRegistry.lookupAll();
 		}
 
 		try {
-			return enforceLookupAll();
+			return authorizeLookupAll();
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
-	protected List<AASDescriptor> enforceLookupAll() throws InhibitException {
-		final List<AASDescriptor> enforcedAASDescriptors = aasRegistryAuthorizer.enforceLookupAll(
-				subjectInformationProvider.get(),
-				decoratedRegistry::lookupAll
-		);
-		return enforcedAASDescriptors.stream().map(aas -> {
+	protected List<AASDescriptor> authorizeLookupAll() throws InhibitException {
+		return authorizeAASDescriptorListOnly().stream().map(aas -> {
 			try {
-				return enforceLookupAAS(aas.getIdentifier());
+				return authorizeLookupAAS(aas.getIdentifier());
 			} catch (final InhibitException e) {
 				// leave out that aas descriptor
 				logger.info(e.getMessage(), e);
@@ -249,28 +249,30 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
+	private List<AASDescriptor> authorizeAASDescriptorListOnly() throws InhibitException {
+		return aasRegistryAuthorizer.authorizeLookupAll(
+				subjectInformationProvider.get(),
+				decoratedRegistry::lookupAll
+		);
+	}
+
 	@Override
 	public List<SubmodelDescriptor> lookupSubmodels(final IIdentifier aasId) throws ProviderException {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedRegistry.lookupSubmodels(aasId);
 		}
 
 		try {
-			return enforceLookupSubmodels(aasId);
+			return authorizeLookupSubmodels(aasId);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
-	protected List<SubmodelDescriptor> enforceLookupSubmodels(final IIdentifier aasId) throws InhibitException {
-		final List<SubmodelDescriptor> enforcedSubmodelDescriptors = aasRegistryAuthorizer.enforceLookupSubmodels(
-				subjectInformationProvider.get(),
-				aasId,
-				() -> decoratedRegistry.lookupSubmodels(aasId)
-		);
-		return enforcedSubmodelDescriptors.stream().map(submodel -> {
+	protected List<SubmodelDescriptor> authorizeLookupSubmodels(final IIdentifier aasId) throws InhibitException {
+		return authorizeSubmodelListOnly(aasId).stream().map(submodel -> {
 			try {
-				return enforceLookupSubmodel(aasId, submodel.getIdentifier());
+				return authorizeLookupSubmodel(aasId, submodel.getIdentifier());
 			} catch (final InhibitException e) {
 				// leave out that submodel descriptor
 				logger.info(e.getMessage(), e);
@@ -279,21 +281,29 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
+	private List<SubmodelDescriptor> authorizeSubmodelListOnly(final IIdentifier aasId) throws InhibitException {
+		return aasRegistryAuthorizer.authorizeLookupSubmodels(
+				subjectInformationProvider.get(),
+				aasId,
+				() -> decoratedRegistry.lookupSubmodels(aasId)
+		);
+	}
+
 	@Override
 	public SubmodelDescriptor lookupSubmodel(final IIdentifier aasId, final IIdentifier smId) throws ProviderException {
-		if (CodeAuthentication.isCodeAuthentication()) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedRegistry.lookupSubmodel(aasId, smId);
 		}
 
 		try {
-			return enforceLookupSubmodel(aasId, smId);
+			return authorizeLookupSubmodel(aasId, smId);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
-	protected SubmodelDescriptor enforceLookupSubmodel(final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-		return aasRegistryAuthorizer.enforceLookupSubmodel(
+	protected SubmodelDescriptor authorizeLookupSubmodel(final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
+		return aasRegistryAuthorizer.authorizeLookupSubmodel(
 				subjectInformationProvider.get(),
 				aasId,
 				smId,
