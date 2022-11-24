@@ -78,10 +78,6 @@ public class MqttV2AASRegistryServiceObserver extends MqttEventService implement
 		logger.info("Create new MQTT AAS Registry Service Observer for endpoint " + client.getServerURI());
 	}
 
-	private static GSONTools createGSONTools() {
-		return new GSONTools(new DefaultTypeFactory(), false, false);
-	}
-
 	@Override
 	public void aasRegistered(AASDescriptor aasDescriptor, String registryId) {		
 		sendMqttMessage(topicFactory.createCreateAASTopic(registryId), serializePayload(aasDescriptor));
@@ -116,5 +112,9 @@ public class MqttV2AASRegistryServiceObserver extends MqttEventService implement
 	
 	private String serializePayload(ModelDescriptor descriptor) {
 		return payloadSerializer.serialize(descriptor);
+	}
+
+	private static GSONTools createGSONTools() {
+		return new GSONTools(new DefaultTypeFactory(), false, false);
 	}
 }

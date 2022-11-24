@@ -41,7 +41,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
  */
 public class ObserableSubmodelAPIV2Helper {
 
-	public final static String EMPTYVALUEUPDATE_TYPE = "emptyValueUpdate";
+	public final static String EMPTYVALUEUPDATE_TYPE = "emptyValueUpdateEvent";
 
 	/**
 	 * Creates a qualifier indicating that the annotated element's value should not be propagated via eventing
@@ -70,7 +70,14 @@ public class ObserableSubmodelAPIV2Helper {
 		return emptyValueUpdateEvent;
 	}
 
-	public static boolean shouldSendEmptyValue(ISubmodelElement submodelElement) {
+	/**
+	 * Returns true if the submodelElement has an EmptyValueUpdateEvent with a value
+	 * of true
+	 * 
+	 * @param submodelElement
+	 * @return
+	 */
+	public static boolean shouldSendEmptyValueEvent(ISubmodelElement submodelElement) {
 		Optional<IQualifier> qualifier = submodelElement.getQualifiers().stream().filter(c -> c instanceof IQualifier)
 				.map(IQualifier.class::cast).filter(q -> q.getType().equals(EMPTYVALUEUPDATE_TYPE)).findAny();
 		if (qualifier.isEmpty())
