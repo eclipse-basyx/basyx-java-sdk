@@ -63,7 +63,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAPI#getSubmodelElement}.
+   * Checks authorization for {@link ISubmodelAPI#getSubmodelElement(String)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -88,7 +88,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAPI#getSubmodel}.
+   * Checks authorization for {@link ISubmodelAPI#getSubmodel()}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -152,7 +152,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   *Checks authorization for {@link ISubmodelAPI#updateSubmodelElement}.
+   *Checks authorization for {@link ISubmodelAPI#updateSubmodelElement(String, Object)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -173,7 +173,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAPI#getSubmodelElementValue}.
+   * Checks authorization for {@link ISubmodelAPI#getSubmodelElementValue(String)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -198,7 +198,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAPI#getOperations}.
+   * Checks authorization for {@link ISubmodelAPI#getOperations()}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -220,7 +220,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAPI#invokeOperation}.
+   * Checks authorization for {@link ISubmodelAPI#invokeOperation(String, Object...)} and {@link ISubmodelAPI#invokeAsync(String, Object...)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -241,7 +241,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAPI#getOperationResult}.
+   * Checks authorization for {@link ISubmodelAPI#getOperationResult(String, String)}.
    *
    * @param subjectInformation
    *                           information of the requester.

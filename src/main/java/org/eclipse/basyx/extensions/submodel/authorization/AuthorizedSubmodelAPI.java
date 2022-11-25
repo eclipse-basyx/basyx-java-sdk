@@ -335,7 +335,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 		final String idShortPath = fixInvokeIdShortPath(inputIdShortPath);
 		try {
-			enforceInvokeOperation(idShortPath);
+			authorizeInvokeOperation(idShortPath);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
@@ -349,7 +349,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		}
 
 		try {
-			enforceInvokeOperation(idShortPath);
+			authorizeInvokeOperation(idShortPath);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
@@ -361,7 +361,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return inputIdShortPath.replaceFirst("/invoke$", "");
 	}
 
-	protected void enforceInvokeOperation(final String smElIdShortPath) throws InhibitException {
+	protected void authorizeInvokeOperation(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
 		submodelAPIAuthorizer.authorizeInvokeOperation(
 				subjectInformationProvider.get(),

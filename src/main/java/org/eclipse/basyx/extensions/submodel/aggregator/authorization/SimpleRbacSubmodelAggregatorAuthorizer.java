@@ -129,22 +129,6 @@ public class SimpleRbacSubmodelAggregatorAuthorizer<SubjectInformationType> impl
   }
 
   @Override
-  public ISubmodelAPI authorizeGetSubmodelAPI(
-      final SubjectInformationType subjectInformation,
-      final IAssetAdministrationShell aas,
-      final IIdentifier smId,
-      final Supplier<ISubmodelAPI> smAPISupplier
-  ) throws InhibitException {
-    final IIdentifier aasId = getAASId(aas);
-
-    SimpleRbacHelper
-        .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
-        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
-
-    return smAPISupplier.get();
-  }
-
-  @Override
   public void authorizeCreateSubmodel(
       final SubjectInformationType subjectInformation,
       final IAssetAdministrationShell aas,
@@ -171,7 +155,7 @@ public class SimpleRbacSubmodelAggregatorAuthorizer<SubjectInformationType> impl
   }
 
   @Override
-  public void authorizeDeleteSubmodel(
+  public void authorizeDeleteSubmodelByIdentifier(
       final SubjectInformationType subjectInformation,
       final IAssetAdministrationShell aas,
       final IIdentifier smId
@@ -180,7 +164,7 @@ public class SimpleRbacSubmodelAggregatorAuthorizer<SubjectInformationType> impl
 
     SimpleRbacHelper
         .checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, SubmodelAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
-        IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
+            IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
   }
 
   private IIdentifier getAASId(final IAssetAdministrationShell aas) {

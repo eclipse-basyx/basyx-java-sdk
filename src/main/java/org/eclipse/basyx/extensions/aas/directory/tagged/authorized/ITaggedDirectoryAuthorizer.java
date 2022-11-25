@@ -108,7 +108,7 @@ public interface ITaggedDirectoryAuthorizer<SubjectInformationType> extends IAAS
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link IAASTaggedDirectory#lookupSubmodelTag(Set)}.
+   * Checks authorization for {@link IAASTaggedDirectory#lookupSubmodelTag(String)}}.
    *
    * @param subjectInformation
    *                           information of the requester.

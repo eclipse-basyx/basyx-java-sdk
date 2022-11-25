@@ -39,7 +39,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
  */
 public interface IAASRegistryAuthorizer<SubjectInformationType> {
   /**
-   * Checks authorization for {@link IAASRegistry#register}.
+   * Checks authorization for {@link IAASRegistry#register(AASDescriptor)}.
    *
    * @param subjectInformation
    *                           information of the requester.

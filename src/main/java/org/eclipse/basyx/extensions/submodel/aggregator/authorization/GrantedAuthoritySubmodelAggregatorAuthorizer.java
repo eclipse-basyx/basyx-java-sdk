@@ -106,18 +106,6 @@ public class GrantedAuthoritySubmodelAggregatorAuthorizer<SubjectInformationType
   }
 
   @Override
-  public ISubmodelAPI authorizeGetSubmodelAPI(
-      final SubjectInformationType subjectInformation,
-      final IAssetAdministrationShell aas,
-      final IIdentifier smId,
-      final Supplier<ISubmodelAPI> smAPISupplier
-  ) throws InhibitException {
-    GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAggregator.READ_AUTHORITY);
-
-    return smAPISupplier.get();
-  }
-
-  @Override
   public void authorizeCreateSubmodel(
       final SubjectInformationType subjectInformation,
       final IAssetAdministrationShell aas,
@@ -136,7 +124,7 @@ public class GrantedAuthoritySubmodelAggregatorAuthorizer<SubjectInformationType
   }
 
   @Override
-  public void authorizeDeleteSubmodel(
+  public void authorizeDeleteSubmodelByIdentifier(
       final SubjectInformationType subjectInformation,
       final IAssetAdministrationShell aas,
       final IIdentifier smId

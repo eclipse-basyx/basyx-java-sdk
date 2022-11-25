@@ -230,7 +230,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		} catch (final ResourceNotFoundException resourceNotFoundException) {
 			// if the resource does not exist, check if we have permission to read every submodel,
 			// if no, the authorization will throw an InhibitException, otherwise we throw the ResourceNotFoundException
-			submodelAggregatorAuthorizer.authorizeGetSubmodelAPI(
+			submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(
 					subjectInformationProvider.get(),
 					aas,
 					new ModelUrn("*"),
@@ -328,7 +328,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected void authorizeDeleteSubmodelByIdentifier(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorAuthorizer.authorizeDeleteSubmodel(
+		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(
 				subjectInformationProvider.get(),
 				aas,
 				smId
@@ -353,7 +353,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	protected void authorizeDeleteSubmodelByIdShort(final String smIdShortPath) throws InhibitException {
 		final ISubmodel sm = getSmUnsecured(smIdShortPath);
 		final IIdentifier smId = getSmIdUnsecured(sm);
-		submodelAggregatorAuthorizer.authorizeDeleteSubmodel(
+		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(
 				subjectInformationProvider.get(),
 				aas,
 				smId

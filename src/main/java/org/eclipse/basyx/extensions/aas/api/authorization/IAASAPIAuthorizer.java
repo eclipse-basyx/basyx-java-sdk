@@ -26,10 +26,8 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**

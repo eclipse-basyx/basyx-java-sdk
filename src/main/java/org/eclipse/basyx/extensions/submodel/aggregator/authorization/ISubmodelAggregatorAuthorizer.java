@@ -41,7 +41,7 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
  */
 public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
   /**
-   * Checks authorization for {@link ISubmodelAggregator#getSubmodelList}.
+   * Checks authorization for {@link ISubmodelAggregator#getSubmodelList()}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -60,7 +60,7 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAggregator#getSubmodel}.
+   * Checks authorization for {@link ISubmodelAggregator#getSubmodel(IIdentifier)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -82,7 +82,7 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAggregator#getSubmodelbyIdShort}.
+   * Checks authorization for {@link ISubmodelAggregator#getSubmodelbyIdShort(String)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -104,7 +104,7 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAggregator#getSubmodelAPIById}.
+   * Checks authorization for {@link ISubmodelAggregator#getSubmodelAPIById(IIdentifier)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -126,7 +126,7 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAggregator#getSubmodelAPIByIdShort}.
+   * Checks authorization for {@link ISubmodelAggregator#getSubmodelAPIByIdShort(String)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -144,28 +144,6 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
       final SubjectInformationType subjectInformation,
       final IAssetAdministrationShell aas,
       final String smIdShortPath,
-      final Supplier<ISubmodelAPI> smAPISupplier
-  ) throws InhibitException;
-
-  /**
-   * Checks authorization for {@link ISubmodelAggregator#getSubmodelAPI}.
-   *
-   * @param subjectInformation
-   *                           information of the requester.
-   * @param aas
-   *                           the aas the submodel belongs to as passed in the constructor
-   *                           of {@link AuthorizedSubmodelAggregator}, may be null.
-   * @param smId
-   *                           id of the submodel.
-   * @param smAPISupplier
-   *                           supploer for the submodel API.
-   * @return the authorized submodel API
-   * @throws InhibitException if authorization failed
-   */
-  public ISubmodelAPI authorizeGetSubmodelAPI(
-      final SubjectInformationType subjectInformation,
-      final IAssetAdministrationShell aas,
-      final IIdentifier smId,
       final Supplier<ISubmodelAPI> smAPISupplier
   ) throws InhibitException;
 
@@ -206,7 +184,7 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
   ) throws InhibitException;
 
   /**
-   * Checks authorization for {@link ISubmodelAggregator#deleteSubmodel}.
+   * Checks authorization for {@link ISubmodelAggregator#deleteSubmodelByIdentifier(IIdentifier)} and {@link ISubmodelAggregator#deleteSubmodelByIdShort(String)}.
    *
    * @param subjectInformation
    *                           information of the requester.
@@ -217,7 +195,7 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
    *                           id of the submodel.
    * @throws InhibitException if authorization failed
    */
-  public void authorizeDeleteSubmodel(
+  public void authorizeDeleteSubmodelByIdentifier(
       final SubjectInformationType subjectInformation,
       final IAssetAdministrationShell aas,
       final IIdentifier smId
