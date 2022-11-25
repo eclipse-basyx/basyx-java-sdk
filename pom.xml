@@ -46,7 +46,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<spring-security-version>5.7.5</spring-security-version>
+		<spring-security-version>5.8.0</spring-security-version>
 	</properties>
 	
 	<repositories>
@@ -177,7 +177,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>4.8.1</version>
+			<version>4.9.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -241,7 +241,7 @@
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
-			<version>9.0.68</version>
+			<version>9.0.69</version>
 		</dependency>
 
 		<!-- Used for creating .aasx files -->
@@ -255,14 +255,14 @@
 		<dependency>
     		<groupId>ch.qos.logback</groupId>
     		<artifactId>logback-classic</artifactId>
-    		<version>1.4.4</version>
+    		<version>1.4.5</version>
 		</dependency>
 		
 		<!-- Used by Logback to compile filter expressions from logback.xml -->
 		<dependency>
     		<groupId>org.codehaus.janino</groupId>
     		<artifactId>janino</artifactId>
-    		<version>3.1.8</version>
+    		<version>3.1.9</version>
 		</dependency>
 		
 		<!-- Paho Java Client for MQTT -->
@@ -334,6 +334,20 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.13.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mock-server</groupId>
+			<artifactId>mockserver-netty</artifactId>
+			<version>5.9.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mock-server</groupId>
+			<artifactId>mockserver-client-java</artifactId>
+			<version>5.9.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

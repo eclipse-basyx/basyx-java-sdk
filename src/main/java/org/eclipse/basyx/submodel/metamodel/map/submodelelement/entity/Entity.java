@@ -26,6 +26,7 @@ package org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.eclipse.basyx.aas.metamodel.exception.MetamodelConstructionException;
@@ -66,6 +67,7 @@ public class Entity extends SubmodelElement implements IEntity {
 	public Entity(String idShort, EntityType entityType) {
 		super(idShort);
 		setEntityType(entityType);
+		setStatements(new HashSet<>());
 
 		// Add model type
 		putAll(new ModelType(MODELTYPE));
