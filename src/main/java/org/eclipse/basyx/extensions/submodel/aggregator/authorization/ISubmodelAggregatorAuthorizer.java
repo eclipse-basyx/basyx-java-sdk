@@ -35,7 +35,7 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
 /**
- * Interface for the policy enforcement points used in {@link AuthorizedSubmodelAggregator}.
+ * Interface for the authorization points used in {@link AuthorizedSubmodelAggregator}.
  *
  * @author wege
  */

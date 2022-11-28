@@ -205,7 +205,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 			try {
 				return authorizeLookupSubmodel(aasId, smId);
 			} catch (final InhibitException e) {
-				// remove submodel descriptor if enforcement was unsuccessful
+				// remove submodel descriptor if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
 			}
 			return null;

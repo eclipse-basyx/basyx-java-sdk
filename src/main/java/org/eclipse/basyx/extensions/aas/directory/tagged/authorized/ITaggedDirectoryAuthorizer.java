@@ -35,7 +35,7 @@ import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
- * Interface for the policy enforcement points used in {@link AuthorizedTaggedDirectory}.
+ * Interface for the authorization points used in {@link AuthorizedTaggedDirectory}.
  *
  * @author wege
  */

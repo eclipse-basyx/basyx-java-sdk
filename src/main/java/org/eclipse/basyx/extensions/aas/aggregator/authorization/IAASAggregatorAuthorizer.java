@@ -34,7 +34,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
- * Interface for the policy enforcement points used in {@link AuthorizedAASAggregator}.
+ * Interface for the authorization points used in {@link AuthorizedAASAggregator}.
  *
  * @author wege
  */

@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A set of {@link RbacRule} used in policy enforcement points or in policy information points.
+ * A set of {@link RbacRule} used in authorization points or in policy information points.
  *
  * @author wege
  */

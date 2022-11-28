@@ -31,7 +31,7 @@ import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
- * Interface for the policy enforcement points used in {@link AuthorizedAASAPI}.
+ * Interface for the authorization points used in {@link AuthorizedAASAPI}.
  *
  * @author wege
  */

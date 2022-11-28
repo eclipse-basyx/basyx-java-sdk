@@ -105,13 +105,13 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		}
 
 		try {
-			return enforceGetSubmodel();
+			return authorizeGetSubmodel();
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
-	protected ISubmodel enforceGetSubmodel() throws InhibitException {
+	protected ISubmodel authorizeGetSubmodel() throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
 		return submodelAPIAuthorizer.authorizeGetSubmodel(
 				subjectInformationProvider.get(),
@@ -129,7 +129,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		}
 
 		try {
-			enforceAddSubmodelElement(elem.getIdShort());
+			authorizeAddSubmodelElement(elem.getIdShort());
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
@@ -144,14 +144,14 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		}
 
 		try {
-			enforceAddSubmodelElement(idShortPath);
+			authorizeAddSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 		decoratedSubmodelAPI.addSubmodelElement(idShortPath, elem);
 	}
 
-	protected void enforceAddSubmodelElement(final String smElIdShortPath) throws InhibitException {
+	protected void authorizeAddSubmodelElement(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
 		submodelAPIAuthorizer.authorizeAddSubmodelElement(
 				subjectInformationProvider.get(),
@@ -286,14 +286,14 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		}
 
 		try {
-			enforceUpdateSubmodelElement(idShortPath);
+			authorizeUpdateSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 		decoratedSubmodelAPI.updateSubmodelElement(idShortPath, newValue);
 	}
 
-	protected void enforceUpdateSubmodelElement(final String smElIdShortPath) throws InhibitException {
+	protected void authorizeUpdateSubmodelElement(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
 		submodelAPIAuthorizer.authorizeUpdateSubmodelElement(
 				subjectInformationProvider.get(),
@@ -310,13 +310,13 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		}
 
 		try {
-			return enforceGetSubmodelElementValue(idShortPath);
+			return authorizeGetSubmodelElementValue(idShortPath);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
-	protected Object enforceGetSubmodelElementValue(final String smElIdShortPath) throws InhibitException {
+	protected Object authorizeGetSubmodelElementValue(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
 		return submodelAPIAuthorizer.authorizeGetSubmodelElementValue(
 				subjectInformationProvider.get(),
@@ -378,13 +378,13 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		}
 
 		try {
-			return enforceGetOperationResult(smElIdShortPath, requestId);
+			return authorizeGetOperationResult(smElIdShortPath, requestId);
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
-	protected Object enforceGetOperationResult(final String smElIdShortPath, final String requestId) throws InhibitException {
+	protected Object authorizeGetOperationResult(final String smElIdShortPath, final String requestId) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
 		return submodelAPIAuthorizer.authorizeGetOperationResult(
 				subjectInformationProvider.get(),
