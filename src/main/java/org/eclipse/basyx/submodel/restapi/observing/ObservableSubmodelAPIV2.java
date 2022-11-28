@@ -119,7 +119,7 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 		ISubmodelElement elem = submodelAPI.getSubmodelElement(idShortPath);
 
 		Object valueToSend;
-		if (ObserableSubmodelAPIV2Helper.shouldSendEmptyValueEvent(elem)) {
+		if (ObservableSubmodelAPIV2Helper.shouldSendEmptyValueEvent(elem)) {
 			valueToSend = null;
 		} else {
 			valueToSend = newValue;
