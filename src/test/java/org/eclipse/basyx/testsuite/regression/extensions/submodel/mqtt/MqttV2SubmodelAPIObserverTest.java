@@ -45,7 +45,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
-import org.eclipse.basyx.submodel.restapi.observing.ObserableSubmodelAPIV2Helper;
+import org.eclipse.basyx.submodel.restapi.observing.ObservableSubmodelAPIV2Helper;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
@@ -226,9 +226,9 @@ public class MqttV2SubmodelAPIObserverTest {
 		IQualifier qualifier;
 
 		if (shouldIgnore) {
-			qualifier = ObserableSubmodelAPIV2Helper.createEmptyValueEventEnabledQualifier();
+			qualifier = ObservableSubmodelAPIV2Helper.createEmptyValueEventEnabledQualifier();
 		} else {
-			qualifier = ObserableSubmodelAPIV2Helper.createEmptyValueEventDisabledQualifier();
+			qualifier = ObservableSubmodelAPIV2Helper.createEmptyValueEventDisabledQualifier();
 		}
 
 		return Collections.singleton(qualifier);
