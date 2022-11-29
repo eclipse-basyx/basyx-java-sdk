@@ -66,7 +66,7 @@ public class MqttV2SubmodelAPITopicFactory extends AbstractMqttV2TopicFactory {
 	public String createCreateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
@@ -91,7 +91,7 @@ public class MqttV2SubmodelAPITopicFactory extends AbstractMqttV2TopicFactory {
 	public String createUpdateSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
@@ -116,7 +116,7 @@ public class MqttV2SubmodelAPITopicFactory extends AbstractMqttV2TopicFactory {
 	public String createDeleteSubmodelElementTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
@@ -141,7 +141,7 @@ public class MqttV2SubmodelAPITopicFactory extends AbstractMqttV2TopicFactory {
 	public String createSubmodelElementValueTopic(String aasId, String submodelId, String idShortPath, String repoId) {
 		idShortPath = VABPathTools.stripSlashes(idShortPath);
 		
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)

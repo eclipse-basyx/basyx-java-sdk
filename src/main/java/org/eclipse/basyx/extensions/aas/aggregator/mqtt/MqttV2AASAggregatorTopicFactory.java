@@ -56,7 +56,7 @@ public class MqttV2AASAggregatorTopicFactory extends AbstractMqttV2TopicFactory 
 	 * @return
 	 */
 	public String createCreateAASTopic(String repoId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
@@ -71,7 +71,7 @@ public class MqttV2AASAggregatorTopicFactory extends AbstractMqttV2TopicFactory 
 	 * @return
 	 */
 	public String createUpdateAASTopic(String repoId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
@@ -86,7 +86,7 @@ public class MqttV2AASAggregatorTopicFactory extends AbstractMqttV2TopicFactory 
 	 * @return
 	 */
 	public String createDeleteAASTopic(String repoId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)

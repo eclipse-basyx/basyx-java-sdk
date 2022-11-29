@@ -58,7 +58,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createCreateAASTopic(String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
@@ -71,7 +71,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createCreateSubmodelTopic(String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SUBMODELS)
@@ -84,7 +84,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createCreateSubmodelTopicWithAASId(String aasId, String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
@@ -99,7 +99,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createUpdateAASTopic(String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
@@ -112,7 +112,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createUpdateSubmodelTopic(String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SUBMODELS)
@@ -125,7 +125,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createUpdateSubmodelTopicWithAASId(String aasId, String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
@@ -140,7 +140,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createDeleteAASTopic(String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
@@ -153,7 +153,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createDeleteSubmodelTopic(String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SUBMODELS)
@@ -166,7 +166,7 @@ public class MqttV2AASRegistryTopicFactory extends AbstractMqttV2TopicFactory {
 	 * 
 	 */
 	public String createDeleteSubmodelTopicWithAASId(String aasId, String registryId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREGISTRY)
 				.add(registryId)
 				.add(SHELLS)
