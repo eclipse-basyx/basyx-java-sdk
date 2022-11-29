@@ -47,7 +47,7 @@ public class MqttV2SubmodelAggregatorTopicFactory extends AbstractMqttV2TopicFac
 	}
 	
 	public String createCreateSubmodelTopic(String aasId, String repoId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
@@ -58,7 +58,7 @@ public class MqttV2SubmodelAggregatorTopicFactory extends AbstractMqttV2TopicFac
 	}
 	
 	public String createUpdateSubmodelTopic(String aasId, String repoId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
@@ -69,7 +69,7 @@ public class MqttV2SubmodelAggregatorTopicFactory extends AbstractMqttV2TopicFac
 	}
 	
 	public String createDeleteSubmodelTopic(String aasId, String repoId) {
-		return new StringJoiner("/", "/", "")
+		return new StringJoiner("/", "", "")
 				.add(AASREPOSITORY)
 				.add(repoId)
 				.add(SHELLS)
