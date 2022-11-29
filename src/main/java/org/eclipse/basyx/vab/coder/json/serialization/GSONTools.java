@@ -130,14 +130,52 @@ public class GSONTools implements Serializer {
 	@Override
 	public String serialize(Object obj) {
 		JsonElement elem = serializeObject(obj);
-		// Removing null value if the removeNull flag is on
-		if (removeNull) {
-			// Gson#toJson removes null automatically
-			Gson gson = new Gson();
-			return gson.toJson(elem);
-		} else {
-			return elem.toString();
+		StringBuilder writer = new StringBuilder();
+		Gson gson = new Gson();
+		if (elem.isJsonObject()) {
+			serializeJsonObject(elem, writer, gson);
+			return writer.toString();
 		}
+		if (removeNull) {
+			gson.toJson(elem, writer);
+		} else {
+			writer.append(elem.toString());
+		}
+		return writer.toString();
+	}
+
+	private void serializeJsonObject(JsonElement elem, StringBuilder writer, Gson gson) {
+		if (elem.getAsJsonObject().asMap().isEmpty()) {
+			writer.append(gson.toJson(elem));
+			return;
+		}
+		writer.append("{");
+		for (Entry<String, JsonElement> en : elem.getAsJsonObject().entrySet()) {
+			if (removeNull && !isNullValue(en)) {
+				String jsonString = gson.toJson(createJsonObject4Entity(en));
+				appendJsonToPreviousSerialization(writer, jsonString);
+			} else {
+				String jsonString = createJsonObject4Entity(en).toString();
+				appendJsonToPreviousSerialization(writer, jsonString);
+			}
+		}
+		writer.deleteCharAt(writer.lastIndexOf(","));
+		writer.append("}");
+	}
+
+	private void appendJsonToPreviousSerialization(StringBuilder writer, String jsonString) {
+		writer.append(jsonString.substring(1, jsonString.length() - 1));
+		writer.append(String.format(","));
+	}
+
+	private JsonObject createJsonObject4Entity(Entry<String, JsonElement> en) {
+		JsonObject jobj = new JsonObject();
+		jobj.add(en.getKey(), en.getValue());
+		return jobj;
+	}
+
+	private boolean isNullValue(Entry<String, JsonElement> en) {
+		return en.getValue().isJsonNull();
 	}
 
 	/**

@@ -37,8 +37,8 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +51,7 @@ import org.junit.Test;
 
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -353,6 +354,7 @@ public class TestJson {
 		JsonObject expectedObj = new JsonObject();
 		expectedObj.add("a", aObj);
 		expectedObj.add("b", new JsonPrimitive("123"));
+		expectedObj.add("c", JsonNull.INSTANCE);
 
 		assertEquals(expectedObj.toString(), toolWithRemoveFlagOn.serialize(expected));
 	}
