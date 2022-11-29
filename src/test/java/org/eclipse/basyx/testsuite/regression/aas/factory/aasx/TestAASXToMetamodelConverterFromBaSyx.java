@@ -26,9 +26,7 @@
 package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -95,6 +93,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String DOUBLE_PROPERTY_IDSHORT = "decimal";
 	private static final String STRING_PROPERTY_IDSHORT = "string";
 	private static final Boolean EXPECTED_BOOLEAN_VALUE = true;
+	private static final Boolean EXPECTED_EMPTY_BOOLEAN_VALUE = false;
 	private static final int EXPECTED_INTEGER_VALUE = 42;
 	private static final double EXPECTED_DOUBLE_VALUE = 3.14159265359;
 	private static final String EXPECTED_STRING_VALUE = "test";
@@ -190,7 +189,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		ISubmodelElement doubleProperty = submodelElements.get(DOUBLE_PROPERTY_IDSHORT);
 		ISubmodelElement stringProperty = submodelElements.get(STRING_PROPERTY_IDSHORT);
 
-		assertNull(emptyBoolProperty.getValue());
+		assertEquals(EXPECTED_EMPTY_BOOLEAN_VALUE, emptyBoolProperty.getValue());
 		assertEquals(EXPECTED_BOOLEAN_VALUE, boolProperty.getValue());
 		assertEquals(EXPECTED_INTEGER_VALUE, intProperty.getValue());
 		assertEquals(EXPECTED_DOUBLE_VALUE, doubleProperty.getValue());
