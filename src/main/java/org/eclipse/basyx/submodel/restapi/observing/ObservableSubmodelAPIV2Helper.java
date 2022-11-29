@@ -39,7 +39,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
  * @author schnicke
  *
  */
-public class ObserableSubmodelAPIV2Helper {
+public class ObservableSubmodelAPIV2Helper {
 
 	public final static String EMPTYVALUEUPDATE_TYPE = "emptyValueUpdateEvent";
 
