@@ -165,6 +165,13 @@
 	</build>
 
 	<dependencies>
+		<!-- Logger -->
+		<dependency>
+    		<groupId>ch.qos.logback</groupId>
+    		<artifactId>logback-classic</artifactId>
+    		<version>1.4.5</version>
+		</dependency>
+	
 		<!-- JUnit 4 for running JUnit tests -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -249,13 +256,6 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>4.1.2</version>
-		</dependency>
-
-		<!-- Logger -->
-		<dependency>
-    		<groupId>ch.qos.logback</groupId>
-    		<artifactId>logback-classic</artifactId>
-    		<version>1.4.5</version>
 		</dependency>
 		
 		<!-- Used by Logback to compile filter expressions from logback.xml -->
