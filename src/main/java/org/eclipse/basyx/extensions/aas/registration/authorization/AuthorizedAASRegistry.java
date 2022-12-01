@@ -24,10 +24,13 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.registration.authorization;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
@@ -199,8 +202,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 			throw new ResourceNotFoundException("AAS with Id " + aasId.getId() + " does not exist");
 		}
 
-		final AASDescriptor enforcedAASDescriptor = authorizedAASDescriptor instanceof TaggedAASDescriptor ? TaggedAASDescriptor.createAsFacade(new HashMap<>(authorizedAASDescriptor)) : new AASDescriptor(authorizedAASDescriptor);
-		final List<SubmodelDescriptor> submodelDescriptorsToRemove = enforcedAASDescriptor.getSubmodelDescriptors().stream().map(submodelDescriptor -> {
+		final Collection<SubmodelDescriptor> submodelDescriptorsToRetain = authorizedAASDescriptor.getSubmodelDescriptors().stream().map(submodelDescriptor -> {
 			final IIdentifier smId = submodelDescriptor.getIdentifier();
 			try {
 				return authorizeLookupSubmodel(aasId, smId);
@@ -211,9 +213,25 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
-		submodelDescriptorsToRemove.forEach(submodelDescriptor -> enforcedAASDescriptor.removeSubmodelDescriptor(submodelDescriptor.getIdentifier()));
+		return shallowCopyAndSubstituteSubmodels(authorizedAASDescriptor, submodelDescriptorsToRetain);
+	}
 
+	private AASDescriptor shallowCopyAndSubstituteSubmodels(final AASDescriptor originalAASDescriptor, final Collection<SubmodelDescriptor> newSubmodels) {
+		final AASDescriptor enforcedAASDescriptor = shallowCopyAASDescriptor(originalAASDescriptor);
+		final Collection<SubmodelDescriptor> originalSubmodelDescriptors = enforcedAASDescriptor.getSubmodelDescriptors();
+		if (!originalSubmodelDescriptors.isEmpty()) {
+			final List<SubmodelDescriptor> enforcedSubmodelDescriptorList = new ArrayList<>(originalSubmodelDescriptors);
+			enforcedSubmodelDescriptorList.retainAll(newSubmodels);
+			enforcedAASDescriptor.put(AssetAdministrationShell.SUBMODELS, enforcedSubmodelDescriptorList);
+		}
 		return enforcedAASDescriptor;
+	}
+
+	private AASDescriptor shallowCopyAASDescriptor(final AASDescriptor originalAASDescriptor) {
+		if (originalAASDescriptor instanceof TaggedAASDescriptor) {
+			return TaggedAASDescriptor.createAsFacade(new HashMap<>(originalAASDescriptor));
+		}
+		return new AASDescriptor(new HashMap<>(originalAASDescriptor));
 	}
 
 	private AASDescriptor authorizeAASDescriptorOnly(final IIdentifier aasId) throws InhibitException {

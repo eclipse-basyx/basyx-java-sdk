@@ -196,7 +196,6 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	}
 
 	protected void authorizeUpdateAAS(final AssetAdministrationShell aas) throws InhibitException {
-		final IIdentifier aasId = aas.getIdentification();
 		aasAggregatorAuthorizer.authorizeUpdateAAS(
 				subjectInformationProvider.get(),
 				aas
