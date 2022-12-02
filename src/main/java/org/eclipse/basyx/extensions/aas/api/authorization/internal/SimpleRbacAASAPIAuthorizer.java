@@ -42,60 +42,43 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  * @author wege
  */
 public class SimpleRbacAASAPIAuthorizer<SubjectInformationType> implements IAASAPIAuthorizer<SubjectInformationType> {
-  protected IRbacRuleChecker rbacRuleChecker;
-  protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
+	protected IRbacRuleChecker rbacRuleChecker;
+	protected IRoleAuthenticator<SubjectInformationType> roleAuthenticator;
 
-  public SimpleRbacAASAPIAuthorizer(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
-    this.rbacRuleChecker = rbacRuleChecker;
-    this.roleAuthenticator = roleAuthenticator;
-  }
+	public SimpleRbacAASAPIAuthorizer(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator) {
+		this.rbacRuleChecker = rbacRuleChecker;
+		this.roleAuthenticator = roleAuthenticator;
+	}
 
-  @Override
-  public IAssetAdministrationShell authorizeGetAAS(
-      final SubjectInformationType subjectInformation,
-      final Supplier<IAssetAdministrationShell> aasSupplier
-  ) throws InhibitException {
-    final IIdentifier aasId = getAasId(aasSupplier);
+	@Override public IAssetAdministrationShell authorizeGetAAS(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
+		final IIdentifier aasId = getAasId(aasSupplier);
 
-    SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(
-        IdHelper.getIdentifierId(aasId), null, null));
+		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), null, null));
 
-    return aasSupplier.get();
-  }
+		return aasSupplier.get();
+	}
 
-  @Override
-  public void authorizeAddSubmodel(
-      final SubjectInformationType subjectInformation,
-      final Supplier<IAssetAdministrationShell> aasSupplier,
-      final IReference smId
-  ) throws InhibitException {
-    final IIdentifier aasId = getAasId(aasSupplier);
+	@Override public void authorizeAddSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final IReference smId) throws InhibitException {
+		final IIdentifier aasId = getAasId(aasSupplier);
 
-    SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
-        IdHelper.getIdentifierId(aasId), IdHelper.getReferenceId(smId), null));
-  }
+		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), IdHelper.getReferenceId(smId), null));
+	}
 
-  @Override
-  public void authorizeRemoveSubmodel(
-      final SubjectInformationType subjectInformation,
-      final Supplier<IAssetAdministrationShell> aasSupplier,
-      final String smIdShortPath
-  ) throws InhibitException {
-    final IIdentifier aasId = getAasId(aasSupplier);
+	@Override public void authorizeRemoveSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final String smIdShortPath) throws InhibitException {
+		final IIdentifier aasId = getAasId(aasSupplier);
 
-    SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(
-        IdHelper.getIdentifierId(aasId), smIdShortPath, null));
-  }
+		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), smIdShortPath, null));
+	}
 
-  private IIdentifier getAasId(final Supplier<IAssetAdministrationShell> aasSupplier) {
-    try (final var ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
-      final IAssetAdministrationShell aas = aasSupplier.get();
+	private IIdentifier getAasId(final Supplier<IAssetAdministrationShell> aasSupplier) {
+		try (final var ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+			final IAssetAdministrationShell aas = aasSupplier.get();
 
-      if (aas == null) {
-        return null;
-      }
+			if (aas == null) {
+				return null;
+			}
 
-      return aas.getIdentification();
-    }
-  }
+			return aas.getIdentification();
+		}
+	}
 }

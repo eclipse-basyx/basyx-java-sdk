@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -44,8 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An aggregator implementation that authorizes invocations before forwarding them to
- *  * an underlying aggregator implementation.
+ * An aggregator implementation that authorizes invocations before forwarding them to * an underlying aggregator implementation.
  *
  * @author wege
  */
@@ -60,11 +59,8 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	protected final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedAASAggregator(
-			final IAASAggregator decoratedAasAggregator,
-			final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
+	public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator, final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.decoratedAasAggregator = decoratedAasAggregator;
 		this.aasAggregatorAuthorizer = aasAggregatorAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
@@ -73,18 +69,12 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	/**
 	 * @deprecated Please use {@link AuthorizedAASAggregator#AuthorizedAASAggregator(IAASAggregator, IAASAggregatorAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
 	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator) {
-		this(
-			decoratedAasAggregator,
-			(IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-			(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
+	@Deprecated @SuppressWarnings("unchecked") public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator) {
+		this(decoratedAasAggregator, (IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override
-	public Collection<IAssetAdministrationShell> getAASList() {
+	@Override public Collection<IAssetAdministrationShell> getAASList() {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAasAggregator.getAASList();
 		}
@@ -109,15 +99,11 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	}
 
 	private Collection<IIdentifier> getAASIdentifierList() throws InhibitException {
-		final Collection<IAssetAdministrationShell> authorizedAASList = aasAggregatorAuthorizer.authorizeGetAASList(
-				subjectInformationProvider.get(),
-				decoratedAasAggregator::getAASList
-		);
+		final Collection<IAssetAdministrationShell> authorizedAASList = aasAggregatorAuthorizer.authorizeGetAASList(subjectInformationProvider.get(), decoratedAasAggregator::getAASList);
 		return authorizedAASList.stream().map(IIdentifiable::getIdentification).collect(Collectors.toList());
 	}
 
-	@Override
-	public IAssetAdministrationShell getAAS(final IIdentifier shellId) throws ResourceNotFoundException {
+	@Override public IAssetAdministrationShell getAAS(final IIdentifier shellId) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAasAggregator.getAAS(shellId);
 		}
@@ -130,15 +116,10 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	}
 
 	protected IAssetAdministrationShell authorizeGetAAS(final IIdentifier aasId) throws InhibitException {
-		return aasAggregatorAuthorizer.authorizeGetAAS(
-				subjectInformationProvider.get(),
-				aasId,
-				() -> decoratedAasAggregator.getAAS(aasId)
-		);
+		return aasAggregatorAuthorizer.authorizeGetAAS(subjectInformationProvider.get(), aasId, () -> decoratedAasAggregator.getAAS(aasId));
 	}
 
-	@Override
-	public IModelProvider getAASProvider(final IIdentifier shellId) throws ResourceNotFoundException {
+	@Override public IModelProvider getAASProvider(final IIdentifier shellId) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAasAggregator.getAASProvider(shellId);
 		}
@@ -151,15 +132,10 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	}
 
 	protected IModelProvider authorizeGetAASProvider(final IIdentifier aasId) throws ResourceNotFoundException, InhibitException {
-		return aasAggregatorAuthorizer.authorizeGetAASProvider(
-				subjectInformationProvider.get(),
-				aasId,
-				() -> decoratedAasAggregator.getAASProvider(aasId)
-		);
+		return aasAggregatorAuthorizer.authorizeGetAASProvider(subjectInformationProvider.get(), aasId, () -> decoratedAasAggregator.getAASProvider(aasId));
 	}
 
-	@Override
-	public void createAAS(final AssetAdministrationShell shell) {
+	@Override public void createAAS(final AssetAdministrationShell shell) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAasAggregator.createAAS(shell);
 			return;
@@ -174,14 +150,10 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	}
 
 	protected void authorizeCreateAAS(final AssetAdministrationShell aas) throws InhibitException {
-		aasAggregatorAuthorizer.authorizeCreateAAS(
-				subjectInformationProvider.get(),
-				aas
-		);
+		aasAggregatorAuthorizer.authorizeCreateAAS(subjectInformationProvider.get(), aas);
 	}
 
-	@Override
-	public void updateAAS(final AssetAdministrationShell shell) throws ResourceNotFoundException {
+	@Override public void updateAAS(final AssetAdministrationShell shell) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAasAggregator.updateAAS(shell);
 			return;
@@ -196,14 +168,10 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	}
 
 	protected void authorizeUpdateAAS(final AssetAdministrationShell aas) throws InhibitException {
-		aasAggregatorAuthorizer.authorizeUpdateAAS(
-				subjectInformationProvider.get(),
-				aas
-		);
+		aasAggregatorAuthorizer.authorizeUpdateAAS(subjectInformationProvider.get(), aas);
 	}
 
-	@Override
-	public void deleteAAS(final IIdentifier shellId) {
+	@Override public void deleteAAS(final IIdentifier shellId) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAasAggregator.deleteAAS(shellId);
 			return;
@@ -218,9 +186,6 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	}
 
 	protected void authorizeDeleteAAS(final IIdentifier aasId) throws InhibitException {
-		aasAggregatorAuthorizer.authorizeDeleteAAS(
-				subjectInformationProvider.get(),
-				aasId
-		);
+		aasAggregatorAuthorizer.authorizeDeleteAAS(subjectInformationProvider.get(), aasId);
 	}
 }

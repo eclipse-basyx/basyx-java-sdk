@@ -37,70 +37,67 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @author wege
  */
 public class ElevatedCodeAuthentication extends AbstractAuthenticationToken {
-  private static final ThreadLocal<Set<ElevatedCodeAuthenticationAreaHandler>> elevatedCodeAuthenticationAreaHandlers = ThreadLocal.withInitial(HashSet::new);
-  private static final ThreadLocal<SecurityContext> previousSecurityContext = new ThreadLocal<>();
+	private static final ThreadLocal<Set<ElevatedCodeAuthenticationAreaHandler>> elevatedCodeAuthenticationAreaHandlers = ThreadLocal.withInitial(HashSet::new);
+	private static final ThreadLocal<SecurityContext> previousSecurityContext = new ThreadLocal<>();
 
-  public ElevatedCodeAuthentication() {
-    super(Collections.emptyList());
-  }
+	public ElevatedCodeAuthentication() {
+		super(Collections.emptyList());
+	}
 
-  @Override
-  public Object getCredentials() {
-    return null;
-  }
+	@Override public Object getCredentials() {
+		return null;
+	}
 
-  @Override
-  public Object getPrincipal() {
-    return null;
-  }
+	@Override public Object getPrincipal() {
+		return null;
+	}
 
-  public static boolean isCodeAuthentication() {
-    return AuthenticationContextProvider.getAuthentication().map(ElevatedCodeAuthentication.class::isInstance).orElse(false);
-  }
+	public static boolean isCodeAuthentication() {
+		return AuthenticationContextProvider.getAuthentication().map(ElevatedCodeAuthentication.class::isInstance).orElse(false);
+	}
 
-  public static class ElevatedCodeAuthenticationAreaHandler implements AutoCloseable {
-    @Override
-    public void close() {
-      leaveElevatedCodeAuthenticationArea(this);
-    }
-  }
+	public static class ElevatedCodeAuthenticationAreaHandler implements AutoCloseable {
+		@Override public void close() {
+			leaveElevatedCodeAuthenticationArea(this);
+		}
+	}
 
-  private static void leaveElevatedCodeAuthenticationArea(final ElevatedCodeAuthenticationAreaHandler areaHandler) {
-    final var areaHandlers = elevatedCodeAuthenticationAreaHandlers.get();
-    if (!areaHandlers.contains(areaHandler)) {
-      return;
-    }
+	private static void leaveElevatedCodeAuthenticationArea(final ElevatedCodeAuthenticationAreaHandler areaHandler) {
+		final var areaHandlers = elevatedCodeAuthenticationAreaHandlers.get();
+		if (!areaHandlers.contains(areaHandler)) {
+			return;
+		}
 
-    areaHandlers.remove(areaHandler);
-    if (areaHandlers.isEmpty()) {
-      unsetElevatedCodeAuthentication();
-    }
-  }
+		areaHandlers.remove(areaHandler);
+		if (areaHandlers.isEmpty()) {
+			unsetElevatedCodeAuthentication();
+		}
+	}
 
-  public static ElevatedCodeAuthenticationAreaHandler enterElevatedCodeAuthenticationArea() {
-    final ElevatedCodeAuthenticationAreaHandler handler = new ElevatedCodeAuthenticationAreaHandler();
-    elevatedCodeAuthenticationAreaHandlers.get().add(handler);
-    setElevatedCodeAuthentication();
-    return handler;
-  }
+	public static ElevatedCodeAuthenticationAreaHandler enterElevatedCodeAuthenticationArea() {
+		final ElevatedCodeAuthenticationAreaHandler handler = new ElevatedCodeAuthenticationAreaHandler();
+		elevatedCodeAuthenticationAreaHandlers.get().add(handler);
+		setElevatedCodeAuthentication();
+		return handler;
+	}
 
-  private static void setElevatedCodeAuthentication() {
-    if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() instanceof ElevatedCodeAuthentication) {
-      return;
-    }
+	private static void setElevatedCodeAuthentication() {
+		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() instanceof ElevatedCodeAuthentication) {
+			return;
+		}
 
-    previousSecurityContext.set(SecurityContextHolder.getContext());
+		previousSecurityContext.set(SecurityContextHolder.getContext());
 
-    final SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-    securityContext.setAuthentication(new ElevatedCodeAuthentication());
-    SecurityContextHolder.setContext(securityContext);
-  }
+		final SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+		securityContext.setAuthentication(new ElevatedCodeAuthentication());
+		SecurityContextHolder.setContext(securityContext);
+	}
 
-  private static void unsetElevatedCodeAuthentication() {
-    SecurityContextHolder.clearContext();
-    if (previousSecurityContext.get() != null) {
-      SecurityContextHolder.setContext(previousSecurityContext.get());
-      previousSecurityContext.remove();
-    }
-  }
+	private static void unsetElevatedCodeAuthentication() {
+		SecurityContextHolder.clearContext();
+		if (previousSecurityContext.get() != null) {
+			SecurityContextHolder.setContext(previousSecurityContext.get());
+			previousSecurityContext.remove();
+		}
+	}
 }

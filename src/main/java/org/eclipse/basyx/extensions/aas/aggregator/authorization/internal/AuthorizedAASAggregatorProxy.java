@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,8 +30,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
 import org.eclipse.basyx.vab.protocol.https.HTTPSConnector;
 
 /**
- * Local proxy class that hides HTTP calls to BaSys aggregator with enabled
- * authorization.
+ * Local proxy class that hides HTTP calls to BaSys aggregator with enabled authorization.
  *
  * @author jungjan, fischer, fried
  */
@@ -40,11 +39,8 @@ public class AuthorizedAASAggregatorProxy extends AASAggregatorProxy {
 	/**
 	 * Constructor for an AAS aggregator proxy based on a HTTP connection
 	 *
-	 * @param aasAggregatorUrl
-	 *            The endpoint of the aggregator
-	 * @param authorizationSupplier
-	 *            Supplier for values to be placed in the HTTP Authorization request
-	 *            header
+	 * @param aasAggregatorUrl      The endpoint of the aggregator
+	 * @param authorizationSupplier Supplier for values to be placed in the HTTP Authorization request header
 	 */
 	public AuthorizedAASAggregatorProxy(final String aasAggregatorUrl, final IAuthorizationSupplier authorizationSupplier) {
 		super(new JSONConnector(new HTTPSConnector(harmonizeURL(aasAggregatorUrl), authorizationSupplier)));

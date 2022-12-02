@@ -34,7 +34,7 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 
 /**
  * Api provider for constructing a new SubmodelAPI that is authorized
- * 
+ *
  * @author espen
  */
 public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> implements ISubmodelAPIFactory {
@@ -43,12 +43,8 @@ public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> impl
 	protected final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingSubmodelAPIFactory(
-			final IAssetAdministrationShell aas,
-			final ISubmodelAPIFactory submodelAPIFactory,
-			final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
+	public AuthorizedDecoratingSubmodelAPIFactory(final IAssetAdministrationShell aas, final ISubmodelAPIFactory submodelAPIFactory, final ISubmodelAPIAuthorizer<SubjectInformationType> submodelAPIAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.aas = aas;
 		this.submodelAPIFactory = submodelAPIFactory;
 		this.submodelAPIAuthorizer = submodelAPIAuthorizer;
@@ -56,23 +52,15 @@ public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> impl
 	}
 
 	/**
-	 * @deprecated please use {@link AuthorizedDecoratingSubmodelAPIFactory#AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell, ISubmodelAPIFactory, ISubmodelAPIAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
+	 * @deprecated please use {@link AuthorizedDecoratingSubmodelAPIFactory#AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell, ISubmodelAPIFactory, ISubmodelAPIAuthorizer, ISubjectInformationProvider)} instead, which uses
+	 * more parameters for the authorization
 	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedDecoratingSubmodelAPIFactory(
-			final ISubmodelAPIFactory submodelAPIFactory
-	) {
-		this(
-			null,
-			submodelAPIFactory,
-			(ISubmodelAPIAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-			(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
+	@Deprecated @SuppressWarnings("unchecked") public AuthorizedDecoratingSubmodelAPIFactory(final ISubmodelAPIFactory submodelAPIFactory) {
+		this(null, submodelAPIFactory, (ISubmodelAPIAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override
-	public ISubmodelAPI getSubmodelAPI(final Submodel submodel) {
+	@Override public ISubmodelAPI getSubmodelAPI(final Submodel submodel) {
 		return new AuthorizedSubmodelAPI<>(aas, submodelAPIFactory.create(submodel), submodelAPIAuthorizer, subjectInformationProvider);
 	}
 }

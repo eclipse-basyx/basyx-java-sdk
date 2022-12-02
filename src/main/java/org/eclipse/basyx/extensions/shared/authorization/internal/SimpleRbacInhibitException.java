@@ -33,53 +33,38 @@ import java.util.List;
  * @author wege
  */
 public class SimpleRbacInhibitException extends InhibitException {
-  private final List<String> roles;
-  private final String action;
-  private final TargetInformation targetInformation;
+	private final List<String> roles;
+	private final String action;
+	private final TargetInformation targetInformation;
 
-  public SimpleRbacInhibitException(final List<String> roles, final String action, final TargetInformation targetInformation) {
-    this(
-        createMessage(action, targetInformation, roles),
-        roles,
-        action,
-        targetInformation
-    );
-  }
+	public SimpleRbacInhibitException(final List<String> roles, final String action, final TargetInformation targetInformation) {
+		this(createMessage(action, targetInformation, roles), roles, action, targetInformation);
+	}
 
-  private SimpleRbacInhibitException(final String message, final List<String> roles, final String action, final TargetInformation targetInformation) {
-    super(message);
+	private SimpleRbacInhibitException(final String message, final List<String> roles, final String action, final TargetInformation targetInformation) {
+		super(message);
 
-    this.roles = roles;
-    this.action = action;
-    this.targetInformation = targetInformation;
-  }
+		this.roles = roles;
+		this.action = action;
+		this.targetInformation = targetInformation;
+	}
 
-  private static String createMessage(final String action, final TargetInformation targetInformation, final List<String> roles) {
-    final String targetInformationString = targetInformation.toString();
-    final String rolesString = Arrays.toString(roles.toArray());
-    return String.format("no rule matching action=%s, targetInfo=%s role=(any of %s)", action, targetInformationString, rolesString);
-  }
+	private static String createMessage(final String action, final TargetInformation targetInformation, final List<String> roles) {
+		final String targetInformationString = targetInformation.toString();
+		final String rolesString = Arrays.toString(roles.toArray());
+		return String.format("no rule matching action=%s, targetInfo=%s role=(any of %s)", action, targetInformationString, rolesString);
+	}
 
-  @Override
-  public InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath) {
-    final TargetInformation messageTargetInformation = reduceSmIdToSmIdShortPath_convertTargetInformation(smIdShortPath);
-    return new SimpleRbacInhibitException(
-        createMessage(action, messageTargetInformation, roles),
-        roles,
-        action,
-        targetInformation
-    );
-  }
+	@Override public InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath) {
+		final TargetInformation messageTargetInformation = reduceSmIdToSmIdShortPath_convertTargetInformation(smIdShortPath);
+		return new SimpleRbacInhibitException(createMessage(action, messageTargetInformation, roles), roles, action, targetInformation);
+	}
 
-  private TargetInformation reduceSmIdToSmIdShortPath_convertTargetInformation(final String smIdShortPath) {
-    if (targetInformation instanceof BaSyxObjectTargetInformation) {
-      return new BaSyxObjectTargetInformation(
-          ((BaSyxObjectTargetInformation) targetInformation).getAasId(),
-          ((BaSyxObjectTargetInformation) targetInformation).getSmId(),
-          String.format("(id of %s)", smIdShortPath)
-      );
-    }
+	private TargetInformation reduceSmIdToSmIdShortPath_convertTargetInformation(final String smIdShortPath) {
+		if (targetInformation instanceof BaSyxObjectTargetInformation) {
+			return new BaSyxObjectTargetInformation(((BaSyxObjectTargetInformation) targetInformation).getAasId(), ((BaSyxObjectTargetInformation) targetInformation).getSmId(), String.format("(id of %s)", smIdShortPath));
+		}
 
-    return targetInformation;
-  }
+		return targetInformation;
+	}
 }

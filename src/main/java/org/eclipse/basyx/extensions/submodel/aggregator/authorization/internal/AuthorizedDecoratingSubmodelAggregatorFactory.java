@@ -33,7 +33,7 @@ import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 
 /**
  * Api provider for constructing a new Submodel aggregator that is authorized
- * 
+ *
  * @author espen
  */
 public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationType> implements ISubmodelAggregatorFactory {
@@ -42,12 +42,8 @@ public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationTyp
 	protected final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingSubmodelAggregatorFactory(
-			final IAssetAdministrationShell aas,
-			final ISubmodelAggregatorFactory submodelAggregatorFactory,
-			final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
+	public AuthorizedDecoratingSubmodelAggregatorFactory(final IAssetAdministrationShell aas, final ISubmodelAggregatorFactory submodelAggregatorFactory,
+			final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer, final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.aas = aas;
 		this.submodelAggregatorFactory = submodelAggregatorFactory;
 		this.submodelAggregatorAuthorizer = submodelAggregatorAuthorizer;
@@ -55,23 +51,15 @@ public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationTyp
 	}
 
 	/**
-	 * @deprecated please use {@link AuthorizedDecoratingSubmodelAggregatorFactory#AuthorizedDecoratingSubmodelAggregatorFactory(IAssetAdministrationShell, ISubmodelAggregatorFactory, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
+	 * @deprecated please use {@link AuthorizedDecoratingSubmodelAggregatorFactory#AuthorizedDecoratingSubmodelAggregatorFactory(IAssetAdministrationShell, ISubmodelAggregatorFactory, ISubmodelAggregatorAuthorizer,
+	 * ISubjectInformationProvider)} instead, which uses more parameters for the authorization
 	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedDecoratingSubmodelAggregatorFactory(
-			final ISubmodelAggregatorFactory submodelAggregatorFactory
-	) {
-		this(
-				null,
-				submodelAggregatorFactory,
-				(ISubmodelAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
+	@Deprecated @SuppressWarnings("unchecked") public AuthorizedDecoratingSubmodelAggregatorFactory(final ISubmodelAggregatorFactory submodelAggregatorFactory) {
+		this(null, submodelAggregatorFactory, (ISubmodelAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override
-	public ISubmodelAggregator create() {
+	@Override public ISubmodelAggregator create() {
 		return new AuthorizedSubmodelAggregator<>(aas, submodelAggregatorFactory.create(), submodelAggregatorAuthorizer, subjectInformationProvider);
 	}
 }

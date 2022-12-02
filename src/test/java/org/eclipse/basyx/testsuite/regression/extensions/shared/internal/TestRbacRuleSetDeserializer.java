@@ -34,27 +34,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class TestRbacRuleSetDeserializer {
-  @Test
-  public void test() throws IOException {
-    final RbacRuleSetDeserializer rbacRuleSetDeserializer = new RbacRuleSetDeserializer((objectMapper) -> {});
-    final RbacRuleSet rbacRuleSet = rbacRuleSetDeserializer.fromFile(
-        "/authorization/internal/rbac_rules.json");
-    Assert.assertEquals(16, rbacRuleSet.getRules().size());
-    Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule(
-        "reader",
-        "urn:org.eclipse.basyx:scope:aas-registry:read",
-        new BaSyxObjectTargetInformation(
-            "*",
-            "*",
-            "*"
-        )
-    )));
-    Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule(
-        "reader",
-        "urn:org.eclipse.basyx:scope:aas-registry:read",
-        new TagTargetInformation(
-            "tag"
-        )
-    )));
-  }
+	@Test public void test() throws IOException {
+		final RbacRuleSetDeserializer rbacRuleSetDeserializer = new RbacRuleSetDeserializer((objectMapper) -> {
+		});
+		final RbacRuleSet rbacRuleSet = rbacRuleSetDeserializer.fromFile("/authorization/internal/rbac_rules.json");
+		Assert.assertEquals(16, rbacRuleSet.getRules().size());
+		Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule("reader", "urn:org.eclipse.basyx:scope:aas-registry:read", new BaSyxObjectTargetInformation("*", "*", "*"))));
+		Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule("reader", "urn:org.eclipse.basyx:scope:aas-registry:read", new TagTargetInformation("tag"))));
+	}
 }

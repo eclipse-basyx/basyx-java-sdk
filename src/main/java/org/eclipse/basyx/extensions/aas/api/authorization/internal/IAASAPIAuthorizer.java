@@ -39,48 +39,29 @@ public interface IAASAPIAuthorizer<SubjectInformationType> {
 	/**
 	 * Checks authorization for {@link IAASAPI#getAAS()}.
 	 *
-	 * @param subjectInformation
-	 *                           information of the requester.
-	 * @param aasSupplier
-	 *                           supplier for the AAS.
+	 * @param subjectInformation information of the requester.
+	 * @param aasSupplier        supplier for the AAS.
 	 * @throws InhibitException if authorization failed
 	 */
-	public IAssetAdministrationShell authorizeGetAAS(
-			final SubjectInformationType subjectInformation,
-			final Supplier<IAssetAdministrationShell> aasSupplier
-  ) throws InhibitException;
+	public IAssetAdministrationShell authorizeGetAAS(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link IAASAPI#addSubmodel(IReference)}.
 	 *
-	 * @param subjectInformation
-	 *                           information of the requester.
-	 * @param aasSupplier
-	 *                           supplier for the AAS.
-	 * @param submodel
-	 *                           the submodel.
+	 * @param subjectInformation information of the requester.
+	 * @param aasSupplier        supplier for the AAS.
+	 * @param submodel           the submodel.
 	 * @throws InhibitException if authorization failed
 	 */
-	public void authorizeAddSubmodel(
-			final SubjectInformationType subjectInformation,
-			final Supplier<IAssetAdministrationShell> aasSupplier,
-			final IReference submodel
-  ) throws InhibitException;
+	public void authorizeAddSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final IReference submodel) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link IAASAPI#removeSubmodel(String)}.
 	 *
-	 * @param subjectInformation
-	 *                           information of the requester.
-	 * @param aasSupplier
-	 *                           supplier for the AAS.
-	 * @param smIdShortPath
-	 *                           short path id of the submodel.
+	 * @param subjectInformation information of the requester.
+	 * @param aasSupplier        supplier for the AAS.
+	 * @param smIdShortPath      short path id of the submodel.
 	 * @throws InhibitException if authorization failed
 	 */
-	public void authorizeRemoveSubmodel(
-			final SubjectInformationType subjectInformation,
-			final Supplier<IAssetAdministrationShell> aasSupplier,
-			final String smIdShortPath
-  ) throws InhibitException;
+	public void authorizeRemoveSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final String smIdShortPath) throws InhibitException;
 }

@@ -26,13 +26,14 @@ package org.eclipse.basyx.extensions.shared.authorization.internal;
 
 /**
  * Interface for a generic subject information used for authorization.
+ *
  * @param <T> The type to be provided.
  */
 public interface ISubjectInformationProvider<T> {
-  /**
-   * Fetches the value from the provider.
-   *
-   * @return The subject information object of the provider.
-   */
-  public T get();
+	/**
+	 * Fetches the value from the provider.
+	 *
+	 * @return The subject information object of the provider.
+	 */
+	public T get();
 }

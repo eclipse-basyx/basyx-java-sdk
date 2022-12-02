@@ -37,7 +37,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 /**
  * Implementation variant for the AASAPI that authorizes each access to the API
  *
- * @author espen
+ * @author espen, wege
  */
 public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	public static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
@@ -48,11 +48,7 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	protected final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedAASAPI(
-			final IAASAPI decoratedAASAPI,
-			final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
+	public AuthorizedAASAPI(final IAASAPI decoratedAASAPI, final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer, final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.decoratedAASAPI = decoratedAASAPI;
 		this.aasAPIAuthorizer = aasAPIAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
@@ -61,18 +57,12 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	/**
 	 * @deprecated Please use {@link AuthorizedAASAPI#AuthorizedAASAPI(IAASAPI, IAASAPIAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
 	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedAASAPI(final IAASAPI decoratedAASAPI) {
-		this(
-			decoratedAASAPI,
-			(IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-			(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
+	@Deprecated @SuppressWarnings("unchecked") public AuthorizedAASAPI(final IAASAPI decoratedAASAPI) {
+		this(decoratedAASAPI, (IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override
-	public IAssetAdministrationShell getAAS() {
+	@Override public IAssetAdministrationShell getAAS() {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAASAPI.getAAS();
 		}
@@ -85,14 +75,10 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	}
 
 	protected IAssetAdministrationShell authorizeGetAAS() throws InhibitException {
-		return aasAPIAuthorizer.authorizeGetAAS(
-				subjectInformationProvider.get(),
-				decoratedAASAPI::getAAS
-		);
+		return aasAPIAuthorizer.authorizeGetAAS(subjectInformationProvider.get(), decoratedAASAPI::getAAS);
 	}
 
-	@Override
-	public void addSubmodel(final IReference submodel) {
+	@Override public void addSubmodel(final IReference submodel) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAASAPI.addSubmodel(submodel);
 			return;
@@ -107,15 +93,10 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	}
 
 	protected void authorizeAddSubmodel(final IReference smId) throws InhibitException {
-		aasAPIAuthorizer.authorizeAddSubmodel(
-				subjectInformationProvider.get(),
-				decoratedAASAPI::getAAS,
-				smId
-		);
+		aasAPIAuthorizer.authorizeAddSubmodel(subjectInformationProvider.get(), decoratedAASAPI::getAAS, smId);
 	}
 
-	@Override
-	public void removeSubmodel(final String smIdShortPath) {
+	@Override public void removeSubmodel(final String smIdShortPath) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAASAPI.removeSubmodel(smIdShortPath);
 			return;
@@ -130,10 +111,6 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	}
 
 	protected void authorizeRemoveSubmodel(final String smIdShortPath) throws InhibitException {
-		aasAPIAuthorizer.authorizeRemoveSubmodel(
-				subjectInformationProvider.get(),
-				decoratedAASAPI::getAAS,
-				smIdShortPath
-		);
+		aasAPIAuthorizer.authorizeRemoveSubmodel(subjectInformationProvider.get(), decoratedAASAPI::getAAS, smIdShortPath);
 	}
 }

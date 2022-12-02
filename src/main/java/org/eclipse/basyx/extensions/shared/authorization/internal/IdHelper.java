@@ -35,13 +35,14 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  * @author wege
  */
 public class IdHelper {
-  private IdHelper() {}
+	private IdHelper() {
+	}
 
-  public static String getIdentifierId(final IIdentifier identifier) {
-    return identifier != null ? identifier.getId() : null;
-  }
+	public static String getIdentifierId(final IIdentifier identifier) {
+		return identifier != null ? identifier.getId() : null;
+	}
 
-  public static String getReferenceId(final IReference reference) {
-    return reference != null ? reference.getKeys().stream().map(IKey::getValue).collect(Collectors.joining(";")) : null;
-  }
+	public static String getReferenceId(final IReference reference) {
+		return reference != null ? reference.getKeys().stream().map(IKey::getValue).collect(Collectors.joining(";")) : null;
+	}
 }

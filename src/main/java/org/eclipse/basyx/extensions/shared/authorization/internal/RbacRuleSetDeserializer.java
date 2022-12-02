@@ -40,68 +40,62 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Deserializer for {@link RbacRuleSet}.
- *
- * Supports polymorphism for {@link TargetInformation} using a "@type" discriminator field.
- * If you need to support further implementations, you can register it via {@link ObjectMapper#registerSubtypes(NamedType...)}
- * using the {@link RbacRuleSetDeserializer#RbacRuleSetDeserializer(Consumer)} constructor.
- *
+ * <p>
+ * Supports polymorphism for {@link TargetInformation} using a "@type" discriminator field. If you need to support further implementations, you can register it via {@link ObjectMapper#registerSubtypes(NamedType...)} using the {@link
+ * RbacRuleSetDeserializer#RbacRuleSetDeserializer(Consumer)} constructor.
+ * <p>
  * Uses jackson.
  *
  * @author wege
  */
 public class RbacRuleSetDeserializer {
-  private static final Logger logger = LoggerFactory.getLogger(RbacRuleSetDeserializer.class);
+	private static final Logger logger = LoggerFactory.getLogger(RbacRuleSetDeserializer.class);
 
-  @JsonTypeInfo(use = Id.NAME, property = "@type")
-  public static class TargetInformationMixin {
+	@JsonTypeInfo(use = Id.NAME, property = "@type") public static class TargetInformationMixin {
 
-  }
+	}
 
-  public static class RbacRuleMixin {
-    @JsonCreator
-    public RbacRuleMixin(final @JsonProperty("role") String role, final @JsonProperty("action") String action, final @JsonProperty("targetInformation") TargetInformation targetInformation) {
+	public static class RbacRuleMixin {
+		@JsonCreator public RbacRuleMixin(final @JsonProperty("role") String role, final @JsonProperty("action") String action, final @JsonProperty("targetInformation") TargetInformation targetInformation) {
 
-    }
-  }
+		}
+	}
 
-  private final ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
-  public RbacRuleSetDeserializer() {
-    this(mapper -> {});
-  }
+	public RbacRuleSetDeserializer() {
+		this(mapper -> {
+		});
+	}
 
-  public RbacRuleSetDeserializer(final Consumer<ObjectMapper> objectMapperConsumer) {
-    objectMapper = new ObjectMapper();
-    objectMapper.addMixIn(RbacRule.class, RbacRuleMixin.class);
-    objectMapper.addMixIn(TargetInformation.class, TargetInformationMixin.class)
-        .registerSubtypes(
-            new NamedType(BaSyxObjectTargetInformation.class, "basyx"),
-            new NamedType(TagTargetInformation.class, "tag")
-        );
-    objectMapperConsumer.accept(objectMapper);
-  }
+	public RbacRuleSetDeserializer(final Consumer<ObjectMapper> objectMapperConsumer) {
+		objectMapper = new ObjectMapper();
+		objectMapper.addMixIn(RbacRule.class, RbacRuleMixin.class);
+		objectMapper.addMixIn(TargetInformation.class, TargetInformationMixin.class).registerSubtypes(new NamedType(BaSyxObjectTargetInformation.class, "basyx"), new NamedType(TagTargetInformation.class, "tag"));
+		objectMapperConsumer.accept(objectMapper);
+	}
 
-  public RbacRuleSet fromFile(final String filePath) throws IOException {
-    if (filePath == null) {
-      throw new IllegalArgumentException("filePath must not be null");
-    }
+	public RbacRuleSet fromFile(final String filePath) throws IOException {
+		if (filePath == null) {
+			throw new IllegalArgumentException("filePath must not be null");
+		}
 
-    logger.info("loading rbac rules...");
-    try (final InputStream inputStream = RbacRuleSet.class.getResourceAsStream(filePath)) {
-      if (inputStream == null) {
-        throw new FileNotFoundException("could not find " + filePath);
-      }
+		logger.info("loading rbac rules...");
+		try (final InputStream inputStream = RbacRuleSet.class.getResourceAsStream(filePath)) {
+			if (inputStream == null) {
+				throw new FileNotFoundException("could not find " + filePath);
+			}
 
-      final RbacRule[] rbacRules = deserialize(inputStream);
+			final RbacRule[] rbacRules = deserialize(inputStream);
 
-      logger.info("Read rbac rules: {}", Arrays.toString(rbacRules));
-      final RbacRuleSet rbacRuleSet = new RbacRuleSet();
-      Arrays.stream(rbacRules).forEach(rbacRuleSet::addRule);
-      return rbacRuleSet;
-    }
-  }
+			logger.info("Read rbac rules: {}", Arrays.toString(rbacRules));
+			final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+			Arrays.stream(rbacRules).forEach(rbacRuleSet::addRule);
+			return rbacRuleSet;
+		}
+	}
 
-  public RbacRule[] deserialize(final InputStream inputStream) throws IOException {
-    return objectMapper.readValue(inputStream, RbacRule[].class);
-  }
+	public RbacRule[] deserialize(final InputStream inputStream) throws IOException {
+		return objectMapper.readValue(inputStream, RbacRule[].class);
+	}
 }

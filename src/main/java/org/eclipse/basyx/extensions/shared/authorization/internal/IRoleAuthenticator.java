@@ -27,18 +27,16 @@ package org.eclipse.basyx.extensions.shared.authorization.internal;
 import java.util.List;
 
 /**
- * Interface for a role provider that should be used in the context of
- * authorization by authenticating some request.
+ * Interface for a role provider that should be used in the context of authorization by authenticating some request.
  *
  * @author wege
  */
 public interface IRoleAuthenticator<SubjectInformationType> {
-  /**
-   * Fetches the authorities from the provider.
-   *
-   * @param subjectInformation
-   *                           the information of the requester from where the roles can be extracted, e.g. a JWT.
-   * @return a list of roles
-   */
-  public List<String> getRoles(final SubjectInformationType subjectInformation);
+	/**
+	 * Fetches the authorities from the provider.
+	 *
+	 * @param subjectInformation the information of the requester from where the roles can be extracted, e.g. a JWT.
+	 * @return a list of roles
+	 */
+	public List<String> getRoles(final SubjectInformationType subjectInformation);
 }

@@ -27,12 +27,10 @@ package org.eclipse.basyx.extensions.submodel.authorization.internal;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.internal.AuthorizedSubmodelAggregator;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedSubmodelAggregator}.
- * Used in {@link SimpleRbacSubmodelAPIAuthorizer}, {@link GrantedAuthoritySubmodelAPIAuthorizer}
+ * Constants for the permission scopes related to the {@link AuthorizedSubmodelAggregator}. Used in {@link SimpleRbacSubmodelAPIAuthorizer}, {@link GrantedAuthoritySubmodelAPIAuthorizer}
  *
  * @author pneuschwander, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @see <a href= "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
  */
 public final class SubmodelAPIScopes {
 	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:sm-api:read";

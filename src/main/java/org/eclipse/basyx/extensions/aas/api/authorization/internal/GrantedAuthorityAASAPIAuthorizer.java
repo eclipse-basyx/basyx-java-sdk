@@ -37,40 +37,23 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
  * @author wege
  */
 public class GrantedAuthorityAASAPIAuthorizer<SubjectInformationType> implements IAASAPIAuthorizer<SubjectInformationType> {
-  protected IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator;
+	protected IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator;
 
-  public GrantedAuthorityAASAPIAuthorizer(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator) {
-    this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
-  }
+	public GrantedAuthorityAASAPIAuthorizer(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator) {
+		this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
+	}
 
-  @Override
-  public IAssetAdministrationShell authorizeGetAAS(
-      final SubjectInformationType subjectInformation,
-      final Supplier<IAssetAdministrationShell> aasSupplier
-  ) throws InhibitException {
-    GrantedAuthorityHelper
-        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.READ_AUTHORITY);
+	@Override public IAssetAdministrationShell authorizeGetAAS(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
+		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.READ_AUTHORITY);
 
-    return aasSupplier.get();
-  }
+		return aasSupplier.get();
+	}
 
-  @Override
-  public void authorizeAddSubmodel(
-      final SubjectInformationType subjectInformation,
-      final Supplier<IAssetAdministrationShell> aasSupplier,
-      final IReference submodel
-  ) throws InhibitException {
-    GrantedAuthorityHelper
-        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.WRITE_AUTHORITY);
-  }
+	@Override public void authorizeAddSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final IReference submodel) throws InhibitException {
+		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.WRITE_AUTHORITY);
+	}
 
-  @Override
-  public void authorizeRemoveSubmodel(
-      final SubjectInformationType subjectInformation,
-      final Supplier<IAssetAdministrationShell> aasSupplier,
-      final String smIdShortPath
-  ) throws InhibitException {
-    GrantedAuthorityHelper
-        .checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.WRITE_AUTHORITY);
-  }
+	@Override public void authorizeRemoveSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final String smIdShortPath) throws InhibitException {
+		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.WRITE_AUTHORITY);
+	}
 }

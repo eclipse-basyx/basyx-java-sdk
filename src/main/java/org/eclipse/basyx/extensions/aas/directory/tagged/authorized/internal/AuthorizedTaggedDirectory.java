@@ -47,12 +47,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * Implementation of {@link IAASTaggedDirectory} for restricting access to
- * sensitive data
+ * Implementation of {@link IAASTaggedDirectory} for restricting access to sensitive data
  *
  * @author fried, wege
- *
  */
 public class AuthorizedTaggedDirectory<SubjectInformationType> extends AuthorizedAASRegistry<SubjectInformationType> implements IAASTaggedDirectory {
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizedTaggedDirectory.class);
@@ -63,14 +60,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
 	/**
-	 * Provides registry implementation that authorizes invocations before
-	 * forwarding them to the provided registry implementation.
+	 * Provides registry implementation that authorizes invocations before forwarding them to the provided registry implementation.
 	 */
-	public AuthorizedTaggedDirectory(
-			final IAASTaggedDirectory decoratedTaggedDirectory,
-			final ITaggedDirectoryAuthorizer<SubjectInformationType> taggedDirectoryAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
+	public AuthorizedTaggedDirectory(final IAASTaggedDirectory decoratedTaggedDirectory, final ITaggedDirectoryAuthorizer<SubjectInformationType> taggedDirectoryAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		super(decoratedTaggedDirectory, taggedDirectoryAuthorizer, subjectInformationProvider);
 		this.decoratedTaggedDirectory = decoratedTaggedDirectory;
 		this.taggedDirectoryAuthorizer = taggedDirectoryAuthorizer;
@@ -80,18 +73,12 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	/**
 	 * @deprecated Please use {@link AuthorizedTaggedDirectory#AuthorizedTaggedDirectory(IAASTaggedDirectory, ITaggedDirectoryAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
 	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedTaggedDirectory(final IAASTaggedDirectory decoratedTaggedDirectory) {
-		this(
-				decoratedTaggedDirectory,
-				(ITaggedDirectoryAuthorizer<SubjectInformationType>) new GrantedAuthorityTaggedDirectoryAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
+	@Deprecated @SuppressWarnings("unchecked") public AuthorizedTaggedDirectory(final IAASTaggedDirectory decoratedTaggedDirectory) {
+		this(decoratedTaggedDirectory, (ITaggedDirectoryAuthorizer<SubjectInformationType>) new GrantedAuthorityTaggedDirectoryAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override
-	public void register(final TaggedAASDescriptor descriptor) {
+	@Override public void register(final TaggedAASDescriptor descriptor) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.register(descriptor);
 			return;
@@ -113,14 +100,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	}
 
 	protected void authorizeRegister(final TaggedAASDescriptor descriptor) throws InhibitException {
-		taggedDirectoryAuthorizer.authorizeRegister(
-				subjectInformationProvider.get(),
-				descriptor
-		);
+		taggedDirectoryAuthorizer.authorizeRegister(subjectInformationProvider.get(), descriptor);
 	}
 
-	@Override
-	public Set<TaggedAASDescriptor> lookupTag(final String tag) {
+	@Override public Set<TaggedAASDescriptor> lookupTag(final String tag) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedTaggedDirectory.lookupTag(tag);
 		}
@@ -136,22 +119,14 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 					logger.info(e.getMessage(), e);
 				}
 				return null;
-			}).filter(Objects::nonNull).collect(Collectors.toSet())
-					.stream()
-					.filter(TaggedAASDescriptor.class::isInstance)
-					.map(TaggedAASDescriptor.class::cast)
-					.collect(Collectors.toSet());
+			}).filter(Objects::nonNull).collect(Collectors.toSet()).stream().filter(TaggedAASDescriptor.class::isInstance).map(TaggedAASDescriptor.class::cast).collect(Collectors.toSet());
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
 		}
 	}
 
 	protected Set<TaggedAASDescriptor> authorizeLookupTag(final String tag) throws InhibitException {
-		final Set<TaggedAASDescriptor> authorizedAASDescriptorsAfterLookupTag = taggedDirectoryAuthorizer.authorizeLookupTag(
-				subjectInformationProvider.get(),
-				tag,
-				() -> decoratedTaggedDirectory.lookupTag(tag)
-		);
+		final Set<TaggedAASDescriptor> authorizedAASDescriptorsAfterLookupTag = taggedDirectoryAuthorizer.authorizeLookupTag(subjectInformationProvider.get(), tag, () -> decoratedTaggedDirectory.lookupTag(tag));
 
 		final Set<TaggedAASDescriptor> authorizedAASDescriptorsAfterLookupAAS = authorizedAASDescriptorsAfterLookupTag.stream().map(aasDescriptor -> {
 			try {
@@ -161,11 +136,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 				logger.info(e.getMessage(), e);
 			}
 			return null;
-		}).filter(Objects::nonNull).collect(Collectors.toList())
-				.stream()
-				.filter(TaggedAASDescriptor.class::isInstance)
-				.map(TaggedAASDescriptor.class::cast)
-				.collect(Collectors.toSet());
+		}).filter(Objects::nonNull).collect(Collectors.toList()).stream().filter(TaggedAASDescriptor.class::isInstance).map(TaggedAASDescriptor.class::cast).collect(Collectors.toSet());
 
 		return authorizedAASDescriptorsAfterLookupAAS.stream().map(aasDescriptor -> {
 			final List<SubmodelDescriptor> submodelDescriptorsToRemove = aasDescriptor.getSubmodelDescriptors().stream().map(submodelDescriptor -> {
@@ -185,8 +156,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		}).collect(Collectors.toSet());
 	}
 
-	@Override
-	public Set<TaggedAASDescriptor> lookupTags(final Set<String> tags) {
+	@Override public Set<TaggedAASDescriptor> lookupTags(final Set<String> tags) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedTaggedDirectory.lookupTags(tags);
 		}
@@ -198,8 +168,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		}
 	}
 
-	@Override
-	public void registerSubmodel(final IIdentifier aasId, final TaggedSubmodelDescriptor smDescriptor) {
+	@Override public void registerSubmodel(final IIdentifier aasId, final TaggedSubmodelDescriptor smDescriptor) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.register(aasId, smDescriptor);
 			return;
@@ -221,15 +190,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	}
 
 	protected void authorizeRegisterSubmodel(final IIdentifier aasId, final TaggedSubmodelDescriptor smDescriptor) throws InhibitException {
-		taggedDirectoryAuthorizer.authorizeRegisterSubmodel(
-				subjectInformationProvider.get(),
-				aasId,
-				smDescriptor
-		);
+		taggedDirectoryAuthorizer.authorizeRegisterSubmodel(subjectInformationProvider.get(), aasId, smDescriptor);
 	}
 
-	@Override
-	public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(final String submodelTag) {
+	@Override public Set<TaggedSubmodelDescriptor> lookupSubmodelTag(final String submodelTag) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedTaggedDirectory.lookupSubmodelTag(submodelTag);
 		}
@@ -242,11 +206,8 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	}
 
 	protected Set<TaggedSubmodelDescriptor> authorizeLookupSubmodelTag(final String submodelTag) throws InhibitException {
-		final Set<TaggedSubmodelDescriptor> authorizedSubmodelDescriptorsAfterLookupTag = taggedDirectoryAuthorizer.authorizeLookupSubmodelTag(
-				subjectInformationProvider.get(),
-				submodelTag,
-				() -> decoratedTaggedDirectory.lookupSubmodelTag(submodelTag)
-		);
+		final Set<TaggedSubmodelDescriptor> authorizedSubmodelDescriptorsAfterLookupTag = taggedDirectoryAuthorizer
+				.authorizeLookupSubmodelTag(subjectInformationProvider.get(), submodelTag, () -> decoratedTaggedDirectory.lookupSubmodelTag(submodelTag));
 
 		return authorizedSubmodelDescriptorsAfterLookupTag.stream().map(smDescriptor -> {
 			try {
@@ -257,15 +218,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 				logger.info(e.getMessage(), e);
 			}
 			return null;
-		}).filter(Objects::nonNull).collect(Collectors.toList())
-				.stream()
-				.filter(TaggedSubmodelDescriptor.class::isInstance)
-				.map(TaggedSubmodelDescriptor.class::cast)
-				.collect(Collectors.toSet());
+		}).filter(Objects::nonNull).collect(Collectors.toList()).stream().filter(TaggedSubmodelDescriptor.class::isInstance).map(TaggedSubmodelDescriptor.class::cast).collect(Collectors.toSet());
 	}
 
-	@Override
-	public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(final Set<String> submodelTags) {
+	@Override public Set<TaggedSubmodelDescriptor> lookupSubmodelTags(final Set<String> submodelTags) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedTaggedDirectory.lookupSubmodelTags(submodelTags);
 		}
@@ -296,15 +252,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	}
 
 	private Set<TaggedSubmodelDescriptor> authorizeLookupSubmodelTagListOnly(final Set<String> submodelTags) throws InhibitException {
-		return taggedDirectoryAuthorizer.authorizeLookupSubmodelTags(
-				subjectInformationProvider.get(),
-				submodelTags,
-				() -> decoratedTaggedDirectory.lookupSubmodelTags(submodelTags)
-		);
+		return taggedDirectoryAuthorizer.authorizeLookupSubmodelTags(subjectInformationProvider.get(), submodelTags, () -> decoratedTaggedDirectory.lookupSubmodelTags(submodelTags));
 	}
 
-	@Override
-	public Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(final Set<String> aasTags, final Set<String> submodelTags) {
+	@Override public Set<TaggedSubmodelDescriptor> lookupBothAasAndSubmodelTags(final Set<String> aasTags, final Set<String> submodelTags) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedTaggedDirectory.lookupSubmodelTags(submodelTags);
 		}
@@ -327,12 +278,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	}
 
 	private Set<TaggedSubmodelDescriptor> authorizeLookupBothAasAndSubmodelTagListOnly(final Set<String> aasTags, final Set<String> submodelTags) throws InhibitException {
-		return taggedDirectoryAuthorizer.authorizeLookupBothAasAndSubmodelTags(
-				subjectInformationProvider.get(),
-				aasTags,
-				submodelTags,
-				() -> decoratedTaggedDirectory.lookupBothAasAndSubmodelTags(aasTags, submodelTags)
-		);
+		return taggedDirectoryAuthorizer.authorizeLookupBothAasAndSubmodelTags(subjectInformationProvider.get(), aasTags, submodelTags, () -> decoratedTaggedDirectory.lookupBothAasAndSubmodelTags(aasTags, submodelTags));
 	}
 
 	protected Set<TaggedAASDescriptor> authorizeLookupTags(final Set<String> tags) throws InhibitException {
@@ -354,10 +300,6 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	}
 
 	private Set<TaggedAASDescriptor> authorizeLookupTagListOnly(final Set<String> tags) throws InhibitException {
-		return taggedDirectoryAuthorizer.authorizeLookupTags(
-				subjectInformationProvider.get(),
-				tags,
-				() -> decoratedTaggedDirectory.lookupTags(tags)
-		);
+		return taggedDirectoryAuthorizer.authorizeLookupTags(subjectInformationProvider.get(), tags, () -> decoratedTaggedDirectory.lookupTags(tags));
 	}
 }

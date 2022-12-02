@@ -30,56 +30,54 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Can set various types of SecurityContexts for test purposes for testing
- * invalid, read or write access.
+ * Can set various types of SecurityContexts for test purposes for testing invalid, read or write access.
  *
  * @author espen, wege
- *
  */
 public class AuthorizationContextProvider {
-  private final String READ_SCOPE;
-  private final String WRITE_SCOPE;
-  private final String EXECUTE_SCOPE;
+	private final String READ_SCOPE;
+	private final String WRITE_SCOPE;
+	private final String EXECUTE_SCOPE;
 
-  public AuthorizationContextProvider(final String readScope, final String writeScope, final String executeScope) {
-    READ_SCOPE = readScope;
-    WRITE_SCOPE = writeScope;
-    EXECUTE_SCOPE = executeScope;
-  }
+	public AuthorizationContextProvider(final String readScope, final String writeScope, final String executeScope) {
+		READ_SCOPE = readScope;
+		WRITE_SCOPE = writeScope;
+		EXECUTE_SCOPE = executeScope;
+	}
 
-  private SecurityContext _getSecurityContextWithAuthorities(final String... authorities) {
-    final SecurityContext context = SecurityContextHolder.createEmptyContext();
-    final Authentication authentication = new TestingAuthenticationToken(null, null, authorities);
-    context.setAuthentication(authentication);
-    return context;
-  }
+	private SecurityContext _getSecurityContextWithAuthorities(final String... authorities) {
+		final SecurityContext context = SecurityContextHolder.createEmptyContext();
+		final Authentication authentication = new TestingAuthenticationToken(null, null, authorities);
+		context.setAuthentication(authentication);
+		return context;
+	}
 
-  public void setEmptySecurityContext() {
-    final SecurityContext context = SecurityContextHolder.createEmptyContext();
-    SecurityContextHolder.setContext(context);
-  }
+	public void setEmptySecurityContext() {
+		final SecurityContext context = SecurityContextHolder.createEmptyContext();
+		SecurityContextHolder.setContext(context);
+	}
 
-  public void setSecurityContextWithoutAuthorities() {
-    final SecurityContext context = _getSecurityContextWithAuthorities();
-    SecurityContextHolder.setContext(context);
-  }
+	public void setSecurityContextWithoutAuthorities() {
+		final SecurityContext context = _getSecurityContextWithAuthorities();
+		SecurityContextHolder.setContext(context);
+	}
 
-  public void setSecurityContextWithReadAuthority() {
-    final SecurityContext context = _getSecurityContextWithAuthorities(READ_SCOPE);
-    SecurityContextHolder.setContext(context);
-  }
+	public void setSecurityContextWithReadAuthority() {
+		final SecurityContext context = _getSecurityContextWithAuthorities(READ_SCOPE);
+		SecurityContextHolder.setContext(context);
+	}
 
-  public void setSecurityContextWithWriteAuthority() {
-    final SecurityContext context = _getSecurityContextWithAuthorities(WRITE_SCOPE);
-    SecurityContextHolder.setContext(context);
-  }
+	public void setSecurityContextWithWriteAuthority() {
+		final SecurityContext context = _getSecurityContextWithAuthorities(WRITE_SCOPE);
+		SecurityContextHolder.setContext(context);
+	}
 
-  public void setSecurityContextWithExecuteAuthority() {
-    final SecurityContext context = _getSecurityContextWithAuthorities(EXECUTE_SCOPE);
-    SecurityContextHolder.setContext(context);
-  }
+	public void setSecurityContextWithExecuteAuthority() {
+		final SecurityContext context = _getSecurityContextWithAuthorities(EXECUTE_SCOPE);
+		SecurityContextHolder.setContext(context);
+	}
 
-  public void clearContext() {
-    SecurityContextHolder.clearContext();
-  }
+	public void clearContext() {
+		SecurityContextHolder.clearContext();
+	}
 }

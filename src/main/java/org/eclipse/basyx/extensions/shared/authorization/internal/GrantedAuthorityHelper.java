@@ -32,13 +32,13 @@ import org.springframework.security.core.GrantedAuthority;
  * @author wege
  */
 public class GrantedAuthorityHelper {
-  private GrantedAuthorityHelper() {}
+	private GrantedAuthorityHelper() {
+	}
 
-  public static <SubjectInformationType> void checkAuthority(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator, final SubjectInformationType subjectInformation, final String requiredAuthority) throws InhibitException {
-    if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream()
-        .map(GrantedAuthority::getAuthority)
-        .noneMatch(authority -> authority.equals(requiredAuthority))) {
-      throw new GrantedAuthorityInhibitException(requiredAuthority);
-    }
-  }
+	public static <SubjectInformationType> void checkAuthority(final IGrantedAuthorityAuthenticator<SubjectInformationType> grantedAuthorityAuthenticator, final SubjectInformationType subjectInformation, final String requiredAuthority)
+			throws InhibitException {
+		if (grantedAuthorityAuthenticator.getAuthorities(subjectInformation).stream().map(GrantedAuthority::getAuthority).noneMatch(authority -> authority.equals(requiredAuthority))) {
+			throw new GrantedAuthorityInhibitException(requiredAuthority);
+		}
+	}
 }

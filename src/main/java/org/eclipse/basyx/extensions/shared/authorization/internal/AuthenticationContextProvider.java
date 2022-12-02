@@ -35,13 +35,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * @author wege
  */
 public class AuthenticationContextProvider implements ISubjectInformationProvider<Authentication> {
-  @Override
-  public Authentication get() {
-    return getAuthentication().orElse(null);
-  }
+	@Override public Authentication get() {
+		return getAuthentication().orElse(null);
+	}
 
-  public static Optional<Authentication> getAuthentication() {
-    final SecurityContext context = SecurityContextHolder.getContext();
-    return Optional.ofNullable(context.getAuthentication());
-  }
+	public static Optional<Authentication> getAuthentication() {
+		final SecurityContext context = SecurityContextHolder.getContext();
+		return Optional.ofNullable(context.getAuthentication());
+	}
 }

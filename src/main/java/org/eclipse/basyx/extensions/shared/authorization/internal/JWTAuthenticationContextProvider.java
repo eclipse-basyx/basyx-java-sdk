@@ -32,22 +32,17 @@ import org.springframework.security.oauth2.server.resource.authentication.Abstra
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
- * A {@link ISubjectInformationProvider} that provides a {@link Jwt} obtained by the
- * {@link org.springframework.security.core.Authentication} from the (thread-local)
- * Spring Security context.
+ * A {@link ISubjectInformationProvider} that provides a {@link Jwt} obtained by the {@link org.springframework.security.core.Authentication} from the (thread-local) Spring Security context.
  *
  * @author wege
  */
 public class JWTAuthenticationContextProvider implements ISubjectInformationProvider<Jwt> {
-  @Override
-  public Jwt get() {
-    return getAuthentication().map(AbstractOAuth2TokenAuthenticationToken::getToken).orElse(null);
-  }
+	@Override public Jwt get() {
+		return getAuthentication().map(AbstractOAuth2TokenAuthenticationToken::getToken).orElse(null);
+	}
 
-  private Optional<JwtAuthenticationToken> getAuthentication() {
-    final SecurityContext context = SecurityContextHolder.getContext();
-    return Optional.ofNullable(context.getAuthentication())
-        .filter(JwtAuthenticationToken.class::isInstance)
-        .map(JwtAuthenticationToken.class::cast);
-  }
+	private Optional<JwtAuthenticationToken> getAuthentication() {
+		final SecurityContext context = SecurityContextHolder.getContext();
+		return Optional.ofNullable(context.getAuthentication()).filter(JwtAuthenticationToken.class::isInstance).map(JwtAuthenticationToken.class::cast);
+	}
 }

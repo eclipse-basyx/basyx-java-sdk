@@ -59,10 +59,8 @@ import org.mockito.junit.MockitoJUnitRunner;
  *
  * @author espen, wege
  */
-@RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class TestSimpleRbacAuthorizedAASAPI {
-	@Mock
-	private IAASAPI apiMock;
+@RunWith(MockitoJUnitRunner.StrictStubs.class) public class TestSimpleRbacAuthorizedAASAPI {
+	@Mock private IAASAPI apiMock;
 	private AuthorizedAASAPI<?> testSubject;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
 	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
@@ -81,43 +79,21 @@ public class TestSimpleRbacAuthorizedAASAPI {
 	private static AssetAdministrationShell shell;
 	private static Submodel submodel;
 
-	@Before
-	public void setUp() {
-		rbacRuleSet.addRule(new RbacRule(
-				adminRole,
-				AASAPIScopes.READ_SCOPE,
-				new BaSyxObjectTargetInformation("*", "*", "*")
-		));
-		rbacRuleSet.addRule(new RbacRule(
-				adminRole,
-				AASAPIScopes.WRITE_SCOPE,
-				new BaSyxObjectTargetInformation("*", "*", "*")
-		));
-		rbacRuleSet.addRule(new RbacRule(
-				readerRole,
-				AASAPIScopes.READ_SCOPE,
-				new BaSyxObjectTargetInformation("*", "*", "*")
-		));
-		testSubject = new AuthorizedAASAPI<>(
-				apiMock,
-				new SimpleRbacAASAPIAuthorizer<>(
-						new PredefinedSetRbacRuleChecker(rbacRuleSet),
-						new KeycloakRoleAuthenticator()
-				),
-				new JWTAuthenticationContextProvider()
-		);
+	@Before public void setUp() {
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(readerRole, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
+		testSubject = new AuthorizedAASAPI<>(apiMock, new SimpleRbacAASAPIAuthorizer<>(new PredefinedSetRbacRuleChecker(rbacRuleSet), new KeycloakRoleAuthenticator()), new JWTAuthenticationContextProvider());
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 		submodel = new Submodel(SUBMODEL_ID, SUBMODEL_IDENTIFIER);
 	}
 
-	@After
-	public void tearDown() {
+	@After public void tearDown() {
 		securityContextProvider.clearContext();
 		Mockito.verifyNoMoreInteractions(apiMock);
 	}
 
-	@Test
-	public void givenPrincipalHasReadAuthority_whenGetAAS_thenInvocationIsForwarded() {
+	@Test public void givenPrincipalHasReadAuthority_whenGetAAS_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.getAAS()).thenReturn(shell);
 
@@ -125,24 +101,21 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		assertEquals(shell, returnedShell);
 	}
 
-	@Test(expected = NotAuthorized.class)
-	public void givenSecurityContextIsEmpty_whenGetAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
 
 		testSubject.getAAS();
 	}
 
-	@Test(expected = NotAuthorized.class)
-	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
 
 		testSubject.getAAS();
 	}
 
-	@Test
-	public void givenPrincipalHasWriteAuthority_whenAddSubmodel_thenInvocationIsForwarded() {
+	@Test public void givenPrincipalHasWriteAuthority_whenAddSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
 		final IReference smReference2Add = submodel.getReference();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
@@ -151,24 +124,21 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		Mockito.verify(apiMock).addSubmodel(smReference2Add);
 	}
 
-	@Test(expected = NotAuthorized.class)
-	public void givenSecurityContextIsEmpty_whenAddSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
 
 		testSubject.addSubmodel(submodel.getReference());
 	}
 
-	@Test(expected = NotAuthorized.class)
-	public void givenPrincipalIsMissingReadAuthority_whenAddSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
 
 		testSubject.addSubmodel(submodel.getReference());
 	}
 
-	@Test
-	public void givenPrincipalHasWriteAuthority_whenRemoveSubmodel_thenInvocationIsForwarded() {
+	@Test public void givenPrincipalHasWriteAuthority_whenRemoveSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
 
@@ -176,16 +146,14 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		Mockito.verify(apiMock).removeSubmodel(SUBMODEL_ID);
 	}
 
-	@Test(expected = NotAuthorized.class)
-	public void givenSecurityContextIsEmpty_whenRemoveSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
 
 		testSubject.removeSubmodel(SUBMODEL_ID);
 	}
 
-	@Test(expected = NotAuthorized.class)
-	public void givenPrincipalIsMissingReadAuthority_whenRemoveSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
 

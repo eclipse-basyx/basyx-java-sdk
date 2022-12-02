@@ -37,71 +37,62 @@ import org.slf4j.LoggerFactory;
  * @author wege
  */
 public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
-  private static final Logger logger = LoggerFactory.getLogger(PredefinedSetRbacRuleChecker.class);
-  private final RbacRuleSet rbacRuleSet;
+	private static final Logger logger = LoggerFactory.getLogger(PredefinedSetRbacRuleChecker.class);
+	private final RbacRuleSet rbacRuleSet;
 
-  public PredefinedSetRbacRuleChecker(final RbacRuleSet rbacRuleSet) {
-    this.rbacRuleSet = rbacRuleSet;
-  }
+	public PredefinedSetRbacRuleChecker(final RbacRuleSet rbacRuleSet) {
+		this.rbacRuleSet = rbacRuleSet;
+	}
 
-  /**
-   * Checks for a given rbac tuple if it exists within the predefined set.
-   * @param roles roles of the subject
-   * @param action action which needs authorization
-   * @param targetInformation target attributes
-   * @return true if the requested rbac tuple was found, false otherwise
-   */
-  public boolean checkRbacRuleIsSatisfied(
-      final List<String> roles,
-      final String action,
-      final TargetInformation targetInformation
-  ) {
-    final Optional<RbacRule> matchingRule = getMatchingRules(roles, action, targetInformation).findAny();
-    logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roles, action, targetInformation, matchingRule);
-    return matchingRule.isPresent();
-  }
+	/**
+	 * Checks for a given rbac tuple if it exists within the predefined set.
+	 *
+	 * @param roles             roles of the subject
+	 * @param action            action which needs authorization
+	 * @param targetInformation target attributes
+	 * @return true if the requested rbac tuple was found, false otherwise
+	 */
+	public boolean checkRbacRuleIsSatisfied(final List<String> roles, final String action, final TargetInformation targetInformation) {
+		final Optional<RbacRule> matchingRule = getMatchingRules(roles, action, targetInformation).findAny();
+		logger.info("roles: {}, action: {}, targetInfo: {} - matching-rule?: {}", roles, action, targetInformation, matchingRule);
+		return matchingRule.isPresent();
+	}
 
-  private Stream<RbacRule> getMatchingRules(
-      final List<String> roles,
-      final String action,
-      final TargetInformation targetInformation
-  ) {
-    return this.rbacRuleSet.getRules().parallelStream()
-        .filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles))
-        .filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
-        .filter(rbacRule -> checkRbacRuleMatchesTargetInformation(rbacRule, targetInformation));
-  }
+	private Stream<RbacRule> getMatchingRules(final List<String> roles, final String action, final TargetInformation targetInformation) {
+		return this.rbacRuleSet.getRules().parallelStream().filter(rbacRule -> checkRolesMatchRbacRule(rbacRule, roles)).filter(rbacRule -> checkActionMatchesRbacRule(rbacRule, action))
+				.filter(rbacRule -> checkRbacRuleMatchesTargetInformation(rbacRule, targetInformation));
+	}
 
-  private boolean checkRolesMatchRbacRule(final RbacRule rbacRule, final List<String> roles) {
-    return rbacRule.getRole().equals("*") || (roles != null && roles.stream().anyMatch(role -> rbacRule.getRole().equals(role)));
-  }
+	private boolean checkRolesMatchRbacRule(final RbacRule rbacRule, final List<String> roles) {
+		return rbacRule.getRole().equals("*") || (roles != null && roles.stream().anyMatch(role -> rbacRule.getRole().equals(role)));
+	}
 
-  private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final String action) {
-    return rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action);
-  }
+	private boolean checkActionMatchesRbacRule(final RbacRule rbacRule, final String action) {
+		return rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action);
+	}
 
-  private boolean checkRbacRuleMatchesTargetInformation(final RbacRule rbacRule, final TargetInformation targetInformation) {
-    final Map<String, String> targetInformationMap = targetInformation.toMap();
-    final Map<String, String> rbacRuleTargetInformationMap = rbacRule.getTargetInformation().toMap();
-    for (final Map.Entry<String, String> targetInfo : targetInformationMap.entrySet()) {
-      final String key = targetInfo.getKey();
-      final String targetInfoValue = targetInfo.getValue();
-      final String rbacRuleValue = rbacRuleTargetInformationMap.get(key);
+	private boolean checkRbacRuleMatchesTargetInformation(final RbacRule rbacRule, final TargetInformation targetInformation) {
+		final Map<String, String> targetInformationMap = targetInformation.toMap();
+		final Map<String, String> rbacRuleTargetInformationMap = rbacRule.getTargetInformation().toMap();
+		for (final Map.Entry<String, String> targetInfo : targetInformationMap.entrySet()) {
+			final String key = targetInfo.getKey();
+			final String targetInfoValue = targetInfo.getValue();
+			final String rbacRuleValue = rbacRuleTargetInformationMap.get(key);
 
-      if (!checkRegexStringMatch(rbacRuleValue, targetInfoValue)) {
-        return false;
-      }
-    }
-    return true;
-  }
+			if (!checkRegexStringMatch(rbacRuleValue, targetInfoValue)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-  private boolean checkRegexStringMatch(final String actualString, final String requiredString) {
-    if (requiredString == null) {
-      return true;
-    }
-    if (actualString == null) {
-      return false;
-    }
-    return actualString.equals("*") || requiredString.matches(actualString.replaceAll("\\*", "[A-Za-z0-9.]+"));
-  }
+	private boolean checkRegexStringMatch(final String actualString, final String requiredString) {
+		if (requiredString == null) {
+			return true;
+		}
+		if (actualString == null) {
+			return false;
+		}
+		return actualString.equals("*") || requiredString.matches(actualString.replaceAll("\\*", "[A-Za-z0-9.]+"));
+	}
 }

@@ -25,27 +25,25 @@
 package org.eclipse.basyx.extensions.shared.authorization.internal;
 
 /**
- * Exception that is thrown when an authorization decision point
- * decides to inhibit some action.
+ * Exception that is thrown when an authorization decision point decides to inhibit some action.
  *
  * @author wege
  */
 public abstract class InhibitException extends Exception {
-  protected InhibitException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
+	protected InhibitException(final String message, final Throwable cause) {
+		super(message, cause);
+	}
 
-  protected InhibitException(final String message) {
-    super(message);
-  }
+	protected InhibitException(final String message) {
+		super(message);
+	}
 
-  /**
-   * Clones the exception while replacing the submodel id in the exception by the given short id of the submodel.
-   * This is used in order to not leak information about decision criteria when the requester of a protected resource only passed the short id.
-   *
-   * @param smIdShortPath
-   *                      the short id of the submodel.
-   * @return the new exception
-   */
-  public abstract InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath);
+	/**
+	 * Clones the exception while replacing the submodel id in the exception by the given short id of the submodel. This is used in order to not leak information about decision criteria when the requester of a protected resource only passed
+	 * the short id.
+	 *
+	 * @param smIdShortPath the short id of the submodel.
+	 * @return the new exception
+	 */
+	public abstract InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath);
 }

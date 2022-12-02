@@ -37,71 +37,56 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author wege
  */
 public class BaSyxObjectTargetInformation implements TargetInformation {
-  private String aasId;
-  private String smId;
-  private String smElIdShortPath;
+	private String aasId;
+	private String smId;
+	private String smElIdShortPath;
 
-  public String getAasId() {
-    return aasId;
-  }
+	public String getAasId() {
+		return aasId;
+	}
 
-  public String getSmId() {
-    return smId;
-  }
+	public String getSmId() {
+		return smId;
+	}
 
-  public String getSmElIdShortPath() {
-    return smElIdShortPath;
-  }
+	public String getSmElIdShortPath() {
+		return smElIdShortPath;
+	}
 
-  @JsonCreator
-  public BaSyxObjectTargetInformation(final @JsonProperty("aasId") String aasId, final @JsonProperty("smId") String smId, final @JsonProperty("smElIdShortPath") String smElIdShortPath) {
-    this.aasId = aasId;
-    this.smId = smId;
-    this.smElIdShortPath = smElIdShortPath;
-  }
+	@JsonCreator public BaSyxObjectTargetInformation(final @JsonProperty("aasId") String aasId, final @JsonProperty("smId") String smId, final @JsonProperty("smElIdShortPath") String smElIdShortPath) {
+		this.aasId = aasId;
+		this.smId = smId;
+		this.smElIdShortPath = smElIdShortPath;
+	}
 
-  @Override
-  public Map<String, String> toMap() {
-    final Map<String, String> map = new HashMap<>();
-    map.put("aasId", aasId);
-    map.put("smId", smId);
-    map.put("smElIdShortPath", smElIdShortPath);
-    return map;
-  }
+	@Override public Map<String, String> toMap() {
+		final Map<String, String> map = new HashMap<>();
+		map.put("aasId", aasId);
+		map.put("smId", smId);
+		map.put("smElIdShortPath", smElIdShortPath);
+		return map;
+	}
 
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o)
-      return true;
+	@Override public boolean equals(final Object o) {
+      if (this == o) {
+        return true;
+      }
 
-    if (!(o instanceof BaSyxObjectTargetInformation))
-      return false;
+      if (!(o instanceof BaSyxObjectTargetInformation)) {
+        return false;
+      }
 
-    final BaSyxObjectTargetInformation other = (BaSyxObjectTargetInformation) o;
+		final BaSyxObjectTargetInformation other = (BaSyxObjectTargetInformation) o;
 
-    return new EqualsBuilder()
-        .append(getAasId(), other.getAasId())
-        .append(getSmId(), other.getSmId())
-        .append(getSmElIdShortPath(), other.getSmElIdShortPath())
-        .isEquals();
-  }
+		return new EqualsBuilder().append(getAasId(), other.getAasId()).append(getSmId(), other.getSmId()).append(getSmElIdShortPath(), other.getSmElIdShortPath()).isEquals();
+	}
 
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(17, 37)
-        .append(getAasId())
-        .append(getSmId())
-        .append(getSmElIdShortPath())
-        .toHashCode();
-  }
+	@Override public int hashCode() {
+		return new HashCodeBuilder(17, 37).append(getAasId()).append(getSmId()).append(getSmElIdShortPath()).toHashCode();
+	}
 
-  @Override
-  public String toString() {
-    return new StringBuilder("BaSyxObjectTargetInformation{")
-        .append("aasId='").append(aasId).append('\'')
-        .append(", smId='").append(smId).append('\'')
-        .append(", smElIdShortPath='").append(smElIdShortPath).append('\'')
-        .append('}')
-        .toString();
-  }
+	@Override public String toString() {
+		return new StringBuilder("BaSyxObjectTargetInformation{").append("aasId='").append(aasId).append('\'').append(", smId='").append(smId).append('\'').append(", smElIdShortPath='").append(smElIdShortPath).append('\'').append('}')
+				.toString();
+	}
 }

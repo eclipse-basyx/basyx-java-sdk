@@ -52,11 +52,7 @@ public class RbacRuleSet {
 		return this.rules.remove(rbacRule);
 	}
 
-	@Override
-	public String toString() {
-		return new StringBuilder("RbacRuleSet{")
-				.append("rules=").append(rules)
-				.append('}')
-				.toString();
+	@Override public String toString() {
+		return new StringBuilder("RbacRuleSet{").append("rules=").append(rules).append('}').toString();
 	}
 }

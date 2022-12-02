@@ -32,16 +32,14 @@ import java.util.List;
  * @author wege
  */
 public class SimpleRbacHelper {
-  private SimpleRbacHelper() {}
+	private SimpleRbacHelper() {
+	}
 
-  public static <SubjectInformationType> void checkRule(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator, final SubjectInformationType subjectInformation, final String action, final TargetInformation targetInformation) throws SimpleRbacInhibitException {
-    final List<String> roles = roleAuthenticator.getRoles(subjectInformation);
-    if (!rbacRuleChecker.checkRbacRuleIsSatisfied(
-        roles,
-        action,
-        targetInformation
-    )) {
-      throw new SimpleRbacInhibitException(roles, action, targetInformation);
-    }
-  }
+	public static <SubjectInformationType> void checkRule(final IRbacRuleChecker rbacRuleChecker, final IRoleAuthenticator<SubjectInformationType> roleAuthenticator, final SubjectInformationType subjectInformation, final String action,
+			final TargetInformation targetInformation) throws SimpleRbacInhibitException {
+		final List<String> roles = roleAuthenticator.getRoles(subjectInformation);
+		if (!rbacRuleChecker.checkRbacRuleIsSatisfied(roles, action, targetInformation)) {
+			throw new SimpleRbacInhibitException(roles, action, targetInformation);
+		}
+	}
 }

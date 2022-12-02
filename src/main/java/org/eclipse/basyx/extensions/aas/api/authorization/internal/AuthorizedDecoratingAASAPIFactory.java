@@ -33,7 +33,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInform
 
 /**
  * Api provider for constructing a new AAS API that is authorized
- * 
+ *
  * @author espen, wege
  */
 public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implements IAASAPIFactory {
@@ -41,11 +41,8 @@ public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implement
 	protected final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedDecoratingAASAPIFactory(
-			final IAASAPIFactory factoryToBeDecorated,
-			final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
+	public AuthorizedDecoratingAASAPIFactory(final IAASAPIFactory factoryToBeDecorated, final IAASAPIAuthorizer<SubjectInformationType> aasAPIAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.apiFactory = factoryToBeDecorated;
 		this.aasAPIAuthorizer = aasAPIAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
@@ -54,20 +51,12 @@ public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implement
 	/**
 	 * @deprecated please use {@link AuthorizedDecoratingAASAPIFactory#AuthorizedDecoratingAASAPIFactory(IAASAPIFactory, IAASAPIAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
 	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedDecoratingAASAPIFactory(
-			final IAASAPIFactory factoryToBeDecorated
-	) {
-		this(
-				factoryToBeDecorated,
-				(IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
+	@Deprecated @SuppressWarnings("unchecked") public AuthorizedDecoratingAASAPIFactory(final IAASAPIFactory factoryToBeDecorated) {
+		this(factoryToBeDecorated, (IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override
-	public IAASAPI getAASApi(final AssetAdministrationShell aas) {
+	@Override public IAASAPI getAASApi(final AssetAdministrationShell aas) {
 		return new AuthorizedAASAPI<>(apiFactory.create(aas), aasAPIAuthorizer, subjectInformationProvider);
 	}
 }

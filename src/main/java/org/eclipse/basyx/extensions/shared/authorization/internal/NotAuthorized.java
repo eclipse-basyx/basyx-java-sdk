@@ -29,33 +29,32 @@ import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
 /**
- * The unchecked exception that gets thrown when an action must not be conducted due to lacking
- * authorization. This can be used to translate/further propagate a checked {@link InhibitException}.
+ * The unchecked exception that gets thrown when an action must not be conducted due to lacking authorization. This can be used to translate/further propagate a checked {@link InhibitException}.
  *
  * @author wege
  */
 public class NotAuthorized extends ProviderException {
-  /**
-   * Version information for serialized instances
-   */
-  private static final long serialVersionUID = 1L;
+	/**
+	 * Version information for serialized instances
+	 */
+	private static final long serialVersionUID = 1L;
 
-  /**
-   * Constructor
-   */
-  public NotAuthorized(final String msg) {
-    super(msg);
-  }
+	/**
+	 * Constructor
+	 */
+	public NotAuthorized(final String msg) {
+		super(msg);
+	}
 
-  public NotAuthorized(final Exception e) {
-    super(e);
-  }
+	public NotAuthorized(final Exception e) {
+		super(e);
+	}
 
-  public NotAuthorized(final List<Message> msgs) {
-    super(msgs);
-  }
+	public NotAuthorized(final List<Message> msgs) {
+		super(msgs);
+	}
 
-  public NotAuthorized() {
-    this("not authorized");
-  }
+	public NotAuthorized() {
+		this("not authorized");
+	}
 }

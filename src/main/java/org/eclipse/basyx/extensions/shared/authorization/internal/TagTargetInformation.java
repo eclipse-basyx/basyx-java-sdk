@@ -37,51 +37,41 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author wege
  */
 public class TagTargetInformation implements TargetInformation {
-  private String tag;
+	private String tag;
 
-  public String getTag() {
-    return tag;
-  }
+	public String getTag() {
+		return tag;
+	}
 
-  @JsonCreator
-  public TagTargetInformation(final @JsonProperty("tag") String tag) {
-    this.tag = tag;
-  }
+	@JsonCreator public TagTargetInformation(final @JsonProperty("tag") String tag) {
+		this.tag = tag;
+	}
 
-  @Override
-  public Map<String, String> toMap() {
-    final Map<String, String> map = new HashMap<>();
-    map.put("tag", tag);
-    return map;
-  }
+	@Override public Map<String, String> toMap() {
+		final Map<String, String> map = new HashMap<>();
+		map.put("tag", tag);
+		return map;
+	}
 
-  @Override
-  public boolean equals(final Object o) {
-    if (this == o)
-      return true;
+	@Override public boolean equals(final Object o) {
+      if (this == o) {
+        return true;
+      }
 
-    if (!(o instanceof TagTargetInformation))
-      return false;
+      if (!(o instanceof TagTargetInformation)) {
+        return false;
+      }
 
-    final TagTargetInformation other = (TagTargetInformation) o;
+		final TagTargetInformation other = (TagTargetInformation) o;
 
-    return new EqualsBuilder()
-        .append(getTag(), other.getTag())
-        .isEquals();
-  }
+		return new EqualsBuilder().append(getTag(), other.getTag()).isEquals();
+	}
 
-  @Override
-  public int hashCode() {
-    return new HashCodeBuilder(17, 37)
-        .append(getTag())
-        .toHashCode();
-  }
+	@Override public int hashCode() {
+		return new HashCodeBuilder(17, 37).append(getTag()).toHashCode();
+	}
 
-  @Override
-  public String toString() {
-    return new StringBuilder("BaSyxObjectTargetInformation{")
-        .append("tag='").append(tag).append('\'')
-        .append('}')
-        .toString();
-  }
+	@Override public String toString() {
+		return new StringBuilder("BaSyxObjectTargetInformation{").append("tag='").append(tag).append('\'').append('}').toString();
+	}
 }

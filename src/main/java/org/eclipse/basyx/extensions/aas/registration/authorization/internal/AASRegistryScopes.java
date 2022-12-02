@@ -28,13 +28,11 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.authorized.internal.Gra
 import org.eclipse.basyx.extensions.aas.directory.tagged.authorized.internal.SimpleRbacTaggedDirectoryAuthorizer;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}.
- * Used in {@link SimpleRbacAASRegistryAuthorizer}, {@link GrantedAuthorityAASRegistryAuthorizer},
- * {@link SimpleRbacTaggedDirectoryAuthorizer}, {@link GrantedAuthorityTaggedDirectoryAuthorizer}
+ * Constants for the permission scopes related to the {@link AuthorizedAASRegistry}. Used in {@link SimpleRbacAASRegistryAuthorizer}, {@link GrantedAuthorityAASRegistryAuthorizer}, {@link SimpleRbacTaggedDirectoryAuthorizer}, {@link
+ * GrantedAuthorityTaggedDirectoryAuthorizer}
  *
  * @author pneuschwander, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @see <a href= "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
  */
 public final class AASRegistryScopes {
 	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-registry:read";

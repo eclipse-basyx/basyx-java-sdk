@@ -28,18 +28,16 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
- * Interface for a GrantedAuthority (as defined by Spring Security) provider that should be used in the context of
- * authorization by authenticating some request.
+ * Interface for a GrantedAuthority (as defined by Spring Security) provider that should be used in the context of authorization by authenticating some request.
  *
  * @author wege
  */
 public interface IGrantedAuthorityAuthenticator<SubjectInformationType> {
-  /**
-   * Fetches the authorities from the provider.
-   *
-   * @param subjectInformation
-   *                           the information of the requester from where the authorities can be extracted, e.g. a JWT.
-   * @return a collection of authorities
-   */
-  public Collection<? extends GrantedAuthority> getAuthorities(final SubjectInformationType subjectInformation);
+	/**
+	 * Fetches the authorities from the provider.
+	 *
+	 * @param subjectInformation the information of the requester from where the authorities can be extracted, e.g. a JWT.
+	 * @return a collection of authorities
+	 */
+	public Collection<? extends GrantedAuthority> getAuthorities(final SubjectInformationType subjectInformation);
 }

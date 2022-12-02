@@ -53,10 +53,10 @@ import org.mockito.junit.MockitoJUnitRunner;
  * Tests authorization with the AuthorizedSubmodelAggregator
  *
  * @author espen, wege
- *
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
+
   @Mock
   private ISubmodelAggregator apiMock;
   private AuthorizedSubmodelAggregator<?> testSubject;
@@ -65,9 +65,12 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
   protected static ISubmodelAPI submodelAPI;
   private static final String SUBMODEL_IDSHORT = "submodelIdShort";
   private static final String SUBMODEL_ID = "submodelId";
-  private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
+  private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI,
+      SUBMODEL_ID);
 
-  private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(AuthorizedSubmodelAggregator.READ_AUTHORITY, AuthorizedSubmodelAggregator.WRITE_AUTHORITY, null);
+  private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(
+      AuthorizedSubmodelAggregator.READ_AUTHORITY, AuthorizedSubmodelAggregator.WRITE_AUTHORITY,
+      null);
 
   @BeforeClass
   public static void setUpClass() {

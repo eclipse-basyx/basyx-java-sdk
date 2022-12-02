@@ -33,10 +33,10 @@ import java.util.Map;
  * @author wege
  */
 public interface TargetInformation extends Serializable {
-  /**
-   * Converts the object to a new String map, containing the key-value pairs of the object.
-   *
-   * @return the new Map
-   */
-  public Map<String, String> toMap();
+	/**
+	 * Converts the object to a new String map, containing the key-value pairs of the object.
+	 *
+	 * @return the new Map
+	 */
+	public Map<String, String> toMap();
 }

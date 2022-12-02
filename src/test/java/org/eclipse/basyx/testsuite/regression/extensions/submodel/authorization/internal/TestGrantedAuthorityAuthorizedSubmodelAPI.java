@@ -53,10 +53,10 @@ import org.mockito.junit.MockitoJUnitRunner;
  * Tests authorization with the AuthorizedSubmodelAggregator
  *
  * @author espen, wege
- *
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestGrantedAuthorityAuthorizedSubmodelAPI {
+
   @Mock
   private ISubmodelAPI apiMock;
   private AuthorizedSubmodelAPI<?> authorizedSubmodelAPI;
@@ -64,7 +64,8 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   protected static Submodel submodel;
   private static final String SUBMODEL_IDSHORT = "submodelIdShort";
   private static final String SUBMODEL_ID = "submodelId";
-  private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
+  private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI,
+      SUBMODEL_ID);
   private static final String PROPERTY_IDSHORT = "testProp";
   private static final boolean PROPERTY_VALUE = true;
   private static final ISubmodelElement PROPERTY = new Property(PROPERTY_IDSHORT, PROPERTY_VALUE);
@@ -72,7 +73,9 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   private static final String ASYNC_REQUEST_ID = "requestId";
   private static final IOperation OPERATION = new Operation(OPERATION_IDSHORT);
 
-  private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(AuthorizedSubmodelAPI.READ_AUTHORITY, AuthorizedSubmodelAPI.WRITE_AUTHORITY, AuthorizedSubmodelAPI.EXECUTE_AUTHORITY);
+  private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(
+      AuthorizedSubmodelAPI.READ_AUTHORITY, AuthorizedSubmodelAPI.WRITE_AUTHORITY,
+      AuthorizedSubmodelAPI.EXECUTE_AUTHORITY);
 
   @BeforeClass
   public static void setUpClass() {
@@ -219,7 +222,8 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
     securityContextProvider.setSecurityContextWithReadAuthority();
 
     Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
-    final ISubmodelElement returnedProperty = authorizedSubmodelAPI.getSubmodelElement(PROPERTY_IDSHORT);
+    final ISubmodelElement returnedProperty = authorizedSubmodelAPI
+        .getSubmodelElement(PROPERTY_IDSHORT);
     assertEquals(PROPERTY, returnedProperty);
   }
 
@@ -271,7 +275,8 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
     Mockito.when(apiMock.getSubmodelElements()).thenReturn(expectedElements);
     Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
 
-    final Collection<ISubmodelElement> returnedElements = authorizedSubmodelAPI.getSubmodelElements();
+    final Collection<ISubmodelElement> returnedElements = authorizedSubmodelAPI
+        .getSubmodelElements();
     assertEquals(expectedElements, returnedElements);
   }
 
@@ -361,9 +366,11 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
   @Test
   public void givenPrincipalHasReadAuthority_whenGetOperationResult_thenInvocationIsForwarded() {
     securityContextProvider.setSecurityContextWithReadAuthority();
-    Mockito.when(apiMock.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID)).thenReturn(PROPERTY_VALUE);
+    Mockito.when(apiMock.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID))
+        .thenReturn(PROPERTY_VALUE);
 
-    final Object returnedValue = authorizedSubmodelAPI.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID);
+    final Object returnedValue = authorizedSubmodelAPI
+        .getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID);
     assertEquals(PROPERTY_VALUE, returnedValue);
   }
 }

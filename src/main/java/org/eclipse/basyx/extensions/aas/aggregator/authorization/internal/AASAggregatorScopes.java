@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -25,12 +25,10 @@
 package org.eclipse.basyx.extensions.aas.aggregator.authorization.internal;
 
 /**
- * Constants for the permission scopes related to the {@link AuthorizedAASAggregator}.
- * Used in {@link SimpleRbacAASAggregatorAuthorizer}, {@link GrantedAuthorityAASAggregatorAuthorizer}
+ * Constants for the permission scopes related to the {@link AuthorizedAASAggregator}. Used in {@link SimpleRbacAASAggregatorAuthorizer}, {@link GrantedAuthorityAASAggregatorAuthorizer}
  *
  * @author jungjan, fried, fischer, wege
- * @see <a href=
- *      "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
+ * @see <a href= "https://tools.ietf.org/html/rfc6749#section-3.3">https://tools.ietf.org/html/rfc6749#section-3.3</a>
  */
 public final class AASAggregatorScopes {
 	public static final String READ_SCOPE = "urn:org.eclipse.basyx:scope:aas-aggregator:read";

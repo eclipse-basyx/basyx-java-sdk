@@ -37,50 +37,38 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
- * Implementation for a role authenticator that reads from the security context
- * {@link SecurityContextHolder} and parses it according to an access token
- * (JSON Web Token) as handed out by Keycloak.
+ * Implementation for a role authenticator that reads from the security context {@link SecurityContextHolder} and parses it according to an access token (JSON Web Token) as handed out by Keycloak.
  *
  * @author wege
  */
 public class KeycloakRoleAuthenticator implements IRoleAuthenticator<Jwt> {
-  private static final Logger logger = LoggerFactory.getLogger(KeycloakRoleAuthenticator.class);
+	private static final Logger logger = LoggerFactory.getLogger(KeycloakRoleAuthenticator.class);
 
-  public KeycloakRoleAuthenticator() {}
+	public KeycloakRoleAuthenticator() {
+	}
 
-  @Override
-  public List<String> getRoles(Jwt subjectInformation) {
-    return Optional.ofNullable(subjectInformation)
-        .map(info -> new JwtAuthenticationToken(
-            subjectInformation
-        ))
-        .map(this::jwtStr2roles)
-        .orElse(new ArrayList<>(Collections.singletonList("anonymous")));
-  }
+	@Override public List<String> getRoles(Jwt subjectInformation) {
+		return Optional.ofNullable(subjectInformation).map(info -> new JwtAuthenticationToken(subjectInformation)).map(this::jwtStr2roles).orElse(new ArrayList<>(Collections.singletonList("anonymous")));
+	}
 
-  private List<String> jwtStr2roles(
-      JwtAuthenticationToken token
-  ) {
-      logger.info("jwtStr: {}", token.getToken().getTokenValue());
-      logger.info("jwt: {}", token.getTokenAttributes());
+	private List<String> jwtStr2roles(JwtAuthenticationToken token) {
+		logger.info("jwtStr: {}", token.getToken().getTokenValue());
+		logger.info("jwt: {}", token.getTokenAttributes());
 
-      try {
-        final Object realmAccessObject = token.getTokenAttributes().get("realm_access");
+		try {
+			final Object realmAccessObject = token.getTokenAttributes().get("realm_access");
 
-        final Map<?, ?> realmAccess = (Map<?, ?>) realmAccessObject;
+			final Map<?, ?> realmAccess = (Map<?, ?>) realmAccessObject;
 
-        final Object rolesObject = realmAccess.get("roles");
+			final Object rolesObject = realmAccess.get("roles");
 
-        if (rolesObject != null) {
-          final List<?> roles = (List<?>) rolesObject;
-          return roles
-              .stream()
-              .map(Object::toString)
-              .collect(Collectors.toList());
-        }
-      } catch (final Exception e) {
-        logger.error(e.getMessage(), e);
-      }
-      return new ArrayList<>(Collections.singletonList("anonymous"));
-    }
+			if (rolesObject != null) {
+				final List<?> roles = (List<?>) rolesObject;
+				return roles.stream().map(Object::toString).collect(Collectors.toList());
+			}
+		} catch (final Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return new ArrayList<>(Collections.singletonList("anonymous"));
+	}
 }

@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
  * Implementation variant for the SubmodelAggregator that authorized each access
  *
  * @author espen, wege
- *
  */
 public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISubmodelAggregator {
 	private static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
@@ -65,45 +64,29 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	protected final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer;
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
-	public AuthorizedSubmodelAggregator(
-			final IAssetAdministrationShell aas,
-			final ISubmodelAggregator decoratedSubmodelAggregator,
-			final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
+	public AuthorizedSubmodelAggregator(final IAssetAdministrationShell aas, final ISubmodelAggregator decoratedSubmodelAggregator, final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.aas = aas;
 		this.decoratedSubmodelAggregator = decoratedSubmodelAggregator;
 		this.submodelAggregatorAuthorizer = submodelAggregatorAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
 	}
 
-	public AuthorizedSubmodelAggregator(final ISubmodelAggregator decoratedSubmodelAggregator, final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer, final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
-		this(
-			null,
-			decoratedSubmodelAggregator,
-			submodelAggregatorAuthorizer,
-			subjectInformationProvider
-		);
+	public AuthorizedSubmodelAggregator(final ISubmodelAggregator decoratedSubmodelAggregator, final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer,
+			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
+		this(null, decoratedSubmodelAggregator, submodelAggregatorAuthorizer, subjectInformationProvider);
 	}
 
 	/**
-	 * @deprecated Please use
-	 * {@link AuthorizedSubmodelAggregator#AuthorizedSubmodelAggregator(IAssetAdministrationShell, ISubmodelAggregator, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)} or
-	 * {@link AuthorizedSubmodelAggregator#AuthorizedSubmodelAggregator(ISubmodelAggregator, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)}
-	 * instead for more explicit parametrization.
+	 * @deprecated Please use {@link AuthorizedSubmodelAggregator#AuthorizedSubmodelAggregator(IAssetAdministrationShell, ISubmodelAggregator, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)} or {@link
+	 * AuthorizedSubmodelAggregator#AuthorizedSubmodelAggregator(ISubmodelAggregator, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
 	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedSubmodelAggregator(final ISubmodelAggregator decoratedSubmodelAggregator) {
-		this(
-			decoratedSubmodelAggregator,
-			(ISubmodelAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-			(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
+	@Deprecated @SuppressWarnings("unchecked") public AuthorizedSubmodelAggregator(final ISubmodelAggregator decoratedSubmodelAggregator) {
+		this(decoratedSubmodelAggregator, (ISubmodelAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
+				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override
-	public Collection<ISubmodel> getSubmodelList() {
+	@Override public Collection<ISubmodel> getSubmodelList() {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAggregator.getSubmodelList();
 		}
@@ -128,16 +111,11 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	private Collection<IIdentifier> getSubmodelIdentifierList() throws InhibitException {
-		final Collection<ISubmodel> authorizedSubmodelList = submodelAggregatorAuthorizer.authorizeGetSubmodelList(
-				subjectInformationProvider.get(),
-				aas,
-				decoratedSubmodelAggregator::getSubmodelList
-		);
+		final Collection<ISubmodel> authorizedSubmodelList = submodelAggregatorAuthorizer.authorizeGetSubmodelList(subjectInformationProvider.get(), aas, decoratedSubmodelAggregator::getSubmodelList);
 		return authorizedSubmodelList.stream().map(IIdentifiable::getIdentification).collect(Collectors.toList());
 	}
 
-	@Override
-	public ISubmodel getSubmodel(final IIdentifier identifier) throws ResourceNotFoundException {
+	@Override public ISubmodel getSubmodel(final IIdentifier identifier) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAggregator.getSubmodel(identifier);
 		}
@@ -150,16 +128,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected ISubmodel authorizeGetSubmodel(final IIdentifier smId) throws ResourceNotFoundException, InhibitException {
-		return submodelAggregatorAuthorizer.authorizeGetSubmodel(
-				subjectInformationProvider.get(),
-				aas,
-				smId,
-				() -> decoratedSubmodelAggregator.getSubmodel(smId)
-		);
+		return submodelAggregatorAuthorizer.authorizeGetSubmodel(subjectInformationProvider.get(), aas, smId, () -> decoratedSubmodelAggregator.getSubmodel(smId));
 	}
 
-	@Override
-	public ISubmodel getSubmodelbyIdShort(final String smIdShortPath) throws ResourceNotFoundException {
+	@Override public ISubmodel getSubmodelbyIdShort(final String smIdShortPath) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAggregator.getSubmodelbyIdShort(smIdShortPath);
 		}
@@ -172,16 +144,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected ISubmodel authorizeGetSubmodelbyIdShort(final String smIdShortPath) throws ResourceNotFoundException, InhibitException {
-		return submodelAggregatorAuthorizer.authorizeGetSubmodelbyIdShort(
-				subjectInformationProvider.get(),
-				aas,
-				smIdShortPath,
-				() -> decoratedSubmodelAggregator.getSubmodelbyIdShort(smIdShortPath)
-		);
+		return submodelAggregatorAuthorizer.authorizeGetSubmodelbyIdShort(subjectInformationProvider.get(), aas, smIdShortPath, () -> decoratedSubmodelAggregator.getSubmodelbyIdShort(smIdShortPath));
 	}
 
-	@Override
-	public ISubmodelAPI getSubmodelAPIById(final IIdentifier identifier) throws ResourceNotFoundException {
+	@Override public ISubmodelAPI getSubmodelAPIById(final IIdentifier identifier) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAggregator.getSubmodelAPIById(identifier);
 		}
@@ -194,16 +160,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected ISubmodelAPI authorizeGetSubmodelAPIById(final IIdentifier smId) throws ResourceNotFoundException, InhibitException {
-		return submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(
-				subjectInformationProvider.get(),
-				aas,
-				smId,
-				() -> decoratedSubmodelAggregator.getSubmodelAPIById(smId)
-		);
+		return submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(subjectInformationProvider.get(), aas, smId, () -> decoratedSubmodelAggregator.getSubmodelAPIById(smId));
 	}
 
-	@Override
-	public ISubmodelAPI getSubmodelAPIByIdShort(final String smIdShortPath) throws ResourceNotFoundException {
+	@Override public ISubmodelAPI getSubmodelAPIByIdShort(final String smIdShortPath) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAggregator.getSubmodelAPIByIdShort(smIdShortPath);
 		}
@@ -218,31 +178,20 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	protected ISubmodelAPI authorizeGetSubmodelAPIByIdShort(final String smIdShortPath) throws ResourceNotFoundException, InhibitException {
 		try {
 			try {
-				return submodelAggregatorAuthorizer.authorizeGetSubmodelAPIByIdShort(
-						subjectInformationProvider.get(),
-						aas,
-						smIdShortPath,
-						() -> decoratedSubmodelAggregator.getSubmodelAPIByIdShort(smIdShortPath)
-				);
+				return submodelAggregatorAuthorizer.authorizeGetSubmodelAPIByIdShort(subjectInformationProvider.get(), aas, smIdShortPath, () -> decoratedSubmodelAggregator.getSubmodelAPIByIdShort(smIdShortPath));
 			} catch (final InhibitException inhibitException) {
 				throw inhibitException.reduceSmIdToSmIdShortPath(smIdShortPath);
 			}
 		} catch (final ResourceNotFoundException resourceNotFoundException) {
 			// if the resource does not exist, check if we have permission to read every submodel,
 			// if no, the authorization will throw an InhibitException, otherwise we throw the ResourceNotFoundException
-			submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(
-					subjectInformationProvider.get(),
-					aas,
-					new ModelUrn("*"),
-					() -> null
-			);
+			submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(subjectInformationProvider.get(), aas, new ModelUrn("*"), () -> null);
 
 			throw resourceNotFoundException;
 		}
 	}
 
-	@Override
-	public void createSubmodel(final Submodel submodel) {
+	@Override public void createSubmodel(final Submodel submodel) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAggregator.createSubmodel(submodel);
 			return;
@@ -257,15 +206,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected void authorizeCreateSubmodel(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorAuthorizer.authorizeCreateSubmodel(
-				subjectInformationProvider.get(),
-				aas,
-				smId
-		);
+		submodelAggregatorAuthorizer.authorizeCreateSubmodel(subjectInformationProvider.get(), aas, smId);
 	}
 
-	@Override
-	public void createSubmodel(final ISubmodelAPI submodelAPI) {
+	@Override public void createSubmodel(final ISubmodelAPI submodelAPI) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAggregator.createSubmodel(submodelAPI);
 			return;
@@ -281,15 +225,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	protected void authorizeCreateSubmodel(final ISubmodelAPI submodelAPI) throws InhibitException {
 		final IIdentifier smId = Optional.ofNullable(submodelAPI).map(ISubmodelAPI::getSubmodel).map(IIdentifiable::getIdentification).orElse(null);
-		submodelAggregatorAuthorizer.authorizeCreateSubmodel(
-				subjectInformationProvider.get(),
-				aas,
-				smId
-		);
+		submodelAggregatorAuthorizer.authorizeCreateSubmodel(subjectInformationProvider.get(), aas, smId);
 	}
 
-	@Override
-	public void updateSubmodel(final Submodel submodel) throws ResourceNotFoundException {
+	@Override public void updateSubmodel(final Submodel submodel) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAggregator.updateSubmodel(submodel);
 			return;
@@ -305,15 +244,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected void authorizeUpdateSubmodel(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorAuthorizer.authorizeUpdateSubmodel(
-				subjectInformationProvider.get(),
-				aas,
-				smId
-		);
+		submodelAggregatorAuthorizer.authorizeUpdateSubmodel(subjectInformationProvider.get(), aas, smId);
 	}
 
-	@Override
-	public void deleteSubmodelByIdentifier(final IIdentifier identifier) {
+	@Override public void deleteSubmodelByIdentifier(final IIdentifier identifier) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAggregator.deleteSubmodelByIdentifier(identifier);
 			return;
@@ -328,15 +262,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected void authorizeDeleteSubmodelByIdentifier(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(
-				subjectInformationProvider.get(),
-				aas,
-				smId
-		);
+		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(subjectInformationProvider.get(), aas, smId);
 	}
 
-	@Override
-	public void deleteSubmodelByIdShort(final String smIdShortPath) {
+	@Override public void deleteSubmodelByIdShort(final String smIdShortPath) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAggregator.deleteSubmodelByIdShort(smIdShortPath);
 			return;
@@ -353,11 +282,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	protected void authorizeDeleteSubmodelByIdShort(final String smIdShortPath) throws InhibitException {
 		final ISubmodel sm = getSmUnsecured(smIdShortPath);
 		final IIdentifier smId = getSmIdUnsecured(sm);
-		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(
-				subjectInformationProvider.get(),
-				aas,
-				smId
-		);
+		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(subjectInformationProvider.get(), aas, smId);
 	}
 
 	private ISubmodel getSmUnsecured(final String smIdShortPath) throws ResourceNotFoundException {
