@@ -2,7 +2,7 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
-import org.eclipse.basyx.extensions.shared.authorization.internal.SecurityContextAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.SecurityContextAuthorizer;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**

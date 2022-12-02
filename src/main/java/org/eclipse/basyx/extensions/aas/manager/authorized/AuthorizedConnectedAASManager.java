@@ -26,7 +26,7 @@ package org.eclipse.basyx.extensions.aas.manager.authorized;
 
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AuthorizedAASRegistryProxy;
+import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAASRegistryProxy;
 import org.eclipse.basyx.vab.protocol.http.connector.IAuthorizationSupplier;
 import org.eclipse.basyx.vab.protocol.https.HTTPSConnectorProvider;
 

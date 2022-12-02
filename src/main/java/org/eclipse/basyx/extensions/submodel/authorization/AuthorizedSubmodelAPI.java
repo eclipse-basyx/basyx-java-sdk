@@ -2,7 +2,7 @@ package org.eclipse.basyx.extensions.submodel.authorization;
 
 import java.util.Collection;
 
-import org.eclipse.basyx.extensions.shared.authorization.internal.SecurityContextAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.SecurityContextAuthorizer;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;

@@ -29,7 +29,7 @@ import java.util.List;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.extensions.shared.authorization.internal.SecurityContextAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.SecurityContextAuthorizer;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.springframework.security.core.Authentication;

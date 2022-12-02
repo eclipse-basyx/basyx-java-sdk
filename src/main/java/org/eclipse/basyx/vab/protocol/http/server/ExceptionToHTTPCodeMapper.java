@@ -26,7 +26,6 @@ package org.eclipse.basyx.vab.protocol.http.server;
 
 import java.util.List;
 
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
@@ -52,8 +51,6 @@ public class ExceptionToHTTPCodeMapper {
 
 		if (e instanceof MalformedRequestException) {
 			return 400;
-		} else if (e instanceof NotAuthorized) {
-			return 403;
 		} else if (e instanceof ResourceAlreadyExistsException) {
 			return 422;
 		} else if (e instanceof ResourceNotFoundException) {
@@ -75,8 +72,6 @@ public class ExceptionToHTTPCodeMapper {
 		switch (statusCode) {
 		case 400:
 			return new MalformedRequestException(text);
-		case 403:
-			return new NotAuthorized(text);
 		case 422:
 			return new ResourceAlreadyExistsException(text);
 		case 404:
@@ -99,8 +94,6 @@ public class ExceptionToHTTPCodeMapper {
 		switch (statusCode) {
 		case 400:
 			return new MalformedRequestException(messages);
-		case 403:
-			return new NotAuthorized(messages);
 		case 422:
 			return new ResourceAlreadyExistsException(messages);
 		case 404:
