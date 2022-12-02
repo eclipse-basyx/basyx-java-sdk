@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.aas.api.authorization;
+package org.eclipse.basyx.testsuite.regression.extensions.aas.api.authorization.internal;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,7 +45,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
-import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
+import org.eclipse.basyx.testsuite.regression.extensions.shared.internal.KeycloakAuthenticationContextProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

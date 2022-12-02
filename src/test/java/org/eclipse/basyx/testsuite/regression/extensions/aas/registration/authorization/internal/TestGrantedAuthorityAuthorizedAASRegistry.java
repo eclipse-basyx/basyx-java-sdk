@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.authorization;
+package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.authorization.internal;
 
 import java.util.Collections;
 import java.util.List;

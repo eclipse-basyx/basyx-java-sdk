@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.submodel.authorization;
+package org.eclipse.basyx.testsuite.regression.extensions.submodel.authorization.internal;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,7 +39,7 @@ import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
-import org.eclipse.basyx.testsuite.regression.extensions.shared.AuthorizationContextProvider;
+import org.eclipse.basyx.testsuite.regression.extensions.shared.internal.AuthorizationContextProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

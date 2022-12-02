@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.authorization;
+package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.authorization.internal;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +42,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
 import org.eclipse.basyx.extensions.shared.authorization.internal.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
-import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
+import org.eclipse.basyx.testsuite.regression.extensions.shared.internal.KeycloakAuthenticationContextProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.shared;
+package org.eclipse.basyx.testsuite.regression.extensions.shared.internal;
 
 import java.io.IOException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.BaSyxObjectTargetInformation;
@@ -37,7 +37,8 @@ public class TestRbacRuleSetDeserializer {
   @Test
   public void test() throws IOException {
     final RbacRuleSetDeserializer rbacRuleSetDeserializer = new RbacRuleSetDeserializer((objectMapper) -> {});
-    final RbacRuleSet rbacRuleSet = rbacRuleSetDeserializer.fromFile("/authorization/rbac_rules.json");
+    final RbacRuleSet rbacRuleSet = rbacRuleSetDeserializer.fromFile(
+        "/authorization/internal/rbac_rules.json");
     Assert.assertEquals(16, rbacRuleSet.getRules().size());
     Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule(
         "reader",

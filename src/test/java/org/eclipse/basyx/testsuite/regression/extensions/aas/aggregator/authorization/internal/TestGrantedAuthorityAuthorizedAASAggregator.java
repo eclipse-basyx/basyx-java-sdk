@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.authorization;
+package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.authorization.internal;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,12 +31,12 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.extensions.aas.aggregator.authorization.AuthorizedAASAggregator;
+import org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.AuthorizedAASAggregator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
-import org.eclipse.basyx.testsuite.regression.extensions.shared.AuthorizationContextProvider;
+import org.eclipse.basyx.testsuite.regression.extensions.shared.internal.AuthorizationContextProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

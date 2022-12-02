@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.authorization;
+package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.authorization.internal;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,8 +33,9 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorScopes;
-import org.eclipse.basyx.extensions.aas.aggregator.authorization.AuthorizedAASAggregator;
+import org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.AASAggregatorScopes;
+import org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.AuthorizedAASAggregator;
+import org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.SimpleRbacAASAggregatorAuthorizer;
 import org.eclipse.basyx.extensions.shared.authorization.internal.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.internal.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.KeycloakRoleAuthenticator;
@@ -45,7 +46,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRuleSet;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
-import org.eclipse.basyx.testsuite.regression.extensions.shared.KeycloakAuthenticationContextProvider;
+import org.eclipse.basyx.testsuite.regression.extensions.shared.internal.KeycloakAuthenticationContextProvider;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

@@ -22,7 +22,7 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.testsuite.regression.extensions.shared;
+package org.eclipse.basyx.testsuite.regression.extensions.shared.internal;
 
 import java.util.Collections;
 import org.eclipse.basyx.extensions.shared.authorization.internal.BaSyxObjectTargetInformation;
