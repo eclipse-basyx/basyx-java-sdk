@@ -75,6 +75,7 @@ public class Property extends DataElement implements IProperty {
 	public Property(String idShort, ValueType valueType) {
 		super(idShort);
 		setValueType(valueType);
+		setValue(null);
 		setIdShort(idShort);
 
 		// Add model type
@@ -119,6 +120,11 @@ public class Property extends DataElement implements IProperty {
 
 		Property facade = new Property();
 		facade.setMap(obj);
+
+		if (facade.get(VALUE) == null) {
+			facade.setValue(null);
+		}
+
 		return facade;
 	}
 
