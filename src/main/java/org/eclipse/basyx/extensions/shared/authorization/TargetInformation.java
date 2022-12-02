@@ -24,19 +24,19 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import java.util.HashMap;
-import java.util.stream.Collectors;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Interface for target attributes for access control.
  *
  * @author wege
  */
-public abstract class TargetInformation extends HashMap<String, String> {
-  @Override
-  public String toString() {
-    return keySet().stream()
-        .map(key -> key + "=" + get(key))
-        .collect(Collectors.joining(",", "{", "}"));
-  }
+public interface TargetInformation extends Serializable {
+  /**
+   * Converts the object to a new String map, containing the key-value pairs of the object.
+   *
+   * @return the new Map
+   */
+  public Map<String, String> toMap();
 }

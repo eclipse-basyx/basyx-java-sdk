@@ -24,31 +24,84 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Specialization of {@link TargetInformation} that uses the aasId/smId/smElIdShortPath tuple.
  *
  * @author wege
  */
-public class BaSyxObjectTargetInformation extends TargetInformation {
-  public static final String AAS_ID_KEY = "aasId";
-  public static final String SM_ID_KEY = "smId";
-  public static final String SM_EL_ID_SHORT_PATH_KEY = "smElIdShortPath";
+public class BaSyxObjectTargetInformation implements TargetInformation {
+  private String aasId;
+  private String smId;
+  private String smElIdShortPath;
 
   public String getAasId() {
-    return get(AAS_ID_KEY);
+    return aasId;
   }
 
   public String getSmId() {
-    return get(SM_ID_KEY);
+    return smId;
   }
 
   public String getSmElIdShortPath() {
-    return get(SM_EL_ID_SHORT_PATH_KEY);
+    return smElIdShortPath;
   }
 
-  public BaSyxObjectTargetInformation(final String aasId, final String smId, final String smElIdShortPath) {
-    put(AAS_ID_KEY, aasId);
-    put(SM_ID_KEY, smId);
-    put(SM_EL_ID_SHORT_PATH_KEY, smElIdShortPath);
+  @JsonCreator
+  public BaSyxObjectTargetInformation(final @JsonProperty("aasId") String aasId, final @JsonProperty("smId") String smId, final @JsonProperty("smElIdShortPath") String smElIdShortPath) {
+    this.aasId = aasId;
+    this.smId = smId;
+    this.smElIdShortPath = smElIdShortPath;
+  }
+
+  @Override
+  public Map<String, String> toMap() {
+    final Map<String, String> map = new HashMap<>();
+    map.put("aasId", aasId);
+    map.put("smId", smId);
+    map.put("smElIdShortPath", smElIdShortPath);
+    return map;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o)
+      return true;
+
+    if (!(o instanceof BaSyxObjectTargetInformation))
+      return false;
+
+    final BaSyxObjectTargetInformation other = (BaSyxObjectTargetInformation) o;
+
+    return new EqualsBuilder()
+        .append(getAasId(), other.getAasId())
+        .append(getSmId(), other.getSmId())
+        .append(getSmElIdShortPath(), other.getSmElIdShortPath())
+        .isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+        .append(getAasId())
+        .append(getSmId())
+        .append(getSmElIdShortPath())
+        .toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new StringBuilder("BaSyxObjectTargetInformation{")
+        .append("aasId='").append(aasId).append('\'')
+        .append(", smId='").append(smId).append('\'')
+        .append(", smElIdShortPath='").append(smElIdShortPath).append('\'')
+        .append('}')
+        .toString();
   }
 }

@@ -24,17 +24,64 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Specialization of {@link TargetInformation} that uses the tag of tagged directories.
  *
  * @author wege
  */
-public class TagTargetInformation extends TargetInformation {
+public class TagTargetInformation implements TargetInformation {
+  private String tag;
+
   public String getTag() {
-    return get("tag");
+    return tag;
   }
 
-  public TagTargetInformation(final String tag) {
-    put("tag", tag);
+  @JsonCreator
+  public TagTargetInformation(final @JsonProperty("tag") String tag) {
+    this.tag = tag;
+  }
+
+  @Override
+  public Map<String, String> toMap() {
+    final Map<String, String> map = new HashMap<>();
+    map.put("tag", tag);
+    return map;
+  }
+
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o)
+      return true;
+
+    if (!(o instanceof TagTargetInformation))
+      return false;
+
+    final TagTargetInformation other = (TagTargetInformation) o;
+
+    return new EqualsBuilder()
+        .append(getTag(), other.getTag())
+        .isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 37)
+        .append(getTag())
+        .toHashCode();
+  }
+
+  @Override
+  public String toString() {
+    return new StringBuilder("BaSyxObjectTargetInformation{")
+        .append("tag='").append(tag).append('\'')
+        .append('}')
+        .toString();
   }
 }

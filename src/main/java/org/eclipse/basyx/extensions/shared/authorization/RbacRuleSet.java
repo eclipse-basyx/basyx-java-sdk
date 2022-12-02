@@ -24,18 +24,9 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A set of {@link RbacRule} used in authorization points or in policy information points.
@@ -43,8 +34,6 @@ import org.slf4j.LoggerFactory;
  * @author wege
  */
 public class RbacRuleSet {
-	private static final Logger logger = LoggerFactory.getLogger(RbacRuleSet.class);
-
 	private final Set<RbacRule> rules;
 
 	public RbacRuleSet() {
@@ -69,39 +58,5 @@ public class RbacRuleSet {
 				.append("rules=").append(rules)
 				.append('}')
 				.toString();
-	}
-
-	public static RbacRuleSet fromFile(final String filePath) {
-		if (filePath == null) {
-			throw new IllegalArgumentException("filePath must not be null");
-		}
-
-		logger.info("loading rbac rules...");
-		try (final InputStream inputStream = RbacRuleSet.class.getResourceAsStream(filePath)) {
-			if (inputStream == null) {
-				throw new FileNotFoundException("could not find " + filePath);
-			}
-			final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			final JsonReader jsonReader = new JsonReader(inputStreamReader);
-			final RbacRuleDTO[] rbacRuleDTOs = new Gson().fromJson(jsonReader, RbacRuleDTO[].class);
-
-			final RbacRule[] rbacRules = Arrays.stream(rbacRuleDTOs).map(RbacRuleSet::convertRbacRuleDTOToRbacRule).toArray(RbacRule[]::new);
-
-			logger.info("Read rbac rules: {}", Arrays.toString(rbacRules));
-			final RbacRuleSet rbacRuleSet = new RbacRuleSet();
-			Arrays.stream(rbacRules).forEach(rbacRuleSet::addRule);
-			return rbacRuleSet;
-		} catch (final IOException e) {
-			logger.error(e.getMessage(), e);
-		}
-		return new RbacRuleSet();
-	}
-
-	private static RbacRule convertRbacRuleDTOToRbacRule(final RbacRuleDTO dto) {
-		final TargetInformation targetInformation = new EmptyTargetInformation();
-
-		targetInformation.putAll(dto.getTargetInformation());
-
-		return new RbacRule(dto.getRole(), dto.getAction(), targetInformation);
 	}
 }

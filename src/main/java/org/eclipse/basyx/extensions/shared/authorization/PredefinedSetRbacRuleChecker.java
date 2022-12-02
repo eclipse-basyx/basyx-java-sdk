@@ -81,10 +81,12 @@ public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
   }
 
   private boolean checkRbacRuleMatchesTargetInformation(final RbacRule rbacRule, final TargetInformation targetInformation) {
-    for (final Map.Entry<String, String> targetInfo : targetInformation.entrySet()) {
+    final Map<String, String> targetInformationMap = targetInformation.toMap();
+    final Map<String, String> rbacRuleTargetInformationMap = rbacRule.getTargetInformation().toMap();
+    for (final Map.Entry<String, String> targetInfo : targetInformationMap.entrySet()) {
       final String key = targetInfo.getKey();
       final String targetInfoValue = targetInfo.getValue();
-      final String rbacRuleValue = rbacRule.getTargetInformation().get(key);
+      final String rbacRuleValue = rbacRuleTargetInformationMap.get(key);
 
       if (!checkRegexStringMatch(rbacRuleValue, targetInfoValue)) {
         return false;
