@@ -28,8 +28,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
-import org.eclipse.basyx.extensions.submodel.aggregator.authorization.AuthorizedSubmodelAggregator;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.submodel.aggregator.authorization.internal.AuthorizedSubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;

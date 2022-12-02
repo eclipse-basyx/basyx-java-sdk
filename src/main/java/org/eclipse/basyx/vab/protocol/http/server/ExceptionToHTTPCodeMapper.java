@@ -26,7 +26,7 @@ package org.eclipse.basyx.vab.protocol.http.server;
 
 import java.util.List;
 
-import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;

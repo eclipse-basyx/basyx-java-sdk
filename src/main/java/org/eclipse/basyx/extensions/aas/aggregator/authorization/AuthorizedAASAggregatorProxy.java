@@ -46,7 +46,7 @@ public class AuthorizedAASAggregatorProxy extends AASAggregatorProxy {
 	 *            Supplier for values to be placed in the HTTP Authorization request
 	 *            header
 	 */
-	public AuthorizedAASAggregatorProxy(final String aasAggregatorUrl, final IAuthorizationSupplier authorizationSupplier) {
+	public AuthorizedAASAggregatorProxy(String aasAggregatorUrl, IAuthorizationSupplier authorizationSupplier) {
 		super(new JSONConnector(new HTTPSConnector(harmonizeURL(aasAggregatorUrl), authorizationSupplier)));
 	}
 

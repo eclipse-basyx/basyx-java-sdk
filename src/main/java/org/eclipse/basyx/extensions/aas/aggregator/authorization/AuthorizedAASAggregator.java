@@ -24,203 +24,72 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
+/**
+ * An aggregator implementation that authorizes invocations before forwarding them to
+ * an underlying aggregator implementation.
+ * <p>
+ * Implementation Note:
+ * This implementation internally uses {@link SecurityContextHolder} to access the {@link SecurityContext} and its {@link Authentication}.
+ * For read operations we require Read Scope Authority, for mutations we require Write Scope Authority.
+ *
+ * @author jungjan, fried, fischer
+ * @see AASAggregatorScopes
+ */
 import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.ElevatedCodeAuthentication;
-import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
-import org.eclipse.basyx.extensions.shared.authorization.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.SecurityContextAuthorizer;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
-import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * An aggregator implementation that authorizes invocations before forwarding them to
- *  * an underlying aggregator implementation.
- *
- * @author wege
- */
-public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggregator {
+public class AuthorizedAASAggregator implements IAASAggregator {
 	private static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";
 	public static final String READ_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASAggregatorScopes.READ_SCOPE;
 	public static final String WRITE_AUTHORITY = SCOPE_AUTHORITY_PREFIX + AASAggregatorScopes.WRITE_SCOPE;
 
-	private static final Logger logger = LoggerFactory.getLogger(AuthorizedAASAggregator.class);
+	private final IAASAggregator aasAggregator;
+	private final SecurityContextAuthorizer authorizer = new SecurityContextAuthorizer();
 
-	protected final IAASAggregator decoratedAasAggregator;
-	protected final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer;
-	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
-
-	public AuthorizedAASAggregator(
-			final IAASAggregator decoratedAasAggregator,
-			final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
-		this.decoratedAasAggregator = decoratedAasAggregator;
-		this.aasAggregatorAuthorizer = aasAggregatorAuthorizer;
-		this.subjectInformationProvider = subjectInformationProvider;
-	}
-
-	/**
-	 * @deprecated Please use {@link AuthorizedAASAggregator#AuthorizedAASAggregator(IAASAggregator, IAASAggregatorAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator) {
-		this(
-			decoratedAasAggregator,
-			(IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-			(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
+	public AuthorizedAASAggregator(IAASAggregator aasAggregator) {
+		this.aasAggregator = aasAggregator;
 	}
 
 	@Override
 	public Collection<IAssetAdministrationShell> getAASList() {
-		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
-			return decoratedAasAggregator.getAASList();
-		}
-
-		try {
-			return authorizeGetAASList();
-		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
-		}
-	}
-
-	protected Collection<IAssetAdministrationShell> authorizeGetAASList() throws InhibitException {
-		return getAASIdentifierList().stream().map(identifier -> {
-			try {
-				return authorizeGetAAS(identifier);
-			} catch (final InhibitException e) {
-				// leave out that aas
-				logger.info(e.getMessage(), e);
-			}
-			return null;
-		}).filter(Objects::nonNull).collect(Collectors.toList());
-	}
-
-	private Collection<IIdentifier> getAASIdentifierList() throws InhibitException {
-		final Collection<IAssetAdministrationShell> authorizedAASList = aasAggregatorAuthorizer.authorizeGetAASList(
-				subjectInformationProvider.get(),
-				decoratedAasAggregator::getAASList
-		);
-		return authorizedAASList.stream().map(IIdentifiable::getIdentification).collect(Collectors.toList());
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		return aasAggregator.getAASList();
 	}
 
 	@Override
-	public IAssetAdministrationShell getAAS(final IIdentifier shellId) throws ResourceNotFoundException {
-		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
-			return decoratedAasAggregator.getAAS(shellId);
-		}
-
-		try {
-			return authorizeGetAAS(shellId);
-		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
-		}
-	}
-
-	protected IAssetAdministrationShell authorizeGetAAS(final IIdentifier aasId) throws InhibitException {
-		return aasAggregatorAuthorizer.authorizeGetAAS(
-				subjectInformationProvider.get(),
-				aasId,
-				() -> decoratedAasAggregator.getAAS(aasId)
-		);
+	public IAssetAdministrationShell getAAS(IIdentifier shellId) throws ResourceNotFoundException {
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		return aasAggregator.getAAS(shellId);
 	}
 
 	@Override
-	public IModelProvider getAASProvider(final IIdentifier shellId) throws ResourceNotFoundException {
-		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
-			return decoratedAasAggregator.getAASProvider(shellId);
-		}
-
-		try {
-			return authorizeGetAASProvider(shellId);
-		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
-		}
-	}
-
-	protected IModelProvider authorizeGetAASProvider(final IIdentifier aasId) throws ResourceNotFoundException, InhibitException {
-		return aasAggregatorAuthorizer.authorizeGetAASProvider(
-				subjectInformationProvider.get(),
-				aasId,
-				() -> decoratedAasAggregator.getAASProvider(aasId)
-		);
+	public IModelProvider getAASProvider(IIdentifier shellId) throws ResourceNotFoundException {
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		return aasAggregator.getAASProvider(shellId);
 	}
 
 	@Override
-	public void createAAS(final AssetAdministrationShell shell) {
-		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
-			decoratedAasAggregator.createAAS(shell);
-			return;
-		}
-
-		try {
-			authorizeCreateAAS(shell);
-		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
-		}
-		decoratedAasAggregator.createAAS(shell);
-	}
-
-	protected void authorizeCreateAAS(final AssetAdministrationShell aas) throws InhibitException {
-		aasAggregatorAuthorizer.authorizeCreateAAS(
-				subjectInformationProvider.get(),
-				aas
-		);
+	public void createAAS(AssetAdministrationShell shell) {
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		aasAggregator.createAAS(shell);
 	}
 
 	@Override
-	public void updateAAS(final AssetAdministrationShell shell) throws ResourceNotFoundException {
-		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
-			decoratedAasAggregator.updateAAS(shell);
-			return;
-		}
-
-		try {
-			authorizeUpdateAAS(shell);
-		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
-		}
-		decoratedAasAggregator.updateAAS(shell);
-	}
-
-	protected void authorizeUpdateAAS(final AssetAdministrationShell aas) throws InhibitException {
-		aasAggregatorAuthorizer.authorizeUpdateAAS(
-				subjectInformationProvider.get(),
-				aas
-		);
+	public void updateAAS(AssetAdministrationShell shell) throws ResourceNotFoundException {
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		aasAggregator.updateAAS(shell);
 	}
 
 	@Override
-	public void deleteAAS(final IIdentifier shellId) {
-		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
-			decoratedAasAggregator.deleteAAS(shellId);
-			return;
-		}
-
-		try {
-			authorizeDeleteAAS(shellId);
-		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
-		}
-		decoratedAasAggregator.deleteAAS(shellId);
-	}
-
-	protected void authorizeDeleteAAS(final IIdentifier aasId) throws InhibitException {
-		aasAggregatorAuthorizer.authorizeDeleteAAS(
-				subjectInformationProvider.get(),
-				aasId
-		);
+	public void deleteAAS(IIdentifier shellId) {
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		aasAggregator.deleteAAS(shellId);
 	}
 }

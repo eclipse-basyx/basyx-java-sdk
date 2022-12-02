@@ -25,10 +25,10 @@
 package org.eclipse.basyx.testsuite.regression.extensions.shared;
 
 import java.util.Collections;
-import org.eclipse.basyx.extensions.shared.authorization.BaSyxObjectTargetInformation;
-import org.eclipse.basyx.extensions.shared.authorization.RbacRule;
-import org.eclipse.basyx.extensions.shared.authorization.RbacRuleSet;
-import org.eclipse.basyx.extensions.shared.authorization.PredefinedSetRbacRuleChecker;
+import org.eclipse.basyx.extensions.shared.authorization.internal.BaSyxObjectTargetInformation;
+import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRule;
+import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRuleSet;
+import org.eclipse.basyx.extensions.shared.authorization.internal.PredefinedSetRbacRuleChecker;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

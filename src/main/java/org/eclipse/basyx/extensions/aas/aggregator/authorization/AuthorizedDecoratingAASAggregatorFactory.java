@@ -26,47 +26,23 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregatorFactory;
-import org.eclipse.basyx.extensions.shared.authorization.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.AuthenticationGrantedAuthorityAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.ISubjectInformationProvider;
 
 /**
  * Factory decorating AASAggregator for authorization
  * 
- * @author fischer, fried, wege
+ * @author fischer, fried
  */
-public class AuthorizedDecoratingAASAggregatorFactory<SubjectInformationType> implements IAASAggregatorFactory {
-	protected final IAASAggregatorFactory apiFactory;
-	protected final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer;
-	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
+public class AuthorizedDecoratingAASAggregatorFactory implements IAASAggregatorFactory {
+	private IAASAggregatorFactory apiFactory;
 
-	public AuthorizedDecoratingAASAggregatorFactory(
-			final IAASAggregatorFactory factoryToBeDecorated,
-			final IAASAggregatorAuthorizer<SubjectInformationType> aasAggregatorAuthorizer,
-			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider
-	) {
+	public AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory factoryToBeDecorated) {
 		this.apiFactory = factoryToBeDecorated;
-		this.aasAggregatorAuthorizer = aasAggregatorAuthorizer;
-		this.subjectInformationProvider = subjectInformationProvider;
-	}
-
-	/**
-	 * @deprecated please use {@link AuthorizedDecoratingAASAggregatorFactory#AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory, IAASAggregatorAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedDecoratingAASAggregatorFactory(final IAASAggregatorFactory factoryToBeDecorated) {
-		this(
-				factoryToBeDecorated,
-				(IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider()
-		);
 	}
 
 	@Override
 	public IAASAggregator create() {
 		IAASAggregator aggregator = apiFactory.create();
-		aggregator = new AuthorizedAASAggregator<>(aggregator, aasAggregatorAuthorizer, subjectInformationProvider);
+		aggregator = new AuthorizedAASAggregator(aggregator);
 		return aggregator;
 	}
 

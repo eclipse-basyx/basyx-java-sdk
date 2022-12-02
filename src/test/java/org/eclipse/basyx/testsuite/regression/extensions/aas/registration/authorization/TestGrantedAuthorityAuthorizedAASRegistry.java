@@ -27,13 +27,11 @@ package org.eclipse.basyx.testsuite.regression.extensions.aas.registration.autho
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
-import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistryScopes;
-import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAASRegistry;
-import org.eclipse.basyx.extensions.shared.authorization.NotAuthorized;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AASRegistryScopes;
+import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AuthorizedAASRegistry;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.junit.After;

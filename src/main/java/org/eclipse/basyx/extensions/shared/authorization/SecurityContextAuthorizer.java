@@ -2,6 +2,7 @@ package org.eclipse.basyx.extensions.shared.authorization;
 
 import java.util.Optional;
 
+import org.eclipse.basyx.extensions.aas.directory.tagged.authorized.internal.ITaggedDirectoryAuthorizer;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * {@link org.eclipse.basyx.extensions.aas.aggregator.authorization.IAASAggregatorAuthorizer}
  * {@link org.eclipse.basyx.extensions.aas.api.authorization.IAASAPIAuthorizer}
  * {@link org.eclipse.basyx.extensions.aas.registration.authorization.IAASRegistryAuthorizer}
- * {@link org.eclipse.basyx.extensions.aas.directory.tagged.authorized.ITaggedDirectoryAuthorizer}
+ * {@link ITaggedDirectoryAuthorizer}
  * {@link org.eclipse.basyx.extensions.submodel.aggregator.authorization.ISubmodelAggregatorAuthorizer}
  * {@link org.eclipse.basyx.extensions.submodel.authorization.ISubmodelAPIAuthorizer}
  */
