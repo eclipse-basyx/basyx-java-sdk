@@ -78,7 +78,9 @@ public class AASAggregator implements IAASAggregator {
 	}
 
 	/**
-	 * Constructs AAS Aggregator using the passed registry. This registry is used to resolve requests for remote submodels. Additionally takes custom API providers;
+	 * Constructs AAS Aggregator using the passed registry. This registry is used to
+	 * resolve requests for remote submodels. Additionally takes custom API
+	 * providers;
 	 */
 	public AASAggregator(IAASAPIFactory aasApiFactory, ISubmodelAPIFactory submodelApiFactory, IAASRegistry registry) {
 		this(aasApiFactory, new SubmodelAggregatorFactory(submodelApiFactory), registry);
@@ -99,7 +101,8 @@ public class AASAggregator implements IAASAggregator {
 	}
 
 	/**
-	 * Constructs AAS Aggregator using the passed registry. This registry is used to resolve requests for remote submodels
+	 * Constructs AAS Aggregator using the passed registry. This registry is used to
+	 * resolve requests for remote submodels
 	 *
 	 * @param registry
 	 */
@@ -107,7 +110,9 @@ public class AASAggregator implements IAASAggregator {
 		this(new VABAASAPIFactory(), new SubmodelAggregatorFactory(), registry);
 	}
 
-	@SuppressWarnings("unchecked") @Override public Collection<IAssetAdministrationShell> getAASList() {
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<IAssetAdministrationShell> getAASList() {
 		return aasProviderMap.values().stream().map(p -> {
 			try {
 				return p.getValue("/aas");
@@ -124,7 +129,9 @@ public class AASAggregator implements IAASAggregator {
 		}).collect(Collectors.toList());
 	}
 
-	@SuppressWarnings("unchecked") @Override public IAssetAdministrationShell getAAS(IIdentifier aasId) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public IAssetAdministrationShell getAAS(IIdentifier aasId) {
 		IModelProvider aasProvider = getAASProvider(aasId);
 
 		// get all Elements from provider
@@ -134,11 +141,13 @@ public class AASAggregator implements IAASAggregator {
 		return aas;
 	}
 
-	@Override public void createAAS(AssetAdministrationShell aas) {
+	@Override
+	public void createAAS(AssetAdministrationShell aas) {
 		aasProviderMap.put(aas.getIdentification().getId(), createMultiSubmodelProvider(aas));
 	}
 
-	@Override public void updateAAS(AssetAdministrationShell aas) {
+	@Override
+	public void updateAAS(AssetAdministrationShell aas) {
 		MultiSubmodelProvider oldProvider = (MultiSubmodelProvider) getAASProvider(aas.getIdentification());
 		IAASAPI aasApi = aasApiFactory.create(aas);
 		AASModelProvider contentProvider = new AASModelProvider(aasApi);
@@ -156,11 +165,13 @@ public class AASAggregator implements IAASAggregator {
 		return new MultiSubmodelProvider(contentProvider, registry, connectorFactory, aasApiFactory, submodelAggregatorFactory.create());
 	}
 
-	@Override public void deleteAAS(IIdentifier aasId) {
+	@Override
+	public void deleteAAS(IIdentifier aasId) {
 		aasProviderMap.remove(aasId.getId());
 	}
 
-	@Override public IModelProvider getAASProvider(IIdentifier aasId) {
+	@Override
+	public IModelProvider getAASProvider(IIdentifier aasId) {
 		MultiSubmodelProvider provider = aasProviderMap.get(aasId.getId());
 
 		if (provider == null) {

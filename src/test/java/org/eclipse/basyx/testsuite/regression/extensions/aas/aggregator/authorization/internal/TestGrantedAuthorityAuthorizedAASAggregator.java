@@ -51,8 +51,10 @@ import org.mockito.junit.MockitoJUnitRunner;
  *
  * @author jungjan, fried, fischer
  */
-@RunWith(MockitoJUnitRunner.StrictStubs.class) public class TestGrantedAuthorityAuthorizedAASAggregator {
-	@Mock private IAASAggregator aggregatorMock;
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
+public class TestGrantedAuthorityAuthorizedAASAggregator {
+	@Mock
+	private IAASAggregator aggregatorMock;
 	private AuthorizedAASAggregator<?> testSubject;
 	private AuthorizationContextProvider securityContextProvider = new AuthorizationContextProvider(AuthorizedAASAggregator.READ_AUTHORITY, AuthorizedAASAggregator.WRITE_AUTHORITY, null);
 
@@ -64,12 +66,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 	private static AssetAdministrationShell shell;
 
-	@Before public void setUp() {
+	@Before
+	public void setUp() {
 		testSubject = new AuthorizedAASAggregator<>(aggregatorMock);
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 	}
 
-	@After public void tearDown() {
+	@After
+	public void tearDown() {
 		securityContextProvider.clearContext();
 		Mockito.verifyNoMoreInteractions(aggregatorMock);
 	}
@@ -79,18 +83,21 @@ import org.mockito.junit.MockitoJUnitRunner;
 		return shell;
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenCreateAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenCreateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		invokeCreateAAS();
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenCreateAAS_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenCreateAAS_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithWriteAuthority();
 		final AssetAdministrationShell shell = invokeCreateAAS();
 		Mockito.verify(aggregatorMock).createAAS(shell);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenCreateAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenCreateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		invokeCreateAAS();
 	}
@@ -100,18 +107,21 @@ import org.mockito.junit.MockitoJUnitRunner;
 		return SHELL_IDENTIFIER;
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenDeleteAAS_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenDeleteAAS_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithWriteAuthority();
 		final IIdentifier shellId = invokeDeleteAAS();
 		Mockito.verify(aggregatorMock).deleteAAS(shellId);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		invokeDeleteAAS();
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenGetAAS_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetAAS_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithReadAuthority();
 
 		final AssetAdministrationShell expectedShell = shell;
@@ -122,13 +132,15 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertEquals(expectedShell, shell);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 
 		testSubject.getAAS(SHELL_IDENTIFIER);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenGetAASList_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetAASList_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithReadAuthority();
 
 		final Collection<IAssetAdministrationShell> expectedAASDescriptorList = Collections.singletonList(shell);
@@ -140,7 +152,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertEquals(expectedAASDescriptorList, shellList);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenGetAASList_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetAASList_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 
 		testSubject.getAASList();

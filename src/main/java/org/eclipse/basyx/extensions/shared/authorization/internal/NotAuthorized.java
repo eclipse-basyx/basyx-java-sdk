@@ -29,7 +29,9 @@ import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 
 /**
- * The unchecked exception that gets thrown when an action must not be conducted due to lacking authorization. This can be used to translate/further propagate a checked {@link InhibitException}.
+ * The unchecked exception that gets thrown when an action must not be conducted
+ * due to lacking authorization. This can be used to translate/further propagate
+ * a checked {@link InhibitException}.
  *
  * @author wege
  */

@@ -39,7 +39,8 @@ import org.mockito.junit.MockitoJUnitRunner;
  *
  * @author wege
  */
-@RunWith(MockitoJUnitRunner.StrictStubs.class) public class TestPredefinedSetRbacRuleChecker {
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
+public class TestPredefinedSetRbacRuleChecker {
 	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 	private final String adminRole = "admin";
@@ -52,7 +53,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 	private final String any = "*";
 
-	@Test public void givenNothing_whenCheckForRuleNull$Null$NullNullNull_thenReturnFalse() {
+	@Test
+	public void givenNothing_whenCheckForRuleNull$Null$NullNullNull_thenReturnFalse() {
 		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(new RbacRuleSet());
 
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(null, null, new BaSyxObjectTargetInformation(null, null, null));
@@ -60,7 +62,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenNothing_whenCheckForRuleEmpty$Null$NullNullNull_thenReturnFalse() {
+	@Test
+	public void givenNothing_whenCheckForRuleEmpty$Null$NullNullNull_thenReturnFalse() {
 		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
 
 		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.emptyList(), null, new BaSyxObjectTargetInformation(null, null, null));
@@ -68,7 +71,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleEmpty$Null$NullNullNull_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleEmpty$Null$NullNullNull_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, "", new BaSyxObjectTargetInformation(null, null, null)));
@@ -80,7 +84,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleAdmin$Null$NullNullNull_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleAdmin$Null$NullNullNull_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, "", new BaSyxObjectTargetInformation(null, null, null)));
@@ -92,7 +97,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleAdmin$Read$SomSomeSome_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Empty$NullNullNull_whenCheckForRuleAdmin$Read$SomSomeSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, "", new BaSyxObjectTargetInformation(null, null, null)));
@@ -104,7 +110,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleAdmin$Read$SomeSomeSome_thenReturnTrue() {
+	@Test
+	public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleAdmin$Read$SomeSomeSome_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, readAction, new BaSyxObjectTargetInformation(someId, someId, someId)));
@@ -116,7 +123,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertTrue(result);
 	}
 
-	@Test public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleNormal$Read$SomeSomeSome_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleNormal$Read$SomeSomeSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, readAction, new BaSyxObjectTargetInformation(someId, someId, someId)));
@@ -128,7 +136,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleAdmin$Write$SomeSomeSome_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Read$SomeSomeSome_whenCheckForRuleAdmin$Write$SomeSomeSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, readAction, new BaSyxObjectTargetInformation(someId, someId, someId)));
@@ -140,7 +149,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$SomeSomeSome_whenCheckForRuleAdmin$Write$OtherSomeSome_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Write$SomeSomeSome_whenCheckForRuleAdmin$Write$OtherSomeSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(someId, someId, someId)));
@@ -152,7 +162,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnySomeSome_whenCheckForRuleAdmin$Write$OtherSomeSome_thenReturnTrue() {
+	@Test
+	public void givenRuleAdmin$Write$AnySomeSome_whenCheckForRuleAdmin$Write$OtherSomeSome_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, someId, someId)));
@@ -164,7 +175,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertTrue(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnySomeSome_whenCheckForRuleAdmin$Write$OtherOtherSome_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Write$AnySomeSome_whenCheckForRuleAdmin$Write$OtherOtherSome_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, someId, someId)));
@@ -176,7 +188,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnySome_whenCheckForRuleAdmin$Write$OtherOtherSome_thenReturnTrue() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnySome_whenCheckForRuleAdmin$Write$OtherOtherSome_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, someId)));
@@ -188,7 +201,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertTrue(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnySome_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnySome_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, someId)));
@@ -200,7 +214,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnTrue() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, any)));
@@ -212,7 +227,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertTrue(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnyFooAny_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnyFooAny_whenCheckForRuleAdmin$Write$OtherOtherOther_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, "foo/" + any)));
@@ -224,7 +240,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnyFooAny_whenCheckForRuleAdmin$Write$OtherOtherFooOther_thenReturnTrue() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnyFooAny_whenCheckForRuleAdmin$Write$OtherOtherFooOther_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, "foo/" + any)));
@@ -236,7 +253,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertTrue(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnyFooAnyBar_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnyFooAnyBar_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/bar")));
@@ -248,7 +266,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertFalse(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnyFooAnyFoobar_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnTrue() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnyFooAnyFoobar_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/foobar")));
@@ -260,7 +279,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertTrue(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnyFooAnyFoobar_and_RuleNormal$Read$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnTrue() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnyFooAnyFoobar_and_RuleNormal$Read$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar_thenReturnTrue() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, "foo/" + any + "/foobar")));
@@ -274,7 +294,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 		Assert.assertTrue(result);
 	}
 
-	@Test public void givenRuleAdmin$Write$AnyAnySomeId_and_RuleNormal$Read$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar$_thenReturnFalse() {
+	@Test
+	public void givenRuleAdmin$Write$AnyAnySomeId_and_RuleNormal$Read$AnyAnyAny_whenCheckForRuleAdmin$Write$OtherOtherFooOtherFoobar$_thenReturnFalse() {
 		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
 
 		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(any, any, someId)));

@@ -64,8 +64,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
  *
  * @author wege
  */
-@RunWith(MockitoJUnitRunner.StrictStubs.class) public class TestSimpleRbacAuthorizedTaggedDirectory {
-	@Mock private IAASTaggedDirectory apiMock;
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
+public class TestSimpleRbacAuthorizedTaggedDirectory {
+	@Mock
+	private IAASTaggedDirectory apiMock;
 	private AuthorizedTaggedDirectory<?> testSubject;
 	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
 	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
@@ -88,7 +90,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 	private static Submodel submodel;
 	private static TaggedSubmodelDescriptor smDescriptor;
 
-	@Before public void setUp() {
+	@Before
+	public void setUp() {
 		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
 		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
 		rbacRuleSet.addRule(new RbacRule(readerRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
@@ -103,28 +106,33 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		smDescriptor.addTag(SM_TAG);
 	}
 
-	@After public void tearDown() {
+	@After
+	public void tearDown() {
 		SecurityContextHolder.clearContext();
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenRegister_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenRegister_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
 
 		testSubject.register(aasDescriptor);
 		Mockito.verify(apiMock).register(aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenRegister_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenRegister_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.register(aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenRegister_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenRegister_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.register(aasDescriptor);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupTag_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupTag_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.lookupAAS(new ModelUrn(SHELL_ID))).thenReturn(aasDescriptor);
 		Mockito.when(apiMock.lookupTag(AAS_TAG)).thenReturn(Collections.singleton(aasDescriptor));
@@ -134,17 +142,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		assertTrue(returnedAASDescriptors.contains(aasDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenLookupTag_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenLookupTag_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupTag(AAS_TAG);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenLookupTag_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenLookupTag_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.lookupTag(AAS_TAG);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupTags_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupTags_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.lookupAAS(new ModelUrn(SHELL_ID))).thenReturn(aasDescriptor);
 		Mockito.when(apiMock.lookupTag(AAS_TAG)).thenReturn(Collections.singleton(aasDescriptor));
@@ -154,36 +165,42 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		assertTrue(returnedAASDescriptors.contains(aasDescriptor));
 	}
 
-	@Test public void givenSecurityContextIsEmpty_whenLookupTags_thenThrowNotAuthorized() {
+	@Test
+	public void givenSecurityContextIsEmpty_whenLookupTags_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		final Set<TaggedAASDescriptor> returnedAASDescriptors = testSubject.lookupTags(Collections.singleton(AAS_TAG));
 		assertTrue(returnedAASDescriptors.isEmpty());
 	}
 
-	@Test public void givenPrincipalIsMissingReadAuthority_whenLookupTags_thenThrowNotAuthorized() {
+	@Test
+	public void givenPrincipalIsMissingReadAuthority_whenLookupTags_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		final Set<TaggedAASDescriptor> returnedAASDescriptors = testSubject.lookupTags(Collections.singleton(AAS_TAG));
 		assertTrue(returnedAASDescriptors.isEmpty());
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenRegisterSubmodel_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenRegisterSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
 
 		testSubject.registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
 		Mockito.verify(apiMock).registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenRegisterSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenRegisterSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupSubmodelTag_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupSubmodelTag_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.lookupSubmodel(new ModelUrn("*"), SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 		Mockito.when(apiMock.lookupSubmodelTag(SM_TAG)).thenReturn(Collections.singleton(smDescriptor));
@@ -193,17 +210,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		assertTrue(returnedSmDescriptors.contains(smDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenLookupSubmodelTag_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenLookupSubmodelTag_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupSubmodelTag(SM_TAG);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenLookupSubmodelTag_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenLookupSubmodelTag_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.lookupSubmodelTag(SM_TAG);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupSubmodelTags_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupSubmodelTags_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.lookupSubmodel(new ModelUrn("*"), SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 		Mockito.when(apiMock.lookupSubmodelTag(SM_TAG)).thenReturn(Collections.singleton(smDescriptor));
@@ -214,19 +234,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		assertTrue(returnedSmDescriptors.contains(smDescriptor));
 	}
 
-	@Test public void givenSecurityContextIsEmpty_whenLookupSubmodelTags_thenThrowNotAuthorized() {
+	@Test
+	public void givenSecurityContextIsEmpty_whenLookupSubmodelTags_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		final Set<TaggedSubmodelDescriptor> returnedSmDescriptors = testSubject.lookupSubmodelTags(Collections.singleton(SM_TAG));
 		assertTrue(returnedSmDescriptors.isEmpty());
 	}
 
-	@Test public void givenPrincipalIsMissingWriteAuthority_whenLookupSubmodelTags_thenThrowNotAuthorized() {
+	@Test
+	public void givenPrincipalIsMissingWriteAuthority_whenLookupSubmodelTags_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		final Set<TaggedSubmodelDescriptor> returnedSmDescriptors = testSubject.lookupSubmodelTags(Collections.singleton(SM_TAG));
 		assertTrue(returnedSmDescriptors.isEmpty());
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupBothAasAndSubmodelTags_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupBothAasAndSubmodelTags_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(readerRole);
 		Mockito.when(apiMock.lookupSubmodel(new ModelUrn("*"), SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 		Mockito.when(apiMock.lookupSubmodelTag(SM_TAG)).thenReturn(Collections.singleton(smDescriptor));
@@ -238,13 +261,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		assertTrue(returnedSmDescriptors.contains(smDescriptor));
 	}
 
-	@Test public void givenSecurityContextIsEmpty_whenLookupBothAasAndSubmodelTags_thenThrowNotAuthorized() {
+	@Test
+	public void givenSecurityContextIsEmpty_whenLookupBothAasAndSubmodelTags_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		final Set<TaggedSubmodelDescriptor> returnedSmDescriptors = testSubject.lookupBothAasAndSubmodelTags(Collections.singleton(AAS_TAG), Collections.singleton(SM_TAG));
 		assertTrue(returnedSmDescriptors.isEmpty());
 	}
 
-	@Test public void givenPrincipalIsMissingWriteAuthority_whenLookupBothAasAndSubmodelTags_thenThrowNotAuthorized() {
+	@Test
+	public void givenPrincipalIsMissingWriteAuthority_whenLookupBothAasAndSubmodelTags_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		final Set<TaggedSubmodelDescriptor> returnedSmDescriptors = testSubject.lookupBothAasAndSubmodelTags(Collections.singleton(AAS_TAG), Collections.singleton(SM_TAG));
 		assertTrue(returnedSmDescriptors.isEmpty());

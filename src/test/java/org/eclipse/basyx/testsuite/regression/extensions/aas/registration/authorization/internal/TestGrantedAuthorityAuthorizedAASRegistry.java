@@ -52,8 +52,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
  *
  * @author pneuschwander
  */
-@RunWith(MockitoJUnitRunner.StrictStubs.class) public class TestGrantedAuthorityAuthorizedAASRegistry {
-	@Mock private IAASRegistry apiMock;
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
+public class TestGrantedAuthorityAuthorizedAASRegistry {
+	@Mock
+	private IAASRegistry apiMock;
 	private AuthorizedAASRegistry<?> testSubject;
 
 	private static final String SHELL_ID = "shell";
@@ -87,76 +89,88 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		return _getSecurityContextWithAuthorities("SCOPE_" + AASRegistryScopes.WRITE_SCOPE);
 	}
 
-	@Before public void setUp() {
+	@Before
+	public void setUp() {
 		testSubject = new AuthorizedAASRegistry<>(apiMock);
 		aasDescriptor = new AASDescriptor(SHELL_ID, SHELL_IDENTIFIER, "");
 		smDescriptor = new SubmodelDescriptor(SUBMODEL_ID, SUBMODEL_IDENTIFIER, "");
 	}
 
-	@After public void tearDown() {
+	@After
+	public void tearDown() {
 		SecurityContextHolder.clearContext();
 		Mockito.verifyNoMoreInteractions(apiMock);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenRegisterAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenRegisterAAS_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getEmptySecurityContext());
 
 		testSubject.register(aasDescriptor);
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenRegisterAASDescriptor_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenRegisterAASDescriptor_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
 
 		testSubject.register(aasDescriptor);
 		Mockito.verify(apiMock).register(aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenRegisterAASDescriptor_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenRegisterAASDescriptor_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
 		testSubject.register(aasDescriptor);
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenRegisterSubmodelDescriptor_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenRegisterSubmodelDescriptor_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
 
 		testSubject.register(SHELL_IDENTIFIER, smDescriptor);
 		Mockito.verify(apiMock).register(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodelDescriptor_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodelDescriptor_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
 		testSubject.register(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenDeleteAAS_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenDeleteAAS_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
 
 		testSubject.delete(SHELL_IDENTIFIER);
 		Mockito.verify(apiMock).delete(SHELL_IDENTIFIER);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
 		testSubject.delete(SHELL_IDENTIFIER);
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenDeleteSubmodel_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenDeleteSubmodel_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
 
 		testSubject.delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 		Mockito.verify(apiMock).delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodel_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
 		testSubject.delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupAAS_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupAAS_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
 		final AASDescriptor expectedAASDescriptor = aasDescriptor;
 		Mockito.when(apiMock.lookupAAS(SHELL_IDENTIFIER)).thenReturn(expectedAASDescriptor);
@@ -165,13 +179,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		Assert.assertEquals(expectedAASDescriptor, aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenLookupAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenLookupAAS_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
 		testSubject.lookupAAS(SHELL_IDENTIFIER);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupAll_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupAll_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
 		final List<AASDescriptor> expectedAASDescriptorList = Collections.singletonList(aasDescriptor);
 		Mockito.when(apiMock.lookupAll()).thenReturn(expectedAASDescriptorList);
@@ -181,13 +197,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		Assert.assertEquals(expectedAASDescriptorList, returnedAasDescriptorList);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenLookupAll_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenLookupAll_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
 		testSubject.lookupAll();
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupSubmodels_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupSubmodels_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
 		final List<SubmodelDescriptor> expectedSubmodelDescriptorList = Collections.singletonList(smDescriptor);
 		Mockito.when(apiMock.lookupSubmodels(SHELL_IDENTIFIER)).thenReturn(expectedSubmodelDescriptorList);
@@ -197,13 +215,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		Assert.assertEquals(expectedSubmodelDescriptorList, returnedSubmodelDescriptorList);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodels_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodels_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
 		testSubject.lookupSubmodels(SHELL_IDENTIFIER);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenLookupSubmodel_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenLookupSubmodel_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithReadAuthority());
 		final SubmodelDescriptor expectedSubmodelDescriptor = smDescriptor;
 		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(expectedSubmodelDescriptor);
@@ -212,7 +232,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 		Assert.assertEquals(expectedSubmodelDescriptor, submodelDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodel_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
 
 		testSubject.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);

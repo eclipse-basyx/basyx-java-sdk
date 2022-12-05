@@ -45,41 +45,49 @@ public class GrantedAuthorityAASRegistryAuthorizer<SubjectInformationType> imple
 		this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
 	}
 
-	@Override public void authorizeRegisterAas(final SubjectInformationType subjectInformation, final AASDescriptor aasDescriptor) throws InhibitException {
+	@Override
+	public void authorizeRegisterAas(final SubjectInformationType subjectInformation, final AASDescriptor aasDescriptor) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
-	@Override public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException {
+	@Override
+	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
-	@Override public void authorizeUnregisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId) throws InhibitException {
+	@Override
+	public void authorizeUnregisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
-	@Override public void authorizeUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
+	@Override
+	public void authorizeUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
-	@Override public AASDescriptor authorizeLookupAAS(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<AASDescriptor> aasSupplier) throws InhibitException {
+	@Override
+	public AASDescriptor authorizeLookupAAS(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<AASDescriptor> aasSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
 
 		return aasSupplier.get();
 	}
 
-	@Override public List<AASDescriptor> authorizeLookupAll(final SubjectInformationType subjectInformation, final Supplier<List<AASDescriptor>> aasDescriptorsSupplier) throws InhibitException {
+	@Override
+	public List<AASDescriptor> authorizeLookupAll(final SubjectInformationType subjectInformation, final Supplier<List<AASDescriptor>> aasDescriptorsSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
 
 		return aasDescriptorsSupplier.get();
 	}
 
-	@Override public List<SubmodelDescriptor> authorizeLookupSubmodels(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<List<SubmodelDescriptor>> submodelDescriptorsSupplier) throws InhibitException {
+	@Override
+	public List<SubmodelDescriptor> authorizeLookupSubmodels(final SubjectInformationType subjectInformation, final IIdentifier aasId, final Supplier<List<SubmodelDescriptor>> submodelDescriptorsSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
 
 		return submodelDescriptorsSupplier.get();
 	}
 
-	@Override public SubmodelDescriptor authorizeLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException {
+	@Override
+	public SubmodelDescriptor authorizeLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
 
 		return smSupplier.get();

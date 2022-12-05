@@ -29,7 +29,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A set of {@link RbacRule} used in authorization points or in policy information points.
+ * A set of {@link RbacRule} used in authorization points or in policy
+ * information points.
  *
  * @author wege
  */
@@ -52,7 +53,8 @@ public class RbacRuleSet {
 		return this.rules.remove(rbacRule);
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return new StringBuilder("RbacRuleSet{").append("rules=").append(rules).append('}').toString();
 	}
 }

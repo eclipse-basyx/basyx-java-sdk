@@ -34,7 +34,8 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
 /**
- * Interface for the authorization points used in {@link AuthorizedAASAggregator}.
+ * Interface for the authorization points used in
+ * {@link AuthorizedAASAggregator}.
  *
  * @author wege
  */
@@ -42,58 +43,80 @@ public interface IAASAggregatorAuthorizer<SubjectInformationType> {
 	/**
 	 * Checks authorization for {@link IAASAggregator#getAAS(IIdentifier)}.
 	 *
-	 * @param subjectInformation information of the requester.
-	 * @param aasId              id of the AAS.
-	 * @param aasSupplier        supplier for the AAS.
-	 * @throws InhibitException if authorization failed
+	 * @param subjectInformation
+	 *            information of the requester.
+	 * @param aasId
+	 *            id of the AAS.
+	 * @param aasSupplier
+	 *            supplier for the AAS.
+	 * @throws InhibitException
+	 *             if authorization failed
 	 */
 	public IAssetAdministrationShell authorizeGetAAS(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link IAASAggregator#getAASList()}.
 	 *
-	 * @param subjectInformation information of the requester.
-	 * @param aasListSupplier    supplier for the collection of AASes.
+	 * @param subjectInformation
+	 *            information of the requester.
+	 * @param aasListSupplier
+	 *            supplier for the collection of AASes.
 	 * @return the authorized collection of AASes
-	 * @throws InhibitException if authorization failed
+	 * @throws InhibitException
+	 *             if authorization failed
 	 */
 	public Collection<IAssetAdministrationShell> authorizeGetAASList(SubjectInformationType subjectInformation, Supplier<Collection<IAssetAdministrationShell>> aasListSupplier) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link IAASAggregator#getAASProvider(IIdentifier)}.
 	 *
-	 * @param subjectInformation    information of the requester.
-	 * @param aasId                 id of the AAS.
-	 * @param modelProviderSupplier supplier for the model provider.
+	 * @param subjectInformation
+	 *            information of the requester.
+	 * @param aasId
+	 *            id of the AAS.
+	 * @param modelProviderSupplier
+	 *            supplier for the model provider.
 	 * @return the authorized model provider
-	 * @throws InhibitException if authorization failed
+	 * @throws InhibitException
+	 *             if authorization failed
 	 */
 	public IModelProvider authorizeGetAASProvider(SubjectInformationType subjectInformation, IIdentifier aasId, Supplier<IModelProvider> modelProviderSupplier) throws InhibitException;
 
 	/**
-	 * Checks authorization for {@link IAASAggregator#createAAS(AssetAdministrationShell)}.
+	 * Checks authorization for
+	 * {@link IAASAggregator#createAAS(AssetAdministrationShell)}.
 	 *
-	 * @param subjectInformation information of the requester.
-	 * @param aas                the AAS.
-	 * @throws InhibitException if authorization failed
+	 * @param subjectInformation
+	 *            information of the requester.
+	 * @param aas
+	 *            the AAS.
+	 * @throws InhibitException
+	 *             if authorization failed
 	 */
 	public void authorizeCreateAAS(SubjectInformationType subjectInformation, AssetAdministrationShell aas) throws InhibitException;
 
 	/**
-	 * Checks authorization for {@link IAASAggregator#updateAAS(AssetAdministrationShell)}.
+	 * Checks authorization for
+	 * {@link IAASAggregator#updateAAS(AssetAdministrationShell)}.
 	 *
-	 * @param subjectInformation information of the requester.
-	 * @param aas                the AAS.
-	 * @throws InhibitException if authorization failed
+	 * @param subjectInformation
+	 *            information of the requester.
+	 * @param aas
+	 *            the AAS.
+	 * @throws InhibitException
+	 *             if authorization failed
 	 */
 	public void authorizeUpdateAAS(SubjectInformationType subjectInformation, AssetAdministrationShell aas) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link IAASAggregator#deleteAAS(IIdentifier)}.
 	 *
-	 * @param subjectInformation information of the requester.
-	 * @param aasId              id of the AAS.
-	 * @throws InhibitException if authorization failed
+	 * @param subjectInformation
+	 *            information of the requester.
+	 * @param aasId
+	 *            id of the AAS.
+	 * @throws InhibitException
+	 *             if authorization failed
 	 */
 	public void authorizeDeleteAAS(SubjectInformationType subjectInformation, IIdentifier aasId) throws InhibitException;
 }

@@ -55,7 +55,8 @@ public class SimpleRbacInhibitException extends InhibitException {
 		return String.format("no rule matching action=%s, targetInfo=%s role=(any of %s)", action, targetInformationString, rolesString);
 	}
 
-	@Override public InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath) {
+	@Override
+	public InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath) {
 		final TargetInformation messageTargetInformation = reduceSmIdToSmIdShortPath_convertTargetInformation(smIdShortPath);
 		return new SimpleRbacInhibitException(createMessage(action, messageTargetInformation, roles), roles, action, targetInformation);
 	}

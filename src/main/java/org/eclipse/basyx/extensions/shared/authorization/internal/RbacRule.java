@@ -29,7 +29,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * A single role based access control rule consisting of role x action x target information.
+ * A single role based access control rule consisting of role x action x target
+ * information.
  *
  * @author wege
  */
@@ -65,7 +66,8 @@ public class RbacRule {
 		return targetInformation;
 	}
 
-	@Override public boolean equals(final Object o) {
+	@Override
+	public boolean equals(final Object o) {
 		if (this == o) {
 			return true;
 		}
@@ -79,11 +81,13 @@ public class RbacRule {
 		return new EqualsBuilder().append(getRole(), rbacRule.getRole()).append(getAction(), rbacRule.getAction()).append(getTargetInformation(), rbacRule.getTargetInformation()).isEquals();
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return new HashCodeBuilder(17, 37).append(getRole()).append(getAction()).append(getTargetInformation()).toHashCode();
 	}
 
-	@Override public String toString() {
+	@Override
+	public String toString() {
 		return new StringBuilder("RbacRule{").append("role='").append(role).append('\'').append(", action='").append(action).append('\'').append(", targetInformation='").append(targetInformation).append('\'').append('}').toString();
 	}
 }

@@ -30,7 +30,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Can set various types of SecurityContexts for test purposes for testing invalid, read or write access.
+ * Can set various types of SecurityContexts for test purposes for testing
+ * invalid, read or write access.
  *
  * @author espen, wege
  */

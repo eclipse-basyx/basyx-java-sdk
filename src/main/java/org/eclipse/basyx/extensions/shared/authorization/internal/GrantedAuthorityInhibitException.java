@@ -25,7 +25,8 @@
 package org.eclipse.basyx.extensions.shared.authorization.internal;
 
 /**
- * Specialization of {@link InhibitException} for Granted Authority access control scheme.
+ * Specialization of {@link InhibitException} for Granted Authority access
+ * control scheme.
  *
  * @author wege
  */
@@ -38,7 +39,8 @@ public class GrantedAuthorityInhibitException extends InhibitException {
 		this.missingAuthority = missingAuthority;
 	}
 
-	@Override public InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath) {
+	@Override
+	public InhibitException reduceSmIdToSmIdShortPath(final String smIdShortPath) {
 		return this;
 	}
 }

@@ -37,7 +37,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
- * Implementation for a role authenticator that reads from the security context {@link SecurityContextHolder} and parses it according to an access token (JSON Web Token) as handed out by Keycloak.
+ * Implementation for a role authenticator that reads from the security context
+ * {@link SecurityContextHolder} and parses it according to an access token
+ * (JSON Web Token) as handed out by Keycloak.
  *
  * @author wege
  */
@@ -47,7 +49,8 @@ public class KeycloakRoleAuthenticator implements IRoleAuthenticator<Jwt> {
 	public KeycloakRoleAuthenticator() {
 	}
 
-	@Override public List<String> getRoles(Jwt subjectInformation) {
+	@Override
+	public List<String> getRoles(Jwt subjectInformation) {
 		return Optional.ofNullable(subjectInformation).map(info -> new JwtAuthenticationToken(subjectInformation)).map(this::jwtStr2roles).orElse(new ArrayList<>(Collections.singletonList("anonymous")));
 	}
 

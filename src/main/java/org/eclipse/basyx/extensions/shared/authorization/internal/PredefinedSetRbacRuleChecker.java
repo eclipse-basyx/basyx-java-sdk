@@ -32,7 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link IRbacRuleChecker} that works with a predefined {@link RbacRuleSet}.
+ * Implementation of {@link IRbacRuleChecker} that works with a predefined
+ * {@link RbacRuleSet}.
  *
  * @author wege
  */
@@ -47,9 +48,12 @@ public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
 	/**
 	 * Checks for a given rbac tuple if it exists within the predefined set.
 	 *
-	 * @param roles             roles of the subject
-	 * @param action            action which needs authorization
-	 * @param targetInformation target attributes
+	 * @param roles
+	 *            roles of the subject
+	 * @param action
+	 *            action which needs authorization
+	 * @param targetInformation
+	 *            target attributes
 	 * @return true if the requested rbac tuple was found, false otherwise
 	 */
 	public boolean checkRbacRuleIsSatisfied(final List<String> roles, final String action, final TargetInformation targetInformation) {

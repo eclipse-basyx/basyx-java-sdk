@@ -51,15 +51,19 @@ public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationTyp
 	}
 
 	/**
-	 * @deprecated please use {@link AuthorizedDecoratingSubmodelAggregatorFactory#AuthorizedDecoratingSubmodelAggregatorFactory(IAssetAdministrationShell, ISubmodelAggregatorFactory, ISubmodelAggregatorAuthorizer,
-	 * ISubjectInformationProvider)} instead, which uses more parameters for the authorization
+	 * @deprecated please use
+	 *             {@link AuthorizedDecoratingSubmodelAggregatorFactory#AuthorizedDecoratingSubmodelAggregatorFactory(IAssetAdministrationShell, ISubmodelAggregatorFactory, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)}
+	 *             instead, which uses more parameters for the authorization
 	 */
-	@Deprecated @SuppressWarnings("unchecked") public AuthorizedDecoratingSubmodelAggregatorFactory(final ISubmodelAggregatorFactory submodelAggregatorFactory) {
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public AuthorizedDecoratingSubmodelAggregatorFactory(final ISubmodelAggregatorFactory submodelAggregatorFactory) {
 		this(null, submodelAggregatorFactory, (ISubmodelAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
 				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override public ISubmodelAggregator create() {
+	@Override
+	public ISubmodelAggregator create() {
 		return new AuthorizedSubmodelAggregator<>(aas, submodelAggregatorFactory.create(), submodelAggregatorAuthorizer, subjectInformationProvider);
 	}
 }

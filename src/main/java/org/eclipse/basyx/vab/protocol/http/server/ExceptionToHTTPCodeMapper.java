@@ -43,7 +43,8 @@ public class ExceptionToHTTPCodeMapper {
 	/**
 	 * Maps ProviderExceptions to HTTP-Codes
 	 *
-	 * @param e The thrown ProviderException
+	 * @param e
+	 *            The thrown ProviderException
 	 * @return HTTP-Code
 	 */
 	public static int mapFromException(ProviderException e) {
@@ -64,7 +65,8 @@ public class ExceptionToHTTPCodeMapper {
 	/**
 	 * Maps HTTP-Codes to ProviderExceptions
 	 *
-	 * @param statusCode The received HTTP-code
+	 * @param statusCode
+	 *            The received HTTP-code
 	 * @return the corresponding ProviderException
 	 */
 	public static ProviderException mapToException(int statusCode, String text) {
@@ -87,7 +89,8 @@ public class ExceptionToHTTPCodeMapper {
 	/**
 	 * Maps HTTP-Codes to ProviderExceptions
 	 *
-	 * @param statusCode The received HTTP-code
+	 * @param statusCode
+	 *            The received HTTP-code
 	 * @return the corresponding ProviderException
 	 */
 	public static ProviderException mapToException(int statusCode, List<Message> messages) {

@@ -52,15 +52,19 @@ public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> impl
 	}
 
 	/**
-	 * @deprecated please use {@link AuthorizedDecoratingSubmodelAPIFactory#AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell, ISubmodelAPIFactory, ISubmodelAPIAuthorizer, ISubjectInformationProvider)} instead, which uses
-	 * more parameters for the authorization
+	 * @deprecated please use
+	 *             {@link AuthorizedDecoratingSubmodelAPIFactory#AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell, ISubmodelAPIFactory, ISubmodelAPIAuthorizer, ISubjectInformationProvider)}
+	 *             instead, which uses more parameters for the authorization
 	 */
-	@Deprecated @SuppressWarnings("unchecked") public AuthorizedDecoratingSubmodelAPIFactory(final ISubmodelAPIFactory submodelAPIFactory) {
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public AuthorizedDecoratingSubmodelAPIFactory(final ISubmodelAPIFactory submodelAPIFactory) {
 		this(null, submodelAPIFactory, (ISubmodelAPIAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
 				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override public ISubmodelAPI getSubmodelAPI(final Submodel submodel) {
+	@Override
+	public ISubmodelAPI getSubmodelAPI(final Submodel submodel) {
 		return new AuthorizedSubmodelAPI<>(aas, submodelAPIFactory.create(submodel), submodelAPIAuthorizer, subjectInformationProvider);
 	}
 }

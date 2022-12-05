@@ -30,12 +30,14 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Provides an {@link Authentication} object taken from the (thread-local) {@link SecurityContext}.
+ * Provides an {@link Authentication} object taken from the (thread-local)
+ * {@link SecurityContext}.
  *
  * @author wege
  */
 public class AuthenticationContextProvider implements ISubjectInformationProvider<Authentication> {
-	@Override public Authentication get() {
+	@Override
+	public Authentication get() {
 		return getAuthentication().orElse(null);
 	}
 

@@ -32,7 +32,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Authentication type that indicates that execution was caused by internal code and therefore should bypass access control to get the required information or do the required changes.
+ * Authentication type that indicates that execution was caused by internal code
+ * and therefore should bypass access control to get the required information or
+ * do the required changes.
  *
  * @author wege
  */
@@ -44,11 +46,13 @@ public class ElevatedCodeAuthentication extends AbstractAuthenticationToken {
 		super(Collections.emptyList());
 	}
 
-	@Override public Object getCredentials() {
+	@Override
+	public Object getCredentials() {
 		return null;
 	}
 
-	@Override public Object getPrincipal() {
+	@Override
+	public Object getPrincipal() {
 		return null;
 	}
 
@@ -57,7 +61,8 @@ public class ElevatedCodeAuthentication extends AbstractAuthenticationToken {
 	}
 
 	public static class ElevatedCodeAuthenticationAreaHandler implements AutoCloseable {
-		@Override public void close() {
+		@Override
+		public void close() {
 			leaveElevatedCodeAuthenticationArea(this);
 		}
 	}

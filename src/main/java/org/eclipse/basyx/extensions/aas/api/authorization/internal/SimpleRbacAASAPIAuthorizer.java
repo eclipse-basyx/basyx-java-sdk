@@ -50,7 +50,8 @@ public class SimpleRbacAASAPIAuthorizer<SubjectInformationType> implements IAASA
 		this.roleAuthenticator = roleAuthenticator;
 	}
 
-	@Override public IAssetAdministrationShell authorizeGetAAS(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
+	@Override
+	public IAssetAdministrationShell authorizeGetAAS(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
 		final IIdentifier aasId = getAasId(aasSupplier);
 
 		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), null, null));
@@ -58,13 +59,15 @@ public class SimpleRbacAASAPIAuthorizer<SubjectInformationType> implements IAASA
 		return aasSupplier.get();
 	}
 
-	@Override public void authorizeAddSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final IReference smId) throws InhibitException {
+	@Override
+	public void authorizeAddSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final IReference smId) throws InhibitException {
 		final IIdentifier aasId = getAasId(aasSupplier);
 
 		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), IdHelper.getReferenceId(smId), null));
 	}
 
-	@Override public void authorizeRemoveSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final String smIdShortPath) throws InhibitException {
+	@Override
+	public void authorizeRemoveSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final String smIdShortPath) throws InhibitException {
 		final IIdentifier aasId = getAasId(aasSupplier);
 
 		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), smIdShortPath, null));

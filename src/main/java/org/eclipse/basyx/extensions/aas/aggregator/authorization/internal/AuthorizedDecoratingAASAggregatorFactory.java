@@ -48,15 +48,19 @@ public class AuthorizedDecoratingAASAggregatorFactory<SubjectInformationType> im
 	}
 
 	/**
-	 * @deprecated please use {@link AuthorizedDecoratingAASAggregatorFactory#AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory, IAASAggregatorAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for
-	 * the authorization
+	 * @deprecated please use
+	 *             {@link AuthorizedDecoratingAASAggregatorFactory#AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory, IAASAggregatorAuthorizer, ISubjectInformationProvider)}
+	 *             instead, which uses more parameters for the authorization
 	 */
-	@Deprecated @SuppressWarnings("unchecked") public AuthorizedDecoratingAASAggregatorFactory(final IAASAggregatorFactory factoryToBeDecorated) {
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public AuthorizedDecoratingAASAggregatorFactory(final IAASAggregatorFactory factoryToBeDecorated) {
 		this(factoryToBeDecorated, (IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
 				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override public IAASAggregator create() {
+	@Override
+	public IAASAggregator create() {
 		IAASAggregator aggregator = apiFactory.create();
 		aggregator = new AuthorizedAASAggregator<>(aggregator, aasAggregatorAuthorizer, subjectInformationProvider);
 		return aggregator;

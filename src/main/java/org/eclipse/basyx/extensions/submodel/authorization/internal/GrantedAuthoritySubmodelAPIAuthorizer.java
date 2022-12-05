@@ -47,57 +47,67 @@ public class GrantedAuthoritySubmodelAPIAuthorizer<SubjectInformationType> imple
 		this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
 	}
 
-	@Override public Collection<ISubmodelElement> authorizeGetSubmodelElements(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final Supplier<ISubmodel> smSupplier,
+	@Override
+	public Collection<ISubmodelElement> authorizeGetSubmodelElements(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final Supplier<ISubmodel> smSupplier,
 			final Supplier<Collection<ISubmodelElement>> smElListSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
 
 		return smElListSupplier.get();
 	}
 
-	@Override public ISubmodelElement authorizeGetSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath,
+	@Override
+	public ISubmodelElement authorizeGetSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath,
 			final Supplier<ISubmodelElement> smElSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
 
 		return smElSupplier.get();
 	}
 
-	@Override public ISubmodel authorizeGetSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException {
+	@Override
+	public ISubmodel authorizeGetSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
 
 		return smSupplier.get();
 	}
 
-	@Override public void authorizeAddSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
+	@Override
+	public void authorizeAddSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.WRITE_AUTHORITY);
 	}
 
-	@Override public void authorizeDeleteSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
+	@Override
+	public void authorizeDeleteSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.WRITE_AUTHORITY);
 	}
 
-	@Override public void authorizeUpdateSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
+	@Override
+	public void authorizeUpdateSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.WRITE_AUTHORITY);
 	}
 
-	@Override public Object authorizeGetSubmodelElementValue(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath, final Supplier<Object> valueSupplier)
+	@Override
+	public Object authorizeGetSubmodelElementValue(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath, final Supplier<Object> valueSupplier)
 			throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
 
 		return valueSupplier.get();
 	}
 
-	@Override public Collection<IOperation> authorizeGetOperations(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final Supplier<ISubmodel> smSupplier,
+	@Override
+	public Collection<IOperation> authorizeGetOperations(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final Supplier<ISubmodel> smSupplier,
 			final Supplier<Collection<IOperation>> operationListSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
 
 		return operationListSupplier.get();
 	}
 
-	@Override public void authorizeInvokeOperation(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
+	@Override
+	public void authorizeInvokeOperation(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.EXECUTE_AUTHORITY);
 	}
 
-	@Override public Object authorizeGetOperationResult(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath, final String requestId,
+	@Override
+	public Object authorizeGetOperationResult(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath, final String requestId,
 			final Supplier<Object> operationResultSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedSubmodelAPI.READ_AUTHORITY);
 

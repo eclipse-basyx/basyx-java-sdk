@@ -41,8 +41,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Deserializer for {@link RbacRuleSet}.
  * <p>
- * Supports polymorphism for {@link TargetInformation} using a "@type" discriminator field. If you need to support further implementations, you can register it via {@link ObjectMapper#registerSubtypes(NamedType...)} using the {@link
- * RbacRuleSetDeserializer#RbacRuleSetDeserializer(Consumer)} constructor.
+ * Supports polymorphism for {@link TargetInformation} using a "@type"
+ * discriminator field. If you need to support further implementations, you can
+ * register it via {@link ObjectMapper#registerSubtypes(NamedType...)} using the
+ * {@link RbacRuleSetDeserializer#RbacRuleSetDeserializer(Consumer)}
+ * constructor.
  * <p>
  * Uses jackson.
  *
@@ -51,12 +54,14 @@ import org.slf4j.LoggerFactory;
 public class RbacRuleSetDeserializer {
 	private static final Logger logger = LoggerFactory.getLogger(RbacRuleSetDeserializer.class);
 
-	@JsonTypeInfo(use = Id.NAME, property = "@type") public static class TargetInformationMixin {
+	@JsonTypeInfo(use = Id.NAME, property = "@type")
+	public static class TargetInformationMixin {
 
 	}
 
 	public static class RbacRuleMixin {
-		@JsonCreator public RbacRuleMixin(final @JsonProperty("role") String role, final @JsonProperty("action") String action, final @JsonProperty("targetInformation") TargetInformation targetInformation) {
+		@JsonCreator
+		public RbacRuleMixin(final @JsonProperty("role") String role, final @JsonProperty("action") String action, final @JsonProperty("targetInformation") TargetInformation targetInformation) {
 
 		}
 	}

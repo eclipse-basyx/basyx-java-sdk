@@ -74,15 +74,21 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 	}
 
 	/**
-	 * @deprecated Please use {@link AuthorizedSubmodelAPI#AuthorizedSubmodelAPI(IAssetAdministrationShell, ISubmodelAPI, ISubmodelAPIAuthorizer, ISubjectInformationProvider)} or {@link
-	 * AuthorizedSubmodelAPI#AuthorizedSubmodelAPI(ISubmodelAPI, ISubmodelAPIAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
+	 * @deprecated Please use
+	 *             {@link AuthorizedSubmodelAPI#AuthorizedSubmodelAPI(IAssetAdministrationShell, ISubmodelAPI, ISubmodelAPIAuthorizer, ISubjectInformationProvider)}
+	 *             or
+	 *             {@link AuthorizedSubmodelAPI#AuthorizedSubmodelAPI(ISubmodelAPI, ISubmodelAPIAuthorizer, ISubjectInformationProvider)}
+	 *             instead for more explicit parametrization.
 	 */
-	@Deprecated @SuppressWarnings("unchecked") public AuthorizedSubmodelAPI(final ISubmodelAPI decoratedSubmodelAPI) {
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public AuthorizedSubmodelAPI(final ISubmodelAPI decoratedSubmodelAPI) {
 		this(decoratedSubmodelAPI, (ISubmodelAPIAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
 				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override public ISubmodel getSubmodel() {
+	@Override
+	public ISubmodel getSubmodel() {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAPI.getSubmodel();
 		}
@@ -99,7 +105,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return submodelAPIAuthorizer.authorizeGetSubmodel(subjectInformationProvider.get(), aas, smId, decoratedSubmodelAPI::getSubmodel);
 	}
 
-	@Override public void addSubmodelElement(final ISubmodelElement elem) {
+	@Override
+	public void addSubmodelElement(final ISubmodelElement elem) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAPI.addSubmodelElement(elem);
 			return;
@@ -113,7 +120,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		decoratedSubmodelAPI.addSubmodelElement(elem);
 	}
 
-	@Override public void addSubmodelElement(final String idShortPath, final ISubmodelElement elem) {
+	@Override
+	public void addSubmodelElement(final String idShortPath, final ISubmodelElement elem) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAPI.addSubmodelElement(idShortPath, elem);
 			return;
@@ -132,7 +140,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		submodelAPIAuthorizer.authorizeAddSubmodelElement(subjectInformationProvider.get(), aas, smId, smElIdShortPath);
 	}
 
-	@Override public ISubmodelElement getSubmodelElement(final String idShortPath) {
+	@Override
+	public ISubmodelElement getSubmodelElement(final String idShortPath) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAPI.getSubmodelElement(idShortPath);
 		}
@@ -149,7 +158,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return submodelAPIAuthorizer.authorizeGetSubmodelElement(subjectInformationProvider.get(), aas, smId, smElIdShortPath, () -> decoratedSubmodelAPI.getSubmodelElement(smElIdShortPath));
 	}
 
-	@Override public void deleteSubmodelElement(final String idShortPath) {
+	@Override
+	public void deleteSubmodelElement(final String idShortPath) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAPI.deleteSubmodelElement(idShortPath);
 			return;
@@ -168,7 +178,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		submodelAPIAuthorizer.authorizeDeleteSubmodelElement(subjectInformationProvider.get(), aas, smId, smElIdShortPath);
 	}
 
-	@Override public Collection<IOperation> getOperations() {
+	@Override
+	public Collection<IOperation> getOperations() {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAPI.getOperations();
 		}
@@ -196,7 +207,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return submodelAPIAuthorizer.authorizeGetOperations(subjectInformationProvider.get(), aas, decoratedSubmodelAPI::getSubmodel, decoratedSubmodelAPI::getOperations);
 	}
 
-	@Override public Collection<ISubmodelElement> getSubmodelElements() {
+	@Override
+	public Collection<ISubmodelElement> getSubmodelElements() {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAPI.getSubmodelElements();
 		}
@@ -224,7 +236,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return submodelAPIAuthorizer.authorizeGetSubmodelElements(subjectInformationProvider.get(), aas, decoratedSubmodelAPI::getSubmodel, decoratedSubmodelAPI::getSubmodelElements);
 	}
 
-	@Override public void updateSubmodelElement(final String idShortPath, final Object newValue) {
+	@Override
+	public void updateSubmodelElement(final String idShortPath, final Object newValue) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedSubmodelAPI.updateSubmodelElement(idShortPath, newValue);
 			return;
@@ -243,7 +256,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		submodelAPIAuthorizer.authorizeUpdateSubmodelElement(subjectInformationProvider.get(), aas, smId, smElIdShortPath);
 	}
 
-	@Override public Object getSubmodelElementValue(final String idShortPath) {
+	@Override
+	public Object getSubmodelElementValue(final String idShortPath) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAPI.getSubmodelElementValue(idShortPath);
 		}
@@ -260,7 +274,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return submodelAPIAuthorizer.authorizeGetSubmodelElementValue(subjectInformationProvider.get(), aas, smId, smElIdShortPath, () -> decoratedSubmodelAPI.getSubmodelElementValue(smElIdShortPath));
 	}
 
-	@Override public Object invokeOperation(final String inputIdShortPath, final Object... params) {
+	@Override
+	public Object invokeOperation(final String inputIdShortPath, final Object... params) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAPI.invokeOperation(inputIdShortPath, params);
 		}
@@ -274,7 +289,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return decoratedSubmodelAPI.invokeOperation(idShortPath, params);
 	}
 
-	@Override public Object invokeAsync(final String idShortPath, final Object... params) {
+	@Override
+	public Object invokeAsync(final String idShortPath, final Object... params) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAPI.invokeAsync(idShortPath, params);
 		}
@@ -297,7 +313,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		submodelAPIAuthorizer.authorizeInvokeOperation(subjectInformationProvider.get(), aas, smId, smElIdShortPath);
 	}
 
-	@Override public Object getOperationResult(final String smElIdShortPath, final String requestId) {
+	@Override
+	public Object getOperationResult(final String smElIdShortPath, final String requestId) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedSubmodelAPI.getOperationResult(smElIdShortPath, requestId);
 		}

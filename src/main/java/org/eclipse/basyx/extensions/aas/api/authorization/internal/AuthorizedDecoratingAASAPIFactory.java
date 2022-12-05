@@ -49,14 +49,19 @@ public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implement
 	}
 
 	/**
-	 * @deprecated please use {@link AuthorizedDecoratingAASAPIFactory#AuthorizedDecoratingAASAPIFactory(IAASAPIFactory, IAASAPIAuthorizer, ISubjectInformationProvider)} instead, which uses more parameters for the authorization
+	 * @deprecated please use
+	 *             {@link AuthorizedDecoratingAASAPIFactory#AuthorizedDecoratingAASAPIFactory(IAASAPIFactory, IAASAPIAuthorizer, ISubjectInformationProvider)}
+	 *             instead, which uses more parameters for the authorization
 	 */
-	@Deprecated @SuppressWarnings("unchecked") public AuthorizedDecoratingAASAPIFactory(final IAASAPIFactory factoryToBeDecorated) {
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public AuthorizedDecoratingAASAPIFactory(final IAASAPIFactory factoryToBeDecorated) {
 		this(factoryToBeDecorated, (IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
 				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override public IAASAPI getAASApi(final AssetAdministrationShell aas) {
+	@Override
+	public IAASAPI getAASApi(final AssetAdministrationShell aas) {
 		return new AuthorizedAASAPI<>(apiFactory.create(aas), aasAPIAuthorizer, subjectInformationProvider);
 	}
 }

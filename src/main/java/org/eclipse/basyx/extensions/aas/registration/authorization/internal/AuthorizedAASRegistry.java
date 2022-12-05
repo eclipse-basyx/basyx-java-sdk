@@ -48,7 +48,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A registry implementation that authorizes invocations before forwarding them to an underlying registry implementation.
+ * A registry implementation that authorizes invocations before forwarding them
+ * to an underlying registry implementation.
  *
  * @author pneuschwander, wege
  * @see AASRegistryScopes
@@ -65,7 +66,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 	protected final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider;
 
 	/**
-	 * Provides registry implementation that authorizes invocations before forwarding them to the provided registry implementation.
+	 * Provides registry implementation that authorizes invocations before
+	 * forwarding them to the provided registry implementation.
 	 */
 	public AuthorizedAASRegistry(final IAASRegistry decoratedRegistry, final IAASRegistryAuthorizer<SubjectInformationType> aasRegistryAuthorizer, final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this.decoratedRegistry = decoratedRegistry;
@@ -74,14 +76,19 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 	}
 
 	/**
-	 * @deprecated Please use {@link AuthorizedAASRegistry#AuthorizedAASRegistry(IAASRegistry, IAASRegistryAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
+	 * @deprecated Please use
+	 *             {@link AuthorizedAASRegistry#AuthorizedAASRegistry(IAASRegistry, IAASRegistryAuthorizer, ISubjectInformationProvider)}
+	 *             instead for more explicit parametrization.
 	 */
-	@Deprecated @SuppressWarnings("unchecked") public AuthorizedAASRegistry(final IAASRegistry decoratedRegistry) {
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public AuthorizedAASRegistry(final IAASRegistry decoratedRegistry) {
 		this(decoratedRegistry, (IAASRegistryAuthorizer<SubjectInformationType>) new GrantedAuthorityAASRegistryAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
 				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override public void register(final AASDescriptor deviceAASDescriptor) throws ProviderException {
+	@Override
+	public void register(final AASDescriptor deviceAASDescriptor) throws ProviderException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.register(deviceAASDescriptor);
 			return;
@@ -99,7 +106,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		aasRegistryAuthorizer.authorizeRegisterAas(subjectInformationProvider.get(), aasDescriptor);
 	}
 
-	@Override public void register(final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws ProviderException {
+	@Override
+	public void register(final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws ProviderException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.register(aasId, smDescriptor);
 			return;
@@ -117,7 +125,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		aasRegistryAuthorizer.authorizeRegisterSubmodel(subjectInformationProvider.get(), aasId, smDescriptor);
 	}
 
-	@Override public void delete(final IIdentifier aasId) throws ProviderException {
+	@Override
+	public void delete(final IIdentifier aasId) throws ProviderException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.delete(aasId);
 			return;
@@ -135,7 +144,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		aasRegistryAuthorizer.authorizeUnregisterAas(subjectInformationProvider.get(), aasId);
 	}
 
-	@Override public void delete(final IIdentifier aasId, final IIdentifier smId) throws ProviderException {
+	@Override
+	public void delete(final IIdentifier aasId, final IIdentifier smId) throws ProviderException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedRegistry.delete(aasId, smId);
 			return;
@@ -153,7 +163,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		aasRegistryAuthorizer.authorizeUnregisterSubmodel(subjectInformationProvider.get(), aasId, smId);
 	}
 
-	@Override public AASDescriptor lookupAAS(final IIdentifier aasId) throws ProviderException {
+	@Override
+	public AASDescriptor lookupAAS(final IIdentifier aasId) throws ProviderException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedRegistry.lookupAAS(aasId);
 		}
@@ -208,7 +219,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		return aasRegistryAuthorizer.authorizeLookupAAS(subjectInformationProvider.get(), aasId, () -> decoratedRegistry.lookupAAS(aasId));
 	}
 
-	@Override public List<AASDescriptor> lookupAll() throws ProviderException {
+	@Override
+	public List<AASDescriptor> lookupAll() throws ProviderException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedRegistry.lookupAll();
 		}
@@ -236,7 +248,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		return aasRegistryAuthorizer.authorizeLookupAll(subjectInformationProvider.get(), decoratedRegistry::lookupAll);
 	}
 
-	@Override public List<SubmodelDescriptor> lookupSubmodels(final IIdentifier aasId) throws ProviderException {
+	@Override
+	public List<SubmodelDescriptor> lookupSubmodels(final IIdentifier aasId) throws ProviderException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedRegistry.lookupSubmodels(aasId);
 		}
@@ -264,7 +277,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		return aasRegistryAuthorizer.authorizeLookupSubmodels(subjectInformationProvider.get(), aasId, () -> decoratedRegistry.lookupSubmodels(aasId));
 	}
 
-	@Override public SubmodelDescriptor lookupSubmodel(final IIdentifier aasId, final IIdentifier smId) throws ProviderException {
+	@Override
+	public SubmodelDescriptor lookupSubmodel(final IIdentifier aasId, final IIdentifier smId) throws ProviderException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedRegistry.lookupSubmodel(aasId, smId);
 		}

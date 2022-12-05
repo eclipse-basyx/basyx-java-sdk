@@ -43,17 +43,20 @@ public class GrantedAuthorityAASAPIAuthorizer<SubjectInformationType> implements
 		this.grantedAuthorityAuthenticator = grantedAuthorityAuthenticator;
 	}
 
-	@Override public IAssetAdministrationShell authorizeGetAAS(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
+	@Override
+	public IAssetAdministrationShell authorizeGetAAS(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.READ_AUTHORITY);
 
 		return aasSupplier.get();
 	}
 
-	@Override public void authorizeAddSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final IReference submodel) throws InhibitException {
+	@Override
+	public void authorizeAddSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final IReference submodel) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.WRITE_AUTHORITY);
 	}
 
-	@Override public void authorizeRemoveSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final String smIdShortPath) throws InhibitException {
+	@Override
+	public void authorizeRemoveSubmodel(final SubjectInformationType subjectInformation, final Supplier<IAssetAdministrationShell> aasSupplier, final String smIdShortPath) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASAPI.WRITE_AUTHORITY);
 	}
 }

@@ -34,7 +34,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class TestRbacRuleSetDeserializer {
-	@Test public void test() throws IOException {
+	@Test
+	public void test() throws IOException {
 		final RbacRuleSetDeserializer rbacRuleSetDeserializer = new RbacRuleSetDeserializer((objectMapper) -> {
 		});
 		final RbacRuleSet rbacRuleSet = rbacRuleSetDeserializer.fromFile("/authorization/internal/rbac_rules.json");

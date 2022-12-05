@@ -51,8 +51,10 @@ import org.mockito.junit.MockitoJUnitRunner;
  *
  * @author espen
  */
-@RunWith(MockitoJUnitRunner.StrictStubs.class) public class TestGrantedAuthorityAuthorizedAASAPI {
-	@Mock private IAASAPI apiMock;
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
+public class TestGrantedAuthorityAuthorizedAASAPI {
+	@Mock
+	private IAASAPI apiMock;
 	private AuthorizedAASAPI<?> testSubject;
 	private AuthorizationContextProvider securityContextProvider;
 
@@ -67,7 +69,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 	private static AssetAdministrationShell shell;
 	private static Submodel submodel;
 
-	@Before public void setUp() {
+	@Before
+	public void setUp() {
 		testSubject = new AuthorizedAASAPI<>(apiMock);
 		securityContextProvider = new AuthorizationContextProvider(AuthorizedAASAPI.READ_AUTHORITY, AuthorizedAASAPI.WRITE_AUTHORITY, null);
 
@@ -76,12 +79,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 		submodel = new Submodel(SUBMODEL_ID, SUBMODEL_IDENTIFIER);
 	}
 
-	@After public void tearDown() {
+	@After
+	public void tearDown() {
 		securityContextProvider.clearContext();
 		Mockito.verifyNoMoreInteractions(apiMock);
 	}
 
-	@Test public void givenPrincipalHasReadAuthority_whenGetAAS_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetAAS_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithReadAuthority();
 		Mockito.when(apiMock.getAAS()).thenReturn(shell);
 
@@ -89,45 +94,53 @@ import org.mockito.junit.MockitoJUnitRunner;
 		assertEquals(shell, returnedShell);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenGetAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.getAAS();
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.getAAS();
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenAddSubmodel_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenAddSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithWriteAuthority();
 		final IReference smReference2Add = submodel.getReference();
 		testSubject.addSubmodel(smReference2Add);
 		Mockito.verify(apiMock).addSubmodel(smReference2Add);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenAddSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.addSubmodel(submodel.getReference());
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenAddSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.addSubmodel(submodel.getReference());
 	}
 
-	@Test public void givenPrincipalHasWriteAuthority_whenRemoveSubmodel_thenInvocationIsForwarded() {
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenRemoveSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithWriteAuthority();
 		testSubject.removeSubmodel(SUBMODEL_ID);
 		Mockito.verify(apiMock).removeSubmodel(SUBMODEL_ID);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenSecurityContextIsEmpty_whenRemoveSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.removeSubmodel(SUBMODEL_ID);
 	}
 
-	@Test(expected = NotAuthorized.class) public void givenPrincipalIsMissingReadAuthority_whenRemoveSubmodel_thenThrowNotAuthorized() {
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.removeSubmodel(SUBMODEL_ID);
 	}

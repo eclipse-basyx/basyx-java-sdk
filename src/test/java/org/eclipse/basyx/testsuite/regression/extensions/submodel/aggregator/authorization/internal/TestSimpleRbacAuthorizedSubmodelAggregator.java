@@ -69,314 +69,288 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestSimpleRbacAuthorizedSubmodelAggregator {
 
-  @Mock
-  private ISubmodelAggregator apiMock;
-  private AuthorizedSubmodelAggregator<?> testSubject;
-  private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
-  private RbacRuleSet rbacRuleSet = new RbacRuleSet();
-
-  private final String adminRole = "admin";
-  private final String readerRole = "reader";
-  private final String partialReaderRole = "partialReader";
-
-  private static final String SUBMODEL_IDSHORT = "submodelIdShort";
-  private static final String SUBMODEL_ID = "submodelId";
-  private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI,
-      SUBMODEL_ID);
-  private static final String SECOND_SUBMODEL_IDSHORT = "secondSubmodelIdShort";
-  private static final String SECOND_SUBMODEL_ID = "secondSubmodelId";
-  private static final Identifier SECOND_SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI,
-      SECOND_SUBMODEL_ID);
-
-  protected static Submodel submodel;
-  protected static ISubmodelAPI submodelAPI;
-  protected static Submodel secondSubmodel;
-
-  @BeforeClass
-  public static void setUpClass() {
-    submodel = new Submodel(SUBMODEL_IDSHORT, SUBMODEL_IDENTIFIER);
-    submodelAPI = new VABSubmodelAPI(new VABMapProvider(submodel));
-    secondSubmodel = new Submodel(SECOND_SUBMODEL_IDSHORT, SECOND_SUBMODEL_IDENTIFIER);
-  }
-
-  @Before
-  public void setUp() {
-    rbacRuleSet.addRule(new RbacRule(
-        adminRole,
-        SubmodelAggregatorScopes.READ_SCOPE,
-        new BaSyxObjectTargetInformation("*", "*", "*")
-    ));
-    rbacRuleSet.addRule(new RbacRule(
-        adminRole,
-        SubmodelAggregatorScopes.WRITE_SCOPE,
-        new BaSyxObjectTargetInformation("*", "*", "*")
-    ));
-    rbacRuleSet.addRule(new RbacRule(
-        readerRole,
-        SubmodelAggregatorScopes.READ_SCOPE,
-        new BaSyxObjectTargetInformation("*", "*", "*")
-    ));
-    rbacRuleSet.addRule(new RbacRule(
-        partialReaderRole,
-        SubmodelAggregatorScopes.READ_SCOPE,
-        new BaSyxObjectTargetInformation("*", SUBMODEL_IDENTIFIER.getId(), "*")
-    ));
-    testSubject = new AuthorizedSubmodelAggregator<>(
-        apiMock,
-        new SimpleRbacSubmodelAggregatorAuthorizer<>(
-            new PredefinedSetRbacRuleChecker(rbacRuleSet),
-            new KeycloakRoleAuthenticator()
-        ),
-        new JWTAuthenticationContextProvider()
-    );
-  }
-
-  @After
-  public void tearDown() {
-    securityContextProvider.clearContext();
-  }
-
-  @Test
-  public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelList_thenResultEmpty() {
-    securityContextProvider.setSecurityContextWithoutRoles();
-
-    final Collection<ISubmodel> returnedSubmodels = testSubject.getSubmodelList();
-    assertTrue(returnedSubmodels.isEmpty());
-  }
-
-  @Test
-  public void givenSecurityContextIsEmpty_whenGetSubmodelList_thenResultEmpty() {
-    securityContextProvider.setEmptySecurityContext();
-
-    final Collection<ISubmodel> returnedSubmodels = testSubject.getSubmodelList();
-    assertTrue(returnedSubmodels.isEmpty());
-  }
-
-  @Test
-  public void givenPrincipalHasReadAuthority_whenGetSubmodelList_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(readerRole);
-    final Collection<ISubmodel> expectedList = new ArrayList<>();
-    expectedList.add(submodel);
-    Mockito.when(apiMock.getSubmodelList()).thenReturn(expectedList);
-    Mockito.when(apiMock.getSubmodel(submodel.getIdentification())).thenReturn(submodel);
-
-    final Collection<ISubmodel> smList = testSubject.getSubmodelList();
-    assertEquals(expectedList, smList);
-  }
-
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whenGetSubmodel_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
-
-    testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
-  }
+	@Mock
+	private ISubmodelAggregator apiMock;
+	private AuthorizedSubmodelAggregator<?> testSubject;
+	private KeycloakAuthenticationContextProvider securityContextProvider = new KeycloakAuthenticationContextProvider();
+	private RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+	private final String adminRole = "admin";
+	private final String readerRole = "reader";
+	private final String partialReaderRole = "partialReader";
+
+	private static final String SUBMODEL_IDSHORT = "submodelIdShort";
+	private static final String SUBMODEL_ID = "submodelId";
+	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SUBMODEL_ID);
+	private static final String SECOND_SUBMODEL_IDSHORT = "secondSubmodelIdShort";
+	private static final String SECOND_SUBMODEL_ID = "secondSubmodelId";
+	private static final Identifier SECOND_SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.IRI, SECOND_SUBMODEL_ID);
+
+	protected static Submodel submodel;
+	protected static ISubmodelAPI submodelAPI;
+	protected static Submodel secondSubmodel;
+
+	@BeforeClass
+	public static void setUpClass() {
+		submodel = new Submodel(SUBMODEL_IDSHORT, SUBMODEL_IDENTIFIER);
+		submodelAPI = new VABSubmodelAPI(new VABMapProvider(submodel));
+		secondSubmodel = new Submodel(SECOND_SUBMODEL_IDSHORT, SECOND_SUBMODEL_IDENTIFIER);
+	}
+
+	@Before
+	public void setUp() {
+		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(readerRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(partialReaderRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", SUBMODEL_IDENTIFIER.getId(), "*")));
+		testSubject = new AuthorizedSubmodelAggregator<>(apiMock, new SimpleRbacSubmodelAggregatorAuthorizer<>(new PredefinedSetRbacRuleChecker(rbacRuleSet), new KeycloakRoleAuthenticator()), new JWTAuthenticationContextProvider());
+	}
+
+	@After
+	public void tearDown() {
+		securityContextProvider.clearContext();
+	}
+
+	@Test
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelList_thenResultEmpty() {
+		securityContextProvider.setSecurityContextWithoutRoles();
+
+		final Collection<ISubmodel> returnedSubmodels = testSubject.getSubmodelList();
+		assertTrue(returnedSubmodels.isEmpty());
+	}
+
+	@Test
+	public void givenSecurityContextIsEmpty_whenGetSubmodelList_thenResultEmpty() {
+		securityContextProvider.setEmptySecurityContext();
+
+		final Collection<ISubmodel> returnedSubmodels = testSubject.getSubmodelList();
+		assertTrue(returnedSubmodels.isEmpty());
+	}
+
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetSubmodelList_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(readerRole);
+		final Collection<ISubmodel> expectedList = new ArrayList<>();
+		expectedList.add(submodel);
+		Mockito.when(apiMock.getSubmodelList()).thenReturn(expectedList);
+		Mockito.when(apiMock.getSubmodel(submodel.getIdentification())).thenReturn(submodel);
+
+		final Collection<ISubmodel> smList = testSubject.getSubmodelList();
+		assertEquals(expectedList, smList);
+	}
+
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodel_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
+
+		testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
+	}
+
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodel_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
+
+		testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
+	}
+
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetSubmodel_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(readerRole);
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
+
+		final ISubmodel returnedSubmodel = testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
+		assertEquals(submodel, returnedSubmodel);
+	}
+
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whengetSubmodelbyIdShort_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
+
+		testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
+	}
+
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whengetSubmodelbyIdShort_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whenGetSubmodel_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
+		testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
+	}
 
-    testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
-  }
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetSubmodelbyIdShort_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(readerRole);
+		Mockito.when(apiMock.getSubmodelbyIdShort(SUBMODEL_IDSHORT)).thenReturn(submodel);
 
-  @Test
-  public void givenPrincipalHasReadAuthority_whenGetSubmodel_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(readerRole);
-    Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
+		final ISubmodel returnedSubmodel = testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
+		assertEquals(submodel, returnedSubmodel);
+	}
 
-    final ISubmodel returnedSubmodel = testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
-    assertEquals(submodel, returnedSubmodel);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIById_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whengetSubmodelbyIdShort_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
+		testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
+	}
 
-    testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIById_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whengetSubmodelbyIdShort_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
+		testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
+	}
 
-    testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
-  }
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetSubmodelAPIById_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(readerRole);
+		Mockito.when(apiMock.getSubmodelAPIById(SUBMODEL_IDENTIFIER)).thenReturn(submodelAPI);
 
-  @Test
-  public void givenPrincipalHasReadAuthority_whenGetSubmodelbyIdShort_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(readerRole);
-    Mockito.when(apiMock.getSubmodelbyIdShort(SUBMODEL_IDSHORT)).thenReturn(submodel);
+		final ISubmodelAPI returnedSubmodelAPI = testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
+		assertEquals(submodelAPI, returnedSubmodelAPI);
+	}
 
-    final ISubmodel returnedSubmodel = testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
-    assertEquals(submodel, returnedSubmodel);
-  }
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetSubmodelAPIByIdShort_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(readerRole);
+		Mockito.when(apiMock.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT)).thenReturn(submodelAPI);
 
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIById_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
+		final ISubmodelAPI returnedSubmodelAPI = testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
+		assertEquals(submodelAPI, returnedSubmodelAPI);
+	}
 
-    testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIByIdShort_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whenGetSubmodelAPIById_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
+		testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
+	}
 
-    testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIByIdShort_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
 
-  @Test
-  public void givenPrincipalHasReadAuthority_whenGetSubmodelAPIById_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(readerRole);
-    Mockito.when(apiMock.getSubmodelAPIById(SUBMODEL_IDENTIFIER)).thenReturn(submodelAPI);
+		testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
+	}
 
-    final ISubmodelAPI returnedSubmodelAPI = testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
-    assertEquals(submodelAPI, returnedSubmodelAPI);
-  }
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenCreateSubmodel_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(adminRole);
 
-  @Test
-  public void givenPrincipalHasReadAuthority_whenGetSubmodelAPIByIdShort_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(readerRole);
-    Mockito.when(apiMock.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT)).thenReturn(submodelAPI);
+		testSubject.createSubmodel(submodel);
+		Mockito.verify(apiMock).createSubmodel(submodel);
+	}
 
-    final ISubmodelAPI returnedSubmodelAPI = testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
-    assertEquals(submodelAPI, returnedSubmodelAPI);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodel_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIByIdShort_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
+		testSubject.createSubmodel(submodel);
+	}
 
-    testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenCreateSubmodel_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whenGetSubmodelAPIByIdShort_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
+		testSubject.createSubmodel(submodel);
+	}
 
-    testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
-  }
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenCreateSubmodelAPI_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(adminRole);
 
-  @Test
-  public void givenPrincipalHasWriteAuthority_whenCreateSubmodel_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(adminRole);
+		testSubject.createSubmodel(submodelAPI);
+		Mockito.verify(apiMock).createSubmodel(submodelAPI);
+	}
 
-    testSubject.createSubmodel(submodel);
-    Mockito.verify(apiMock).createSubmodel(submodel);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodelAPI_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodel_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
+		testSubject.createSubmodel(submodelAPI);
+	}
 
-    testSubject.createSubmodel(submodel);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenCreateSubmodelAPI_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whenCreateSubmodel_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
+		testSubject.createSubmodel(submodelAPI);
+	}
 
-    testSubject.createSubmodel(submodel);
-  }
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenUpdateSubmodel_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(adminRole);
 
-  @Test
-  public void givenPrincipalHasWriteAuthority_whenCreateSubmodelAPI_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(adminRole);
+		testSubject.updateSubmodel(submodel);
+		Mockito.verify(apiMock).updateSubmodel(submodel);
+	}
 
-    testSubject.createSubmodel(submodelAPI);
-    Mockito.verify(apiMock).createSubmodel(submodelAPI);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingReadAuthority_whenUpdateSubmodel_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodelAPI_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
+		testSubject.updateSubmodel(submodel);
+	}
 
-    testSubject.createSubmodel(submodelAPI);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenUpdateSubmodel_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whenCreateSubmodelAPI_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
+		testSubject.updateSubmodel(submodel);
+	}
 
-    testSubject.createSubmodel(submodelAPI);
-  }
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenDeleteSubmodelByIdentifier_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(adminRole);
 
-  @Test
-  public void givenPrincipalHasWriteAuthority_whenUpdateSubmodel_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(adminRole);
+		testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
+		Mockito.verify(apiMock).deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
+	}
 
-    testSubject.updateSubmodel(submodel);
-    Mockito.verify(apiMock).updateSubmodel(submodel);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdentifier_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingReadAuthority_whenUpdateSubmodel_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
+		testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
+	}
 
-    testSubject.updateSubmodel(submodel);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdentifier_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whenUpdateSubmodel_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
+		testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
+	}
 
-    testSubject.updateSubmodel(submodel);
-  }
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenDeleteSubmodelByIdShort_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(adminRole);
 
-  @Test
-  public void givenPrincipalHasWriteAuthority_whenDeleteSubmodelByIdentifier_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(adminRole);
+		testSubject.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
+		Mockito.verify(apiMock).deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
+	}
 
-    testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
-    Mockito.verify(apiMock).deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdShort_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutRoles();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdentifier_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
+		testSubject.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
+	}
 
-    testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
-  }
+	@Test(expected = NotAuthorized.class)
+	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdShort_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdentifier_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
+		testSubject.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
+	}
 
-    testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
-  }
+	@Test
+	public void givenPrincipalHasPartialReadAuthority_whenGetAASList_thenInvocationIsForwarded() {
+		securityContextProvider.setSecurityContextWithRoles(partialReaderRole);
 
-  @Test
-  public void givenPrincipalHasWriteAuthority_whenDeleteSubmodelByIdShort_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(adminRole);
+		final Collection<ISubmodel> expectedSubmodelList = Collections.singletonList(submodel);
+		Mockito.when(apiMock.getSubmodelList()).thenReturn(new HashSet<>(Arrays.asList(submodel, secondSubmodel)));
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
-    testSubject.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
-    Mockito.verify(apiMock).deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
-  }
+		final Collection<ISubmodel> returnedSubmodelList = testSubject.getSubmodelList();
 
-  @Test(expected = NotAuthorized.class)
-  public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdShort_thenThrowNotAuthorized() {
-    securityContextProvider.setSecurityContextWithoutRoles();
-
-    testSubject.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
-  }
-
-  @Test(expected = NotAuthorized.class)
-  public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdShort_thenThrowNotAuthorized() {
-    securityContextProvider.setEmptySecurityContext();
-
-    testSubject.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
-  }
-
-  @Test
-  public void givenPrincipalHasPartialReadAuthority_whenGetAASList_thenInvocationIsForwarded() {
-    securityContextProvider.setSecurityContextWithRoles(partialReaderRole);
-
-    final Collection<ISubmodel> expectedSubmodelList = Collections.singletonList(submodel);
-    Mockito.when(apiMock.getSubmodelList())
-        .thenReturn(new HashSet<>(Arrays.asList(submodel, secondSubmodel)));
-    Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
-
-    final Collection<ISubmodel> returnedSubmodelList = testSubject.getSubmodelList();
-
-    Assert.assertEquals(expectedSubmodelList, returnedSubmodelList);
-  }
+		Assert.assertEquals(expectedSubmodelList, returnedSubmodelList);
+	}
 }

@@ -55,14 +55,19 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	}
 
 	/**
-	 * @deprecated Please use {@link AuthorizedAASAPI#AuthorizedAASAPI(IAASAPI, IAASAPIAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
+	 * @deprecated Please use
+	 *             {@link AuthorizedAASAPI#AuthorizedAASAPI(IAASAPI, IAASAPIAuthorizer, ISubjectInformationProvider)}
+	 *             instead for more explicit parametrization.
 	 */
-	@Deprecated @SuppressWarnings("unchecked") public AuthorizedAASAPI(final IAASAPI decoratedAASAPI) {
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public AuthorizedAASAPI(final IAASAPI decoratedAASAPI) {
 		this(decoratedAASAPI, (IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
 				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override public IAssetAdministrationShell getAAS() {
+	@Override
+	public IAssetAdministrationShell getAAS() {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAASAPI.getAAS();
 		}
@@ -78,7 +83,8 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 		return aasAPIAuthorizer.authorizeGetAAS(subjectInformationProvider.get(), decoratedAASAPI::getAAS);
 	}
 
-	@Override public void addSubmodel(final IReference submodel) {
+	@Override
+	public void addSubmodel(final IReference submodel) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAASAPI.addSubmodel(submodel);
 			return;
@@ -96,7 +102,8 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 		aasAPIAuthorizer.authorizeAddSubmodel(subjectInformationProvider.get(), decoratedAASAPI::getAAS, smId);
 	}
 
-	@Override public void removeSubmodel(final String smIdShortPath) {
+	@Override
+	public void removeSubmodel(final String smIdShortPath) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAASAPI.removeSubmodel(smIdShortPath);
 			return;

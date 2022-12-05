@@ -33,7 +33,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
 /**
- * Can set various types of SecurityContexts for test purposes for testing invalid, read or write access.
+ * Can set various types of SecurityContexts for test purposes for testing
+ * invalid, read or write access.
  *
  * @author wege
  */

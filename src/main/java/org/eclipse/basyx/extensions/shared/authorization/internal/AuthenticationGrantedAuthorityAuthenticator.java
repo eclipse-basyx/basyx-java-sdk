@@ -31,7 +31,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 
 /**
- * Implementation for an {@link GrantedAuthority}-based authenticator that reads from the (thread-local) {@link SecurityContext}.
+ * Implementation for an {@link GrantedAuthority}-based authenticator that reads
+ * from the (thread-local) {@link SecurityContext}.
  *
  * @author wege
  */
@@ -39,7 +40,8 @@ public class AuthenticationGrantedAuthorityAuthenticator implements IGrantedAuth
 	public AuthenticationGrantedAuthorityAuthenticator() {
 	}
 
-	@Override public Collection<? extends GrantedAuthority> getAuthorities(final Authentication subjectInformation) {
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities(final Authentication subjectInformation) {
 		if (subjectInformation == null) {
 			return Collections.emptyList();
 		}

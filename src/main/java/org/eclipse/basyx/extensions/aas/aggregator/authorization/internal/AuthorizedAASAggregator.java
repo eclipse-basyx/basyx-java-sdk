@@ -44,7 +44,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An aggregator implementation that authorizes invocations before forwarding them to * an underlying aggregator implementation.
+ * An aggregator implementation that authorizes invocations before forwarding
+ * them to * an underlying aggregator implementation.
  *
  * @author wege
  */
@@ -67,14 +68,19 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 	}
 
 	/**
-	 * @deprecated Please use {@link AuthorizedAASAggregator#AuthorizedAASAggregator(IAASAggregator, IAASAggregatorAuthorizer, ISubjectInformationProvider)} instead for more explicit parametrization.
+	 * @deprecated Please use
+	 *             {@link AuthorizedAASAggregator#AuthorizedAASAggregator(IAASAggregator, IAASAggregatorAuthorizer, ISubjectInformationProvider)}
+	 *             instead for more explicit parametrization.
 	 */
-	@Deprecated @SuppressWarnings("unchecked") public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator) {
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator) {
 		this(decoratedAasAggregator, (IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
 				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
-	@Override public Collection<IAssetAdministrationShell> getAASList() {
+	@Override
+	public Collection<IAssetAdministrationShell> getAASList() {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAasAggregator.getAASList();
 		}
@@ -103,7 +109,8 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		return authorizedAASList.stream().map(IIdentifiable::getIdentification).collect(Collectors.toList());
 	}
 
-	@Override public IAssetAdministrationShell getAAS(final IIdentifier shellId) throws ResourceNotFoundException {
+	@Override
+	public IAssetAdministrationShell getAAS(final IIdentifier shellId) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAasAggregator.getAAS(shellId);
 		}
@@ -119,7 +126,8 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		return aasAggregatorAuthorizer.authorizeGetAAS(subjectInformationProvider.get(), aasId, () -> decoratedAasAggregator.getAAS(aasId));
 	}
 
-	@Override public IModelProvider getAASProvider(final IIdentifier shellId) throws ResourceNotFoundException {
+	@Override
+	public IModelProvider getAASProvider(final IIdentifier shellId) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			return decoratedAasAggregator.getAASProvider(shellId);
 		}
@@ -135,7 +143,8 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		return aasAggregatorAuthorizer.authorizeGetAASProvider(subjectInformationProvider.get(), aasId, () -> decoratedAasAggregator.getAASProvider(aasId));
 	}
 
-	@Override public void createAAS(final AssetAdministrationShell shell) {
+	@Override
+	public void createAAS(final AssetAdministrationShell shell) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAasAggregator.createAAS(shell);
 			return;
@@ -153,7 +162,8 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		aasAggregatorAuthorizer.authorizeCreateAAS(subjectInformationProvider.get(), aas);
 	}
 
-	@Override public void updateAAS(final AssetAdministrationShell shell) throws ResourceNotFoundException {
+	@Override
+	public void updateAAS(final AssetAdministrationShell shell) throws ResourceNotFoundException {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAasAggregator.updateAAS(shell);
 			return;
@@ -171,7 +181,8 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		aasAggregatorAuthorizer.authorizeUpdateAAS(subjectInformationProvider.get(), aas);
 	}
 
-	@Override public void deleteAAS(final IIdentifier shellId) {
+	@Override
+	public void deleteAAS(final IIdentifier shellId) {
 		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
 			decoratedAasAggregator.deleteAAS(shellId);
 			return;

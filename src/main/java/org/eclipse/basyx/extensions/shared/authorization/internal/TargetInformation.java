@@ -34,7 +34,8 @@ import java.util.Map;
  */
 public interface TargetInformation extends Serializable {
 	/**
-	 * Converts the object to a new String map, containing the key-value pairs of the object.
+	 * Converts the object to a new String map, containing the key-value pairs of
+	 * the object.
 	 *
 	 * @return the new Map
 	 */

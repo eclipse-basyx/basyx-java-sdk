@@ -65,7 +65,8 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		this.smApiFactory = smApiFactory;
 	}
 
-	@Override public Collection<ISubmodel> getSubmodelList() {
+	@Override
+	public Collection<ISubmodel> getSubmodelList() {
 		return smApiMap.values().stream().map(smApi -> {
 			try {
 				return smApi.getSubmodel();
@@ -76,7 +77,8 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
-	@Override public ISubmodel getSubmodel(IIdentifier identifier) throws ResourceNotFoundException {
+	@Override
+	public ISubmodel getSubmodel(IIdentifier identifier) throws ResourceNotFoundException {
 		ISubmodelAPI api = getSubmodelAPIById(identifier);
 		return api.getSubmodel();
 	}
@@ -92,20 +94,24 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		throw new ResourceNotFoundException("The submodel with id '" + identifier.getId() + "' could not be found");
 	}
 
-	@Override public void createSubmodel(Submodel submodel) {
+	@Override
+	public void createSubmodel(Submodel submodel) {
 		updateSubmodel(submodel);
 	}
 
-	@Override public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
+	@Override
+	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
 		ISubmodelAPI submodelAPI = smApiFactory.create(submodel);
 		createSubmodel(submodelAPI);
 	}
 
-	@Override public void createSubmodel(ISubmodelAPI submodelAPI) {
+	@Override
+	public void createSubmodel(ISubmodelAPI submodelAPI) {
 		smApiMap.put(submodelAPI.getSubmodel().getIdShort(), submodelAPI);
 	}
 
-	@Override public ISubmodel getSubmodelbyIdShort(String idShort) throws ResourceNotFoundException {
+	@Override
+	public ISubmodel getSubmodelbyIdShort(String idShort) throws ResourceNotFoundException {
 		ISubmodelAPI api = smApiMap.get(idShort);
 		if (api == null) {
 			throw new ResourceNotFoundException("The submodel with idShort '" + idShort + "' could not be found");
@@ -114,7 +120,8 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		}
 	}
 
-	@Override public void deleteSubmodelByIdentifier(IIdentifier identifier) {
+	@Override
+	public void deleteSubmodelByIdentifier(IIdentifier identifier) {
 		try {
 			String idShort = getIdShort(identifier);
 			smApiMap.remove(idShort);
@@ -122,16 +129,19 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		}
 	}
 
-	@Override public void deleteSubmodelByIdShort(String idShort) {
+	@Override
+	public void deleteSubmodelByIdShort(String idShort) {
 		smApiMap.remove(idShort);
 	}
 
-	@Override public ISubmodelAPI getSubmodelAPIById(IIdentifier identifier) throws ResourceNotFoundException {
+	@Override
+	public ISubmodelAPI getSubmodelAPIById(IIdentifier identifier) throws ResourceNotFoundException {
 		String idShort = getIdShort(identifier);
 		return smApiMap.get(idShort);
 	}
 
-	@Override public ISubmodelAPI getSubmodelAPIByIdShort(String idShort) throws ResourceNotFoundException {
+	@Override
+	public ISubmodelAPI getSubmodelAPIByIdShort(String idShort) throws ResourceNotFoundException {
 		ISubmodelAPI api = smApiMap.get(idShort);
 		if (api == null) {
 			throw new ResourceNotFoundException("The submodel with idShort '" + idShort + "' could not be found");

@@ -44,10 +44,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 
 /**
- * @deprecated This class has been replaced in favor of more adapted and implementable authorizer interfaces {@link org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.IAASAggregatorAuthorizer} {@link IAASAPIAuthorizer}
- * {@link IAASRegistryAuthorizer} {@link ITaggedDirectoryAuthorizer} {@link ISubmodelAggregatorAuthorizer} {@link ISubmodelAPIAuthorizer}
+ * @deprecated This class has been replaced in favor of more adapted and
+ *             implementable authorizer interfaces
+ *             {@link org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.IAASAggregatorAuthorizer}
+ *             {@link IAASAPIAuthorizer} {@link IAASRegistryAuthorizer}
+ *             {@link ITaggedDirectoryAuthorizer}
+ *             {@link ISubmodelAggregatorAuthorizer}
+ *             {@link ISubmodelAPIAuthorizer}
  */
-@Deprecated public class SecurityContextAuthorizer {
+@Deprecated
+public class SecurityContextAuthorizer {
 	public void throwExceptionInCaseOfInsufficientAuthorization(final String requiredAuthority) {
 		final Optional<Authentication> authentication = getAuthentication();
 		if (!authentication.isPresent()) {
