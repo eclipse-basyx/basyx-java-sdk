@@ -28,21 +28,19 @@ package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -213,8 +211,8 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 
 		// Check if all expected files are present
 		for (String path : EXPECTED_UNZIPPED_FILES) {
-		    String normalized = path.replaceAll("\\\\", "/");
-			assertTrue(new java.io.File(normalized).exists());
+		    Path p = Path.of(path);
+			assertTrue(new java.io.File(p.toString()).exists());
 		}
 	}
 
