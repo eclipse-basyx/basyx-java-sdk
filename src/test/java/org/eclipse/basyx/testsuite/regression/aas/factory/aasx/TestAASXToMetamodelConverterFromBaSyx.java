@@ -32,7 +32,6 @@ import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -97,13 +96,13 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final double EXPECTED_DOUBLE_VALUE = 3.14159265359;
 	private static final String EXPECTED_STRING_VALUE = "test";
 
-	private static final String IMAGE_PATH = "icon.png";
+	private static final String IMAGE_PATH = "/icon.png";
 	private static final String IMAGE_MIMETYPE = "image/png";
 	private static final String IMAGE_IDSHORT = "image";
-	private static final String PDF_PATH = "aasx/Document/docu.pdf";
+	private static final String PDF_PATH = "/aasx/Document/docu.pdf";
 	private static final String PDF_MIMETYPE = "application/pdf";
 	private static final String PDF_IDSHORT = "pdf";
-	private static final String TARGET_PATH = System.getProperty("java.io.tmpdir") + "aasx/files/";
+	private static final String TARGET_PATH = "target/files"; // gets set by BaSyx
 	private static final String[] EXPECTED_UNZIPPED_FILES = { TARGET_PATH + PDF_PATH, TARGET_PATH + IMAGE_PATH };
 
 	private static final String REL_PATH = "_rels/.rels";
@@ -210,9 +209,8 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		packageManager.unzipRelatedFiles();
 
 		// Check if all expected files are present
-		for (String path : EXPECTED_UNZIPPED_FILES) {
-		    Path p = Path.of(path);
-			assertTrue(new java.io.File(p.toString()).exists());
+		for (String path : EXPECTED_UNZIPPED_FILES) {  
+			assertTrue(new java.io.File(path).exists());
 		}
 	}
 
