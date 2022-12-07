@@ -272,7 +272,7 @@ public class AASXToMetamodelConverter {
 	public void unzipRelatedFiles() throws IOException, ParserConfigurationException, SAXException, URISyntaxException, InvalidFormatException {
 		// load folder which stores the files
 		loadAASX();
-
+		
 		List<String> files = parseReferencedFilePathsFromAASX();
 		for (String filePath : files) {
 			// name of the folder
@@ -281,7 +281,18 @@ public class AASXToMetamodelConverter {
 
 		closeOPCPackage();
 	}
-
+	
+	/**
+	 * Creates a temporary directory at the location given by java.io.tmpdir
+	 * property
+	 * 
+	 * @throws IOException
+	 */
+	private Path getTempDirectory(String prefix) throws IOException {
+	  String tempDir = System.getProperty("java.io.tmpdir");
+	  return Files.createDirectories(new File(tempDir,  prefix).toPath());
+	}
+	
 	/**
 	 * Create a folder to hold the unpackaged files The folder has the path
 	 * \target\classes\docs
@@ -315,10 +326,9 @@ public class AASXToMetamodelConverter {
 			logger.warn("A file with empty path can not be unzipped.");
 			return;
 		}
-		logger.info("Unzipping " + filePath + " to root folder:");
+		logger.info("Unzipping " + filePath + " to temporary directory:");
 		String relativePath = "files/" + VABPathTools.getParentPath(filePath);
-		Path rootPath = getRootFolder();
-		Path destDir = rootPath.resolve(relativePath);
+		Path destDir = getTempDirectory("aasx").resolve(relativePath);
 		logger.info("Unzipping to " + destDir);
 		Files.createDirectories(destDir);
 
