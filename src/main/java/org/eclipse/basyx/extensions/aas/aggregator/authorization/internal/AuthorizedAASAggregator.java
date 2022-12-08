@@ -84,10 +84,10 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 			try {
 				return authorizeGetAAS(identifier);
 			} catch (final InhibitException e) {
-				// leave out that aas
+				// log and leave out aas if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 

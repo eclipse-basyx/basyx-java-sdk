@@ -181,10 +181,10 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 			try {
 				return (IOperation) authorizeGetSubmodelElement(operation.getIdShort());
 			} catch (final InhibitException e) {
-				// leave out that operation
+				// log and leave out operation if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
@@ -210,10 +210,10 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 			try {
 				return authorizeGetSubmodelElement(smEl.getIdShort());
 			} catch (final InhibitException e) {
-				// leave out that submodelElement
+				// log and leave out submodelElement if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 

@@ -94,10 +94,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 			try {
 				return authorizeGetSubmodel(smId);
 			} catch (final InhibitException e) {
-				// leave out that submodel
+				// log and leave out submodel if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 

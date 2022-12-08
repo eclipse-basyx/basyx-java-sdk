@@ -175,10 +175,10 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 			try {
 				return authorizeLookupSubmodel(aasId, smId);
 			} catch (final InhibitException e) {
-				// remove submodel descriptor if authorization was unsuccessful
+				// log and leave out submodel descriptor if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 
 		return shallowCopyAndSubstituteSubmodels(authorizedAASDescriptor, submodelDescriptorsToRetain);
@@ -224,10 +224,10 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 			try {
 				return authorizeLookupAAS(aas.getIdentifier());
 			} catch (final InhibitException e) {
-				// leave out that aas descriptor
+				// log and leave out aas descriptor if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
@@ -253,10 +253,10 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 			try {
 				return authorizeLookupSubmodel(aasId, submodel.getIdentifier());
 			} catch (final InhibitException e) {
-				// leave out that submodel descriptor
+				// log and leave out submodel descriptor if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList());
 	}
 

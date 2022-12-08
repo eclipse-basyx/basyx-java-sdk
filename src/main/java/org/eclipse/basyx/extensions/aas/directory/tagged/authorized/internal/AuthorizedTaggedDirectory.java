@@ -109,10 +109,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 				try {
 					return super.authorizeLookupAAS(taggedAASDescriptor.getIdentifier());
 				} catch (final InhibitException e) {
-					// remove aas descriptor if authorization was unsuccessful
+					// log and leave out aas descriptor if authorization was unsuccessful
 					logger.info(e.getMessage(), e);
+					return null;
 				}
-				return null;
 			}).filter(Objects::nonNull).collect(Collectors.toSet()).stream().filter(TaggedAASDescriptor.class::isInstance).map(TaggedAASDescriptor.class::cast).collect(Collectors.toSet());
 		} catch (final InhibitException e) {
 			throw new NotAuthorized(e);
@@ -126,10 +126,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 			try {
 				return authorizeLookupAAS(aasDescriptor.getIdentifier());
 			} catch (final InhibitException e) {
-				// remove aas descriptor if authorization was unsuccessful
+				// log and leave out aas descriptor if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList()).stream().filter(TaggedAASDescriptor.class::isInstance).map(TaggedAASDescriptor.class::cast).collect(Collectors.toSet());
 
 		return authorizedAASDescriptorsAfterLookupAAS.stream().map(aasDescriptor -> {
@@ -138,10 +138,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 				try {
 					return authorizeLookupSubmodel(aasDescriptor.getIdentifier(), smId);
 				} catch (final InhibitException e) {
-					// remove submodel descriptor if authorization was unsuccessful
+					// log and leave out submodel descriptor if authorization was unsuccessful
 					logger.info(e.getMessage(), e);
+					return null;
 				}
-				return null;
 			}).filter(Objects::nonNull).collect(Collectors.toList());
 
 			submodelDescriptorsToRemove.forEach(submodelDescriptor -> aasDescriptor.removeSubmodelDescriptor(submodelDescriptor.getIdentifier()));
@@ -208,13 +208,12 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 
 		return authorizedSubmodelDescriptorsAfterLookupTag.stream().map(smDescriptor -> {
 			try {
-				// TODO: decide if to do this, what rules must user specify for access?
 				return authorizeLookupSubmodel(new ModelUrn("*"), smDescriptor.getIdentifier());
 			} catch (final InhibitException e) {
-				// remove submodel descriptor if authorization was unsuccessful
+				// log and leave out submodel descriptor if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).collect(Collectors.toList()).stream().filter(TaggedSubmodelDescriptor.class::isInstance).map(TaggedSubmodelDescriptor.class::cast).collect(Collectors.toSet());
 	}
 
@@ -237,10 +236,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 			try {
 				return authorizeLookupSubmodelTag(tag);
 			} catch (final InhibitException e) {
-				// remove submodel descriptor if authorization was unsuccessful
+				// log and leave out submodel descriptor if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toSet());
 
 		final Set<TaggedSubmodelDescriptor> authorizedTaggedAASDescriptors = new HashSet<>(authorizedTaggedSmDescriptorsByCollection);
@@ -286,10 +285,10 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 			try {
 				return authorizeLookupTag(tag);
 			} catch (final InhibitException e) {
-				// remove aas descriptor if authorization was unsuccessful
+				// log and leave out aas descriptor if authorization was unsuccessful
 				logger.info(e.getMessage(), e);
+				return null;
 			}
-			return null;
 		}).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toSet());
 
 		final Set<TaggedAASDescriptor> authorizedTaggedAASDescriptors = new HashSet<>(authorizedTaggedAASDescriptorsByCollection);
