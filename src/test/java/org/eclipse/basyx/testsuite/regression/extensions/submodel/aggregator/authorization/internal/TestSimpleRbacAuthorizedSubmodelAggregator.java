@@ -35,7 +35,7 @@ import java.util.HashSet;
 import org.eclipse.basyx.extensions.shared.authorization.internal.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.internal.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.KeycloakRoleAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRuleSet;
@@ -139,14 +139,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		assertEquals(expectedList, smList);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenGetSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -162,14 +162,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		assertEquals(submodel, returnedSubmodel);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whengetSubmodelbyIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whengetSubmodelbyIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -185,14 +185,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		assertEquals(submodel, returnedSubmodel);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIById_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIById_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -217,14 +217,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		assertEquals(submodelAPI, returnedSubmodelAPI);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIByIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIByIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -239,14 +239,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		Mockito.verify(apiMock).createSubmodel(submodel);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.createSubmodel(submodel);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenCreateSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -261,14 +261,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		Mockito.verify(apiMock).createSubmodel(submodelAPI);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodelAPI_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.createSubmodel(submodelAPI);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenCreateSubmodelAPI_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -283,14 +283,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		Mockito.verify(apiMock).updateSubmodel(submodel);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenUpdateSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.updateSubmodel(submodel);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenUpdateSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -305,14 +305,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		Mockito.verify(apiMock).deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdentifier_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdentifier_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -327,14 +327,14 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 		Mockito.verify(apiMock).deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodelByIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
 		testSubject.deleteSubmodelByIdShort(SUBMODEL_IDSHORT);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdShort_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 

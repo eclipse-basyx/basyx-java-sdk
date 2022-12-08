@@ -30,7 +30,7 @@ import org.eclipse.basyx.extensions.aas.api.authorization.AASAPIScopes;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
@@ -62,7 +62,7 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 		try {
 			return authorizeGetAAS();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -80,7 +80,7 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 		try {
 			authorizeAddSubmodel(submodel);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedAASAPI.addSubmodel(submodel);
 	}
@@ -99,7 +99,7 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 		try {
 			authorizeRemoveSubmodel(smIdShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedAASAPI.removeSubmodel(smIdShortPath);
 	}

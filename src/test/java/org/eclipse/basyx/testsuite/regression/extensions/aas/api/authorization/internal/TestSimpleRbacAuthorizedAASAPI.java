@@ -39,7 +39,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.internal.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.KeycloakRoleAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -106,7 +106,7 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		assertEquals(shell, returnedShell);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
@@ -114,7 +114,7 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		testSubject.getAAS();
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
@@ -132,7 +132,7 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		Mockito.verify(apiMock).addSubmodel(smReference2Add);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
@@ -140,7 +140,7 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		testSubject.addSubmodel(submodel.getReference());
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenAddSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
@@ -157,7 +157,7 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		Mockito.verify(apiMock).removeSubmodel(SUBMODEL_ID);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);
@@ -165,7 +165,7 @@ public class TestSimpleRbacAuthorizedAASAPI {
 		testSubject.removeSubmodel(SUBMODEL_ID);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenRemoveSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		Mockito.when(apiMock.getAAS()).thenReturn(null);

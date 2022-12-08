@@ -32,7 +32,7 @@ import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.AuthorizedAASAggregator;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
@@ -83,7 +83,7 @@ public class TestGrantedAuthorityAuthorizedAASAggregator {
 		return shell;
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenCreateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		invokeCreateAAS();
@@ -96,7 +96,7 @@ public class TestGrantedAuthorityAuthorizedAASAggregator {
 		Mockito.verify(aggregatorMock).createAAS(shell);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenCreateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		invokeCreateAAS();
@@ -114,7 +114,7 @@ public class TestGrantedAuthorityAuthorizedAASAggregator {
 		Mockito.verify(aggregatorMock).deleteAAS(shellId);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		invokeDeleteAAS();
@@ -132,7 +132,7 @@ public class TestGrantedAuthorityAuthorizedAASAggregator {
 		Assert.assertEquals(expectedShell, shell);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 
@@ -152,7 +152,7 @@ public class TestGrantedAuthorityAuthorizedAASAggregator {
 		Assert.assertEquals(expectedAASDescriptorList, shellList);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetAASList_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 

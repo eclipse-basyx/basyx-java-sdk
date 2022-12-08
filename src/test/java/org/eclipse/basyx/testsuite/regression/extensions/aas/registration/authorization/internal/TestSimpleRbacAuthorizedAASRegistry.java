@@ -38,7 +38,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRuleSet;
 import org.eclipse.basyx.extensions.shared.authorization.internal.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.KeycloakRoleAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
@@ -103,7 +103,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Mockito.verifyNoMoreInteractions(apiMock);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenRegisterAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 
@@ -118,7 +118,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Mockito.verify(apiMock).register(aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenRegisterAASDescriptor_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
@@ -133,7 +133,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Mockito.verify(apiMock).register(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodelDescriptor_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
@@ -148,7 +148,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Mockito.verify(apiMock).delete(SHELL_IDENTIFIER);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
@@ -163,7 +163,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Mockito.verify(apiMock).delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
@@ -180,7 +180,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Assert.assertEquals(expectedAASDescriptor, returnedAasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
@@ -198,7 +198,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Assert.assertEquals(expectedAASDescriptorList, returnedAasDescriptorList);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupAll_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
@@ -227,7 +227,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Assert.assertEquals(expectedSubmodelDescriptorList, returnedSubmodelDescriptorList);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodels_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
@@ -255,7 +255,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		Assert.assertEquals(expectedSubmodelDescriptor, returnedSubmodelDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 

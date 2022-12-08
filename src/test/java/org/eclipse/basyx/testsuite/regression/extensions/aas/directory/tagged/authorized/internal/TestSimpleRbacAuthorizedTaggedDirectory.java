@@ -41,7 +41,7 @@ import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistrySc
 import org.eclipse.basyx.extensions.shared.authorization.internal.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.internal.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.KeycloakRoleAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRuleSet;
@@ -119,13 +119,13 @@ public class TestSimpleRbacAuthorizedTaggedDirectory {
 		Mockito.verify(apiMock).register(aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenRegister_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.register(aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenRegister_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.register(aasDescriptor);
@@ -142,13 +142,13 @@ public class TestSimpleRbacAuthorizedTaggedDirectory {
 		assertTrue(returnedAASDescriptors.contains(aasDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenLookupTag_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupTag(AAS_TAG);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupTag_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.lookupTag(AAS_TAG);
@@ -187,13 +187,13 @@ public class TestSimpleRbacAuthorizedTaggedDirectory {
 		Mockito.verify(apiMock).registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenRegisterSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
@@ -210,13 +210,13 @@ public class TestSimpleRbacAuthorizedTaggedDirectory {
 		assertTrue(returnedSmDescriptors.contains(smDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenLookupSubmodelTag_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupSubmodelTag(SM_TAG);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenLookupSubmodelTag_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		testSubject.lookupSubmodelTag(SM_TAG);

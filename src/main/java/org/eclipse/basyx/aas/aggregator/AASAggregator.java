@@ -39,7 +39,7 @@ import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.aggregator.SubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -116,7 +116,7 @@ public class AASAggregator implements IAASAggregator {
 		return aasProviderMap.values().stream().map(p -> {
 			try {
 				return p.getValue("/aas");
-			} catch (NotAuthorized e) {
+			} catch (NotAuthorizedException e) {
 				return null;
 			} catch (Exception e1) {
 				e1.printStackTrace();

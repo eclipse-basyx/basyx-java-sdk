@@ -31,7 +31,7 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.submodel.authorization.SubmodelAPIScopes;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -81,7 +81,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			return authorizeGetSubmodel();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -100,7 +100,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			authorizeAddSubmodelElement(elem.getIdShort());
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAPI.addSubmodelElement(elem);
 	}
@@ -115,7 +115,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			authorizeAddSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAPI.addSubmodelElement(idShortPath, elem);
 	}
@@ -134,7 +134,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			return authorizeGetSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -153,7 +153,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			authorizeDeleteSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAPI.deleteSubmodelElement(idShortPath);
 	}
@@ -172,7 +172,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			return authorizeGetOperations();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -201,7 +201,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			return authorizeGetSubmodelElements();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -231,7 +231,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			authorizeUpdateSubmodelElement(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAPI.updateSubmodelElement(idShortPath, newValue);
 	}
@@ -250,7 +250,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			return authorizeGetSubmodelElementValue(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -269,7 +269,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			authorizeInvokeOperation(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		return decoratedSubmodelAPI.invokeOperation(idShortPath, params);
 	}
@@ -283,7 +283,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			authorizeInvokeOperation(idShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		return decoratedSubmodelAPI.invokeAsync(idShortPath, params);
 	}
@@ -307,7 +307,7 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		try {
 			return authorizeGetOperationResult(smElIdShortPath, requestId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 

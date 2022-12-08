@@ -34,7 +34,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAu
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication.ElevatedCodeAuthenticationAreaHandler;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SubmodelAggregatorScopes;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -85,7 +85,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			return authorizeGetSubmodelList();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			return authorizeGetSubmodel(identifier);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -132,7 +132,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			return authorizeGetSubmodelbyIdShort(smIdShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			return authorizeGetSubmodelAPIById(identifier);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -166,7 +166,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			return authorizeGetSubmodelAPIByIdShort(smIdShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -198,7 +198,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			authorizeCreateSubmodel(submodel.getIdentification());
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAggregator.createSubmodel(submodel);
 	}
@@ -217,7 +217,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			authorizeCreateSubmodel(submodelAPI);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAggregator.createSubmodel(submodelAPI);
 	}
@@ -238,7 +238,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			authorizeUpdateSubmodel(smId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAggregator.updateSubmodel(submodel);
 	}
@@ -257,7 +257,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			authorizeDeleteSubmodelByIdentifier(identifier);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAggregator.deleteSubmodelByIdentifier(identifier);
 	}
@@ -276,7 +276,7 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 		try {
 			authorizeDeleteSubmodelByIdShort(smIdShortPath);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedSubmodelAggregator.deleteSubmodelByIdShort(smIdShortPath);
 	}

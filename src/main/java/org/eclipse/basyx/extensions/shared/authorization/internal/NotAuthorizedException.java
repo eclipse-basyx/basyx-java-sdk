@@ -35,7 +35,7 @@ import org.eclipse.basyx.vab.exception.provider.ProviderException;
  *
  * @author wege
  */
-public class NotAuthorized extends ProviderException {
+public class NotAuthorizedException extends ProviderException {
 	/**
 	 * Version information for serialized instances
 	 */
@@ -44,19 +44,19 @@ public class NotAuthorized extends ProviderException {
 	/**
 	 * Constructor
 	 */
-	public NotAuthorized(final String msg) {
+	public NotAuthorizedException(final String msg) {
 		super(msg);
 	}
 
-	public NotAuthorized(final Exception e) {
+	public NotAuthorizedException(final Exception e) {
 		super(e);
 	}
 
-	public NotAuthorized(final List<Message> msgs) {
+	public NotAuthorizedException(final List<Message> msgs) {
 		super(msgs);
 	}
 
-	public NotAuthorized() {
+	public NotAuthorizedException() {
 		this("not authorized");
 	}
 }

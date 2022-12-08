@@ -34,7 +34,7 @@ import org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorSc
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
@@ -75,7 +75,7 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		try {
 			return authorizeGetAASList();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -105,7 +105,7 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		try {
 			return authorizeGetAAS(shellId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -122,7 +122,7 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		try {
 			return authorizeGetAASProvider(shellId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -140,7 +140,7 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		try {
 			authorizeCreateAAS(shell);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedAasAggregator.createAAS(shell);
 	}
@@ -159,7 +159,7 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		try {
 			authorizeUpdateAAS(shell);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedAasAggregator.updateAAS(shell);
 	}
@@ -178,7 +178,7 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		try {
 			authorizeDeleteAAS(shellId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedAasAggregator.deleteAAS(shellId);
 	}

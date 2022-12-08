@@ -39,7 +39,7 @@ import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistrySc
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
@@ -84,7 +84,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		try {
 			authorizeRegister(deviceAASDescriptor);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedRegistry.register(deviceAASDescriptor);
 	}
@@ -103,7 +103,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		try {
 			authorizeRegister(aasId, smDescriptor);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedRegistry.register(aasId, smDescriptor);
 	}
@@ -122,7 +122,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		try {
 			authorizeDelete(aasId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedRegistry.delete(aasId);
 	}
@@ -141,7 +141,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		try {
 			authorizeDelete(aasId, smId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 		decoratedRegistry.delete(aasId, smId);
 	}
@@ -159,7 +159,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		try {
 			return authorizeLookupAAS(aasId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -215,7 +215,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		try {
 			return authorizeLookupAll();
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -244,7 +244,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		try {
 			return authorizeLookupSubmodels(aasId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -273,7 +273,7 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 		try {
 			return authorizeLookupSubmodel(aasId, smId);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 

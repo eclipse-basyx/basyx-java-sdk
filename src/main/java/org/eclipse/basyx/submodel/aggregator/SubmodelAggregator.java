@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -70,7 +70,7 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 		return smApiMap.values().stream().map(smApi -> {
 			try {
 				return smApi.getSubmodel();
-			} catch (final NotAuthorized e) {
+			} catch (final NotAuthorizedException e) {
 				logger.info(e.getMessage(), e);
 			}
 			return null;

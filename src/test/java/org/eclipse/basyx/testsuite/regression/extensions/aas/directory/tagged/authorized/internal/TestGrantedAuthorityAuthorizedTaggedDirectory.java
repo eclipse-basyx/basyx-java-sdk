@@ -37,7 +37,7 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.authorized.internal.AuthorizedTaggedDirectory;
 import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AuthorizedAASRegistry;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
@@ -104,13 +104,13 @@ public class TestGrantedAuthorityAuthorizedTaggedDirectory {
 		Mockito.verify(apiMock).register(aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenRegister_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.register(aasDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenRegister_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.register(aasDescriptor);
@@ -127,13 +127,13 @@ public class TestGrantedAuthorityAuthorizedTaggedDirectory {
 		assertTrue(returnedAASDescriptors.contains(aasDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenLookupTag_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupTag(AAS_TAG);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenLookupTag_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.lookupTag(AAS_TAG);
@@ -150,13 +150,13 @@ public class TestGrantedAuthorityAuthorizedTaggedDirectory {
 		assertTrue(returnedAASDescriptors.contains(aasDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenLookupTags_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupTags(Collections.singleton(AAS_TAG));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenLookupTags_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.lookupTags(Collections.singleton(AAS_TAG));
@@ -170,13 +170,13 @@ public class TestGrantedAuthorityAuthorizedTaggedDirectory {
 		Mockito.verify(apiMock).registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenRegisterSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenRegisterSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.registerSubmodel(SHELL_IDENTIFIER, smDescriptor);
@@ -193,13 +193,13 @@ public class TestGrantedAuthorityAuthorizedTaggedDirectory {
 		assertTrue(returnedSmDescriptors.contains(smDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenLookupSubmodelTag_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupSubmodelTag(SM_TAG);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenLookupSubmodelTag_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.lookupSubmodelTag(SM_TAG);
@@ -217,13 +217,13 @@ public class TestGrantedAuthorityAuthorizedTaggedDirectory {
 		assertTrue(returnedSmDescriptors.contains(smDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenLookupSubmodelTags_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupSubmodelTags(Collections.singleton(SM_TAG));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenLookupSubmodelTags_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.lookupSubmodelTags(Collections.singleton(SM_TAG));
@@ -242,13 +242,13 @@ public class TestGrantedAuthorityAuthorizedTaggedDirectory {
 		assertTrue(returnedSmDescriptors.contains(smDescriptor));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenLookupBothAasAndSubmodelTags_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		testSubject.lookupBothAasAndSubmodelTags(Collections.singleton(AAS_TAG), Collections.singleton(SM_TAG));
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenLookupBothAasAndSubmodelTags_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
 		testSubject.lookupBothAasAndSubmodelTags(Collections.singleton(AAS_TAG), Collections.singleton(SM_TAG));

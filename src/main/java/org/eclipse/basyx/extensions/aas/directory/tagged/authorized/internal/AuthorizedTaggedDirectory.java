@@ -39,7 +39,7 @@ import org.eclipse.basyx.extensions.aas.registration.authorization.internal.Auth
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,13 +80,13 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		try {
 			authorizeRegister(descriptor);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 
 		try {
 			super.authorizeRegister(descriptor);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 
 		decoratedTaggedDirectory.register(descriptor);
@@ -115,7 +115,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 				}
 			}).filter(Objects::nonNull).collect(Collectors.toSet()).stream().filter(TaggedAASDescriptor.class::isInstance).map(TaggedAASDescriptor.class::cast).collect(Collectors.toSet());
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -159,7 +159,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		try {
 			return authorizeLookupTags(tags);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -173,13 +173,13 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		try {
 			authorizeRegisterSubmodel(aasId, smDescriptor);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 
 		try {
 			super.authorizeRegister(aasId, smDescriptor);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 
 		decoratedTaggedDirectory.registerSubmodel(aasId, smDescriptor);
@@ -198,7 +198,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		try {
 			return authorizeLookupSubmodelTag(submodelTag);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -226,7 +226,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		try {
 			return authorizeLookupSubmodelTags(submodelTags);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 
@@ -261,7 +261,7 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		try {
 			return authorizeLookupBothAasAndSubmodelTags(aasTags, submodelTags);
 		} catch (final InhibitException e) {
-			throw new NotAuthorized(e);
+			throw new NotAuthorizedException(e);
 		}
 	}
 

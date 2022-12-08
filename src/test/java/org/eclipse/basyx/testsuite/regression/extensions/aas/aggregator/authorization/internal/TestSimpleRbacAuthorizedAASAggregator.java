@@ -39,7 +39,7 @@ import org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.Simple
 import org.eclipse.basyx.extensions.shared.authorization.internal.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.internal.JWTAuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.KeycloakRoleAuthenticator;
-import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.PredefinedSetRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRule;
 import org.eclipse.basyx.extensions.shared.authorization.internal.RbacRuleSet;
@@ -109,7 +109,7 @@ public class TestSimpleRbacAuthorizedAASAggregator {
 		return shell;
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenCreateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		invokeCreateAAS();
@@ -122,13 +122,13 @@ public class TestSimpleRbacAuthorizedAASAggregator {
 		Mockito.verify(apiMock).createAAS(shell);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenCreateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		invokeCreateAAS();
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenSecurityContextIsEmpty_whenUpdateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setEmptySecurityContext();
 		final AssetAdministrationShell shell = new AssetAdministrationShell();
@@ -143,7 +143,7 @@ public class TestSimpleRbacAuthorizedAASAggregator {
 		Mockito.verify(apiMock).updateAAS(shell);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenUpdateAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		final AssetAdministrationShell shell = new AssetAdministrationShell();
@@ -162,7 +162,7 @@ public class TestSimpleRbacAuthorizedAASAggregator {
 		Mockito.verify(apiMock).deleteAAS(shellId);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenDeleteAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 		invokeDeleteAAS();
@@ -180,7 +180,7 @@ public class TestSimpleRbacAuthorizedAASAggregator {
 		Assert.assertEquals(expectedShell, shell);
 	}
 
-	@Test(expected = NotAuthorized.class)
+	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetAAS_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
 
