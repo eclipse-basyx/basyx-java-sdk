@@ -32,6 +32,9 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.aas.api.authorization.internal.AuthorizedAASAPI;
+import org.eclipse.basyx.extensions.aas.api.authorization.internal.GrantedAuthorityAASAPIAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
@@ -71,7 +74,7 @@ public class TestGrantedAuthorityAuthorizedAASAPI {
 
 	@Before
 	public void setUp() {
-		testSubject = new AuthorizedAASAPI<>(apiMock);
+		testSubject = new AuthorizedAASAPI<>(apiMock, new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()), new AuthenticationContextProvider());
 		securityContextProvider = new AuthorizationContextProvider(AuthorizedAASAPI.READ_AUTHORITY, AuthorizedAASAPI.WRITE_AUTHORITY, null);
 
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);

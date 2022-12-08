@@ -32,6 +32,9 @@ import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.AuthorizedAASAggregator;
+import org.eclipse.basyx.extensions.aas.aggregator.authorization.internal.GrantedAuthorityAASAggregatorAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -49,7 +52,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * Tests authorization with the AuthorizedAASAggregator
  *
- * @author jungjan, fried, fischer
+ * @author wege
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestGrantedAuthorityAuthorizedAASAggregator {
@@ -68,7 +71,7 @@ public class TestGrantedAuthorityAuthorizedAASAggregator {
 
 	@Before
 	public void setUp() {
-		testSubject = new AuthorizedAASAggregator<>(aggregatorMock);
+		testSubject = new AuthorizedAASAggregator<>(aggregatorMock, new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()), new AuthenticationContextProvider());
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 	}
 

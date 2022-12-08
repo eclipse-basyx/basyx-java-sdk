@@ -28,8 +28,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.submodel.aggregator.authorization.internal.AuthorizedSubmodelAggregator;
+import org.eclipse.basyx.extensions.submodel.aggregator.authorization.internal.GrantedAuthoritySubmodelAggregatorAuthorizer;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -77,7 +80,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 
 	@Before
 	public void setUp() {
-		testSubject = new AuthorizedSubmodelAggregator<>(apiMock);
+		testSubject = new AuthorizedSubmodelAggregator<>(apiMock, new GrantedAuthoritySubmodelAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()), new AuthenticationContextProvider());
 	}
 
 	@After

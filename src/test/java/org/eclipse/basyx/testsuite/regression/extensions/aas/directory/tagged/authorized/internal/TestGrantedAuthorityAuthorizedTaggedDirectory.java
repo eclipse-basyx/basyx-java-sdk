@@ -36,7 +36,10 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.authorized.internal.AuthorizedTaggedDirectory;
+import org.eclipse.basyx.extensions.aas.directory.tagged.authorized.internal.GrantedAuthorityTaggedDirectoryAuthorizer;
 import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AuthorizedAASRegistry;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -79,7 +82,7 @@ public class TestGrantedAuthorityAuthorizedTaggedDirectory {
 
 	@Before
 	public void setUp() {
-		testSubject = new AuthorizedTaggedDirectory<>(apiMock);
+		testSubject = new AuthorizedTaggedDirectory<>(apiMock, new GrantedAuthorityTaggedDirectoryAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()), new AuthenticationContextProvider());
 		securityContextProvider = new AuthorizationContextProvider(AuthorizedAASRegistry.READ_AUTHORITY, AuthorizedAASRegistry.WRITE_AUTHORITY, null);
 
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);

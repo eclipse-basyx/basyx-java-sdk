@@ -30,6 +30,9 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AuthorizedAASRegistry;
+import org.eclipse.basyx.extensions.aas.registration.authorization.internal.GrantedAuthorityAASRegistryAuthorizer;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
@@ -90,7 +93,7 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
 
 	@Before
 	public void setUp() {
-		testSubject = new AuthorizedAASRegistry<>(apiMock);
+		testSubject = new AuthorizedAASRegistry<>(apiMock, new GrantedAuthorityAASRegistryAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()), new AuthenticationContextProvider());
 		aasDescriptor = new AASDescriptor(SHELL_ID, SHELL_IDENTIFIER, "");
 		smDescriptor = new SubmodelDescriptor(SUBMODEL_ID, SUBMODEL_IDENTIFIER, "");
 	}

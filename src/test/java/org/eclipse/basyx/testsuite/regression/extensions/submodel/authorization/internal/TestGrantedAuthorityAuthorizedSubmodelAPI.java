@@ -28,8 +28,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
+import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.extensions.submodel.authorization.internal.AuthorizedSubmodelAPI;
+import org.eclipse.basyx.extensions.submodel.authorization.internal.GrantedAuthoritySubmodelAPIAuthorizer;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -81,7 +84,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
 
 	@Before
 	public void setUp() {
-		authorizedSubmodelAPI = new AuthorizedSubmodelAPI<>(apiMock);
+		authorizedSubmodelAPI = new AuthorizedSubmodelAPI<>(apiMock, new GrantedAuthoritySubmodelAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()), new AuthenticationContextProvider());
 		Mockito.when(apiMock.getSubmodel()).thenReturn(submodel);
 	}
 
