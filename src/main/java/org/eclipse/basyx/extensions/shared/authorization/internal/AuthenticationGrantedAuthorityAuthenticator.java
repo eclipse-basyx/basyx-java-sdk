@@ -37,9 +37,6 @@ import org.springframework.security.core.context.SecurityContext;
  * @author wege
  */
 public class AuthenticationGrantedAuthorityAuthenticator implements IGrantedAuthorityAuthenticator<Authentication> {
-	public AuthenticationGrantedAuthorityAuthenticator() {
-	}
-
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities(final Authentication subjectInformation) {
 		if (subjectInformation == null) {
