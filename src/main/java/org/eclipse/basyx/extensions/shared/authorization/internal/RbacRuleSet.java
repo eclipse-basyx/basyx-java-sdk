@@ -35,11 +35,7 @@ import java.util.Set;
  * @author wege
  */
 public class RbacRuleSet {
-	private final Set<RbacRule> rules;
-
-	public RbacRuleSet() {
-		this.rules = new HashSet<>();
-	}
+	private final Set<RbacRule> rules = new HashSet<>();
 
 	public Set<RbacRule> getRules() {
 		return Collections.unmodifiableSet(this.rules);
