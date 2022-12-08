@@ -26,6 +26,7 @@ package org.eclipse.basyx.extensions.aas.api.authorization.internal;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
+import org.eclipse.basyx.extensions.aas.api.authorization.AASAPIScopes;
 import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;

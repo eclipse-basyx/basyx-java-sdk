@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistryScopes;
 import org.eclipse.basyx.extensions.shared.authorization.internal.BaSyxObjectTargetInformation;
 import org.eclipse.basyx.extensions.shared.authorization.internal.IRbacRuleChecker;
 import org.eclipse.basyx.extensions.shared.authorization.internal.IRoleAuthenticator;

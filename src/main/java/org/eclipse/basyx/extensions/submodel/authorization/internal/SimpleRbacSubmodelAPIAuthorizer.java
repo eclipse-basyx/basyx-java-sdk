@@ -35,6 +35,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.IdHelper;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.IRoleAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.SimpleRbacHelper;
+import org.eclipse.basyx.extensions.submodel.authorization.SubmodelAPIScopes;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;

@@ -31,7 +31,6 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.extensions.aas.registration.authorization.AASRegistryScopes;
 import org.eclipse.basyx.extensions.aas.registration.authorization.AuthorizedAASRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
@@ -76,11 +75,11 @@ public class TestAuthorizedAASRegistry {
 	}
 
 	private SecurityContext getSecurityContextWithReadAuthority() {
-		return _getSecurityContextWithAuthorities("SCOPE_" + AASRegistryScopes.READ_SCOPE);
+		return _getSecurityContextWithAuthorities(AuthorizedAASRegistry.READ_AUTHORITY);
 	}
 
 	private SecurityContext getSecurityContextWithWriteAuthority() {
-		return _getSecurityContextWithAuthorities("SCOPE_" + AASRegistryScopes.WRITE_SCOPE);
+		return _getSecurityContextWithAuthorities(AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
 	@Before

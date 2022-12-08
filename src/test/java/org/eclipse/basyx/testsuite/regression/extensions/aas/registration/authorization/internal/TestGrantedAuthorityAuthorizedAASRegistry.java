@@ -29,7 +29,6 @@ import java.util.List;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
-import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AASRegistryScopes;
 import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AuthorizedAASRegistry;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorized;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -82,11 +81,11 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
 	}
 
 	private SecurityContext getSecurityContextWithReadAuthority() {
-		return _getSecurityContextWithAuthorities("SCOPE_" + AASRegistryScopes.READ_SCOPE);
+		return _getSecurityContextWithAuthorities(AuthorizedAASRegistry.READ_AUTHORITY);
 	}
 
 	private SecurityContext getSecurityContextWithWriteAuthority() {
-		return _getSecurityContextWithAuthorities("SCOPE_" + AASRegistryScopes.WRITE_SCOPE);
+		return _getSecurityContextWithAuthorities(AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
 	@Before
