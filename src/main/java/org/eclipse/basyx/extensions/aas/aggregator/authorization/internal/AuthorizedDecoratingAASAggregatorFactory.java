@@ -26,8 +26,6 @@ package org.eclipse.basyx.extensions.aas.aggregator.authorization.internal;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregatorFactory;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 
 /**
@@ -45,18 +43,6 @@ public class AuthorizedDecoratingAASAggregatorFactory<SubjectInformationType> im
 		this.apiFactory = factoryToBeDecorated;
 		this.aasAggregatorAuthorizer = aasAggregatorAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
-	}
-
-	/**
-	 * @deprecated please use
-	 *             {@link AuthorizedDecoratingAASAggregatorFactory#AuthorizedDecoratingAASAggregatorFactory(IAASAggregatorFactory, IAASAggregatorAuthorizer, ISubjectInformationProvider)}
-	 *             instead, which uses more parameters for the authorization
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedDecoratingAASAggregatorFactory(final IAASAggregatorFactory factoryToBeDecorated) {
-		this(factoryToBeDecorated, (IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
 	@Override

@@ -27,8 +27,6 @@ package org.eclipse.basyx.extensions.aas.api.authorization.internal;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 
 /**
@@ -46,18 +44,6 @@ public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implement
 		this.apiFactory = factoryToBeDecorated;
 		this.aasAPIAuthorizer = aasAPIAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
-	}
-
-	/**
-	 * @deprecated please use
-	 *             {@link AuthorizedDecoratingAASAPIFactory#AuthorizedDecoratingAASAPIFactory(IAASAPIFactory, IAASAPIAuthorizer, ISubjectInformationProvider)}
-	 *             instead, which uses more parameters for the authorization
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedDecoratingAASAPIFactory(final IAASAPIFactory factoryToBeDecorated) {
-		this(factoryToBeDecorated, (IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
 	@Override

@@ -25,8 +25,6 @@
 package org.eclipse.basyx.extensions.submodel.authorization.internal;
 
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -35,7 +33,7 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 /**
  * Api provider for constructing a new SubmodelAPI that is authorized
  *
- * @author espen
+ * @author espen, wege
  */
 public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> implements ISubmodelAPIFactory {
 	protected final IAssetAdministrationShell aas;
@@ -49,18 +47,6 @@ public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> impl
 		this.submodelAPIFactory = submodelAPIFactory;
 		this.submodelAPIAuthorizer = submodelAPIAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
-	}
-
-	/**
-	 * @deprecated please use
-	 *             {@link AuthorizedDecoratingSubmodelAPIFactory#AuthorizedDecoratingSubmodelAPIFactory(IAssetAdministrationShell, ISubmodelAPIFactory, ISubmodelAPIAuthorizer, ISubjectInformationProvider)}
-	 *             instead, which uses more parameters for the authorization
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedDecoratingSubmodelAPIFactory(final ISubmodelAPIFactory submodelAPIFactory) {
-		this(null, submodelAPIFactory, (ISubmodelAPIAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
 	@Override
