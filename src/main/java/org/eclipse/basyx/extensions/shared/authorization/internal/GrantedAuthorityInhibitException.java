@@ -31,12 +31,8 @@ package org.eclipse.basyx.extensions.shared.authorization.internal;
  * @author wege
  */
 public class GrantedAuthorityInhibitException extends InhibitException {
-	private final String missingAuthority;
-
 	public GrantedAuthorityInhibitException(final String missingAuthority) {
 		super("no authority " + missingAuthority);
-
-		this.missingAuthority = missingAuthority;
 	}
 
 	@Override
