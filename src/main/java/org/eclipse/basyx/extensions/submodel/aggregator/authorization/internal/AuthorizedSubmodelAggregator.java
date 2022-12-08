@@ -30,8 +30,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication.ElevatedCodeAuthenticationAreaHandler;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
@@ -76,20 +74,6 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	public AuthorizedSubmodelAggregator(final ISubmodelAggregator decoratedSubmodelAggregator, final ISubmodelAggregatorAuthorizer<SubjectInformationType> submodelAggregatorAuthorizer,
 			final ISubjectInformationProvider<SubjectInformationType> subjectInformationProvider) {
 		this(null, decoratedSubmodelAggregator, submodelAggregatorAuthorizer, subjectInformationProvider);
-	}
-
-	/**
-	 * @deprecated Please use
-	 *             {@link AuthorizedSubmodelAggregator#AuthorizedSubmodelAggregator(IAssetAdministrationShell, ISubmodelAggregator, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)}
-	 *             or
-	 *             {@link AuthorizedSubmodelAggregator#AuthorizedSubmodelAggregator(ISubmodelAggregator, ISubmodelAggregatorAuthorizer, ISubjectInformationProvider)}
-	 *             instead for more explicit parametrization.
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedSubmodelAggregator(final ISubmodelAggregator decoratedSubmodelAggregator) {
-		this(decoratedSubmodelAggregator, (ISubmodelAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthoritySubmodelAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
 	@Override

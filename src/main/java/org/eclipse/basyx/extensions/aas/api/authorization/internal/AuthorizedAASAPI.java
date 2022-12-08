@@ -27,8 +27,6 @@ package org.eclipse.basyx.extensions.aas.api.authorization.internal;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.extensions.aas.api.authorization.AASAPIScopes;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
@@ -53,18 +51,6 @@ public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 		this.decoratedAASAPI = decoratedAASAPI;
 		this.aasAPIAuthorizer = aasAPIAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
-	}
-
-	/**
-	 * @deprecated Please use
-	 *             {@link AuthorizedAASAPI#AuthorizedAASAPI(IAASAPI, IAASAPIAuthorizer, ISubjectInformationProvider)}
-	 *             instead for more explicit parametrization.
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedAASAPI(final IAASAPI decoratedAASAPI) {
-		this(decoratedAASAPI, (IAASAPIAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAPIAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
 	@Override

@@ -36,8 +36,6 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedAASDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescriptor;
 import org.eclipse.basyx.extensions.aas.registration.authorization.internal.AuthorizedAASRegistry;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
@@ -70,18 +68,6 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 		this.decoratedTaggedDirectory = decoratedTaggedDirectory;
 		this.taggedDirectoryAuthorizer = taggedDirectoryAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
-	}
-
-	/**
-	 * @deprecated Please use
-	 *             {@link AuthorizedTaggedDirectory#AuthorizedTaggedDirectory(IAASTaggedDirectory, ITaggedDirectoryAuthorizer, ISubjectInformationProvider)}
-	 *             instead for more explicit parametrization.
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedTaggedDirectory(final IAASTaggedDirectory decoratedTaggedDirectory) {
-		this(decoratedTaggedDirectory, (ITaggedDirectoryAuthorizer<SubjectInformationType>) new GrantedAuthorityTaggedDirectoryAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
 	@Override

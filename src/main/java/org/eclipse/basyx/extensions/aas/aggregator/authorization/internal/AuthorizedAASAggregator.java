@@ -31,8 +31,6 @@ import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.aas.aggregator.authorization.AASAggregatorScopes;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
-import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
@@ -66,18 +64,6 @@ public class AuthorizedAASAggregator<SubjectInformationType> implements IAASAggr
 		this.decoratedAasAggregator = decoratedAasAggregator;
 		this.aasAggregatorAuthorizer = aasAggregatorAuthorizer;
 		this.subjectInformationProvider = subjectInformationProvider;
-	}
-
-	/**
-	 * @deprecated Please use
-	 *             {@link AuthorizedAASAggregator#AuthorizedAASAggregator(IAASAggregator, IAASAggregatorAuthorizer, ISubjectInformationProvider)}
-	 *             instead for more explicit parametrization.
-	 */
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	public AuthorizedAASAggregator(final IAASAggregator decoratedAasAggregator) {
-		this(decoratedAasAggregator, (IAASAggregatorAuthorizer<SubjectInformationType>) new GrantedAuthorityAASAggregatorAuthorizer<>(new AuthenticationGrantedAuthorityAuthenticator()),
-				(ISubjectInformationProvider<SubjectInformationType>) new AuthenticationContextProvider());
 	}
 
 	@Override
