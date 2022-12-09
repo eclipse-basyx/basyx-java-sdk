@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,8 +106,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String PDF_IDSHORT = "pdf";
 	private static final String TARGET_PATH = "target/files"; // gets set by BaSyx
 	private static final String[] EXPECTED_UNZIPPED_FILES = { TARGET_PATH + PDF_PATH, TARGET_PATH + IMAGE_PATH };
-	private static final String TEMPORARY_DIRECTORY = System.getProperty("java.io.tmpdir") + "/files";
-	private static final String[] EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR = { TEMPORARY_DIRECTORY + PDF_PATH, TEMPORARY_DIRECTORY + IMAGE_PATH };
+	private static final String[] EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR = { PDF_PATH, IMAGE_PATH };
 
 	private static final String REL_PATH = "_rels/.rels";
 	private static final String ORIGIN_REL_PATH = "aasx/_rels/aasx-origin.rels";
@@ -228,10 +228,12 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	 */
 	@Test
 	public void testFilesUnzippedToSpecifiedDirectory() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
-	  packageManager.unzipRelatedFiles(Path.of(TEMPORARY_DIRECTORY));
+	  Path pathToTempDir = Files.createTempDirectory("aasx");	  
+	  packageManager.unzipRelatedFiles(pathToTempDir);
 
-	  for (String path : EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR) {
-	    assertTrue(new java.io.File(path).exists());
+	  for (String p : EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR) {
+	    Path path = Path.of(pathToTempDir.toString() + "/files" + p);
+	    assertTrue(new java.io.File(path.toString()).exists());
 	  }
 	}
 

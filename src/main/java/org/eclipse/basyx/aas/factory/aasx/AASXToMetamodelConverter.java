@@ -276,7 +276,7 @@ public class AASXToMetamodelConverter {
 		List<String> files = parseReferencedFilePathsFromAASX();
 		for (String filePath : files) {
 			// name of the folder
-			unzipFile(filePath, aasxRoot);
+			unzipFile(filePath, aasxRoot, null);
 		}
 
 		closeOPCPackage();
@@ -327,7 +327,7 @@ public class AASXToMetamodelConverter {
 	 * @throws URISyntaxException
 	 * @throws InvalidFormatException
 	 */
-	private void unzipFile(String filePath, OPCPackage aasxRoot, Path... pathToDirectory) throws IOException, URISyntaxException, InvalidFormatException {
+	private void unzipFile(String filePath, OPCPackage aasxRoot, Path pathToDirectory) throws IOException, URISyntaxException, InvalidFormatException {
 		// Create destination directory
 		if (filePath.startsWith("/")) {
 			filePath = filePath.substring(1);
@@ -341,9 +341,8 @@ public class AASXToMetamodelConverter {
 		String relativePath = "files/" + VABPathTools.getParentPath(filePath);
 		Path destDir;
 		
-		if (pathToDirectory.length == 1) {
-		  Path directory = pathToDirectory[0];
-		  destDir = directory.resolve(relativePath);
+		if (pathToDirectory != null) {
+		  destDir = pathToDirectory.resolve(relativePath);
 		} else {		  
 		  Path rootPath = getRootFolder();
 		  destDir = rootPath.resolve(relativePath);
