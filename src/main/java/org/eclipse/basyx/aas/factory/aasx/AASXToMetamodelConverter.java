@@ -293,10 +293,6 @@ public class AASXToMetamodelConverter {
 	  
 	  closeOPCPackage();
 	}
-	
-	private Path createDirectory(Path path) throws IOException {
-	  return Files.createDirectories(path);
-	}
 
 	/**
 	 * Create a folder to hold the unpackaged files The folder has the path
@@ -337,7 +333,7 @@ public class AASXToMetamodelConverter {
 		Path destDir;
 		
 		if (pathToDirectory.length == 1) {
-		  Path directory = createDirectory(pathToDirectory[0]);
+		  Path directory = pathToDirectory[0];
 		  destDir = directory.resolve(relativePath);
 		} else {		  
 		  Path rootPath = getRootFolder();
