@@ -282,7 +282,16 @@ public class AASXToMetamodelConverter {
 		closeOPCPackage();
 	}
 	
-	
+	/**
+	 * Unzips all files referenced by the aasx file to a specified directory
+	 *
+	 * @param pathToDirectory
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws URISyntaxException
+	 */
 	public void unzipRelatedFiles(Path pathToDirectory) throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
 	  loadAASX();
 	  
