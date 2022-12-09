@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Implementation variant for the SubmodelAggregator that authorized each access
  *
- * @author espen, wege
+ * @author wege
  */
 public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISubmodelAggregator {
 	private static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";

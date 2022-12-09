@@ -55,7 +55,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * Tests authorization with the AuthorizedSubmodelAggregator
  *
- * @author espen, wege
+ * @author wege
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestGrantedAuthorityAuthorizedSubmodelAggregator {

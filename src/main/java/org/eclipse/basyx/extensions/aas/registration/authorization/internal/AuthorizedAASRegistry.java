@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * A registry implementation that authorizes invocations before forwarding them
  * to an underlying registry implementation.
  *
- * @author pneuschwander, wege
+ * @author wege
  * @see AASRegistryScopes
  */
 public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegistry {

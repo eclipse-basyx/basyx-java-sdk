@@ -33,7 +33,7 @@ import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 /**
  * Api provider for constructing a new SubmodelAPI that is authorized
  *
- * @author espen, wege
+ * @author wege
  */
 public class AuthorizedDecoratingSubmodelAPIFactory<SubjectInformationType> implements ISubmodelAPIFactory {
 	protected final IAssetAdministrationShell aas;

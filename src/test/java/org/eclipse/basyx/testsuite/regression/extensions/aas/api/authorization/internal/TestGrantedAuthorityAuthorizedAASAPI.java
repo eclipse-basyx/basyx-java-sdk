@@ -52,7 +52,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * Tests authorization with the AuthorizedAASAPI
  *
- * @author espen
+ * @author wege
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestGrantedAuthorityAuthorizedAASAPI {

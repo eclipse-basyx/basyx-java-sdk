@@ -31,7 +31,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInform
 /**
  * Factory decorating AASAggregator for authorization
  *
- * @author fischer, fried, wege
+ * @author wege
  */
 public class AuthorizedDecoratingAASAggregatorFactory<SubjectInformationType> implements IAASAggregatorFactory {
 	protected final IAASAggregatorFactory apiFactory;

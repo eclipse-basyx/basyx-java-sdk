@@ -36,7 +36,7 @@ import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 /**
  * Maps Exceptions from providers to HTTP-Codes
  *
- * @author conradi
+ * @author conradi, wege
  */
 public class ExceptionToHTTPCodeMapper {
 

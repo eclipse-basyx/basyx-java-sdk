@@ -52,7 +52,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 /**
  * Tests authorization with the AuthorizedAASRegistry
  *
- * @author pneuschwander
+ * @author wege
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestGrantedAuthorityAuthorizedAASRegistry {

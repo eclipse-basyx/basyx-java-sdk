@@ -59,7 +59,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 /**
  * Tests authorization with the AuthorizedAASAggregator
  *
- * @author jungjan, fried, fischer, wege
+ * @author wege
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class TestSimpleRbacAuthorizedAASAggregator {

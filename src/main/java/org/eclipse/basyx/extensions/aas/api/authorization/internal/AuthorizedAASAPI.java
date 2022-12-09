@@ -36,7 +36,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 /**
  * Implementation variant for the AASAPI that authorizes each access to the API
  *
- * @author espen, wege
+ * @author wege
  */
 public class AuthorizedAASAPI<SubjectInformationType> implements IAASAPI {
 	public static final String SCOPE_AUTHORITY_PREFIX = "SCOPE_";

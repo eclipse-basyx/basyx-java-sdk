@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * Implementation of {@link IAASTaggedDirectory} for restricting access to
  * sensitive data
  *
- * @author fried, wege
+ * @author wege
  */
 public class AuthorizedTaggedDirectory<SubjectInformationType> extends AuthorizedAASRegistry<SubjectInformationType> implements IAASTaggedDirectory {
 	private static final Logger logger = LoggerFactory.getLogger(AuthorizedTaggedDirectory.class);

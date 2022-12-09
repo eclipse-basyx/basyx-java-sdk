@@ -32,7 +32,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInform
 /**
  * Api provider for constructing a new AAS API that is authorized
  *
- * @author espen, wege
+ * @author wege
  */
 public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implements IAASAPIFactory {
 	protected final IAASAPIFactory apiFactory;

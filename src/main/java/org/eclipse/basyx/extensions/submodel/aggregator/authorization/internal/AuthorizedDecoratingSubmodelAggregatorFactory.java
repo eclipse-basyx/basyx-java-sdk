@@ -32,7 +32,7 @@ import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 /**
  * Api provider for constructing a new Submodel aggregator that is authorized
  *
- * @author espen, wege
+ * @author wege
  */
 public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationType> implements ISubmodelAggregatorFactory {
 	protected final IAssetAdministrationShell aas;

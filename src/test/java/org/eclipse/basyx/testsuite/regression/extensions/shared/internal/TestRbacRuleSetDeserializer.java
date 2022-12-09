@@ -33,6 +33,11 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.TagTargetInfor
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * Tests rbac rule set deserialization.
+ *
+ * @author wege
+ */
 public class TestRbacRuleSetDeserializer {
 	@Test
 	public void test() throws IOException {
