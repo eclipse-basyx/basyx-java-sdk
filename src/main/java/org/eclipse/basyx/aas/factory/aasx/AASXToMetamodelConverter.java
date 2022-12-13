@@ -270,18 +270,7 @@ public class AASXToMetamodelConverter {
 	 * @throws InvalidFormatException
 	 */
 	public void unzipRelatedFiles() throws IOException, ParserConfigurationException, SAXException, URISyntaxException, InvalidFormatException {
-		// load folder which stores the files
-		loadAASX();
-
-		var rootFolder = getRootFolder();
-
-		List<String> files = parseReferencedFilePathsFromAASX();
-		for (String filePath : files) {
-			// name of the folder
-			unzipFile(filePath, aasxRoot, rootFolder);
-		}
-
-		closeOPCPackage();
+		unzipRelatedFiles(getRootFolder());
 	}
 	
 	/**
