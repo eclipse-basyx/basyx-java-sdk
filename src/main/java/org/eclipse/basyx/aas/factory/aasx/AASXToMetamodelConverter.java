@@ -270,16 +270,28 @@ public class AASXToMetamodelConverter {
 	 * @throws InvalidFormatException
 	 */
 	public void unzipRelatedFiles() throws IOException, ParserConfigurationException, SAXException, URISyntaxException, InvalidFormatException {
-		// load folder which stores the files
-		loadAASX();
-
-		List<String> files = parseReferencedFilePathsFromAASX();
-		for (String filePath : files) {
-			// name of the folder
-			unzipFile(filePath, aasxRoot);
-		}
-
-		closeOPCPackage();
+		unzipRelatedFiles(getRootFolder());
+	}
+	
+	/**
+	 * Unzips all files referenced by the aasx file to a specified directory
+	 *
+	 * @param pathToDirectory
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws URISyntaxException
+	 */
+	public void unzipRelatedFiles(Path pathToDirectory) throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
+	  loadAASX();
+	  
+	  List<String> files = parseReferencedFilePathsFromAASX();
+	  for (String filePath: files) {
+	    unzipFile(filePath, aasxRoot, pathToDirectory);
+	  }
+	  
+	  closeOPCPackage();
 	}
 
 	/**
@@ -306,7 +318,7 @@ public class AASXToMetamodelConverter {
 	 * @throws URISyntaxException
 	 * @throws InvalidFormatException
 	 */
-	private void unzipFile(String filePath, OPCPackage aasxRoot) throws IOException, URISyntaxException, InvalidFormatException {
+	private void unzipFile(String filePath, OPCPackage aasxRoot, Path pathToDirectory) throws IOException, URISyntaxException, InvalidFormatException {
 		// Create destination directory
 		if (filePath.startsWith("/")) {
 			filePath = filePath.substring(1);
@@ -315,10 +327,13 @@ public class AASXToMetamodelConverter {
 			logger.warn("A file with empty path can not be unzipped.");
 			return;
 		}
-		logger.info("Unzipping " + filePath + " to root folder:");
+		
+		logger.info("Unzipping " + filePath);
 		String relativePath = "files/" + VABPathTools.getParentPath(filePath);
-		Path rootPath = getRootFolder();
-		Path destDir = rootPath.resolve(relativePath);
+		Path destDir;
+
+	    destDir = pathToDirectory.resolve(relativePath);
+
 		logger.info("Unzipping to " + destDir);
 		Files.createDirectories(destDir);
 

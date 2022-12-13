@@ -28,21 +28,20 @@ package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -107,6 +106,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String PDF_IDSHORT = "pdf";
 	private static final String TARGET_PATH = "target/files"; // gets set by BaSyx
 	private static final String[] EXPECTED_UNZIPPED_FILES = { TARGET_PATH + PDF_PATH, TARGET_PATH + IMAGE_PATH };
+	private static final String[] EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR = { PDF_PATH, IMAGE_PATH };
 
 	private static final String REL_PATH = "_rels/.rels";
 	private static final String ORIGIN_REL_PATH = "aasx/_rels/aasx-origin.rels";
@@ -212,9 +212,29 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		packageManager.unzipRelatedFiles();
 
 		// Check if all expected files are present
-		for (String path : EXPECTED_UNZIPPED_FILES) {
+		for (String path : EXPECTED_UNZIPPED_FILES) {  
 			assertTrue(new java.io.File(path).exists());
 		}
+	}
+
+	/**
+	 * Tests the files contained in aasx can be unzipped to specified directory
+	 *
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws URISyntaxException
+	 */
+	@Test
+	public void testFilesUnzippedToSpecifiedDirectory() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
+	  Path pathToTempDir = Files.createTempDirectory("aasx");	  
+	  packageManager.unzipRelatedFiles(pathToTempDir);
+
+	  for (String p : EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR) {
+	    Path path = Path.of(pathToTempDir.toString() + "/files" + p);
+	    assertTrue(new java.io.File(path.toString()).exists());
+	  }
 	}
 
 	/**
