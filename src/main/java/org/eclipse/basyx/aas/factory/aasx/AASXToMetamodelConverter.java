@@ -273,10 +273,12 @@ public class AASXToMetamodelConverter {
 		// load folder which stores the files
 		loadAASX();
 
+		var rootFolder = getRootFolder();
+
 		List<String> files = parseReferencedFilePathsFromAASX();
 		for (String filePath : files) {
 			// name of the folder
-			unzipFile(filePath, aasxRoot, null);
+			unzipFile(filePath, aasxRoot, rootFolder);
 		}
 
 		closeOPCPackage();
@@ -340,14 +342,9 @@ public class AASXToMetamodelConverter {
 		logger.info("Unzipping " + filePath);
 		String relativePath = "files/" + VABPathTools.getParentPath(filePath);
 		Path destDir;
-		
-		if (pathToDirectory != null) {
-		  destDir = pathToDirectory.resolve(relativePath);
-		} else {		  
-		  Path rootPath = getRootFolder();
-		  destDir = rootPath.resolve(relativePath);
-		}
-		
+
+	    destDir = pathToDirectory.resolve(relativePath);
+
 		logger.info("Unzipping to " + destDir);
 		Files.createDirectories(destDir);
 
