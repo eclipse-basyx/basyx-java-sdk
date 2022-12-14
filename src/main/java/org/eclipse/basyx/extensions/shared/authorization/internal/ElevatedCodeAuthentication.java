@@ -27,6 +27,7 @@ package org.eclipse.basyx.extensions.shared.authorization.internal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  *
  * @author wege
  */
+@SuppressWarnings("serial")
 public class ElevatedCodeAuthentication extends AbstractAuthenticationToken {
 	private static final ThreadLocal<Set<ElevatedCodeAuthenticationAreaHandler>> elevatedCodeAuthenticationAreaHandlers = ThreadLocal.withInitial(HashSet::new);
 	private static final ThreadLocal<SecurityContext> previousSecurityContext = new ThreadLocal<>();

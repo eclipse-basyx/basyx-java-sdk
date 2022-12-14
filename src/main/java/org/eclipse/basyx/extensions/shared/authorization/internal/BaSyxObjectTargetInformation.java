@@ -24,19 +24,22 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization.internal;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Specialization of {@link TargetInformation} that uses the
  * aasId/smId/smElIdShortPath tuple.
  *
  * @author wege
- */
+ */ 
+@SuppressWarnings("serial")
 public class BaSyxObjectTargetInformation implements TargetInformation {
 	private String aasId;
 	private String smId;

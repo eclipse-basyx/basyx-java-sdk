@@ -108,6 +108,7 @@ public class Result extends LinkedHashMap<String, Object> {
 		return new Result(success, entity, messages);
 	}
 
+	@SuppressWarnings("deprecation")
 	private static List<Message> getMessageListFromException(Exception e) {
 
 		List<Message> messageList = new LinkedList<Message>();

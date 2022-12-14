@@ -66,6 +66,7 @@ public class TestConnectedSubmodel extends TestSubmodelSuite {
 
 	ConnectedSubmodel submodel;
 
+	@SuppressWarnings("unchecked")
 	@Before
 	public void build() {
 
