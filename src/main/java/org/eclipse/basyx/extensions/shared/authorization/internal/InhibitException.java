@@ -30,6 +30,7 @@ package org.eclipse.basyx.extensions.shared.authorization.internal;
  *
  * @author wege
  */
+@SuppressWarnings("serial")
 public abstract class InhibitException extends Exception {
 	protected InhibitException(final String message, final Throwable cause) {
 		super(message, cause);

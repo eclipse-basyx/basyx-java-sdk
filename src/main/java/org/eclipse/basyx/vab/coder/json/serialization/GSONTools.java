@@ -79,6 +79,7 @@ public class GSONTools implements Serializer {
 	/**
 	 * JsonParser reference
 	 */
+	@SuppressWarnings("deprecation")
 	protected static JsonParser parser = new JsonParser();
 
 	/**
@@ -121,6 +122,7 @@ public class GSONTools implements Serializer {
 		toolsFactory = newFactoryInstance;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Object deserialize(String str) {
 		JsonElement elem = parser.parse(str);

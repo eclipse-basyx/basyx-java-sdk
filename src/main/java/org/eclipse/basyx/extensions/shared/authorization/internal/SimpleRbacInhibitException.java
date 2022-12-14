@@ -32,6 +32,7 @@ import java.util.List;
  *
  * @author wege
  */
+@SuppressWarnings("serial")
 public class SimpleRbacInhibitException extends InhibitException {
 	private final List<String> roles;
 	private final String action;

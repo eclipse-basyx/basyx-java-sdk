@@ -79,6 +79,7 @@ import org.springframework.security.web.util.matcher.AnyRequestMatcher;
  * @author pschorn, espen, haque, danish
  * 
  */
+@SuppressWarnings("deprecation")
 public class BaSyxHTTPServer {
 
 	private static final Logger logger = LoggerFactory.getLogger(BaSyxHTTPServer.class);

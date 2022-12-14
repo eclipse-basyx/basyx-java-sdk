@@ -30,6 +30,7 @@ package org.eclipse.basyx.extensions.shared.authorization.internal;
  *
  * @author wege
  */
+@SuppressWarnings("serial")
 public class GrantedAuthorityInhibitException extends InhibitException {
 	public GrantedAuthorityInhibitException(final String missingAuthority) {
 		super("no authority " + missingAuthority);

@@ -38,9 +38,11 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
@@ -98,6 +100,7 @@ public class TestProperty {
 		assertEquals(STRING_TYPE, property.getValueType());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testSet() throws DatatypeConfigurationException {
 		Property booleanProp = new Property();

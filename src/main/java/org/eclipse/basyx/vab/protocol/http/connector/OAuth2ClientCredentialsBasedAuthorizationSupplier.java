@@ -24,26 +24,29 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.connector;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTParser;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 
 /**
  * Supplier for Bearer Token based HTTP Authorization request header values
@@ -86,6 +89,7 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 	 * @param scopes
 	 *            Set of scopes to be requested from the Authorization Server
 	 */
+	@SuppressWarnings("deprecation")
 	public OAuth2ClientCredentialsBasedAuthorizationSupplier(final String tokenEndpoint, final String clientId, final String clientSecret, final Set<String> scopes) {
 		this.client = new JerseyClientBuilder().build();
 		this.client.register(HttpAuthenticationFeature.basicBuilder().credentials(clientId, clientSecret).build());
@@ -152,6 +156,7 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 		return this.client.target(this.tokenEndpoint).request().post(Entity.form(new Form().param("grant_type", "client_credentials").param("scope", String.join(SCOPE_DELIMITER, this.scopes))));
 	}
 
+	@SuppressWarnings("deprecation")
 	private String getAccessTokenFromResponse(final Response response) {
 		final String responseString = response.readEntity(String.class);
 		final JsonElement responseEl = jsonParser.parse(responseString);

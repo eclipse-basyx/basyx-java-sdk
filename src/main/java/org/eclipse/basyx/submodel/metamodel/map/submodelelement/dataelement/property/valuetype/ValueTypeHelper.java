@@ -135,6 +135,7 @@ public class ValueTypeHelper {
 	 * Map the PropertyValueType to Java type
 	 * 
 	 */
+	@SuppressWarnings("deprecation")
 	public static Object getJavaObject(Object value, ValueType objType) {
 
 		if (value == null) {
