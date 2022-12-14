@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -27,6 +27,7 @@ package org.eclipse.basyx.aas.aggregator;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
@@ -38,6 +39,7 @@ import org.eclipse.basyx.aas.restapi.MultiSubmodelProvider;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
+import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.aggregator.SubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
@@ -50,8 +52,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 /**
  * An implementation of the IAASAggregator interface using maps internally
  *
- * @author conradi, schnicke
- *
+ * @author conradi, schnicke, wege
  */
 public class AASAggregator implements IAASAggregator {
 
@@ -115,11 +116,13 @@ public class AASAggregator implements IAASAggregator {
 		return aasProviderMap.values().stream().map(p -> {
 			try {
 				return p.getValue("/aas");
+			} catch (NotAuthorizedException e) {
+				return null;
 			} catch (Exception e1) {
 				e1.printStackTrace();
-				throw new RuntimeException();
+				throw new RuntimeException(e1);
 			}
-		}).map(m -> {
+		}).filter(Objects::nonNull).map(m -> {
 			AssetAdministrationShell aas = new AssetAdministrationShell();
 			aas.putAll((Map<? extends String, ? extends Object>) m);
 			return aas;

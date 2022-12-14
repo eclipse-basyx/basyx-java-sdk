@@ -32,13 +32,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-
 import org.apache.http.client.ClientProtocolException;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.testsuite.regression.vab.modelprovider.SimpleVABElement;
@@ -56,6 +53,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.helper.HTTPUploadHelper;
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -191,7 +189,7 @@ public class TestVABHTTP extends TestProvider {
 	 * @param URL
 	 */
 	private void performRequest(String URL) {
-		Client client = ClientBuilder.newClient();
+		Client client = new JerseyClientBuilder().build();
 
 		// Called URL
 		WebTarget resource = client.target(URL);

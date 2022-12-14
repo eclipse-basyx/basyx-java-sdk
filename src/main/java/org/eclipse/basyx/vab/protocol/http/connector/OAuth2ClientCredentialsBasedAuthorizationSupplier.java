@@ -24,29 +24,26 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.connector;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTParser;
 
 /**
  * Supplier for Bearer Token based HTTP Authorization request header values
@@ -90,7 +87,7 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 	 *            Set of scopes to be requested from the Authorization Server
 	 */
 	public OAuth2ClientCredentialsBasedAuthorizationSupplier(final String tokenEndpoint, final String clientId, final String clientSecret, final Set<String> scopes) {
-		this.client = ClientBuilder.newClient();
+		this.client = new JerseyClientBuilder().build();
 		this.client.register(HttpAuthenticationFeature.basicBuilder().credentials(clientId, clientSecret).build());
 		this.jsonParser = new JsonParser();
 		this.tokenEndpoint = tokenEndpoint;

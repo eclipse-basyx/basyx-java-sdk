@@ -24,12 +24,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.connector;
 
+import com.google.gson.Gson;
+import io.netty.handler.codec.http.HttpMethod;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
@@ -37,7 +37,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Message;
 import org.eclipse.basyx.vab.coder.json.metaprotocol.MessageType;
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Result;
@@ -46,13 +45,10 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.protocol.api.IBaSyxConnector;
 import org.eclipse.basyx.vab.protocol.http.server.ExceptionToHTTPCodeMapper;
 import org.glassfish.jersey.client.HttpUrlConnectorProvider;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
-
-import com.google.gson.Gson;
-
-import io.netty.handler.codec.http.HttpMethod;
 
 /**
  * HTTP connector class
@@ -99,8 +95,7 @@ public class HTTPConnector implements IBaSyxConnector {
 		this.mediaType = mediaType;
 		this.authorizationSupplier = authorizationSupplier;
 
-		// Create client
-		client = ClientBuilder.newClient();
+		client = new JerseyClientBuilder().build();
 
 		logger.trace("Create with addr: {}", address);
 	}
