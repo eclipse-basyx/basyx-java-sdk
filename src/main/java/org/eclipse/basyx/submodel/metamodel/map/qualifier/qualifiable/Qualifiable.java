@@ -25,7 +25,7 @@
 package org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IConstraint;
@@ -53,7 +53,7 @@ public class Qualifiable extends VABModelMap<Object> implements IQualifiable {
 	 */
 	public Qualifiable(Constraint qualifier) {
 		// Create collection with qualifiers
-		Collection<Constraint> qualifiers = new HashSet<>();
+		Collection<Constraint> qualifiers = new LinkedHashSet<>();
 		// - Add qualifier
 		qualifiers.add(qualifier);
 
@@ -97,7 +97,7 @@ public class Qualifiable extends VABModelMap<Object> implements IQualifiable {
 	public Collection<IConstraint> getQualifiers() {
 		// Transform set of maps to set of IConstraints
 		Collection<Map<String, Object>> set = (Collection<Map<String, Object>>) get(Qualifiable.QUALIFIERS);
-		Collection<IConstraint> ret = new HashSet<>();
+		Collection<IConstraint> ret = new LinkedHashSet<>();
 		if (set != null) {
 			for (Map<String, Object> m : set) {
 				if (ModelType.createAsFacade(m).getName().equals(Formula.MODELTYPE)) {

@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelelement;
 
+import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
@@ -36,6 +37,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.dataspecification.EmbeddedDataSpecification;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.HasDataSpecification;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Formula;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
@@ -63,6 +65,18 @@ public class TestSubmodelElement {
 	}
 
 	@Test
+	public void testDataSpecificationReferencesInitialization() {
+	  assertEquals(emptySet(), submodelElement.getDataSpecificationReferences());
+	}
+
+	@Test
+	public void testGetDataSpecificationReferencesIfNull() {
+		submodelElement.put(HasDataSpecification.DATASPECIFICATION, null);
+		Collection<IReference> dataSpecificationReferences = submodelElement.getDataSpecificationReferences();
+		assertEquals(0, dataSpecificationReferences.size());
+	}
+
+	@Test
 	public void testSetDataSpecificationReferences() {
 		Collection<IReference> refs = Collections.singleton(REFERENCE);
 		submodelElement.setDataSpecificationReferences(refs);
@@ -75,6 +89,13 @@ public class TestSubmodelElement {
 		Collection<IEmbeddedDataSpecification> specifications = Collections.singleton(embeddedDataSpecification);
 		submodelElement.setEmbeddedDataSpecifications(specifications);
 		assertEquals(specifications, submodelElement.getEmbeddedDataSpecifications());
+	}
+
+	@Test
+	public void testGetEmbeddedDataSpecificationIfNull() {
+		submodelElement.put(HasDataSpecification.EMBEDDEDDATASPECIFICATIONS, null);
+		Collection<IEmbeddedDataSpecification> embeddedDataSpecifications = submodelElement.getEmbeddedDataSpecifications();
+		assertEquals(0, embeddedDataSpecifications.size());
 	}
 
 	@Test

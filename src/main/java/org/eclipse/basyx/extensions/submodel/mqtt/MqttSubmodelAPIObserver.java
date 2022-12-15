@@ -75,7 +75,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		this.aasIdentifier = aasId;
 		this.submodelIdentifier = submodelIdentifier;
 		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, MqttSubmodelAPIHelper.createChangedSubmodelPayload(this.submodelIdentifier.getId()));
 	}
 	
 	/**
@@ -97,7 +97,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		this.aasIdentifier = aasId;
 		this.submodelIdentifier = submodelIdentifier;
 		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, MqttSubmodelAPIHelper.createChangedSubmodelPayload(this.submodelIdentifier.getId()));
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		
 		observedAPI.addObserver(this);
 		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, MqttSubmodelAPIHelper.createChangedSubmodelPayload(this.submodelIdentifier.getId()));
 	}
 
 	/**
@@ -157,7 +157,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		
 		observedAPI.addObserver(this);
 		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, MqttSubmodelAPIHelper.createChangedSubmodelPayload(this.submodelIdentifier.getId()));
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 		
 		observedAPI.addObserver(this);
 		
-		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, this.submodelIdentifier.getId());
+		sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_CREATESUBMODEL, MqttSubmodelAPIHelper.createChangedSubmodelPayload(this.submodelIdentifier.getId()));
 	}
 	
 	private void connectMqttClientIfRequired() throws MqttException {
@@ -233,24 +233,33 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	@Override
 	public void elementAdded(String idShortPath, Object newValue) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, getCombinedMessage(aasIdentifier.getId(), submodelIdentifier.getId(), idShortPath));
+			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_ADDELEMENT, MqttSubmodelAPIHelper.createChangedSubmodelElementPayload(getParentIdIfPresent(), submodelIdentifier.getId(), idShortPath));
 		}
 	}
 
 	@Override
 	public void elementDeleted(String idShortPath) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_DELETEELEMENT, getCombinedMessage(aasIdentifier.getId(), submodelIdentifier.getId(), idShortPath));
+			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_DELETEELEMENT, MqttSubmodelAPIHelper.createChangedSubmodelElementPayload(getParentIdIfPresent(), submodelIdentifier.getId(), idShortPath));
 		}
 	}
 
 	@Override
 	public void elementUpdated(String idShortPath, Object newValue) {
 		if (filter(idShortPath)) {
-			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_UPDATEELEMENT, getCombinedMessage(aasIdentifier.getId(), submodelIdentifier.getId(), idShortPath));
+			sendMqttMessage(MqttSubmodelAPIHelper.TOPIC_UPDATEELEMENT, MqttSubmodelAPIHelper.createChangedSubmodelElementPayload(getParentIdIfPresent(), submodelIdentifier.getId(), idShortPath));
 		}
 	}
 
+	/**
+	 * This method will be removed from this class. MqttSubmodelAPIHelper is used to
+	 * create the payload.
+	 *
+	 * @deprecated Use
+	 *             {@link org.eclipse.basyx.extensions.submodel.mqtt.MqttSubmodelAPIHelper#createChangedSubmodelElementPayload(String, String, String)}
+	 *             instead.
+	 */
+	@Deprecated
 	public static String getCombinedMessage(String aasId, String submodelId, String elementPart) {
 		elementPart = VABPathTools.stripSlashes(elementPart);
 		return "(" + aasId + "," + submodelId + "," + elementPart + ")";
@@ -259,6 +268,10 @@ public class MqttSubmodelAPIObserver extends MqttEventService implements ISubmod
 	private boolean filter(String idShort) {
 		idShort = VABPathTools.stripSlashes(idShort);
 		return !useWhitelist || whitelist.contains(idShort);
+	}
+
+	private String getParentIdIfPresent() {
+		return aasIdentifier == null ? null : aasIdentifier.getId();
 	}
 
 }

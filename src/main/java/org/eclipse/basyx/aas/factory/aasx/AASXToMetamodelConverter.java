@@ -26,6 +26,7 @@
 package org.eclipse.basyx.aas.factory.aasx;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -49,6 +50,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleFactory;
+import org.eclipse.basyx.aas.factory.exception.MultipleThumbnailFoundException;
 import org.eclipse.basyx.aas.factory.xml.XMLToMetamodelConverter;
 import org.eclipse.basyx.aas.metamodel.map.AasEnv;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -66,7 +68,7 @@ import org.xml.sax.SAXException;
  * 
  * The aas provides the references to the submodels and assets
  * 
- * @author zhangzai, conradi
+ * @author zhangzai, conradi, danish
  *
  */
 public class AASXToMetamodelConverter {
@@ -103,6 +105,16 @@ public class AASXToMetamodelConverter {
 		XMLToMetamodelConverter converter = new XMLToMetamodelConverter(xmlContent);
 		closeOPCPackage();
 		return converter.parseAasEnv();
+	}
+	
+	public InputStream retrieveThumbnail() throws IOException, InvalidFormatException {
+		loadAASX();
+
+		InputStream thumbnailStream = getThumbnailStream(aasxRoot);
+		
+		closeOPCPackage();
+		
+		return thumbnailStream;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -172,6 +184,24 @@ public class AASXToMetamodelConverter {
 		IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
 		return writer.toString();
 	}
+	
+	private InputStream getThumbnailStream(OPCPackage aasxPackage) throws IOException {
+		PackageRelationshipCollection thumbnailPackageRelationship = aasxPackage.getRelationshipsByType(MetamodelToAASXConverter.THUMBNAIL_TYPE);
+		
+		checkIfThumbnailExists(thumbnailPackageRelationship);
+		
+		PackagePart thumbnailPart = aasxPackage.getPart(thumbnailPackageRelationship.getRelationship(0));
+		
+		return thumbnailPart.getInputStream();
+	}
+
+	private void checkIfThumbnailExists(PackageRelationshipCollection thumbnailPackageRelationship) throws MultipleThumbnailFoundException, FileNotFoundException {
+		if (thumbnailPackageRelationship.size() > 1) {
+			throw new MultipleThumbnailFoundException("More than one Thumbnail found in the specified package");
+		} else if (thumbnailPackageRelationship.size() == 0) {
+			throw new FileNotFoundException("No Thumbnail found in the specified package");
+		}
+	}
 
 	/**
 	 * Load the referenced filepaths in the submodels such as PDF, PNG files from
@@ -240,16 +270,28 @@ public class AASXToMetamodelConverter {
 	 * @throws InvalidFormatException
 	 */
 	public void unzipRelatedFiles() throws IOException, ParserConfigurationException, SAXException, URISyntaxException, InvalidFormatException {
-		// load folder which stores the files
-		loadAASX();
-
-		List<String> files = parseReferencedFilePathsFromAASX();
-		for (String filePath : files) {
-			// name of the folder
-			unzipFile(filePath, aasxRoot);
-		}
-
-		closeOPCPackage();
+		unzipRelatedFiles(getRootFolder());
+	}
+	
+	/**
+	 * Unzips all files referenced by the aasx file to a specified directory
+	 *
+	 * @param pathToDirectory
+	 * @throws InvalidFormatException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws URISyntaxException
+	 */
+	public void unzipRelatedFiles(Path pathToDirectory) throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
+	  loadAASX();
+	  
+	  List<String> files = parseReferencedFilePathsFromAASX();
+	  for (String filePath: files) {
+	    unzipFile(filePath, aasxRoot, pathToDirectory);
+	  }
+	  
+	  closeOPCPackage();
 	}
 
 	/**
@@ -276,7 +318,7 @@ public class AASXToMetamodelConverter {
 	 * @throws URISyntaxException
 	 * @throws InvalidFormatException
 	 */
-	private void unzipFile(String filePath, OPCPackage aasxRoot) throws IOException, URISyntaxException, InvalidFormatException {
+	private void unzipFile(String filePath, OPCPackage aasxRoot, Path pathToDirectory) throws IOException, URISyntaxException, InvalidFormatException {
 		// Create destination directory
 		if (filePath.startsWith("/")) {
 			filePath = filePath.substring(1);
@@ -285,10 +327,13 @@ public class AASXToMetamodelConverter {
 			logger.warn("A file with empty path can not be unzipped.");
 			return;
 		}
-		logger.info("Unzipping " + filePath + " to root folder:");
+		
+		logger.info("Unzipping " + filePath);
 		String relativePath = "files/" + VABPathTools.getParentPath(filePath);
-		Path rootPath = getRootFolder();
-		Path destDir = rootPath.resolve(relativePath);
+		Path destDir;
+
+	    destDir = pathToDirectory.resolve(relativePath);
+
 		logger.info("Unzipping to " + destDir);
 		Files.createDirectories(destDir);
 

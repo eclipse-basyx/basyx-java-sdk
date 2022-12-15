@@ -124,16 +124,16 @@ public class MqttAASAggregatorObserver extends MqttEventService implements IAASA
 
 	@Override
 	public void aasCreated(String shellId) {
-		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_CREATEAAS, shellId);
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_CREATEAAS, MqttAASAggregatorHelper.createAASChangedPayload(shellId));
 	}
 
 	@Override
 	public void aasUpdated(String shellId) {
-		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_UPDATEAAS, shellId);
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_UPDATEAAS, MqttAASAggregatorHelper.createAASChangedPayload(shellId));
 	}
 
 	@Override
 	public void aasDeleted(String shellId) {
-		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_DELETEAAS, shellId);
+		sendMqttMessage(MqttAASAggregatorHelper.TOPIC_DELETEAAS, MqttAASAggregatorHelper.createAASChangedPayload(shellId));
 	}
 }

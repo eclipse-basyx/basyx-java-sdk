@@ -46,6 +46,7 @@ public class TestConnectedRange {
 	ConnectedRange connectedRange;
 	Range range;
 
+	@SuppressWarnings("deprecation")
 	@Before
 	public void build() {
 		range = new Range(ValueType.Int32, new Integer(1), new Integer(10));

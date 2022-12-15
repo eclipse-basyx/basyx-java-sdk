@@ -117,7 +117,7 @@ public class Range extends DataElement implements IRange {
 		return MODELTYPE.equals(modelType) || (modelType == null && (map.containsKey(MIN) && map.containsKey(MAX) && map.containsKey(VALUETYPE)));
 	}
 
-	private void setValueType(ValueType valueType) {
+	public void setValueType(ValueType valueType) {
 		put(Range.VALUETYPE, valueType.toString());
 	}
 

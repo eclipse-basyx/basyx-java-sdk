@@ -25,6 +25,7 @@
 package org.eclipse.basyx.submodel.metamodel.map.reference;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -45,6 +46,9 @@ public class ReferenceHelper {
 	 * @return
 	 */
 	public static Collection<IReference> transform(Object obj) {
+		if (obj == null) {
+			return new HashSet<>();
+		}
 		// Transform set of maps to set of IReference
 		@SuppressWarnings("unchecked")
 		Collection<Map<String, Object>> collection = (Collection<Map<String, Object>>) obj;

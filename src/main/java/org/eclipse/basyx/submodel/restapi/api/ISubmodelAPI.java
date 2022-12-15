@@ -37,7 +37,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOpera
  *
  */
 public interface ISubmodelAPI {
-
+	
 	/**
 	 * Retrieves the underlying submodel
 	 * 

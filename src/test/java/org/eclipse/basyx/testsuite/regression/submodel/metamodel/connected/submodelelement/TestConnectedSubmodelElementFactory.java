@@ -53,6 +53,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.MultiLanguageProperty;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.ReferenceElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.Range;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.event.BasicEvent;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
@@ -115,8 +116,7 @@ public class TestConnectedSubmodelElementFactory {
 	private Map<String, Object> buildDataElements() {
 		Map<String, Object> ret = new LinkedHashMap<>();
 
-		Property property = new Property();
-		property.setIdShort(PROPERTY_ID);
+		Property property = new Property(PROPERTY_ID, ValueType.String);
 		ret.put(PROPERTY_ID, property);
 
 		Blob blob = new Blob();

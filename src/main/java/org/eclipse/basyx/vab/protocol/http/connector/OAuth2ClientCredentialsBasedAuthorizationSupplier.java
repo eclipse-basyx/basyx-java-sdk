@@ -32,12 +32,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,8 +89,9 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 	 * @param scopes
 	 *            Set of scopes to be requested from the Authorization Server
 	 */
+	@SuppressWarnings("deprecation")
 	public OAuth2ClientCredentialsBasedAuthorizationSupplier(final String tokenEndpoint, final String clientId, final String clientSecret, final Set<String> scopes) {
-		this.client = ClientBuilder.newClient();
+		this.client = new JerseyClientBuilder().build();
 		this.client.register(HttpAuthenticationFeature.basicBuilder().credentials(clientId, clientSecret).build());
 		this.jsonParser = new JsonParser();
 		this.tokenEndpoint = tokenEndpoint;
@@ -155,6 +156,7 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 		return this.client.target(this.tokenEndpoint).request().post(Entity.form(new Form().param("grant_type", "client_credentials").param("scope", String.join(SCOPE_DELIMITER, this.scopes))));
 	}
 
+	@SuppressWarnings("deprecation")
 	private String getAccessTokenFromResponse(final Response response) {
 		final String responseString = response.readEntity(String.class);
 		final JsonElement responseEl = jsonParser.parse(responseString);

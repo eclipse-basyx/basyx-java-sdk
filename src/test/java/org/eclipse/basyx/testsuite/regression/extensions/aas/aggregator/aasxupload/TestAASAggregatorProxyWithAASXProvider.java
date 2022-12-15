@@ -26,7 +26,10 @@
 
 package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.aasxupload;
 
+import static org.junit.Assert.assertNull;
+
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -38,6 +41,10 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.aas.aggregator.aasxupload.AASAggregatorAASXUpload;
 import org.eclipse.basyx.extensions.aas.aggregator.aasxupload.proxy.AASAggregatorAASXUploadProxy;
 import org.eclipse.basyx.extensions.aas.aggregator.aasxupload.restapi.AASAggregatorAASXUploadProvider;
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
+import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.testsuite.regression.aas.aggregator.TestAASAggregatorProxy;
 import org.eclipse.basyx.testsuite.regression.vab.protocol.http.AASHTTPServerResource;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
@@ -57,6 +64,7 @@ public class TestAASAggregatorProxyWithAASXProvider extends TestAASAggregatorPro
 	private static final int PORT = 4000;
 	private static final String CONTEXT_PATH = "aggregator";
 	private static final String API_URL = "http://" + SERVER + ":" + PORT + "/" + CONTEXT_PATH + "/shells";
+	public static final String AASX_WITH_EMPTY_BOOLEAN_PATH = "src/test/resources/aas/factory/aasx/aas_with_empty_value.aasx";
 	private AASAggregatorAASXUploadProvider provider = new AASAggregatorAASXUploadProvider(new AASAggregatorAASXUpload(new AASAggregator()));
 
 	@Rule
@@ -75,4 +83,24 @@ public class TestAASAggregatorProxyWithAASXProvider extends TestAASAggregatorPro
 		Collection<IAssetAdministrationShell> uploadedShells = proxy.getAASList();
 		TestAASAggregatorAASXUploadSuite.checkAASX(uploadedShells);
 	}
+
+	@Test
+	public void testUploadAASXWithEmptyBooleanValue() throws FileNotFoundException {
+		AASAggregatorAASXUploadProxy proxy = new AASAggregatorAASXUploadProxy(API_URL);
+		proxy.uploadAASX(new FileInputStream(Paths.get(AASX_WITH_EMPTY_BOOLEAN_PATH).toFile()));
+
+		Identifier aasId = new Identifier(IdentifierType.IRI, "christina.mavreas.de/ids/aas/kevin_9543_6170_6022_4656");
+		Identifier smId = new Identifier(IdentifierType.IRI, "christina.mavreas.de/ids/sm/functions_8263_5170_6022_9881");
+
+		ISubmodel submodel = proxy.getAAS(aasId).getSubmodel(smId);
+		Object nullBoolValue = ((IProperty) submodel.getSubmodelElement("DynamicInformations/IsAvailable")).getValue();
+		assertNull(nullBoolValue);
+
+		Object emptyBoolValue = ((IProperty) submodel.getSubmodelElement("DynamicInformations/IsCharging")).getValue();
+		assertNull(emptyBoolValue);
+
+		Object intNullValue = ((IProperty) submodel.getSubmodelElement("DynamicInformations/BatteryPercentage")).getValue();
+		assertNull(intNullValue);
+	}
+
 }

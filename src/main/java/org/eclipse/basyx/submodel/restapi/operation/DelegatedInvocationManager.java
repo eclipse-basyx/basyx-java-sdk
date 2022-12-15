@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IConstraint;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifier;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 
@@ -86,7 +87,7 @@ public class DelegatedInvocationManager {
 	 * @return the delegation Qualifier
 	 */
 	public static Qualifier createDelegationQualifier(String delegationURL) {
-		return new Qualifier(DelegatedInvocationManager.DELEGATION_TYPE, delegationURL, "string", null);
+		return new Qualifier(DelegatedInvocationManager.DELEGATION_TYPE, delegationURL, ValueType.String, null);
 	}
 
 	/**

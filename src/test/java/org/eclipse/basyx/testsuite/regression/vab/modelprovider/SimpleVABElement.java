@@ -26,8 +26,8 @@ package org.eclipse.basyx.testsuite.regression.vab.modelprovider;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -109,6 +109,7 @@ public class SimpleVABElement extends LinkedHashMap<String, Object> {
 		return structure;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> createFunctions() {
 		Map<String, Object> functions = new LinkedHashMap<>();
 		functions.put("supplier", (Supplier<Object>) () -> {

@@ -99,7 +99,7 @@ public abstract class TestTaggedDirectorySuite extends TestRegistryProviderSuite
 	 * This method is not included in @Before to not interfere with test cases of
 	 * parent test suite, namely {@link TestRegistryProviderSuite#testGetMultiAAS()}
 	 */
-	private void init() {
+	protected void init() {
 		// Register AASs using several tags
 		TaggedAASDescriptor desc1 = new TaggedAASDescriptor(taggedAasIdShort1, taggedAAS1, taggedAasEndpoint1);
 		desc1.addTag(DEVICE);

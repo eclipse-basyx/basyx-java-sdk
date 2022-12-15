@@ -28,14 +28,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.protocol.http.server.BaSyxHTTPServer;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.After;
 import org.junit.Test;
 
@@ -47,7 +46,7 @@ import org.junit.Test;
  */
 public class TestHttpCors {
 	private static BaSyxHTTPServer server;
-	
+
 	protected static final String CONTEXT_PATH = "/aasServer";
 	protected static final String DOCBASE_PATH = System.getProperty("java.io.tmpdir");
 	protected static final String HOSTNAME = "localhost";
@@ -60,14 +59,14 @@ public class TestHttpCors {
 	public void stopServer() {
 		server.shutdown();
 	}
-	
+
 	@Test
 	public void allowSpecificCorsOrigin() {
 		createAndStartHttpServerWithCORS(ALLOW_SPECIFIC_ORIGIN);
 
 		assertEquals(ALLOW_SPECIFIC_ORIGIN, getAccessControlAllowOriginResponseHeader());
 	}
-	
+
 	@Test
 	public void allowAllOriginInCors() {
 		String allowAllOrigin = "*";
@@ -75,39 +74,39 @@ public class TestHttpCors {
 
 		assertEquals(allowAllOrigin, getAccessControlAllowOriginResponseHeader());
 	}
-	
+
 	@Test
 	public void withoutCorsConfiguration() {
 		createAndStartHttpServerWithoutCORS();
-		
+
 		assertNull(getAccessControlAllowOriginResponseHeader());
 	}
-	
+
 	@Test
 	public void allowSpecificMethods() {
 		createAndStartHttpServerWithCORS(ALLOW_SPECIFIC_ORIGIN);
-		
+
 		String allowMethods = "GET, POST, DELETE, PUT, PATCH";
 
 		assertEquals(allowMethods, getAccessControlAllowMethodsResponseHeader());
 	}
-	
+
 	@Test
 	public void allowSpecificHeaders() {
 		createAndStartHttpServerWithCORS(ALLOW_SPECIFIC_ORIGIN);
-		
-		String allowHeaders = "X-Requested-With";
+
+		String allowHeaders = "X-Requested-With, Content-Type";
 
 		assertEquals(allowHeaders, getAccessControlAllowHeadersResponseHeader());
 	}
-	
+
 	private void createAndStartHttpServerWithoutCORS() {
 		BaSyxContext contextConfig = createBaseContext();
 		server = new BaSyxHTTPServer(contextConfig);
-		
+
 		configureAndStartServer(contextConfig);
 	}
-	
+
 	protected void createAndStartHttpServerWithCORS(String accessControlAllowOrigin) {
 		BaSyxContext contextConfig = createBaseContext();
 		contextConfig.setAccessControlAllowOrigin(accessControlAllowOrigin);
@@ -132,23 +131,23 @@ public class TestHttpCors {
 		Response response = doRequest();
 		return response.getHeaderString(accessControlAllowOrigin);
 	}
-	
+
 	private String getAccessControlAllowMethodsResponseHeader() {
 		String accessControlAllowMethods = "Access-Control-Allow-Methods";
-		
+
 		Response response = doRequest();
 		return response.getHeaderString(accessControlAllowMethods);
 	}
-	
+
 	private String getAccessControlAllowHeadersResponseHeader() {
 		String accessControlAllowHeaders = "Access-Control-Allow-Headers";
-		
+
 		Response response = doRequest();
 		return response.getHeaderString(accessControlAllowHeaders);
 	}
 
 	private Response doRequest() {
-		Client client = ClientBuilder.newClient();
+		Client client = new JerseyClientBuilder().build();
 		WebTarget resource = client.target(TARGET_URL);
 
 		Builder request = resource.request();
