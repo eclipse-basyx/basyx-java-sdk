@@ -75,7 +75,15 @@ public class XMLHelper {
 	 * @return the given String or an empty String
 	 */
 	public static String getString(Object object) {
-		return object instanceof String ? ((String) object).trim() : "";
+		ValueType valueType;
+		try {
+			valueType = ValueTypeHelper.getType(object);
+		} catch (Exception ex) {
+			valueType = ValueType.None;
+		}
+		if (ValueType.None != valueType)
+			return object.toString().trim();
+		return "";
 	}
 
 	/**

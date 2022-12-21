@@ -28,6 +28,7 @@ package org.eclipse.basyx.testsuite.regression.aas.factory.aasx;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,13 +61,16 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.parts.IConceptDescription;
+import org.eclipse.basyx.submodel.metamodel.api.qualifier.qualifiable.IConstraint;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.qualifiable.Qualifier;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,6 +98,8 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String INTEGER_PROPERTY_IDSHORT = "int";
 	private static final String DOUBLE_PROPERTY_IDSHORT = "decimal";
 	private static final String STRING_PROPERTY_IDSHORT = "string";
+	private static final String OPERATION_WITH_QUALIFIER_IDSHORT = "operationWithQualifier";
+	private static final Integer QUALIFIER_VALUE = 100;
 	private static final Boolean EXPECTED_BOOLEAN_VALUE = true;
 	private static final int EXPECTED_INTEGER_VALUE = 42;
 	private static final double EXPECTED_DOUBLE_VALUE = 3.14159265359;
@@ -195,6 +202,23 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		assertEquals(EXPECTED_INTEGER_VALUE, intProperty.getValue());
 		assertEquals(EXPECTED_DOUBLE_VALUE, doubleProperty.getValue());
 		assertEquals(EXPECTED_STRING_VALUE, stringProperty.getValue());
+	}
+
+	/**
+	 * Test Qualifiers are parsed properly
+	 */
+	@Test
+	public void testQualifierValue() throws Exception {
+		Set<AASBundle> bundles = packageManager.retrieveAASBundles();
+		AASBundle bundle = bundles.stream().findFirst().get();
+
+		ISubmodel parsedSubmodel = bundle.getSubmodels().stream().findFirst().get();
+		Map<String, ISubmodelElement> submodelElements = parsedSubmodel.getSubmodelElements();
+
+		ISubmodelElement operationWithQualifer = submodelElements.get(OPERATION_WITH_QUALIFIER_IDSHORT);
+		IConstraint[] constraints = operationWithQualifer.getQualifiers().toArray(new IConstraint[] {});
+		Qualifier qualifier = (Qualifier)constraints[0];
+		assertEquals(QUALIFIER_VALUE, qualifier.getValue());
 	}
 
 	/**
@@ -429,6 +453,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		sm.addSubmodelElement(createIntegerProperty());
 		sm.addSubmodelElement(createDoubleProperty());
 		sm.addSubmodelElement(createStringProperty());
+		sm.addSubmodelElement(createOperationWithQualifier());
 		sm.addSubmodelElement(createBaSyxFile(PDF_PATH, PDF_MIMETYPE, PDF_IDSHORT));
 		aas.addSubmodel(sm);
 
@@ -448,7 +473,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		// size for the test comparison
 		fileList.add(createInMemoryFile(IMAGE_PATH));
 		fileList.add(createInMemoryFile(PDF_PATH));
-		submodelElementsSize = 7;
+		submodelElementsSize = 8;
 		
         Thumbnail thumbnail = new Thumbnail(ThumbnailExtension.PNG, new ByteArrayInputStream(THUMBNAIL));
 		
@@ -499,6 +524,16 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		stringProperty.setValueType(ValueType.String);
 		stringProperty.setValue(EXPECTED_STRING_VALUE);
 		return stringProperty;
+	}
+
+	private ISubmodelElement createOperationWithQualifier() {
+		Operation operation = new Operation(OPERATION_WITH_QUALIFIER_IDSHORT);
+		Qualifier qualifier = new Qualifier();
+		qualifier.setValue(QUALIFIER_VALUE);
+		qualifier.setValueType(ValueType.Int32);
+		qualifier.setType("newType");
+		operation.setQualifiers(Collections.singletonList(qualifier));
+		return operation;
 	}
 
 	/**
