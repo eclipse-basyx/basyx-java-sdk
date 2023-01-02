@@ -156,11 +156,7 @@ public class Qualifier extends Constraint implements IQualifier {
 	@Override
 	public Object getValue() {
 		Object value = get(Qualifier.VALUE);
-		if (value instanceof String) {
-			return ValueTypeHelper.getJavaObject(value, getValueType());
-		} else {
-			return value;
-		}
+		return ValueTypeHelper.getJavaObject(value, getValueType());
 	}
 
 	public void setValueId(IReference obj) {
