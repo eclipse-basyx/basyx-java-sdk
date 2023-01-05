@@ -67,15 +67,20 @@ public class XMLHelper {
 	/**
 	 * If the content of a XML-Element is requested, the parser returns an Object or
 	 * null, if it doesn't exist.<br>
-	 * This function casts the Object into a String and replaces null with an empty
-	 * String.
+	 * This function returns a String representation if possible. Null and Maps are
+	 * replaced with an empty String.
 	 * 
 	 * @param object
-	 *            a Object that is either a String or null
-	 * @return the given String or an empty String
+	 * @return the trimmed String object or an empty String
 	 */
 	public static String getString(Object object) {
-		return object instanceof String ? ((String) object).trim() : "";
+		// On XML level, it is not differentiated between an empty tag that should
+		// contain text and an empty tag that should contain further text. Thus, Maps
+		// are replaced with ""
+		if (object == null || (object instanceof Map<?, ?>))
+			return "";
+
+		return object.toString().trim();
 	}
 
 	/**
