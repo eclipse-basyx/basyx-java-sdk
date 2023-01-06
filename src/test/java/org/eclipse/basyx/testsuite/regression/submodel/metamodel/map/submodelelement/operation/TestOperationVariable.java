@@ -25,10 +25,18 @@
 package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelelement.operation;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.entity.EntityType;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.Entity;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,12 +73,61 @@ public class TestOperationVariable {
 	}
 
 	@Test
-	// TODO: Change with 1.0 Release when ModelingKind.Template is obligatory for
-	// OperationVariables
 	public void testSetValueChangedModelingKind() {
 		Property property = new Property("testIdShort", ValueType.String);
 		property.setKind(ModelingKind.INSTANCE);
 		operationVariable.setValue(property);
 		assertEquals(ModelingKind.TEMPLATE, operationVariable.getValue().getKind());
+	}
+
+	@Test
+	public void internalSMCRepresentationIsCollection() {
+		SubmodelElementCollection smc = createDummySMC();
+
+		OperationVariable opVar = new OperationVariable(smc);
+
+		assertSMCValueIsCollectionInternally(opVar);
+	}
+
+	@Test
+	public void internalEntityStatementRepresentationIsCollection() {
+		Entity entity = createDummyEntity();
+
+		OperationVariable opVar = new OperationVariable(entity);
+
+		assertSMCinEntityStatementIsCollectionInternally(opVar);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void assertSMCinEntityStatementIsCollectionInternally(OperationVariable opVar) {
+		Map<String, Object> entityMap = (Map<String, Object>) opVar.get(Property.VALUE);
+		Collection<Map<String, Object>> entityStatements = (Collection<Map<String, Object>>) entityMap.get(Entity.STATEMENT);
+
+		Map<String, Object> smc = entityStatements.iterator().next();
+		Object smcValue = smc.get(Property.VALUE);
+
+		assertTrue(smcValue instanceof Collection);
+	}
+
+	private Entity createDummyEntity() {
+		Entity entity = new Entity("entity", EntityType.COMANAGEDENTITY);
+		entity.setStatements(Collections.singleton(createDummySMC()));
+
+		return entity;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void assertSMCValueIsCollectionInternally(OperationVariable opVar) {
+		Map<String, Object> smcMap = (Map<String, Object>) opVar.get(Property.VALUE);
+		Object smcValue = smcMap.get(Property.VALUE);
+
+		assertTrue(smcValue instanceof Collection);
+	}
+
+	private SubmodelElementCollection createDummySMC() {
+		SubmodelElementCollection smc = new SubmodelElementCollection("collection");
+		smc.addSubmodelElement(new Property("p1", 1));
+		smc.addSubmodelElement(new Property("p2", 2));
+		return smc;
 	}
 }

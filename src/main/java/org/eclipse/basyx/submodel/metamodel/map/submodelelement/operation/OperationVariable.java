@@ -24,17 +24,22 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.metamodel.exception.MetamodelConstructionException;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperationVariable;
+import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.haskind.HasKind;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.Entity;
 import org.eclipse.basyx.vab.model.VABModelMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +119,33 @@ public class OperationVariable extends VABModelMap<Object> implements IOperation
 			logger.warn("Modeling kind of Operation variable was wrong and automatically changed to ModelingKind.TEMPLATE");
 			HasKind.createAsFacade((Map<String, Object>) value).setKind(ModelingKind.TEMPLATE);
 		}
-		put(Property.VALUE, value);
+
+		Object valueToSet = preprocessValue(value);
+
+		put(Property.VALUE, valueToSet);
+
+	}
+
+	private Object preprocessValue(ISubmodelElement value) {
+		if (value instanceof SubmodelElementCollection) {
+			return handleSMC(value);
+		} else if (value instanceof Entity) {
+			return handleEntity((Entity) value);
+		} else {
+			return value;
+		}
+	}
+
+	private Object handleSMC(ISubmodelElement value) {
+		return SubmodelElementMapCollectionConverter.smElementToMap((SubmodelElementCollection) value);
+	}
+
+	private Object handleEntity(Entity value) {
+		Collection<ISubmodelElement> statements = value.getStatements();
+		Collection<Object> processedStatementObjects = statements.stream().map(s -> preprocessValue(s)).collect(Collectors.toList());
+		value.put(Entity.STATEMENT, processedStatementObjects);
+
+		return value;
 	}
 
 	@SuppressWarnings("unchecked")
