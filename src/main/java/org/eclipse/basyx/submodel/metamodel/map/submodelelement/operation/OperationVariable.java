@@ -30,6 +30,7 @@ import org.eclipse.basyx.aas.metamodel.exception.MetamodelConstructionException;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperationVariable;
+import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.modeltype.ModelType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.haskind.HasKind;
@@ -114,7 +115,19 @@ public class OperationVariable extends VABModelMap<Object> implements IOperation
 			logger.warn("Modeling kind of Operation variable was wrong and automatically changed to ModelingKind.TEMPLATE");
 			HasKind.createAsFacade((Map<String, Object>) value).setKind(ModelingKind.TEMPLATE);
 		}
-		put(Property.VALUE, value);
+
+		Object valueToSet = preprocessValue(value);
+
+		put(Property.VALUE, valueToSet);
+
+	}
+
+	private Object preprocessValue(ISubmodelElement value) {
+		if (value instanceof SubmodelElement) {
+			return SubmodelElementMapCollectionConverter.smElementToMap((SubmodelElement) value);
+		} else {
+			return value;
+		}
 	}
 
 	@SuppressWarnings("unchecked")
