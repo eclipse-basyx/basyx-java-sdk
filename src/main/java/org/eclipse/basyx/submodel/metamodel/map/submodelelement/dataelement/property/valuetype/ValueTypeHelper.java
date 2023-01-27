@@ -96,21 +96,12 @@ public class ValueTypeHelper {
 			} else if (c == long.class || c == Long.class) {
 				objectType = ValueType.Int64;
 			} else if (c == BigInteger.class) {
-				BigInteger tmp = (BigInteger) obj;
-				if (tmp.compareTo(new BigInteger("0")) > 0) {
-					objectType = ValueType.PositiveInteger;
-				} else if (tmp.compareTo(new BigInteger("0")) < 0) {
-					objectType = ValueType.NegativeInteger;
-				} else {
-					objectType = ValueType.Integer;
-				}
-
+				objectType = handleBigInteger((BigInteger) obj);
 			} else if (c == void.class || c == Void.class) {
 				objectType = ValueType.None;
 			} else if (c == boolean.class || c == Boolean.class) {
 				objectType = ValueType.Boolean;
 			} else if (c == float.class || c == Float.class) {
-				// TODO C# deprecated due to new serialization
 				objectType = ValueType.Float;
 			} else if (c == double.class || c == Double.class) {
 				objectType = ValueType.Double;
@@ -129,6 +120,16 @@ public class ValueTypeHelper {
 			}
 		}
 		return objectType;
+	}
+
+	private static ValueType handleBigInteger(BigInteger integer) {
+		if (integer.compareTo(new BigInteger("0")) > 0) {
+			return ValueType.PositiveInteger;
+		} else if (integer.compareTo(new BigInteger("0")) < 0) {
+			return ValueType.NegativeInteger;
+		} else {
+			return ValueType.Integer;
+		}
 	}
 
 	/**
@@ -228,6 +229,7 @@ public class ValueTypeHelper {
 			case YearMonthDuration:
 				target = Period.parse((String) value);
 				break;
+			case Date:
 			case DateTime:
 			case DateTimeStamp:
 			case GDay:
