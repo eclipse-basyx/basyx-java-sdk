@@ -37,6 +37,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.junit.Test;
 
 /**
+ * Tests the ValueTypeHelper class
  * 
  * @author schnicke
  *
