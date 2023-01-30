@@ -84,6 +84,18 @@ public class TestProperty {
 	}
 
 	@Test
+	public void dateProperty() throws DatatypeConfigurationException {
+		String date = "2002-09-24";
+		XMLGregorianCalendar expected = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
+
+		Property prop = new Property("idShort", ValueType.Date);
+		prop.setValue(expected);
+
+		assertEquals(date, prop.get(Property.VALUE));
+		assertEquals(expected, prop.getValue());
+	}
+
+	@Test
 	public void testConstructor2() {
 		Referable referable = new Referable("testIdShort", "testCategory", new LangStrings("DE", "test"));
 		Reference semanticId = new Reference(new Key(KeyElements.ASSET, true, "testValue", IdentifierType.IRI));
