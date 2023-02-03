@@ -88,6 +88,7 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 	 * @param scopes
 	 *            Set of scopes to be requested from the Authorization Server
 	 */
+	@SuppressWarnings("deprecation")
 	public OAuth2ClientCredentialsBasedAuthorizationSupplier(final String tokenEndpoint, final String clientId, final String clientSecret, final Set<String> scopes) {
 		this.client = new JerseyClientBuilder().build();
 		this.client.register(HttpAuthenticationFeature.basicBuilder().credentials(clientId, clientSecret).build());
