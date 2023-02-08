@@ -24,18 +24,11 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.connector;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
-import javax.ws.rs.core.Response;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -43,10 +36,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTParser;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.Response;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Supplier for Bearer Token based HTTP Authorization request header values
@@ -153,13 +152,26 @@ public class OAuth2ClientCredentialsBasedAuthorizationSupplier implements IAutho
 	}
 
 	private Response requestToken() {
-		return this.client.target(this.tokenEndpoint).request().post(Entity.form(new Form().param("grant_type", "client_credentials").param("scope", String.join(SCOPE_DELIMITER, this.scopes))));
+		Form form = new Form().param("grant_type", "client_credentials");
+
+		// leave out scope parameter if there are no scopes, which is valid according to
+		// the RFC, otherwise the server might return an error
+		if (!scopes.isEmpty()) {
+			form = form.param("scope", String.join(SCOPE_DELIMITER, this.scopes));
+		}
+
+		return this.client.target(this.tokenEndpoint).request().post(Entity.form(form));
 	}
 
 	@SuppressWarnings("deprecation")
 	private String getAccessTokenFromResponse(final Response response) {
 		final String responseString = response.readEntity(String.class);
-		final JsonElement responseEl = jsonParser.parse(responseString);
-		return responseEl.getAsJsonObject().get("access_token").getAsString();
+		try {
+			final JsonElement responseEl = jsonParser.parse(responseString);
+			return responseEl.getAsJsonObject().get("access_token").getAsString();
+		} catch (final JsonParseException e) {
+			logger.error("server did not return a parseable json but instead: {}", responseString);
+			throw e;
+		}
 	}
 }
