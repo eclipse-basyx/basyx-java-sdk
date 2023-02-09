@@ -25,6 +25,9 @@
 
 package org.eclipse.basyx.submodel.aggregator.api;
 
+import org.apache.commons.lang3.NotImplementedException;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+
 /**
  * Interface for providing an SubmodelAggregator
  * 
@@ -32,10 +35,20 @@ package org.eclipse.basyx.submodel.aggregator.api;
  *
  */
 public interface ISubmodelAggregatorFactory {
+
 	/**
-	 * Return a constructed SubmodelAggregator
+	 * Returns a constructed SubmodelAggregator
 	 * 
 	 * @return
 	 */
 	public ISubmodelAggregator create();
+
+	/**
+	 * 
+	 * @param aasIdentifier
+	 * @return Returns a constructed SubmodelAggregator
+	 */
+	default public ISubmodelAggregator create(IIdentifier aasIdentifier) {
+		throw new NotImplementedException();
+	};
 }
