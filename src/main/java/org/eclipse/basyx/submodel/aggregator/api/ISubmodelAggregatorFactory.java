@@ -44,6 +44,7 @@ public interface ISubmodelAggregatorFactory {
 	public ISubmodelAggregator create();
 
 	/**
+	 * Returns a constructed SubmodelAggregator
 	 * 
 	 * @param aasIdentifier
 	 * @return Returns a constructed SubmodelAggregator
