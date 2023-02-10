@@ -28,6 +28,7 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * Api provider for constructing a new Submodel aggregator that is authorized
@@ -51,5 +52,10 @@ public class AuthorizedDecoratingSubmodelAggregatorFactory<SubjectInformationTyp
 	@Override
 	public ISubmodelAggregator create() {
 		return new AuthorizedSubmodelAggregator<>(aas, submodelAggregatorFactory.create(), submodelAggregatorAuthorizer, subjectInformationProvider);
+	}
+	
+	@Override
+	public ISubmodelAggregator create(IIdentifier aasIdentifier) {
+		return new AuthorizedSubmodelAggregator<>(aas, submodelAggregatorFactory.create(aasIdentifier), submodelAggregatorAuthorizer, subjectInformationProvider);
 	}
 }
