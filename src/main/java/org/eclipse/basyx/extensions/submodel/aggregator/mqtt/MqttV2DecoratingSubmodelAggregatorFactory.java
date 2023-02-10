@@ -60,10 +60,7 @@ public class MqttV2DecoratingSubmodelAggregatorFactory implements ISubmodelAggre
 	public ISubmodelAggregator create() {
 		try {
 			ISubmodelAggregator aggregator = submodelAggregatorFactory.create();
-			observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator, this.aasServerId);
-			observer = new MqttV2SubmodelAggregatorObserver(mqttClient, topicFactory);
-			observedSubmodelAggregator.addObserver(observer);
-			return observedSubmodelAggregator;
+			return decorateAggregator(aggregator);
 		} catch (MqttException e) {
 			throw new ProviderException(e);
 		}
@@ -73,13 +70,17 @@ public class MqttV2DecoratingSubmodelAggregatorFactory implements ISubmodelAggre
 	public ISubmodelAggregator create(IIdentifier aasIdentifier) {
 		try {
 			ISubmodelAggregator aggregator = submodelAggregatorFactory.create(aasIdentifier);
-			observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator, this.aasServerId);
-			observer = new MqttV2SubmodelAggregatorObserver(mqttClient, topicFactory);
-			observedSubmodelAggregator.addObserver(observer);
-			return observedSubmodelAggregator;
+			return decorateAggregator(aggregator);
 		} catch (MqttException e) {
 			throw new ProviderException(e);
 		}
+	}
+
+	private ISubmodelAggregator decorateAggregator(ISubmodelAggregator aggregator) throws MqttException {
+		observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator, this.aasServerId);
+		observer = new MqttV2SubmodelAggregatorObserver(mqttClient, topicFactory);
+		observedSubmodelAggregator.addObserver(observer);
+		return observedSubmodelAggregator;
 	}
 
 }
