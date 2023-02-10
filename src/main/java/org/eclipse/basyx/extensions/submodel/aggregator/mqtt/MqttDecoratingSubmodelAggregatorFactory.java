@@ -30,6 +30,7 @@ import java.security.ProviderException;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregator;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -55,6 +56,18 @@ public class MqttDecoratingSubmodelAggregatorFactory implements ISubmodelAggrega
 	public ISubmodelAggregator create() {
 		try {
 			ISubmodelAggregator aggregator = submodelAggregatorFactory.create();
+			observedSubmodelAggregator = new ObservableSubmodelAggregator(aggregator);
+			observer = new MqttSubmodelAggregatorObserver(mqttClient);
+			observedSubmodelAggregator.addObserver(observer);
+			return observedSubmodelAggregator;
+		} catch (MqttException e) {
+			throw new ProviderException(e);
+		}
+	}
+	@Override
+	public ISubmodelAggregator create(IIdentifier aasIdentifier) {
+		try {
+			ISubmodelAggregator aggregator = submodelAggregatorFactory.create(aasIdentifier);
 			observedSubmodelAggregator = new ObservableSubmodelAggregator(aggregator);
 			observer = new MqttSubmodelAggregatorObserver(mqttClient);
 			observedSubmodelAggregator.addObserver(observer);

@@ -11,6 +11,7 @@ package org.eclipse.basyx.extensions.submodel.aggregator.authorization;
 
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * Api provider for constructing a new Submodel aggregator that is authorized
@@ -27,5 +28,10 @@ public class AuthorizedDecoratingSubmodelAggregatorFactory implements ISubmodelA
 	@Override
 	public ISubmodelAggregator create() {
 		return new AuthorizedSubmodelAggregator(submodelAggregatorFactory.create());
+	}
+
+	@Override
+	public ISubmodelAggregator create(IIdentifier aasIdentifier) {
+		return new AuthorizedSubmodelAggregator(submodelAggregatorFactory.create(aasIdentifier));
 	}
 }
