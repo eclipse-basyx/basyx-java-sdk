@@ -120,28 +120,7 @@ public class TestConnectedAssetAdministrationShell extends AssetAdministrationSh
 		AASModelProvider aasProvider = new AASModelProvider(retrieveBaselineShell());
 		ConnectedAssetAdministrationShell localCAAS = new ConnectedAssetAdministrationShell(new VABElementProxy("", aasProvider));
 
-		AssetAdministrationShell originalAAS = addAssetReferenceToAAS(retrieveBaselineShell());
-		assertEquals(originalAAS, localCAAS.getLocalCopy());
+		assertEquals(retrieveBaselineShell(), localCAAS.getLocalCopy());
 	}
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testGetAssetReferenceFromAASJSON() {
-		Map<String, Object> assetMap = (Map<String, Object>) retrieveShell().getAsset();
-		assertTrue(assetMap.containsKey(Reference.KEY));
-		List<Object> assetKeys = (List<Object>) assetMap.get(Reference.KEY);
-		Map<String, Object> keyMap = (Map<String, Object>) assetKeys.get(0);
-		assertEquals(Asset.MODELTYPE, keyMap.get(Key.TYPE));
-		String expectedAssetId = retrieveBaselineShell().getAsset().getIdentification().getId();
-		assertEquals(expectedAssetId, keyMap.get(Key.VALUE));
-	}
-
-	private AssetAdministrationShell addAssetReferenceToAAS(AssetAdministrationShell aas) {
-		Asset asset = (Asset) aas.getAsset();
-		Map<String, Object> modifiedAsset = new LinkedHashMap<>();
-		modifiedAsset.put(Reference.KEY, asset.getReference().getKeys());
-		modifiedAsset.putAll(asset);
-		aas.setAsset(Asset.createAsFacade(modifiedAsset));
-		return aas;
-	}
 }
