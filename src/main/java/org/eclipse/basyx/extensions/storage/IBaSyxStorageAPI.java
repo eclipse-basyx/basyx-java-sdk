@@ -56,24 +56,18 @@ public interface IBaSyxStorageAPI<T> {
 
 	/**
 	 * Retrieves an object by it's key from the persistence storage
-	 * 
-	 * @param expectedType
-	 *            The type of the object to be retrieved (usually the return type)
 	 * @param key
 	 *            The key of the object to be retrieved
 	 * @return The expected object if successful
 	 */
-	T retrieve(String key, Class<?> expectedType);
+	T retrieve(String key);
 
 	/**
 	 * Retrieves all object of one type from the persistence storage
-	 * 
-	 * @param expectedType
-	 *            The type of the object to be retrieved (usually the type returned
 	 *            Collection items)
 	 * @return All objects of the specified type that are persistent in the storage
 	 */
-	Collection<T> retrieveAll(Class<?> expectedType);
+	Collection<T> retrieveAll();
 
 	/**
 	 * Deletes an object by it's key from the persistence storage
@@ -84,6 +78,22 @@ public interface IBaSyxStorageAPI<T> {
 	 */
 	boolean delete(String key);
 
+	/**
+	 * Creates a collection if it does not already exist, whereby "collection" is a
+	 * data container in the context of the respective persistence storage. For the
+	 * concrete persistence storage, another name may be common: e.g. for relational
+	 * database systems: "table", for S3: "bucket".
+	 * 
+	 * @param collectionName
+	 *            The name of the collection
+	 */
+	void createCollectionIfNotExists(String collectionName);
 
-
+	/**
+	 * Deletes a collection, whereby "collection" is a data container in the context
+	 * of the respective persistence storage. For the concrete persistence storage,
+	 * another name may be common: e.g. for relational database systems: "table",
+	 * for S3: "bucket".
+	 */
+	void deleteCollection();
 }

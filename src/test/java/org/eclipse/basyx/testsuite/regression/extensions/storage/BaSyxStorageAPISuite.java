@@ -25,17 +25,17 @@
 package org.eclipse.basyx.testsuite.regression.extensions.storage;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
 import org.eclipse.basyx.extensions.storage.BaSyxStorageAPI;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -44,20 +44,16 @@ import org.junit.Test;
  * DISCLAIMER: Some data created by this Testsuite is explicitly NOT removed
  * from the persistence storage to ensure nothing important deleted by accident.
  * 
- * @author jungjan
+ * @author jungjan, fried
  *
  */
 public abstract class BaSyxStorageAPISuite {
 
-	protected static VABTestType testType;
-	private BaSyxStorageAPI<VABTestType> storageAPI;
+	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.CUSTOM, "testSubmodelIidentifier");
+	protected static Submodel testType = new Submodel("testSubmodel", SUBMODEL_IDENTIFIER);
+	private BaSyxStorageAPI<Submodel> storageAPI;
 
-	protected abstract BaSyxStorageAPI<VABTestType> getStorageAPI();
-
-	@BeforeClass
-	public static void setUpClass() {
-		testType = new VABTestType(VABTestType.DEFAULT_ID, VABTestType.DEFAULT_STR, VABTestType.DEFAULT_INT, VABTestType.DEFAULT_ARRAY, VABTestType.DEFAULT_COLLECTION, VABTestType.DEFAULT_MAP);
-	}
+	protected abstract BaSyxStorageAPI<Submodel> getStorageAPI();
 
 	@Before
 	public void setUp() {
@@ -70,78 +66,27 @@ public abstract class BaSyxStorageAPISuite {
 	}
 
 	@Test
-	public void createOrUpdate() {
-		assertCreate(testType);
-		VABTestType beforeActual = storageAPI.retrieve(testType.getIdentification().getId(), testType.getClass());
-		VABTestType afterExpected = invertTestTypeIntValue(beforeActual);
-		VABTestType afterActual = storageAPI.createOrUpdate(afterExpected);
-
-		assertNotEquals(beforeActual, afterActual);
-		assertEquals(afterExpected, afterActual);
-	}
-
-	private void assertCreate(VABTestType testType) {
-		VABTestType result = storageAPI.createOrUpdate(testType);
-		assertEquals(testType, result);
+	public void retrieve() {
+		storageAPI.createOrUpdate(testType);
+		Submodel actual = storageAPI.retrieve(testType.getIdentification().getId());
+		assertEquals(testType, actual);
 	}
 
 	@Test
 	public void update() {
 		storageAPI.createOrUpdate(testType);
-		VABTestType beforeActual = storageAPI.retrieve(testType.getIdentification().getId(), testType.getClass());
-		VABTestType afterExpected = invertTestTypeIntValue(beforeActual);
-		VABTestType afterActual = storageAPI.update(afterExpected, testType.getIdentification().getId());
+		testType.setIdShort("updated");
+		Submodel actual = storageAPI.createOrUpdate(testType);
 
-		assertNotEquals(beforeActual, afterActual);
-		assertEquals(afterExpected, afterActual);
-	}
-
-	private VABTestType invertTestTypeIntValue(VABTestType beforeActual) {
-		VABTestType afterExpected = new VABTestType(beforeActual);
-		afterExpected.setTestInt(-testType.getTestInt());
-		return afterExpected;
-	}
-
-	@Test
-	public void retrieve() {
-		VABTestType expected = testType;
-		storageAPI.createOrUpdate(testType);
-
-		VABTestType actual = storageAPI.retrieve(testType.getIdentification().getId(), testType.getClass());
-
-		assertEquals(expected, actual);
-	}
-
-	@Test
-	public void retrieveAll() {
-		VABTestType entry1 = new VABTestType(testType);
-		VABTestType entry2 = new VABTestType(testType);
-
-		entry1.setTestStr("1");
-		entry1.setTestStr("2");
-
-		storageAPI.createOrUpdate(entry1);
-		storageAPI.createOrUpdate(entry2);
-
-		Collection<VABTestType> retrieved = storageAPI.retrieveAll(testType.getClass());
-
-		assertTrue(retrieved.contains(entry1));
-		assertTrue(retrieved.contains(entry2));
-
-		cleanRetrieveAll(retrieved);
-	}
-
-	private void cleanRetrieveAll(Collection<VABTestType> retrieved) {
-		retrieved.forEach(entry -> storageAPI.delete(entry.getIdentification().getId()));
+		assertEquals(testType, actual);
 	}
 
 	@Test
 	public void delete() {
+		System.out.println(testType);
 		storageAPI.createOrUpdate(testType);
-		VABTestType there = storageAPI.retrieve(testType.getIdentification().getId(), testType.getClass());
-		assertNotNull(there);
 		assertTrue(storageAPI.delete(testType.getIdentification().getId()));
-		VABTestType gone = storageAPI.retrieve(testType.getIdentification().getId(), testType.getClass());
-		assertNull(gone);
+		Collection<Submodel> allElements = storageAPI.retrieveAll();
+		assertFalse(allElements.contains(testType));
 	}
 }

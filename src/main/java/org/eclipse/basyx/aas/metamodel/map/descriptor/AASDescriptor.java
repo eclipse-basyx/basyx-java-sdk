@@ -227,4 +227,14 @@ public class AASDescriptor extends ModelDescriptor {
 			throw new MalformedRequestException("Passed entry for " + AssetAdministrationShell.SUBMODELS + " is not a list of submodelDescriptors!");
 		}
 	}
+
+	public static AASDescriptor createAsFacade(Map<String, Object> map) {
+		if (map == null) {
+			return null;
+		}
+
+		AASDescriptor ret = new AASDescriptor();
+		ret.setMap(map);
+		return ret;
+	}
 }

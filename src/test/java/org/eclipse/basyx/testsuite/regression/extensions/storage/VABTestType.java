@@ -88,7 +88,6 @@ public class VABTestType extends VABModelMap<Object> implements IIdentifiable {
 			identification = getIdentification();
 		}
 		((Identifier) identification).setId(id);
-		System.out.println(":::::::::::::::" + getIdentification().getId());
 	}
 
 
