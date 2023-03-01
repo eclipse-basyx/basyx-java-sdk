@@ -107,7 +107,7 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	@Override
 	public T retrieve(String key) {
 		T retrieved = rawRetrieve(key);
-		if (isSubmodelType(retrieved.getClass())) {
+		if (retrieved != null && isSubmodelType(retrieved.getClass())) {
 			return (T) handleRetrievedSubmodel((Submodel) retrieved);
 		}
 		return retrieved;
@@ -128,7 +128,7 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	protected Submodel handleRetrievedSubmodel(Submodel retrieved) {
-		Map<String, Map<String, Object>> elementMaps = (Map<String, Map<String, Object>>)retrieved.get(Submodel.SUBMODELELEMENT);
+		Map<String, Map<String, Object>> elementMaps = (Map<String, Map<String, Object>>) retrieved.get(Submodel.SUBMODELELEMENT);
 		Map<String, ISubmodelElement> elements = forceToISubmodelElements(elementMaps);
 		retrieved.put(Submodel.SUBMODELELEMENT, elements);
 		return retrieved;
