@@ -37,13 +37,19 @@ import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
 
+/**
+ * Serializes and deserializes shells and submodels to and from json
+ * 
+ * @author jungjan
+ *
+ */
 public class BidirectionalJSONConverter {
 	private static GSONTools gsonTools = new GSONTools(new DefaultTypeFactory());
 
 	public static String serializeSubmodel(ISubmodel submodel) {
 		return gsonTools.serialize(submodel);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static ISubmodel deserializeSubmodel(String jsonSubmodel) {
 		return Submodel.createAsFacade((Map<String, Object>) gsonTools.deserialize(jsonSubmodel));
@@ -88,8 +94,6 @@ public class BidirectionalJSONConverter {
 		return semanticIdKeysToString(keys);
 	}
 
-
-
 	public static String semanticIdKeysToString(List<IKey> keys) {
 		return keys.stream().map(k -> 
 				Key.TYPE + ":" + k.getType() + ";" 
@@ -98,6 +102,5 @@ public class BidirectionalJSONConverter {
 				+ Key.IDTYPE + ":" + k.getIdType())
 				.collect(Collectors.joining("/"));
 			}
-
 
 }

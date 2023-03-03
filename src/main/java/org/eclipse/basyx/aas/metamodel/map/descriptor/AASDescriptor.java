@@ -228,6 +228,12 @@ public class AASDescriptor extends ModelDescriptor {
 		}
 	}
 
+	/**
+	 * Creates the AASDescriptor from a given map
+	 * 
+	 * @param map
+	 * @return
+	 */
 	public static AASDescriptor createAsFacade(Map<String, Object> map) {
 		if (map == null) {
 			return null;

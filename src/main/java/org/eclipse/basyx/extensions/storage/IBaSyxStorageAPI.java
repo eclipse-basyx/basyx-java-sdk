@@ -41,7 +41,7 @@ public interface IBaSyxStorageAPI<T> {
 	 *            The object to be created or updated
 	 * @return The created or updated object if successful
 	 */
-	T createOrUpdate(T obj);
+	public T createOrUpdate(T obj);
 
 	/**
 	 * Updates objects in the persistence storage
@@ -52,22 +52,24 @@ public interface IBaSyxStorageAPI<T> {
 	 *            The key of the object to be updated
 	 * @return The updated object if successful
 	 */
-	T update(T obj, String key);
+	public T update(T obj, String key);
 
 	/**
 	 * Retrieves an object by it's key from the persistence storage
+	 * 
 	 * @param key
 	 *            The key of the object to be retrieved
 	 * @return The expected object if successful
 	 */
-	T retrieve(String key);
+	public T retrieve(String key);
 
 	/**
-	 * Retrieves all object of one type from the persistence storage
-	 *            Collection items)
+	 * Retrieves all object of one type from the persistence storage Collection
+	 * items)
+	 * 
 	 * @return All objects of the specified type that are persistent in the storage
 	 */
-	Collection<T> retrieveAll();
+	public Collection<T> retrieveAll();
 
 	/**
 	 * Deletes an object by it's key from the persistence storage
@@ -76,7 +78,7 @@ public interface IBaSyxStorageAPI<T> {
 	 *            The key of the object to be deleted
 	 * @return true if successful else false
 	 */
-	boolean delete(String key);
+	public boolean delete(String key);
 
 	/**
 	 * Creates a collection if it does not already exist, whereby "collection" is a
@@ -87,7 +89,7 @@ public interface IBaSyxStorageAPI<T> {
 	 * @param collectionName
 	 *            The name of the collection
 	 */
-	void createCollectionIfNotExists(String collectionName);
+	public void createCollectionIfNotExists(String collectionName);
 
 	/**
 	 * Deletes a collection, whereby "collection" is a data container in the context
@@ -95,5 +97,5 @@ public interface IBaSyxStorageAPI<T> {
 	 * another name may be common: e.g. for relational database systems: "table",
 	 * for S3: "bucket".
 	 */
-	void deleteCollection();
+	public void deleteCollection();
 }
