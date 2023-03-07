@@ -52,8 +52,8 @@ public class AASAggregatorAASXUploadProvider extends AASAggregatorProvider {
 
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
-		path = stripPrefix(path);
-		String[] splitted = VABPathTools.splitPath(path);
+		String strippedPath = stripPrefix(path);
+		String[] splitted = VABPathTools.splitPath(strippedPath);
 
 		if (isAASXAccessPath(splitted)) {
 			try {
