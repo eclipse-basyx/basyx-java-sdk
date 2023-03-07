@@ -85,7 +85,7 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	}
 
 	/**
-	 * Retrieves an object by it's key from the persistence storage.
+	 * Retrieves an object by its key from the persistence storage.
 	 * 
 	 * The result of this retrieval will then be further processed by the
 	 * {@link #retrieve(String)} method to ensure it is interpreted correctly.
