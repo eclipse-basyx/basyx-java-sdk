@@ -27,6 +27,7 @@ package org.eclipse.basyx.submodel.aggregator;
 
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPIFactory;
 import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPIFactory;
 
@@ -52,6 +53,11 @@ public class SubmodelAggregatorFactory implements ISubmodelAggregatorFactory {
 	@Override
 	public ISubmodelAggregator create() {
 		return new SubmodelAggregator(submodelAPIFactory);
+	}
+
+	@Override
+	public ISubmodelAggregator create(IIdentifier ignored) {
+		return create();
 	}
 
 }
