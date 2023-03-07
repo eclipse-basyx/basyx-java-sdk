@@ -162,7 +162,7 @@ public class AASAggregator implements IAASAggregator {
 		IConnectorFactory connectorFactory = new HTTPConnectorFactory();
 		IAASAPI aasApi = aasApiFactory.create(aas);
 		AASModelProvider contentProvider = new AASModelProvider(aasApi);
-		return new MultiSubmodelProvider(contentProvider, registry, connectorFactory, aasApiFactory, submodelAggregatorFactory.create());
+		return new MultiSubmodelProvider(contentProvider, registry, connectorFactory, aasApiFactory, submodelAggregatorFactory.create(aas.getIdentification()));
 	}
 
 	@Override
