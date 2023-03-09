@@ -36,6 +36,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 
 /**
  * A Factory class containing methods creating an HTTPS client with no
@@ -71,7 +72,7 @@ public class JerseyHttpsClientFactory {
 
 	private static Client getJerseyHTTPSClient(HostnameVerifier hostnameVerifier) throws KeyManagementException, NoSuchAlgorithmException {
 		SSLContext sslContext = getSslContext(PROTOCOL);
-		return ClientBuilder.newBuilder().sslContext(sslContext).hostnameVerifier(hostnameVerifier).build();
+		return new JerseyClientBuilder().sslContext(sslContext).hostnameVerifier(hostnameVerifier).build();
 	}
 
 	/**

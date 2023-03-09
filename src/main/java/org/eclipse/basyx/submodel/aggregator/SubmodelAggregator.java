@@ -50,26 +50,26 @@ import org.slf4j.LoggerFactory;
 public class SubmodelAggregator implements ISubmodelAggregator {
 	private static final Logger logger = LoggerFactory.getLogger(SubmodelAggregator.class);
 
-	protected Map<String, ISubmodelAPI> smApiMap = new HashMap<>();
+	protected Map<String, ISubmodelAPI> submodelApiMap = new HashMap<>();
 
 	/**
 	 * Store Submodel API Provider. By default, uses the VAB Submodel Provider
 	 */
-	protected ISubmodelAPIFactory smApiFactory;
+	protected ISubmodelAPIFactory submodelApiFactory;
 
 	public SubmodelAggregator() {
-		smApiFactory = new VABSubmodelAPIFactory();
+		submodelApiFactory = new VABSubmodelAPIFactory();
 	}
 
-	public SubmodelAggregator(ISubmodelAPIFactory smApiFactory) {
-		this.smApiFactory = smApiFactory;
+	public SubmodelAggregator(ISubmodelAPIFactory submodelApiFactory) {
+		this.submodelApiFactory = submodelApiFactory;
 	}
 
 	@Override
 	public Collection<ISubmodel> getSubmodelList() {
-		return smApiMap.values().stream().map(smApi -> {
+		return submodelApiMap.values().stream().map(submodelApi -> {
 			try {
-				return smApi.getSubmodel();
+				return submodelApi.getSubmodel();
 			} catch (final NotAuthorizedException e) {
 				logger.info(e.getMessage(), e);
 			}
@@ -84,7 +84,7 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 	}
 
 	private String getIdShort(IIdentifier identifier) {
-		for (ISubmodelAPI api : smApiMap.values()) {
+		for (ISubmodelAPI api : submodelApiMap.values()) {
 			ISubmodel submodel = api.getSubmodel();
 			String idValue = submodel.getIdentification().getId();
 			if (idValue.equals(identifier.getId())) {
@@ -101,18 +101,18 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 
 	@Override
 	public void updateSubmodel(Submodel submodel) throws ResourceNotFoundException {
-		ISubmodelAPI submodelAPI = smApiFactory.create(submodel);
+		ISubmodelAPI submodelAPI = submodelApiFactory.create(submodel);
 		createSubmodel(submodelAPI);
 	}
 
 	@Override
 	public void createSubmodel(ISubmodelAPI submodelAPI) {
-		smApiMap.put(submodelAPI.getSubmodel().getIdShort(), submodelAPI);
+		submodelApiMap.put(submodelAPI.getSubmodel().getIdShort(), submodelAPI);
 	}
 
 	@Override
 	public ISubmodel getSubmodelbyIdShort(String idShort) throws ResourceNotFoundException {
-		ISubmodelAPI api = smApiMap.get(idShort);
+		ISubmodelAPI api = submodelApiMap.get(idShort);
 		if (api == null) {
 			throw new ResourceNotFoundException("The submodel with idShort '" + idShort + "' could not be found");
 		} else {
@@ -124,25 +124,25 @@ public class SubmodelAggregator implements ISubmodelAggregator {
 	public void deleteSubmodelByIdentifier(IIdentifier identifier) {
 		try {
 			String idShort = getIdShort(identifier);
-			smApiMap.remove(idShort);
+			submodelApiMap.remove(idShort);
 		} catch (ResourceNotFoundException exception) {
 		}
 	}
 
 	@Override
 	public void deleteSubmodelByIdShort(String idShort) {
-		smApiMap.remove(idShort);
+		submodelApiMap.remove(idShort);
 	}
 
 	@Override
 	public ISubmodelAPI getSubmodelAPIById(IIdentifier identifier) throws ResourceNotFoundException {
 		String idShort = getIdShort(identifier);
-		return smApiMap.get(idShort);
+		return submodelApiMap.get(idShort);
 	}
 
 	@Override
 	public ISubmodelAPI getSubmodelAPIByIdShort(String idShort) throws ResourceNotFoundException {
-		ISubmodelAPI api = smApiMap.get(idShort);
+		ISubmodelAPI api = submodelApiMap.get(idShort);
 		if (api == null) {
 			throw new ResourceNotFoundException("The submodel with idShort '" + idShort + "' could not be found");
 		}
