@@ -168,7 +168,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 	private String getFilePath(String idShortPath, File file) {
 		String filePath = file.getValue();
-		if (filePath.isEmpty()) {
+		if (filePath == null || filePath.isEmpty()) {
 			String mimeType = file.getMimeType();
 			String fileName = idShortPath + "." + mimeType;
 			String tmpDirectory = Files.createTempDir().getAbsolutePath();
