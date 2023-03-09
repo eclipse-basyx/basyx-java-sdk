@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.delegation;
 
+import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -137,5 +138,15 @@ public class DelegatingSubmodelAPI implements ISubmodelAPI {
 
 		if (!optionalConstraint.isEmpty())
 			throw new MalformedRequestException("The update request on this SubmodelElement " + element.getIdShort() + " with delegated qualifier is not allowed");
+	}
+
+	@Override
+	public Object getSubmodelElementFile(String idShortPath) {
+		return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
+	}
+
+	@Override
+	public void uploadSubmodelElementFile(String idShortPath, FileInputStream fileStream) {
+		decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
 	}
 }

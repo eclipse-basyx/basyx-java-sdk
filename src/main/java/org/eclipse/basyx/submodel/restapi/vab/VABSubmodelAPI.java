@@ -108,9 +108,11 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	@Override
 	public void deleteSubmodelElement(String idShortPath) {
 		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
-		File file = File.createAsFacade((Map<String, Object>) submodelElement);
-		java.io.File tmpFile = new java.io.File(file.getValue());
-		tmpFile.delete();
+		if (File.isFile((Map<String, Object>) submodelElement)) {
+			File file = File.createAsFacade((Map<String, Object>) submodelElement);
+			java.io.File tmpFile = new java.io.File(file.getValue());
+			tmpFile.delete();
+		}
 		getElementProvider().deleteValue(SubmodelAPIHelper.getSubmodelElementPath(idShortPath));
 	}
 
@@ -131,19 +133,23 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
-		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
-		if (File.isFile((Map<String, Object>) submodelElement) && newValue instanceof FileInputStream) {
-			try {
-				createFile(idShortPath, newValue, submodelElement);
-			} catch (IOException e) {
-			}
-		}
 		getElementProvider().setValue(SubmodelAPIHelper.getSubmodelElementValuePath(idShortPath), newValue);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void createFile(String idShortPath, Object newValue, ISubmodelElement submodelElement)
-			throws IOException {
+	@Override
+	public void uploadSubmodelElementFile(String idShortPath, FileInputStream fileStream) {
+		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
+		if (File.isFile((Map<String, Object>) submodelElement)) {
+			try {
+				createFile(idShortPath, fileStream, submodelElement);
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void createFile(String idShortPath, Object newValue, ISubmodelElement submodelElement) throws IOException {
 		File file = File.createAsFacade((Map<String, Object>) submodelElement);
 		String filePath = getFilePath(idShortPath, file);
 

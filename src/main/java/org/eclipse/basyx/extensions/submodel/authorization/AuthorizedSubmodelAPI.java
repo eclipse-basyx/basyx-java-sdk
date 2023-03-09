@@ -1,5 +1,6 @@
 package org.eclipse.basyx.extensions.submodel.authorization;
 
+import java.io.FileInputStream;
 import java.util.Collection;
 
 import org.eclipse.basyx.extensions.shared.authorization.SecurityContextAuthorizer;
@@ -96,5 +97,17 @@ public class AuthorizedSubmodelAPI implements ISubmodelAPI {
 	public Object getOperationResult(String idShort, String requestId) {
 		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
 		return decoratedSubmodelAPI.getOperationResult(idShort, requestId);
+	}
+
+	@Override
+	public Object getSubmodelElementFile(String idShortPath) {
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(READ_AUTHORITY);
+		return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
+	}
+
+	@Override
+	public void uploadSubmodelElementFile(String idShortPath, FileInputStream fileStream) {
+		authorizer.throwExceptionInCaseOfInsufficientAuthorization(WRITE_AUTHORITY);
+		decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
 	}
 }

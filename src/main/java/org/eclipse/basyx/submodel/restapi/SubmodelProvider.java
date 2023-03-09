@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -286,7 +287,7 @@ public class SubmodelProvider implements IModelProvider {
 		String[] splitted = VABPathTools.splitPath(path);
 		path = removeSMElementPrefix(path);
 		if (endsWithFileUpload(splitted)) {
-			submodelAPI.updateSubmodelElement(getIdShortFromSplittedPath(splitted), newEntity);
+			submodelAPI.uploadSubmodelElementFile(getIdShortFromSplittedPath(splitted), (FileInputStream) newEntity);
 			return;
 		}
 		throw new MalformedRequestException("POST on \"" + path + "\" not allowed");
