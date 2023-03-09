@@ -38,6 +38,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
@@ -123,6 +124,7 @@ public class SubmodelProvider implements IModelProvider {
 		return path;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue(String path) throws ProviderException {
 		VABPathTools.checkPathForNull(path);
@@ -158,6 +160,18 @@ public class SubmodelProvider implements IModelProvider {
 					idShorts.remove(idShorts.size() - 1);
 					idShorts.remove(idShorts.size() - 1);
 					return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
+				} else if (endsWithFile(splitted)) {
+
+					String idShortPath = getIdShortFromSplittedPath(splitted);
+					Map<String, Object> submodelElement = (Map<String, Object>) submodelAPI
+							.getSubmodelElement(idShortPath);
+
+					if (!File.isFile(submodelElement)) {
+						throw new MalformedRequestException("/File is only allowed for File Submodel Elements");
+					}
+
+					return submodelAPI.getSubmodelElementFile(idShortPath);
+
 				} else {
 					return submodelAPI.getSubmodelElement(path);
 				}
@@ -265,7 +279,17 @@ public class SubmodelProvider implements IModelProvider {
 
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
-		throw new MalformedRequestException("POST (create) on '" + path + "' not allowed. Use PUT (set) instead.");
+		path = removeSubmodelPrefix(path);
+		if (path.isEmpty()) {
+			throw new MalformedRequestException("Set on \"" + SUBMODEL + "\" not supported");
+		}
+		String[] splitted = VABPathTools.splitPath(path);
+		path = removeSMElementPrefix(path);
+		if (endsWithFileUpload(splitted)) {
+			submodelAPI.updateSubmodelElement(getIdShortFromSplittedPath(splitted), newEntity);
+			return;
+		}
+		throw new MalformedRequestException("POST on \"" + path + "\" not allowed");
 	}
 
 	@Override
@@ -278,7 +302,7 @@ public class SubmodelProvider implements IModelProvider {
 					path = removeSMElementPrefix(path);
 					submodelAPI.deleteSubmodelElement(path);
 				} else {
-					submodelAPI.deleteSubmodelElement(splitted[1]);
+					submodelAPI.deleteSubmodelElement(getIdShortFromSplittedPath(splitted));
 				}
 			} else {
 				throw new MalformedRequestException("Path " + path + " not supported for delete");
@@ -345,4 +369,17 @@ public class SubmodelProvider implements IModelProvider {
 	private String removeSMElementPrefix(String path) {
 		return path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
 	}
+
+	private boolean endsWithFile(String[] splitted) {
+		return splitted[splitted.length - 1].equals("File");
+	}
+
+	private boolean endsWithFileUpload(String[] splitted) {
+		return splitted[splitted.length - 1].equals("upload") && splitted[splitted.length - 2].equals("File");
+	}
+
+	private String getIdShortFromSplittedPath(String[] splitted) {
+		return splitted[1];
+	}
+
 }

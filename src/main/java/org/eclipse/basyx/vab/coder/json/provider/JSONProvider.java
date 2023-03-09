@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.coder.json.provider;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Result;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
@@ -198,6 +201,25 @@ public class JSONProvider<ModelProvider extends IModelProvider> {
 		} catch (Exception e) {
 			sendException(outputStream, e);
 		}
+	}
+
+	public void processBaSysFileGet(String path, HttpServletResponse resp) throws FileNotFoundException, IOException {
+		java.io.File file = (java.io.File) providerBackend.getValue(path);
+		if (!file.exists()) {
+			throw new FileNotFoundException();
+		}
+		byte[] fileBytes = new byte[(int) file.length()];
+		FileInputStream fileInputStream = new FileInputStream(file);
+		fileInputStream.read(fileBytes);
+		fileInputStream.close();
+
+
+		// Set the response headers
+		resp.setContentType("application/octet-stream");
+		resp.setContentLength((int) file.length());
+		resp.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+		resp.getOutputStream().write(fileBytes);
+		resp.getOutputStream().close();
 	}
 
 	/**

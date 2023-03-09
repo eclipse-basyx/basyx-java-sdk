@@ -26,6 +26,7 @@ package org.eclipse.basyx.submodel.restapi.api;
 
 import java.util.Collection;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
@@ -145,5 +146,9 @@ public interface ISubmodelAPI {
 	 * @return the result of the Operation or a Message that it is not finished yet
 	 */
 	public Object getOperationResult(String idShort, String requestId);
+
+	default public Object getSubmodelElementFile(String idShortPath) {
+		throw new NotImplementedException();
+	}
 
 }

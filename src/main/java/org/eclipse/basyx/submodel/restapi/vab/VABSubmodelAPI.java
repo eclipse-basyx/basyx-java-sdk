@@ -24,21 +24,29 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi.vab;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.submodel.restapi.MultiSubmodelElementProvider;
 import org.eclipse.basyx.submodel.restapi.SubmodelAPIHelper;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+
+import com.google.common.io.Files;
 
 /**
  * Implements the Submodel API by mapping it to VAB paths
@@ -55,8 +63,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	/**
 	 * Creates a VABSubmodelAPI that wraps an IModelProvider
 	 * 
-	 * @param modelProvider
-	 *            providing the Submodel
+	 * @param modelProvider providing the Submodel
 	 */
 	public VABSubmodelAPI(IModelProvider modelProvider) {
 		super();
@@ -97,26 +104,73 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 		getElementProvider().createValue(SubmodelAPIHelper.getSubmodelElementPath(idShortPath), elem);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void deleteSubmodelElement(String idShortPath) {
+		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
+		File file = File.createAsFacade((Map<String, Object>) submodelElement);
+		java.io.File tmpFile = new java.io.File(file.getValue());
+		tmpFile.delete();
 		getElementProvider().deleteValue(SubmodelAPIHelper.getSubmodelElementPath(idShortPath));
 	}
 
 	@Override
 	public Collection<IOperation> getOperations() {
-		return getSubmodelElements().stream().filter(e -> e instanceof IOperation).map(e -> (IOperation) e).collect(Collectors.toList());
+		return getSubmodelElements().stream().filter(e -> e instanceof IOperation).map(e -> (IOperation) e)
+				.collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<ISubmodelElement> getSubmodelElements() {
-		Collection<Map<String, Object>> elements = (Collection<Map<String, Object>>) getElementProvider().getValue(SubmodelAPIHelper.getSubmodelElementsPath());
+		Collection<Map<String, Object>> elements = (Collection<Map<String, Object>>) getElementProvider()
+				.getValue(SubmodelAPIHelper.getSubmodelElementsPath());
 		return elements.stream().map(SubmodelElement::createAsFacade).collect(Collectors.toList());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
+		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
+		if (File.isFile((Map<String, Object>) submodelElement) && newValue instanceof FileInputStream) {
+			try {
+				createFile(idShortPath, newValue, submodelElement);
+			} catch (IOException e) {
+			}
+		}
 		getElementProvider().setValue(SubmodelAPIHelper.getSubmodelElementValuePath(idShortPath), newValue);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void createFile(String idShortPath, Object newValue, ISubmodelElement submodelElement)
+			throws IOException {
+		File file = File.createAsFacade((Map<String, Object>) submodelElement);
+		String filePath = getFilePath(idShortPath, file);
+
+		java.io.File targetFile = new java.io.File(filePath);
+
+		FileOutputStream outStream = new FileOutputStream(targetFile);
+		FileInputStream inStream = (FileInputStream) newValue;
+
+		IOUtils.copy(inStream, outStream);
+
+		inStream.close();
+		outStream.close();
+		return;
+
+	}
+
+	private String getFilePath(String idShortPath, File file) {
+		String filePath = file.getValue();
+		if (filePath.isEmpty()) {
+			String mimeType = file.getMimeType();
+			String fileName = idShortPath + "." + mimeType;
+			String tmpDirectory = Files.createTempDir().getAbsolutePath();
+			filePath = tmpDirectory + "/" + fileName;
+			file.setValue(filePath);
+			getElementProvider().setValue(SubmodelAPIHelper.getSubmodelElementValuePath(idShortPath), filePath);
+		}
+		return filePath;
 	}
 
 	@Override
@@ -127,22 +181,40 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ISubmodelElement getSubmodelElement(String idShortPath) {
-		return SubmodelElement.createAsFacade((Map<String, Object>) getElementProvider().getValue(SubmodelAPIHelper.getSubmodelElementPath(idShortPath)));
+		return SubmodelElement.createAsFacade((Map<String, Object>) getElementProvider()
+				.getValue(SubmodelAPIHelper.getSubmodelElementPath(idShortPath)));
 	}
 
 	@Override
 	public Object invokeOperation(String idShortPath, Object... params) {
-		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementSyncInvokePath(idShortPath), params);
+		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementSyncInvokePath(idShortPath),
+				params);
 	}
 
 	@Override
 	public Object invokeAsync(String idShortPath, Object... params) {
-		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementAsyncInvokePath(idShortPath), params);
+		return getElementProvider().invokeOperation(SubmodelAPIHelper.getSubmodelElementAsyncInvokePath(idShortPath),
+				params);
 	}
 
 	@Override
 	public Object getOperationResult(String idShortPath, String requestId) {
-		return getElementProvider().getValue(SubmodelAPIHelper.getSubmodelElementResultValuePath(idShortPath, requestId));
+		return getElementProvider()
+				.getValue(SubmodelAPIHelper.getSubmodelElementResultValuePath(idShortPath, requestId));
+	}
+
+	@Override
+	public Object getSubmodelElementFile(String idShortPath) {
+
+		@SuppressWarnings("unchecked")
+		Map<String, Object> submodelElement = (Map<String, Object>) getSubmodelElement(idShortPath);
+
+		File fileSubmodelElement = File.createAsFacade(submodelElement);
+
+		if (fileSubmodelElement.getValue().isEmpty()) {
+			throw new ProviderException("The File Submodel Element does not contain a File");
+		}
+		return new java.io.File((String) fileSubmodelElement.getValue());
 	}
 
 }
