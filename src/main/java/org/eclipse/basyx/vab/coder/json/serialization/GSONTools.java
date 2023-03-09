@@ -32,8 +32,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
@@ -158,6 +160,8 @@ public class GSONTools implements Serializer {
 			return serializeMap((Map<String, Object>) obj);
 		} else if (obj instanceof Collection<?>) {
 			return serializeCollection((Collection<Object>) obj);
+		} else if (obj.getClass().isArray()) {
+			return serializeArray(obj);
 		} else if (isFunction(obj)) {
 			return serializeFunction(obj);
 		}
@@ -331,6 +335,110 @@ public class GSONTools implements Serializer {
 		JsonArray array = new JsonArray();
 		collection.stream().map(this::serializeObject).forEach(array::add);
 		return array;
+	}
+
+	/**
+	 * Serializes an array to a JsonArray and adds index where appropriate
+	 * 
+	 * @param array
+	 * @return
+	 */
+	private JsonArray serializeArray(Object array) {
+		if (!isPrimitiveArray(array)) {
+			List<Object> arrayList = Arrays.asList(array);
+			return serializeCollection(arrayList);
+		}
+		return serializePrimitiveJsonArray(array);
+	}
+
+	private <T> JsonArray serializePrimitiveJsonArray(Object array) {
+		if (array instanceof boolean[]) {
+			return serializeBooleanArray((boolean[]) array);
+		}
+		if (array instanceof byte[]) {
+			return serializeBytenArray((byte[]) array);
+		}
+		if (array instanceof char[]) {
+			return serializeCharArray((char[]) array);
+		}
+		if (array instanceof short[]) {
+			return serializeShortnArray((short[]) array);
+		}
+		if (array instanceof int[]) {
+			return serializeIntArray((int[]) array);
+		}
+		if (array instanceof long[]) {
+			return serializeLongArray((long[]) array);
+		}
+		if (array instanceof float[]) {
+			return serializeFloatArray((float[]) array);
+		}
+		if (array instanceof double[]) {
+			return serializeDoubleArray((double[]) array);
+		}
+		throw new RuntimeException("Array is not primitive!");
+	}
+
+	private JsonArray serializeBooleanArray(boolean[] array) {
+		JsonArray jsonArray = new JsonArray();
+		for (int i = 0; i < array.length; i++) {
+			jsonArray.add(array[i]);
+		}
+		return jsonArray;
+	}
+
+	private JsonArray serializeBytenArray(byte[] array) {
+		JsonArray jsonArray = new JsonArray();
+		for (int i = 0; i < array.length; i++) {
+			jsonArray.add(array[i]);
+		}
+		return jsonArray;
+	}
+
+	private JsonArray serializeCharArray(char[] array) {
+		JsonArray jsonArray = new JsonArray();
+		for (int i = 0; i < array.length; i++) {
+			jsonArray.add(array[i]);
+		}
+		return jsonArray;
+	}
+
+	private JsonArray serializeShortnArray(short[] array) {
+		JsonArray jsonArray = new JsonArray();
+		for (int i = 0; i < array.length; i++) {
+			jsonArray.add(array[i]);
+		}
+		return jsonArray;
+	}
+
+	private JsonArray serializeIntArray(int[] array) {
+		JsonArray jsonArray = new JsonArray();
+		Arrays.stream(array).forEachOrdered(jsonArray::add);
+		return jsonArray;
+	}
+
+	private JsonArray serializeLongArray(long[] array) {
+		JsonArray jsonArray = new JsonArray();
+		Arrays.stream(array).forEachOrdered(jsonArray::add);
+		return jsonArray;
+	}
+
+	private JsonArray serializeFloatArray(float[] array) {
+		JsonArray jsonArray = new JsonArray();
+		for (int i = 0; i < array.length; i++) {
+			jsonArray.add(array[i]);
+		}
+		return jsonArray;
+	}
+
+	private JsonArray serializeDoubleArray(double[] array) {
+		JsonArray jsonArray = new JsonArray();
+		Arrays.stream(array).forEachOrdered(jsonArray::add);
+		return jsonArray;
+	}
+
+	private boolean isPrimitiveArray(Object array) {
+		return array.getClass().getComponentType().isPrimitive();
 	}
 
 	/**
