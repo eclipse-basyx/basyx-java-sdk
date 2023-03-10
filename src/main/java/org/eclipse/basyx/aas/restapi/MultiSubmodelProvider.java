@@ -395,7 +395,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 
 	private boolean isPropertyPathFileUploadPath(String propertyPath) {
 		String[] propertyPathParts = VABPathTools.splitPath(propertyPath);
-		boolean isFileUpload = VABPathTools.buildPath(propertyPathParts, 3).equals("File/upload");
+		boolean isFileUpload = VABPathTools.buildPath(propertyPathParts, 3).equals("upload");
 		return isFileUpload;
 	}
 

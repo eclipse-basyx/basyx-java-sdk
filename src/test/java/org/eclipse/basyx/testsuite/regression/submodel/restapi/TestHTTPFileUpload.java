@@ -42,17 +42,18 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.ClientProtocolException;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.entity.mime.FileBody;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.eclipse.basyx.aas.aggregator.AASAggregatorFactory;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.testsuite.regression.vab.protocol.http.AASHTTPServerResource;
@@ -61,6 +62,7 @@ import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
 
 /**
@@ -84,24 +86,14 @@ public class TestHTTPFileUpload {
 			.addServletMapping("/*", new VABHTTPInterface<IModelProvider>(provider)));
 
 	@Test
-	public void uploadFileToFileSubmodelElement() throws ClientProtocolException, IOException {
-		CloseableHttpResponse aasUploadResponse = uploadDummyAAS();
-		CloseableHttpResponse submodelUploadResponse = uploadDummySubmodel();
-		CloseableHttpResponse submodelElementFileUploadResponse = uploadDummyFileToSubmodelElement("file_sme");
-		assertEquals(HTTP_200, aasUploadResponse.getStatusLine().toString());
-		assertEquals(HTTP_200, submodelUploadResponse.getStatusLine().toString());
-		assertEquals(HTTP_201, submodelElementFileUploadResponse.getStatusLine().toString());
-	}
-
-	@Test
 	public void uploadFileToNonFileSubmodelElement()
 			throws FileNotFoundException, UnsupportedEncodingException, ClientProtocolException, IOException {
 		CloseableHttpResponse aasUploadResponse = uploadDummyAAS();
 		CloseableHttpResponse submodelUploadResponse = uploadDummySubmodel();
 		CloseableHttpResponse submodelElementFileUploadResponse = uploadDummyFileToSubmodelElement("test_value");
-		assertEquals(HTTP_200, aasUploadResponse.getStatusLine().toString());
-		assertEquals(HTTP_200, submodelUploadResponse.getStatusLine().toString());
-		assertEquals(HTTP_400, submodelElementFileUploadResponse.getStatusLine().toString());
+		assertEquals(HttpStatus.OK.value(), aasUploadResponse.getCode());
+		assertEquals(HttpStatus.OK.value(), submodelUploadResponse.getCode());
+		assertEquals(HttpStatus.BAD_REQUEST.value(), submodelElementFileUploadResponse.getCode());
 	}
 
 	@Test
@@ -109,9 +101,9 @@ public class TestHTTPFileUpload {
 		CloseableHttpResponse aasUploadResponse = uploadDummyAAS();
 		CloseableHttpResponse submodelUploadResponse = uploadDummySubmodel();
 		CloseableHttpResponse submodelElementFileUploadResponse = uploadDummyFileToSubmodelElement("file_sme");
-		assertEquals(HTTP_200, aasUploadResponse.getStatusLine().toString());
-		assertEquals(HTTP_200, submodelUploadResponse.getStatusLine().toString());
-		assertEquals(HTTP_201, submodelElementFileUploadResponse.getStatusLine().toString());
+		assertEquals(HttpStatus.OK.value(), aasUploadResponse.getCode());
+		assertEquals(HttpStatus.OK.value(), submodelUploadResponse.getCode());
+		assertEquals(HttpStatus.CREATED.value(), submodelElementFileUploadResponse.getCode());
 
 		File expected = ResourceUtils.getFile("src/test/resources/aas/dummyAAS.json");
 		File actual = new File("file_sme.json");
@@ -133,10 +125,10 @@ public class TestHTTPFileUpload {
 	}
 
 	private CloseableHttpResponse uploadDummyFileToSubmodelElement(String submodelElementIdShort) throws IOException {
-		CloseableHttpClient client = HttpClientBuilder.create().build();
+		CloseableHttpClient client = HttpClients.createDefault();
 
 		File file = ResourceUtils.getFile("src/test/resources/aas/dummyAAS.json");
-
+		
 		HttpPost uploadFile = new HttpPost(
 				API_URL + "/basyx.examples.test/aas/submodels/test_sm/submodel/submodelElements/"
 						+ submodelElementIdShort + "/File/upload");

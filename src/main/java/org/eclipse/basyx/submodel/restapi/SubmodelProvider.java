@@ -346,7 +346,7 @@ public class SubmodelProvider implements IModelProvider {
 	}
 
 	private boolean endsWithFileUpload(String[] splitted) {
-		return splitted[splitted.length - 1].equals(UPLOAD) && splitted[splitted.length - 2].equals(FILE);
+		return splitted[splitted.length - 1].equals(UPLOAD);
 	}
 
 	private String getIdShortFromSplittedPath(String[] splitted) {
