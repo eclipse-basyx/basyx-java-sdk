@@ -1,0 +1,63 @@
+{
+    "parent": {
+        "keys": [
+            {
+                "idType": "Custom",
+                "type": "AssetAdministrationShell",
+                "value": "basyx.examples.oven",
+                "local": true
+            }
+        ]
+    },
+    "identification": {
+        "idType": "Custom",
+        "id": "basyx.examples.oven.test_submodel"
+    },
+    "idShort": "test_sm",
+    "kind": "Instance",
+    "dataSpecification": [],
+    "modelType": {
+        "name": "Submodel"
+    },
+    "embeddedDataSpecifications": [],
+    "submodelElements": [
+        {
+            "parent": {
+                "keys": [
+                    {
+                        "idType": "Custom",
+                        "type": "Submodel",
+                        "value": "basyx.examples.test_submodel",
+                        "local": true
+                    }
+                ]
+            },
+            "idShort": "test_value",
+            "kind": "Instance",
+            "valueType": "integer",
+            "modelType": {
+                "name": "Property"
+            },
+            "value": 1234
+        },
+        {
+            "parent": {
+                "keys": [
+                    {
+                        "idType": "Custom",
+                        "type": "Submodel",
+                        "value": "basyx.examples.test_submodel",
+                        "local": true
+                    }
+                ]
+            },
+            "idShort": "file_sme",
+            "kind": "Instance",
+            "mimeType": "json",
+            "modelType": {
+                "name": "File"
+            },
+            "value": ""
+        }
+    ]
+}

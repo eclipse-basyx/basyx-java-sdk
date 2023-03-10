@@ -24,7 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.mqtt;
 
-import java.io.FileInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 
@@ -212,12 +213,12 @@ public class MqttSubmodelAPI implements ISubmodelAPI {
 	}
 
 	@Override
-	public Object getSubmodelElementFile(String idShortPath) {
+	public File getSubmodelElementFile(String idShortPath) {
 		return observedAPI.getSubmodelElementFile(idShortPath);
 	}
 
 	@Override
-	public void uploadSubmodelElementFile(String idShortPath, FileInputStream fileStream) {
+	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
 		observedAPI.uploadSubmodelElementFile(idShortPath, fileStream);
 	}
 }

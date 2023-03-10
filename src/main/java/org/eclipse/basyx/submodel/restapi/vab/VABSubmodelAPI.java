@@ -24,9 +24,9 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi.vab;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -42,7 +42,8 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File
 import org.eclipse.basyx.submodel.restapi.MultiSubmodelElementProvider;
 import org.eclipse.basyx.submodel.restapi.SubmodelAPIHelper;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
-import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
@@ -138,13 +139,16 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void uploadSubmodelElementFile(String idShortPath, FileInputStream fileStream) {
+	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
 		ISubmodelElement submodelElement = getSubmodelElement(idShortPath);
 		if (File.isFile((Map<String, Object>) submodelElement)) {
 			try {
 				createFile(idShortPath, fileStream, submodelElement);
 			} catch (IOException e) {
 			}
+		} else {
+			throw new MalformedRequestException(
+					"The request is invalid for a SubmodelElement with type '" + submodelElement.getModelType() + "'");
 		}
 	}
 
@@ -156,7 +160,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 		java.io.File targetFile = new java.io.File(filePath);
 
 		FileOutputStream outStream = new FileOutputStream(targetFile);
-		FileInputStream inStream = (FileInputStream) newValue;
+		InputStream inStream = (InputStream) newValue;
 
 		IOUtils.copy(inStream, outStream);
 
@@ -209,16 +213,16 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 				.getValue(SubmodelAPIHelper.getSubmodelElementResultValuePath(idShortPath, requestId));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public Object getSubmodelElementFile(String idShortPath) {
+	public java.io.File getSubmodelElementFile(String idShortPath) {
 
-		@SuppressWarnings("unchecked")
 		Map<String, Object> submodelElement = (Map<String, Object>) getSubmodelElement(idShortPath);
 
 		File fileSubmodelElement = File.createAsFacade(submodelElement);
 
 		if (fileSubmodelElement.getValue().isEmpty()) {
-			throw new ProviderException("The File Submodel Element does not contain a File");
+			throw new ResourceNotFoundException("The File Submodel Element does not contain a File");
 		}
 		return new java.io.File((String) fileSubmodelElement.getValue());
 	}

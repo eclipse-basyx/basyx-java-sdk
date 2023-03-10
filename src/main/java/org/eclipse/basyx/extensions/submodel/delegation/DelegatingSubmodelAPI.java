@@ -24,7 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.delegation;
 
-import java.io.FileInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -141,12 +142,12 @@ public class DelegatingSubmodelAPI implements ISubmodelAPI {
 	}
 
 	@Override
-	public Object getSubmodelElementFile(String idShortPath) {
+	public File getSubmodelElementFile(String idShortPath) {
 		return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
 	}
 
 	@Override
-	public void uploadSubmodelElementFile(String idShortPath, FileInputStream fileStream) {
+	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
 		decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
 	}
 }

@@ -24,7 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.authorization.internal;
 
-import java.io.FileInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -329,12 +330,12 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 	}
 
 	@Override
-	public Object getSubmodelElementFile(String idShortPath) {
+	public File getSubmodelElementFile(String idShortPath) {
 		return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
 	}
 
 	@Override
-	public void uploadSubmodelElementFile(String idShortPath, FileInputStream fileStream) {
+	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
 		decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
 	}
 }

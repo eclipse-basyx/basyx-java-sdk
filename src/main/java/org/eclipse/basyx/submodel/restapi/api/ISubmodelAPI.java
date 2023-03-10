@@ -24,7 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi.api;
 
-import java.io.FileInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 
 import org.apache.commons.lang3.NotImplementedException;
@@ -148,11 +149,11 @@ public interface ISubmodelAPI {
 	 */
 	public Object getOperationResult(String idShort, String requestId);
 
-	default public Object getSubmodelElementFile(String idShortPath) {
+	default public File getSubmodelElementFile(String idShortPath) {
 		throw new NotImplementedException();
 	}
 
-	default void uploadSubmodelElementFile(String idShortPath, FileInputStream fileStream) {
+	default void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
 		throw new NotImplementedException();
 	}
 
