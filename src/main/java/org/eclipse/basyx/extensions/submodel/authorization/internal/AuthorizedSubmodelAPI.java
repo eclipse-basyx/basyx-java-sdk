@@ -24,9 +24,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.submodel.authorization.internal;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAuthentication;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
@@ -324,5 +327,15 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		}
 
 		return sm.getIdentification();
+	}
+
+	@Override
+	public File getSubmodelElementFile(String idShortPath) {
+		return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
+	}
+
+	@Override
+	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
+		decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
 	}
 }

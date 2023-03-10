@@ -1,0 +1,28 @@
+{
+    "conceptDictionary": [],
+    "identification": {
+        "idType": "Custom",
+        "id": "basyx.examples.test"
+    },
+    "idShort": "test",
+    "dataSpecification": [],
+    "modelType": {
+        "name": "AssetAdministrationShell"
+    },
+    "asset": {
+        "identification": {
+            "idType": "Custom",
+            "id": "basyx.examples.OvenAsset"
+        },
+        "idShort": "OvenAsset",
+        "kind": "Instance",
+        "dataSpecification": [],
+        "modelType": {
+            "name": "Asset"
+        },
+        "embeddedDataSpecifications": []
+    },
+    "embeddedDataSpecifications": [],
+    "views": [],
+    "submodels": []
+}
