@@ -86,10 +86,10 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 
 	@Before
 	public void setUp() {
-		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(readerRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(partialReaderRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(SHELL_IDENTIFIER.getId(), SUBMODEL_IDENTIFIER.getId(), "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(readerRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(partialReaderRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(SHELL_IDENTIFIER.getId(), SUBMODEL_IDENTIFIER.getId(), "*", "*")));
 		testSubject = new AuthorizedAASRegistry<>(apiMock, new SimpleRbacAASRegistryAuthorizer<>(new PredefinedSetRbacRuleChecker(rbacRuleSet), new KeycloakRoleAuthenticator()), new JWTAuthenticationContextProvider());
 		aasDescriptor = new AASDescriptor(SHELL_ID, SHELL_IDENTIFIER, "");
 		smDescriptor = new SubmodelDescriptor(SUBMODEL_ID, SUBMODEL_IDENTIFIER, "");

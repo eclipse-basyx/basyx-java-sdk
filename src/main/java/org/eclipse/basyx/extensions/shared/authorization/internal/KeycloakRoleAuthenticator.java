@@ -59,19 +59,53 @@ public class KeycloakRoleAuthenticator implements IRoleAuthenticator<Jwt> {
 		logger.info("jwt: {}", token.getTokenAttributes());
 
 		try {
-			final Object realmAccessObject = token.getTokenAttributes().get("realm_access");
+			final List<String> realmRoles = getRealmAccessRoles(token);
+			final List<String> resourceRoles = getResoureAccessRoles(token);
 
-			final Map<?, ?> realmAccess = (Map<?, ?>) realmAccessObject;
+			final List<String> roles = new ArrayList<>();
+			roles.addAll(realmRoles);
+			roles.addAll(resourceRoles);
 
-			final Object rolesObject = realmAccess.get("roles");
-
-			if (rolesObject != null) {
-				final List<?> roles = (List<?>) rolesObject;
-				return roles.stream().map(Object::toString).collect(Collectors.toList());
+			if (!roles.isEmpty()) {
+				return roles;
 			}
 		} catch (final Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 		return new ArrayList<>(Collections.singletonList("anonymous"));
+	}
+
+	private List<String> getRealmAccessRoles(JwtAuthenticationToken token) {
+		final Object realmAccessObject = token.getTokenAttributes().get("realm_access");
+
+		if (realmAccessObject == null) {
+			return Collections.emptyList();
+		}
+
+		return getCategoryRoles(realmAccessObject);
+	}
+
+	private List<String> getResoureAccessRoles(JwtAuthenticationToken token) {
+		final Object resourceAccessObject = token.getTokenAttributes().get("resource_access");
+
+		if (resourceAccessObject == null) {
+			return Collections.emptyList();
+		}
+
+		final Map<?, ?> resourceAccess = (Map<?, ?>) resourceAccessObject;
+
+		return resourceAccess.values().stream().map(this::getCategoryRoles).flatMap(List::stream).collect(Collectors.toList());
+	}
+
+	private List<String> getCategoryRoles(Object categoryObject) {
+		final Map<?, ?> category = (Map<?, ?>) categoryObject;
+
+		final Object rolesObject = category.get("roles");
+
+		if (rolesObject == null) {
+			return Collections.emptyList();
+		}
+
+		return (List<String>) rolesObject;
 	}
 }

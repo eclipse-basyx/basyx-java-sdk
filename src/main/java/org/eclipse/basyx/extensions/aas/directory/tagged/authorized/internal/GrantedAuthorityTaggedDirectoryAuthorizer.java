@@ -34,6 +34,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.GrantedAuthori
 import org.eclipse.basyx.extensions.shared.authorization.internal.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
  * Scope based implementation for {@link ITaggedDirectoryAuthorizer}.
@@ -46,7 +47,7 @@ public class GrantedAuthorityTaggedDirectoryAuthorizer<SubjectInformationType> e
 	}
 
 	@Override
-	public void authorizeRegister(final SubjectInformationType subjectInformation, final TaggedAASDescriptor taggedAASDescriptorSupplier) throws InhibitException {
+	public void authorizeRegister(final SubjectInformationType subjectInformation, final IIdentifier aasId, final TaggedAASDescriptor taggedAASDescriptorSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
@@ -65,7 +66,7 @@ public class GrantedAuthorityTaggedDirectoryAuthorizer<SubjectInformationType> e
 	}
 
 	@Override
-	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final TaggedSubmodelDescriptor taggedSubmodelDescriptor) throws InhibitException {
+	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId, final TaggedSubmodelDescriptor taggedSubmodelDescriptor) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 

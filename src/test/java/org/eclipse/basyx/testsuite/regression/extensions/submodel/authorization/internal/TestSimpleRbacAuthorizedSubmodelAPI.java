@@ -92,11 +92,11 @@ public class TestSimpleRbacAuthorizedSubmodelAPI {
 
 	@Before
 	public void setUp() {
-		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAPIScopes.EXECUTE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(readerRole, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(executorRole, SubmodelAPIScopes.EXECUTE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAPIScopes.EXECUTE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(readerRole, SubmodelAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(executorRole, SubmodelAPIScopes.EXECUTE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
 		authorizedSubmodelAPI = new AuthorizedSubmodelAPI<>(apiMock, new SimpleRbacSubmodelAPIAuthorizer<>(new PredefinedSetRbacRuleChecker(rbacRuleSet), new KeycloakRoleAuthenticator()), new JWTAuthenticationContextProvider());
 	}
 

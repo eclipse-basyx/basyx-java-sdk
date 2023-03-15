@@ -40,6 +40,7 @@ import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
@@ -204,7 +205,9 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected void authorizeCreateSubmodel(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorAuthorizer.authorizeCreateSubmodel(subjectInformationProvider.get(), aas, smId);
+		final ISubmodel sm = getSmUnsecured(smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
+		submodelAggregatorAuthorizer.authorizeCreateSubmodel(subjectInformationProvider.get(), aas, smId, smSemanticId);
 	}
 
 	@Override
@@ -224,7 +227,9 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 	protected void authorizeCreateSubmodel(final ISubmodelAPI submodelAPI) throws InhibitException {
 		final IIdentifier smId = Optional.ofNullable(submodelAPI).map(ISubmodelAPI::getSubmodel).map(IIdentifiable::getIdentification).orElse(null);
-		submodelAggregatorAuthorizer.authorizeCreateSubmodel(subjectInformationProvider.get(), aas, smId);
+		final ISubmodel sm = getSmUnsecured(smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
+		submodelAggregatorAuthorizer.authorizeCreateSubmodel(subjectInformationProvider.get(), aas, smId, smSemanticId);
 	}
 
 	@Override
@@ -244,7 +249,9 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected void authorizeUpdateSubmodel(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorAuthorizer.authorizeUpdateSubmodel(subjectInformationProvider.get(), aas, smId);
+		final ISubmodel sm = getSmUnsecured(smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
+		submodelAggregatorAuthorizer.authorizeUpdateSubmodel(subjectInformationProvider.get(), aas, smId, smSemanticId);
 	}
 
 	@Override
@@ -263,7 +270,9 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected void authorizeDeleteSubmodelByIdentifier(final IIdentifier smId) throws InhibitException {
-		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(subjectInformationProvider.get(), aas, smId);
+		final ISubmodel sm = getSmUnsecured(smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
+		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(subjectInformationProvider.get(), aas, smId, smSemanticId);
 	}
 
 	@Override
@@ -284,7 +293,14 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	protected void authorizeDeleteSubmodelByIdShort(final String smIdShortPath) throws InhibitException {
 		final ISubmodel sm = getSmUnsecured(smIdShortPath);
 		final IIdentifier smId = getSmIdUnsecured(sm);
-		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(subjectInformationProvider.get(), aas, smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
+		submodelAggregatorAuthorizer.authorizeDeleteSubmodelByIdentifier(subjectInformationProvider.get(), aas, smId, smSemanticId);
+	}
+
+	private ISubmodel getSmUnsecured(final IIdentifier smId) throws ResourceNotFoundException {
+		try (final ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+			return decoratedSubmodelAggregator.getSubmodel(smId);
+		}
 	}
 
 	private ISubmodel getSmUnsecured(final String smIdShortPath) throws ResourceNotFoundException {
@@ -300,6 +316,16 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 
 		try (final ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
 			return sm.getIdentification();
+		}
+	}
+
+	private IReference getSmSemanticIdUnsecured(final ISubmodel sm) throws ResourceNotFoundException {
+		if (sm == null) {
+			return null;
+		}
+
+		try (final ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+			return sm.getSemanticId();
 		}
 	}
 }

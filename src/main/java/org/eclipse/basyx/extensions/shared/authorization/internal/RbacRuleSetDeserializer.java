@@ -28,13 +28,19 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +81,7 @@ public class RbacRuleSetDeserializer {
 
 	public RbacRuleSetDeserializer(final Consumer<ObjectMapper> objectMapperConsumer) {
 		objectMapper = new ObjectMapper();
+		objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 		objectMapper.addMixIn(RbacRule.class, RbacRuleMixin.class);
 		objectMapper.addMixIn(TargetInformation.class, TargetInformationMixin.class).registerSubtypes(new NamedType(BaSyxObjectTargetInformation.class, "basyx"), new NamedType(TagTargetInformation.class, "tag"));
 		objectMapperConsumer.accept(objectMapper);
@@ -100,7 +107,61 @@ public class RbacRuleSetDeserializer {
 		}
 	}
 
+	private static class RbacRuleMultiple {
+		String role;
+		String[] actions;
+		Map<String, String>[] targetInformation;
+
+		public String getRole() {
+			return role;
+		}
+
+		public String[] getActions() {
+			return actions;
+		}
+
+		public Map<String, String>[] getTargetInformation() {
+			return targetInformation;
+		}
+
+		public RbacRuleMultiple() {
+		}
+
+		public RbacRuleMultiple(final @JsonProperty("role") String role, final @JsonProperty("action") String[] actions, final @JsonProperty("targetInformation") Map<String, String>[] targetInformation) {
+			this.role = role;
+			this.actions = actions;
+			this.targetInformation = targetInformation;
+		}
+	}
+
+	private static class Pair<T, U> {
+		private final T first;
+		private final U second;
+
+		public Pair(final T first, final U second) {
+			this.first = first;
+			this.second = second;
+		}
+	}
+
+	private <T, U> List<Pair<T, U>> cartesianProduct2(final T[] firsts, final U[] seconds) {
+		final List<Pair<T, U>> result = new ArrayList<>();
+
+		for (final T first : firsts) {
+			for (final U second : seconds) {
+				result.add(new Pair<>(first, second));
+			}
+		}
+
+		return result;
+	}
+
 	public RbacRule[] deserialize(final InputStream inputStream) throws IOException {
-		return objectMapper.readValue(inputStream, RbacRule[].class);
+		final RbacRuleMultiple[] rbacRulesRaw = objectMapper.readValue(inputStream, RbacRuleMultiple[].class);
+		return Arrays.stream(rbacRulesRaw)
+				.flatMap(raw -> cartesianProduct2(raw.actions, raw.targetInformation)
+					.stream().map(pair -> objectMapper.convertValue(new RbacRuleDTO(raw.role, pair.first, pair.second), RbacRule.class))
+				)
+				.toArray(RbacRule[]::new);
 	}
 }

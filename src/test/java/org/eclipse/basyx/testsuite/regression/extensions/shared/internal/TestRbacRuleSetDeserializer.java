@@ -41,11 +41,31 @@ import org.junit.Test;
 public class TestRbacRuleSetDeserializer {
 	@Test
 	public void test() throws IOException {
-		final RbacRuleSetDeserializer rbacRuleSetDeserializer = new RbacRuleSetDeserializer((objectMapper) -> {
-		});
+		final RbacRuleSetDeserializer rbacRuleSetDeserializer = new RbacRuleSetDeserializer();
 		final RbacRuleSet rbacRuleSet = rbacRuleSetDeserializer.fromFile("/authorization/internal/rbac_rules.json");
-		Assert.assertEquals(16, rbacRuleSet.getRules().size());
-		Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule("reader", "urn:org.eclipse.basyx:scope:aas-registry:read", new BaSyxObjectTargetInformation("*", "*", "*"))));
+		Assert.assertEquals(17, rbacRuleSet.getRules().size());
+		Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule("reader", "urn:org.eclipse.basyx:scope:aas-registry:read", new BaSyxObjectTargetInformation("*", "*", null, "*"))));
 		Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule("reader", "urn:org.eclipse.basyx:scope:aas-registry:read", new TagTargetInformation("tag"))));
+		Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule("reader", "urn:org.eclipse.basyx:scope:aas-registry:read", new BaSyxObjectTargetInformation("*", "*", "example-semantic-id", "*"))));
+	}
+
+	final String[] multipleActions = new String[]{
+		"urn:org.eclipse.basyx:scope:aas-aggregator:read",
+		"urn:org.eclipse.basyx:scope:aas-aggregator:write",
+		"urn:org.eclipse.basyx:scope:aas-api:read",
+		"urn:org.eclipse.basyx:scope:aas-api:write",
+		"urn:org.eclipse.basyx:scope:sm-aggregator:read",
+		"urn:org.eclipse.basyx:scope:sm-api:read",
+		"urn:org.eclipse.basyx:scope:aas-registry:read"
+	};
+
+	@Test
+	public void multipleActions() throws IOException {
+		final RbacRuleSetDeserializer rbacRuleSetDeserializer = new RbacRuleSetDeserializer();
+		final RbacRuleSet rbacRuleSet = rbacRuleSetDeserializer.fromFile("/authorization/internal/rbac_rules_multiple_actions.json");
+		Assert.assertEquals(multipleActions.length, rbacRuleSet.getRules().size());
+		for (final String action : multipleActions) {
+			Assert.assertTrue(rbacRuleSet.getRules().contains(new RbacRule("admin", action, new BaSyxObjectTargetInformation("*", "*", "*", "*"))));
+		}
 	}
 }

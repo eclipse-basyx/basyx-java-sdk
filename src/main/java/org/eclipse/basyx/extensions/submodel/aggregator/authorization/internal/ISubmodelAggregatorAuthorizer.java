@@ -31,6 +31,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitExcepti
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 
@@ -68,6 +69,8 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAggregator}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smSupplier
 	 *            supplier for the submodel.
 	 * @return the authorized submodel.
@@ -106,6 +109,8 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAggregator}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smAPISupplier
 	 *            supplier for the submodel API.
 	 * @return the authorized submodel API
@@ -144,10 +149,12 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAggregator}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeCreateSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId) throws InhibitException;
+	public void authorizeCreateSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId) throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -160,10 +167,12 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAggregator}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeUpdateSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId) throws InhibitException;
+	public void authorizeUpdateSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId) throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -177,8 +186,10 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAggregator}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeDeleteSubmodelByIdentifier(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId) throws InhibitException;
+	public void authorizeDeleteSubmodelByIdentifier(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId) throws InhibitException;
 }

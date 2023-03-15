@@ -83,9 +83,9 @@ public class TestSimpleRbacAuthorizedAASAPI {
 
 	@Before
 	public void setUp() {
-		rbacRuleSet.addRule(new RbacRule(adminRole, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(adminRole, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(readerRole, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASAPIScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(readerRole, AASAPIScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
 		testSubject = new AuthorizedAASAPI<>(apiMock, new SimpleRbacAASAPIAuthorizer<>(new PredefinedSetRbacRuleChecker(rbacRuleSet), new KeycloakRoleAuthenticator()), new JWTAuthenticationContextProvider());
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 		submodel = new Submodel(SUBMODEL_ID, SUBMODEL_IDENTIFIER);

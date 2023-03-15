@@ -38,6 +38,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitExcepti
 import org.eclipse.basyx.extensions.shared.authorization.internal.SimpleRbacHelper;
 import org.eclipse.basyx.extensions.shared.authorization.internal.TagTargetInformation;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
  * Simple role based implementation for {@link ITaggedDirectoryAuthorizer}.
@@ -50,10 +51,8 @@ public class SimpleRbacTaggedDirectoryAuthorizer<SubjectInformationType> extends
 	}
 
 	@Override
-	public void authorizeRegister(final SubjectInformationType subjectInformation, final TaggedAASDescriptor taggedAASDescriptor) throws InhibitException {
-		final IIdentifier aasId = taggedAASDescriptor.getIdentifier();
-
-		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), null, null));
+	public void authorizeRegister(final SubjectInformationType subjectInformation, final IIdentifier aasId, final TaggedAASDescriptor taggedAASDescriptor) throws InhibitException {
+		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), null, null, null));
 	}
 
 	@Override
@@ -69,10 +68,8 @@ public class SimpleRbacTaggedDirectoryAuthorizer<SubjectInformationType> extends
 	}
 
 	@Override
-	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final TaggedSubmodelDescriptor taggedSubmodelDescriptor) throws InhibitException {
-		final IIdentifier smId = taggedSubmodelDescriptor.getIdentifier();
-
-		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), null));
+	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId, final TaggedSubmodelDescriptor taggedSubmodelDescriptor) throws InhibitException {
+		SimpleRbacHelper.checkRule(rbacRuleChecker, roleAuthenticator, subjectInformation, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation(IdHelper.getIdentifierId(aasId), IdHelper.getIdentifierId(smId), IdHelper.getReferenceId(smSemanticId), null));
 	}
 
 	@Override

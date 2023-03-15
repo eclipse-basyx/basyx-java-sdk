@@ -99,10 +99,10 @@ public class TestSimpleRbacAuthorizedSubmodelAggregator {
 
 	@Before
 	public void setUp() {
-		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(readerRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(partialReaderRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", SUBMODEL_IDENTIFIER.getId(), "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, SubmodelAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(readerRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(partialReaderRole, SubmodelAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", SUBMODEL_IDENTIFIER.getId(), "*", "*")));
 		testSubject = new AuthorizedSubmodelAggregator<>(apiMock, new SimpleRbacSubmodelAggregatorAuthorizer<>(new PredefinedSetRbacRuleChecker(rbacRuleSet), new KeycloakRoleAuthenticator()), new JWTAuthenticationContextProvider());
 	}
 
