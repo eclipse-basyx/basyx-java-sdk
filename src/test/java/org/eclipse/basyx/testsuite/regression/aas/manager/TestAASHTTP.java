@@ -55,15 +55,21 @@ import org.junit.Test;
 /**
  * Tests access to an AAS provided by a servlet. This is an integration test
  * 
- * @author schnicke
+ * @author schnicke, danish
  *
  */
 public class TestAASHTTP {
+
+	private static final String WORKING_ENDPOINT = "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas";
+	private static final String NOT_WORKING_404_ENDPOINT_1 = "http://localhost:8080/basys.sdk/Testsuite/StubAAS1/aas";
+	private static final String NOT_WORKING_404_ENDPOINT_2 = "http://localhost:8080/basys.sdk/Testsuite/StubAAS2/aas";
 
 	// Manager used to connect to the AAS
 	ConnectedAssetAdministrationShellManager manager;
 
 	private static BaSyxContext context = new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir")).addServletMapping("/Testsuite/StubAAS/*", new StubAASServlet());
+	
+	private AASDescriptor aasDescriptor;
 
 	/**
 	 * Makes sure Tomcat Server is started
@@ -76,27 +82,15 @@ public class TestAASHTTP {
 	 */
 	@Before
 	public void build() {
-		// Fill directory stub
-		VABInMemoryRegistry directory = new VABInMemoryRegistry();
-		directory.addMapping(StubAASServlet.AASURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas");
-		directory.addMapping(StubAASServlet.SMURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
+		createDirectoryWithMapping();
 
 		InMemoryRegistry registry = new InMemoryRegistry();
+		
+		aasDescriptor = createAasDescriptor(WORKING_ENDPOINT);
 
-		// Create aas descriptor for the aas registry
-		AASDescriptor aasDescriptor = new AASDescriptor(StubAASServlet.AASURN, "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas");
+		registerAasDescriptor(registry, aasDescriptor);
 
-		// Create the submodel descriptor
-		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(StubAASServlet.SMIDSHORT, StubAASServlet.SMURN, "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
-
-		// add submodel descriptor to the aas descriptor
-		aasDescriptor.addSubmodelDescriptor(submodelDescriptor);
-
-		// register the aas in the registry
-		registry.register(aasDescriptor);
-
-		// Create manager using the directory stub an the HTTPConnectorProvider
-		manager = new ConnectedAssetAdministrationShellManager(registry, new HTTPConnectorFactory());
+		createAasManager(registry);
 	}
 
 	/**
@@ -118,6 +112,15 @@ public class TestAASHTTP {
 		// Check content of submodels
 		assertEquals(1, submodels.size());
 		assertTrue(submodels.containsKey(StubAASServlet.SMIDSHORT));
+	}
+	
+	@Test
+	public void retrieveSingleAas() throws Exception {
+		prepareAasDescriptorForMultipleEndpoints();
+		
+		IAssetAdministrationShell assetAdministrationShell = manager.retrieveAAS(StubAASServlet.AASURN);
+
+		assertEquals(StubAASServlet.AASIDSHORT, assetAdministrationShell.getIdShort());
 	}
 
 	/**
@@ -172,6 +175,48 @@ public class TestAASHTTP {
 		Map<String, ISubmodelElement> elements = sm.getSubmodelElements();
 		// 2 properties, 4 operations, 1 collection
 		assertEquals(9, elements.size());
+	}
+	
+	@Test
+	public void retrieveSingleSubmodel() {
+		prepareAasDescriptorForMultipleEndpoints();
+		
+		ISubmodel submodel = manager.retrieveSubmodel(StubAASServlet.AASURN, StubAASServlet.SMURN);
 
+		assertEquals(StubAASServlet.SMIDSHORT, submodel.getIdShort());
+	}
+	
+	private void prepareAasDescriptorForMultipleEndpoints() {
+		aasDescriptor.removeEndpoint(WORKING_ENDPOINT);
+		aasDescriptor.addEndpoint(NOT_WORKING_404_ENDPOINT_1);
+		aasDescriptor.addEndpoint(WORKING_ENDPOINT);
+		aasDescriptor.addEndpoint(NOT_WORKING_404_ENDPOINT_2);
+	}
+	
+	private void registerAasDescriptor(InMemoryRegistry registry, AASDescriptor aasDescriptor) {
+		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptor();
+
+		aasDescriptor.addSubmodelDescriptor(submodelDescriptor);
+
+		registry.register(aasDescriptor);
+	}
+	
+	private void createAasManager(InMemoryRegistry registry) {
+		manager = new ConnectedAssetAdministrationShellManager(registry, new HTTPConnectorFactory());
+	}
+
+	private SubmodelDescriptor createSubmodelDescriptor() {
+		SubmodelDescriptor submodelDescriptor = new SubmodelDescriptor(StubAASServlet.SMIDSHORT, StubAASServlet.SMURN, "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
+		return submodelDescriptor;
+	}
+
+	private void createDirectoryWithMapping() {
+		VABInMemoryRegistry directory = new VABInMemoryRegistry();
+		directory.addMapping(StubAASServlet.AASURN.getId(), WORKING_ENDPOINT);
+		directory.addMapping(StubAASServlet.SMURN.getId(), "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
+	}
+
+	private AASDescriptor createAasDescriptor(String url) {
+		return new AASDescriptor(StubAASServlet.AASURN, url);
 	}
 }

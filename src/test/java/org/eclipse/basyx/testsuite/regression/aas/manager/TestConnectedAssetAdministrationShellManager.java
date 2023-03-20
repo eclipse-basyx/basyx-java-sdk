@@ -30,7 +30,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
-
 import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
@@ -68,10 +67,18 @@ import org.mockito.Mockito;
 /**
  * Tests ConnectedAssetAdministrationShellManager class
  * 
- * @author schnicke
+ * @author schnicke, danish
  * 
  */
 public class TestConnectedAssetAdministrationShellManager {
+	private static final String AAS_NAME_2 = "aasName2";
+	private static final String SM_NAME = "smName";
+	private static final String AAS_NAME = "aasName";
+	private static final String SM_ID = "smId";
+	private static final String AAS_ID = "aasId";
+	private static final String AAS_ID_2 = "aasId2";
+	private static final String AAS_ID_1 = "aasId1";
+	
 	ConnectedAssetAdministrationShellManager manager;
 	ConnectorProviderStub connectorProvider;
 	IAASRegistry registry;
@@ -96,8 +103,8 @@ public class TestConnectedAssetAdministrationShellManager {
 	@Test
 	public void createAAS() throws Exception {
 		// Register AAS at directory
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
-		String aasIdShort = "aasName";
+		IIdentifier aasId = createIdentifier(AAS_ID);
+		String aasIdShort = AAS_NAME;
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
 
@@ -118,9 +125,9 @@ public class TestConnectedAssetAdministrationShellManager {
 
 	@Test
 	public void createSubmodel() throws Exception {
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
-		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
-		String smIdShort = "smName";
+		IIdentifier aasId = createIdentifier(AAS_ID);
+		IIdentifier smId = createIdentifier(SM_ID);
+		String smIdShort = SM_NAME;
 
 		// Register AAS at directory
 		AASDescriptor desc = new AASDescriptor(aasId, "/aas");
@@ -163,10 +170,10 @@ public class TestConnectedAssetAdministrationShellManager {
 	public void registerSubmodel() {
 		String aasEndpoint = "";
 
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
-		String aasIdShort = "aasName";
-		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
-		String smIdShort = "smName";
+		IIdentifier aasId = createIdentifier(AAS_ID);
+		String aasIdShort = AAS_NAME;
+		IIdentifier smId = createIdentifier(SM_ID);
+		String smIdShort = SM_NAME;
 
 		String expectedSubmodelEndpoint = aasEndpoint + "shells/aasId/aas/submodels/" + smIdShort + "/submodel";
 
@@ -187,11 +194,11 @@ public class TestConnectedAssetAdministrationShellManager {
 
 	@Test
 	public void deleteSubmodel() {
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
-		String aasIdShort = "aasName";
+		IIdentifier aasId = createIdentifier(AAS_ID);
+		String aasIdShort = AAS_NAME;
 
-		IIdentifier smId = new Identifier(IdentifierType.CUSTOM, "smId");
-		String smIdShort = "smName";
+		IIdentifier smId = createIdentifier(SM_ID);
+		String smIdShort = SM_NAME;
 
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
@@ -199,7 +206,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
 		manager.createAAS(aas, "");
 
-		Submodel sm = new Submodel(smIdShort, smId);
+		Submodel sm = createTestSubmodel(smId, smIdShort);
 		manager.createSubmodel(aasId, sm);
 
 		// Assert everything was created correctly
@@ -214,8 +221,8 @@ public class TestConnectedAssetAdministrationShellManager {
 
 	@Test
 	public void deleteAAS() {
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
-		String aasIdShort = "aasName";
+		IIdentifier aasId = createIdentifier(AAS_ID);
+		String aasIdShort = AAS_NAME;
 
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
@@ -233,24 +240,48 @@ public class TestConnectedAssetAdministrationShellManager {
 
 	@Test
 	public void retrieveAll() {
-		IIdentifier aasId1 = new Identifier(IdentifierType.CUSTOM, "aasId1");
-		String aasIdShort1 = "aasName1";
-		IIdentifier aasId2 = new Identifier(IdentifierType.CUSTOM, "aasId2");
-		String aasIdShort2 = "aasName2";
+		IIdentifier aasId1 = createIdentifier(AAS_ID_1);
+		String aasIdShort1 = AAS_NAME;
+		IIdentifier aasId2 = createIdentifier(AAS_ID_2);
+		String aasIdShort2 = AAS_NAME_2;
 
-		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
-		prepareConnectorProvider(provider);
-
-		// Create the AASs
-		AssetAdministrationShell aas1 = createTestAAS(aasId1, aasIdShort1);
-		AssetAdministrationShell aas2 = createTestAAS(aasId2, aasIdShort2);
-		manager.createAAS(aas1, "");
-		manager.createAAS(aas2, "");
+		configureAndCreateDummyAas(aasId1, aasIdShort1, aasId2, aasIdShort2);
 
 		// Retrieve them
 		Collection<IAssetAdministrationShell> connectedAASs = manager.retrieveAASAll();
 		assertEquals(2, connectedAASs.size());
 		connectedAASs.stream().forEach(aas -> assertTrue(aas.getIdShort().equals(aasIdShort1) || aas.getIdShort().equals(aasIdShort2)));
+	}
+	
+	@Test
+	public void retrieveSingleAAS() {
+		IIdentifier aasId1 = createIdentifier(AAS_ID_1);
+		String aasIdShort1 = AAS_NAME;
+		IIdentifier aasId2 = createIdentifier(AAS_ID_2);
+		String aasIdShort2 = AAS_NAME_2;
+
+		configureAndCreateDummyAas(aasId1, aasIdShort1, aasId2, aasIdShort2);
+		
+		IAssetAdministrationShell assetAdministrationShell = manager.retrieveAAS(aasId2);
+		
+		assertEquals(aasIdShort2, assetAdministrationShell.getIdShort());
+		assertEquals(aasId2, assetAdministrationShell.getIdentification());
+	}
+	
+	@Test
+	public void retrieveSingleSubmodel() {
+		IIdentifier aasId = createIdentifier(AAS_ID);
+		String aasIdShort = AAS_NAME;
+
+		IIdentifier smId = createIdentifier(SM_ID);
+		String smIdShort = SM_NAME;
+
+		configureAndCreateDummySubmodel(aasId, aasIdShort, smId, smIdShort);
+		
+		ISubmodel submodel = manager.retrieveSubmodel(aasId, smId);
+		
+		assertEquals(smIdShort, submodel.getIdShort());
+		assertEquals(smId, submodel.getIdentification());
 	}
 
 	/**
@@ -298,7 +329,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
 
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
+		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, AAS_ID);
 		IIdentifier nonexistentSMId = new Identifier(IdentifierType.CUSTOM, "nonexistentSM");
 
 		// Try to retrieve a nonexistent Submodel from an existing AAS
@@ -325,6 +356,33 @@ public class TestConnectedAssetAdministrationShellManager {
 		
 		Mockito.verifyNoMoreInteractions(mockedProvider);
 	}
+	
+	private void configureAndCreateDummySubmodel(IIdentifier aasId, String aasIdShort, IIdentifier smId, String smIdShort) {
+		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
+		prepareConnectorProvider(provider);
+
+		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
+		manager.createAAS(aas, "");
+
+		Submodel sm = createTestSubmodel(smId, smIdShort);
+		manager.createSubmodel(aasId, sm);
+	}
+
+	private Identifier createIdentifier(String id) {
+		return new Identifier(IdentifierType.CUSTOM, id);
+	}
+ 
+	private void configureAndCreateDummyAas(IIdentifier aasId1, String aasIdShort1,
+			IIdentifier aasId2, String aasIdShort2) {
+		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
+		prepareConnectorProvider(provider);
+
+		// Create the AASs
+		AssetAdministrationShell aas1 = createTestAAS(aasId1, aasIdShort1);
+		AssetAdministrationShell aas2 = createTestAAS(aasId2, aasIdShort2);
+		manager.createAAS(aas1, "");
+		manager.createAAS(aas2, "");
+	}
 
 	private ConnectorFactory createAndConfigureConnectorFactoryMock() {
 		ConnectorFactory mockedProvider = Mockito.mock(ConnectorFactory.class);
@@ -341,5 +399,10 @@ public class TestConnectedAssetAdministrationShellManager {
 	private AssetAdministrationShell createTestAAS(IIdentifier aasId, String aasIdShort) {
 		AssetAdministrationShell aas = new AssetAdministrationShell(aasIdShort, aasId, new Asset("assetIdShort", new ModelUrn("assetId"), AssetKind.INSTANCE));
 		return aas;
+	}
+	
+	private Submodel createTestSubmodel(IIdentifier smId, String smIdShort) {
+		Submodel sm = new Submodel(smIdShort, smId);
+		return sm;
 	}
 }

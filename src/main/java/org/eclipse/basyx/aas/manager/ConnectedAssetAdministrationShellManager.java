@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.basyx.aas.aggregator.AASAggregatorAPIHelper;
@@ -44,6 +45,8 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.connected.ConnectedSubmodel;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.factory.java.ModelProxyFactory;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.VABPathTools;
@@ -55,7 +58,7 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
  * Implement a AAS manager backend that communicates via HTTP/REST<br>
  * <br>
  * 
- * @author kuhn, schnicke
+ * @author kuhn, schnicke, danish
  * 
  */
 public class ConnectedAssetAdministrationShellManager implements IAssetAdministrationShellManager {
@@ -85,14 +88,8 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	@Override
 	public ISubmodel retrieveSubmodel(IIdentifier aasId, IIdentifier smId) {
-		// look up SM descriptor in the registry
-		SubmodelDescriptor smDescriptor = aasDirectory.lookupSubmodel(aasId, smId);
-
-		// get address of the submodel descriptor
-		String addr = smDescriptor.getFirstEndpoint();
-
-		// Return a new VABElementProxy
-		return new ConnectedSubmodel(proxyFactory.createProxy(addr));
+		VABElementProxy proxy = getSubmodelProxyFromId(aasId, smId);
+		return new ConnectedSubmodel(proxy);
 	}
 
 	@Override
@@ -107,24 +104,12 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		Collection<SubmodelDescriptor> smDescriptors = aasDesc.getSubmodelDescriptors();
 		Map<String, ISubmodel> submodels = new LinkedHashMap<>();
 		for (SubmodelDescriptor smDesc : smDescriptors) {
-			String smEndpoint = smDesc.getFirstEndpoint();
 			String smIdShort = smDesc.getIdShort();
-			VABElementProxy smProxy = proxyFactory.createProxy(smEndpoint);
-			ConnectedSubmodel connectedSM = new ConnectedSubmodel(smProxy);
+			ISubmodel connectedSM = retrieveSubmodel(aasDesc.getIdentifier(), smDesc.getIdentifier());
 			submodels.put(smIdShort, connectedSM);
 		}
+		
 		return submodels;
-	}
-
-	private VABElementProxy getAASProxyFromId(IIdentifier aasId) {
-		// Lookup AAS descriptor
-		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(aasId);
-
-		// Get AAS address from AAS descriptor
-		String addr = aasDescriptor.getFirstEndpoint();
-
-		// Return a new VABElementProxy
-		return proxyFactory.createProxy(addr);
 	}
 
 	/**
@@ -195,5 +180,43 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		proxy.createAAS(aas);
 		String combinedEndpoint = VABPathTools.concatenatePaths(harmonizedEndpoint, AASAggregatorAPIHelper.getAASAccessPath(aas.getIdentification()));
 		aasDirectory.register(new AASDescriptor(aas, combinedEndpoint));
+	}
+	
+	private VABElementProxy getAASProxyFromId(IIdentifier aasId) {
+		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(aasId);
+		
+		Optional<Map<String, Object>> optionalAasDescriptor = getWorkingEndpoint(aasDescriptor.getEndpoints());
+		
+		if (!optionalAasDescriptor.isPresent())
+			throw new ResourceNotFoundException("The resource with id : " + aasId + " could not be found!");
+		
+		return proxyFactory.createProxy((String) optionalAasDescriptor.get().get(AssetAdministrationShell.ADDRESS));
+	}
+	
+	private VABElementProxy getSubmodelProxyFromId(IIdentifier aasId, IIdentifier smId) {
+		SubmodelDescriptor smDescriptor = aasDirectory.lookupSubmodel(aasId, smId);
+
+		Optional<Map<String, Object>> optionalSubmodelDescriptor = getWorkingEndpoint(smDescriptor.getEndpoints());
+		
+		if (!optionalSubmodelDescriptor.isPresent())
+			throw new ResourceNotFoundException("The resource with id : " + aasId + " could not be found!");
+
+		return proxyFactory.createProxy((String) optionalSubmodelDescriptor.get().get(AssetAdministrationShell.ADDRESS));
+	}
+
+	private Optional<Map<String, Object>> getWorkingEndpoint(Collection<Map<String, Object>> endpoints) {
+		return endpoints.stream().filter(this::isWorkingEndpoint).findFirst();
+	}
+	
+	private boolean isWorkingEndpoint(Map<String, Object> endpoint) {
+		VABElementProxy vabElementProxy = proxyFactory.createProxy((String) endpoint.get(AssetAdministrationShell.ADDRESS));
+		
+		try {
+			new ConnectedAssetAdministrationShell(vabElementProxy).getIdentification();
+			return true;
+		} catch (ProviderException e) {
+			return false;
+		}
+		
 	}
 }
