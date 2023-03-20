@@ -337,7 +337,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		IModelProvider provider = new AASAggregatorProvider(new AASAggregator());
 		prepareConnectorProvider(provider);
 
-		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, AAS_ID);
+		IIdentifier aasId = new Identifier(IdentifierType.CUSTOM, "aasId");
 		IIdentifier nonexistentSMId = new Identifier(IdentifierType.CUSTOM, "nonexistentSM");
 
 		// Try to retrieve a nonexistent Submodel from an existing AAS
