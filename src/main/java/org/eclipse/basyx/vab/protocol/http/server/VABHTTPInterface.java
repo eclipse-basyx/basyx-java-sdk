@@ -140,11 +140,7 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 	}
 
 	private boolean isFileAccessPath(String path) {
-		String[] splitted = VABPathTools.splitPath(path);
-		if (splitted.length == 0) {
-			return false;
-		}
-		return splitted[splitted.length - 1].equals("File");
+		return VABPathTools.getLastElement(path).equals("File");
 	}
 
 	/**
