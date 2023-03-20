@@ -118,9 +118,9 @@ public class TestAASHTTP {
 	public void retrieveSingleAas() throws Exception {
 		prepareAasDescriptorForMultipleEndpoints();
 		
-		IAssetAdministrationShell shell = manager.retrieveAAS(StubAASServlet.AASURN);
+		IAssetAdministrationShell assetAdministrationShell = manager.retrieveAAS(StubAASServlet.AASURN);
 
-		assertEquals(StubAASServlet.AASIDSHORT, shell.getIdShort());
+		assertEquals(StubAASServlet.AASIDSHORT, assetAdministrationShell.getIdShort());
 	}
 
 	/**
@@ -181,9 +181,9 @@ public class TestAASHTTP {
 	public void retrieveSingleSubmodel() {
 		prepareAasDescriptorForMultipleEndpoints();
 		
-		ISubmodel sm = manager.retrieveSubmodel(StubAASServlet.AASURN, StubAASServlet.SMURN);
+		ISubmodel submodel = manager.retrieveSubmodel(StubAASServlet.AASURN, StubAASServlet.SMURN);
 
-		assertEquals(StubAASServlet.SMIDSHORT, sm.getIdShort());
+		assertEquals(StubAASServlet.SMIDSHORT, submodel.getIdShort());
 	}
 	
 	private void prepareAasDescriptorForMultipleEndpoints() {
