@@ -199,7 +199,7 @@ public class TestConnectedAssetAdministrationShellManager {
 		AssetAdministrationShell aas = createTestAAS(aasId, aasIdShort);
 		manager.createAAS(aas, "");
 
-		Submodel sm = createTestSubmodel(smId, smIdShort);
+		Submodel sm = new Submodel(smIdShort, smId);
 		manager.createSubmodel(aasId, sm);
 
 		// Assert everything was created correctly
@@ -376,7 +376,7 @@ public class TestConnectedAssetAdministrationShellManager {
 	}
 
 	private Identifier createIdentifier(String id) {
-		return new Identifier(IdentifierType.CUSTOM, id);
+		return new CustomId(id);
 	}
 
 	private ConnectorFactory createAndConfigureConnectorFactoryMock() {
@@ -394,10 +394,5 @@ public class TestConnectedAssetAdministrationShellManager {
 	private AssetAdministrationShell createTestAAS(IIdentifier aasId, String aasIdShort) {
 		AssetAdministrationShell aas = new AssetAdministrationShell(aasIdShort, aasId, new Asset("assetIdShort", new ModelUrn("assetId"), AssetKind.INSTANCE));
 		return aas;
-	}
-	
-	private Submodel createTestSubmodel(IIdentifier smId, String smIdShort) {
-		Submodel sm = new Submodel(smIdShort, smId);
-		return sm;
 	}
 }

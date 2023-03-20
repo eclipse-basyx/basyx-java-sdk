@@ -59,7 +59,8 @@ import org.junit.Test;
  */
 public class TestAASHTTP {
 
-	private static final String WORKING_ENDPOINT = "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas";
+	private static final String WORKING_SM_ENDPOINT = "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel";
+	private static final String WORKING_AAS_ENDPOINT = "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas";
 	private static final String NOT_WORKING_404_ENDPOINT_1 = "http://localhost:8080/basys.sdk/Testsuite/StubAAS1/aas";
 	private static final String NOT_WORKING_404_ENDPOINT_2 = "http://localhost:8080/basys.sdk/Testsuite/StubAAS2/aas";
 
@@ -69,6 +70,7 @@ public class TestAASHTTP {
 	private static BaSyxContext context = new BaSyxContext("/basys.sdk", System.getProperty("java.io.tmpdir")).addServletMapping("/Testsuite/StubAAS/*", new StubAASServlet());
 	
 	private AASDescriptor aasDescriptor;
+	private SubmodelDescriptor submodelDescriptor;
 
 	/**
 	 * Makes sure Tomcat Server is started
@@ -83,7 +85,7 @@ public class TestAASHTTP {
 	public void build() {
 		InMemoryRegistry registry = new InMemoryRegistry();
 		
-		aasDescriptor = createAasDescriptor(WORKING_ENDPOINT);
+		aasDescriptor = createAasDescriptor(WORKING_AAS_ENDPOINT);
 
 		registerAasDescriptorWithSubmodelDescriptor(registry, aasDescriptor);
 
@@ -176,7 +178,7 @@ public class TestAASHTTP {
 	
 	@Test
 	public void retrieveSingleSubmodel() {
-		prepareAasDescriptorForMultipleEndpoints();
+		prepareSubmodelDescriptorForMultipleEndpoints();
 		
 		ISubmodel submodel = manager.retrieveSubmodel(StubAASServlet.AASURN, StubAASServlet.SMURN);
 
@@ -184,14 +186,21 @@ public class TestAASHTTP {
 	}
 	
 	private void prepareAasDescriptorForMultipleEndpoints() {
-		aasDescriptor.removeEndpoint(WORKING_ENDPOINT);
+		aasDescriptor.removeEndpoint(WORKING_AAS_ENDPOINT);
 		aasDescriptor.addEndpoint(NOT_WORKING_404_ENDPOINT_1);
-		aasDescriptor.addEndpoint(WORKING_ENDPOINT);
+		aasDescriptor.addEndpoint(WORKING_AAS_ENDPOINT);
 		aasDescriptor.addEndpoint(NOT_WORKING_404_ENDPOINT_2);
 	}
 	
+	private void prepareSubmodelDescriptorForMultipleEndpoints() {
+		submodelDescriptor.removeEndpoint(WORKING_SM_ENDPOINT);
+		submodelDescriptor.addEndpoint(NOT_WORKING_404_ENDPOINT_1);
+		submodelDescriptor.addEndpoint(WORKING_SM_ENDPOINT);
+		submodelDescriptor.addEndpoint(NOT_WORKING_404_ENDPOINT_2);
+	}
+	
 	private void registerAasDescriptorWithSubmodelDescriptor(InMemoryRegistry registry, AASDescriptor aasDescriptor) {
-		SubmodelDescriptor submodelDescriptor = createSubmodelDescriptor();
+		submodelDescriptor = createSubmodelDescriptor();
 
 		aasDescriptor.addSubmodelDescriptor(submodelDescriptor);
 
@@ -199,7 +208,7 @@ public class TestAASHTTP {
 	}
 
 	private SubmodelDescriptor createSubmodelDescriptor() {
-		return new SubmodelDescriptor(StubAASServlet.SMIDSHORT, StubAASServlet.SMURN, "http://localhost:8080/basys.sdk/Testsuite/StubAAS/aas/submodels/" + StubAASServlet.SMIDSHORT + "/submodel");
+		return new SubmodelDescriptor(StubAASServlet.SMIDSHORT, StubAASServlet.SMURN, WORKING_SM_ENDPOINT);
 	}
 
 	private AASDescriptor createAasDescriptor(String url) {

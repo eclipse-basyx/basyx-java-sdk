@@ -42,6 +42,7 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.connected.ConnectedElement;
 import org.eclipse.basyx.submodel.metamodel.connected.ConnectedSubmodel;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
@@ -185,7 +186,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	private VABElementProxy getAASProxyFromId(IIdentifier aasId) {
 		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(aasId);
 		
-		Optional<Map<String, Object>> optionalAasDescriptor = getWorkingEndpoint(aasDescriptor.getEndpoints());
+		Optional<Map<String, Object>> optionalAasDescriptor = getWorkingAasEndpoint(aasDescriptor.getEndpoints());
 		
 		if (!optionalAasDescriptor.isPresent())
 			throw new ResourceNotFoundException("The resource with id : " + aasId + " could not be found!");
@@ -196,7 +197,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	private VABElementProxy getSubmodelProxyFromId(IIdentifier aasId, IIdentifier smId) {
 		SubmodelDescriptor smDescriptor = aasDirectory.lookupSubmodel(aasId, smId);
 
-		Optional<Map<String, Object>> optionalSubmodelDescriptor = getWorkingEndpoint(smDescriptor.getEndpoints());
+		Optional<Map<String, Object>> optionalSubmodelDescriptor = getWorkingSubmodelEndpoint(smDescriptor.getEndpoints());
 		
 		if (!optionalSubmodelDescriptor.isPresent())
 			throw new ResourceNotFoundException("The resource with id : " + aasId + " could not be found!");
@@ -204,19 +205,36 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		return proxyFactory.createProxy((String) optionalSubmodelDescriptor.get().get(AssetAdministrationShell.ADDRESS));
 	}
 
-	private Optional<Map<String, Object>> getWorkingEndpoint(Collection<Map<String, Object>> endpoints) {
-		return endpoints.stream().filter(this::isWorkingEndpoint).findFirst();
+	private Optional<Map<String, Object>> getWorkingAasEndpoint(Collection<Map<String, Object>> endpoints) {
+		return endpoints.stream().filter(endpoint -> isWorking(new ConnectedAssetAdministrationShell(createProxy(endpoint)))).findFirst();
 	}
 	
-	private boolean isWorkingEndpoint(Map<String, Object> endpoint) {
-		VABElementProxy vabElementProxy = proxyFactory.createProxy((String) endpoint.get(AssetAdministrationShell.ADDRESS));
+	private Optional<Map<String, Object>> getWorkingSubmodelEndpoint(Collection<Map<String, Object>> endpoints) {
+		return endpoints.stream().filter(endpoint -> isWorking(new ConnectedSubmodel(createProxy(endpoint)))).findFirst();
+	}
+	
+	private VABElementProxy createProxy(Map<String, Object> endpoint) {
+		return proxyFactory.createProxy((String) endpoint.get(AssetAdministrationShell.ADDRESS));
+	}
+
+	private boolean isWorking(ConnectedElement connectedElement) {
 		
 		try {
-			new ConnectedAssetAdministrationShell(vabElementProxy).getIdentification();
+			attemptIdentificationRetrieval(connectedElement);
+			
 			return true;
 		} catch (ProviderException e) {
 			return false;
 		}
 		
 	}
+
+	private void attemptIdentificationRetrieval(ConnectedElement connectedElement) {
+		if (connectedElement instanceof ConnectedAssetAdministrationShell) {
+			((ConnectedAssetAdministrationShell) connectedElement).getIdentification();
+		} else {
+			((ConnectedSubmodel) connectedElement).getIdentification();
+		}
+	}
+
 }
