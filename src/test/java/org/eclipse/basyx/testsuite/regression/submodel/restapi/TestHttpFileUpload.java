@@ -35,7 +35,7 @@ import org.junit.Test;
  * @author fried
  *
  */
-public class TestHTTPFileUpload {
+public class TestHttpFileUpload {
 
 
 	@Test
