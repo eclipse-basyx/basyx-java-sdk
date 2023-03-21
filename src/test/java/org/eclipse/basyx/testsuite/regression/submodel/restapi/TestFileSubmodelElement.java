@@ -67,7 +67,7 @@ public class TestFileSubmodelElement {
 
 		java.io.File file = submodelAPI.getSubmodelElementFile(FILE_SME_ID_SHORT);
 
-		assertEquals("fileSmeIdShort", file.getName());
+		assertEquals("fileSmeIdShort.xml", file.getName());
 		assertEquals(tempFile.length(), file.length());
 	}
 
