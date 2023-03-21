@@ -33,6 +33,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
@@ -173,7 +176,20 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	private String getFilePath(String idShortPath, File file) {
 		String fileName = idShortPath.replaceAll("/", "-");
 
-		return tmpDirectory + "/" + fileName;
+		String extension = getFileExtension(file);
+
+		return tmpDirectory + "/" + fileName + extension;
+	}
+
+	private String getFileExtension(File file) {
+		MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+		try {
+			MimeType mimeType = allTypes.forName(file.getMimeType());
+			return mimeType.getExtension();
+		} catch (MimeTypeException e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 	@Override
