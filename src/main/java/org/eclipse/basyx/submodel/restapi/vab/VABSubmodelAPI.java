@@ -44,7 +44,6 @@ import org.eclipse.basyx.submodel.restapi.SubmodelAPIHelper;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
-import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 
@@ -61,6 +60,8 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 	// The VAB model provider containing the model this API implementation is based
 	// on
 	private IModelProvider modelProvider;
+
+	private String tmpDirectory = Files.createTempDir().getAbsolutePath();
 
 	/**
 	 * Creates a VABSubmodelAPI that wraps an IModelProvider
@@ -167,21 +168,12 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 		inStream.close();
 		outStream.close();
-		return;
-
 	}
 
 	private String getFilePath(String idShortPath, File file) {
-		String filePath = file.getValue();
-		if (filePath == null || filePath.isEmpty()) {
-			String mimeType = file.getMimeType();
-			String fileName = idShortPath + "." + mimeType;
-			String tmpDirectory = Files.createTempDir().getAbsolutePath();
-			filePath = tmpDirectory + "/" + fileName;
-			file.setValue(filePath);
-			getElementProvider().setValue(SubmodelAPIHelper.getSubmodelElementValuePath(idShortPath), filePath);
-		}
-		return filePath;
+		String fileName = idShortPath.replaceAll("/", "-");
+
+		return tmpDirectory + "/" + fileName;
 	}
 
 	@Override
@@ -222,10 +214,9 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 		File fileSubmodelElement = File.createAsFacade(submodelElement);
 
-		if (fileSubmodelElement.getValue().isEmpty()) {
-			throw new ResourceNotFoundException("The File Submodel Element does not contain a File");
-		}
-		return new java.io.File(fileSubmodelElement.getValue());
+		String filePath = getFilePath(idShortPath, fileSubmodelElement);
+
+		return new java.io.File(filePath);
 	}
 
 }
