@@ -71,14 +71,11 @@ import org.springframework.util.ResourceUtils;
  * @author fried
  *
  */
-public class TestHTTPFileUpload {
+public class TestHttpFileUpload {
 	private static final String SERVER = "localhost";
 	private static final int PORT = 4000;
 	private static final String CONTEXT_PATH = "fileSubmodelElementTest";
 	private static final String API_URL = "http://" + SERVER + ":" + PORT + "/" + CONTEXT_PATH + "/shells";
-	private static final Object HTTP_200 = "HTTP/1.1 200 ";
-	private static final Object HTTP_201 = "HTTP/1.1 201 ";
-	private static final Object HTTP_400 = "HTTP/1.1 400 ";
 	private AASAggregatorProvider provider = new AASAggregatorProvider(new AASAggregatorFactory().create());
 
 	@Rule
@@ -157,7 +154,6 @@ public class TestHTTPFileUpload {
 		return client.execute(put);
 	}
 
-	@SuppressWarnings("unused")
 	private CloseableHttpResponse uploadDummySubmodel()
 			throws FileNotFoundException, IOException, UnsupportedEncodingException, ClientProtocolException {
 		File file = ResourceUtils.getFile("src/test/resources/aas/dummySubmodel.json");

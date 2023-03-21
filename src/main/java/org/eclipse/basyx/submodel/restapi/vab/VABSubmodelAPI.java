@@ -43,6 +43,7 @@ import org.eclipse.basyx.submodel.restapi.MultiSubmodelElementProvider;
 import org.eclipse.basyx.submodel.restapi.SubmodelAPIHelper;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
@@ -131,7 +132,6 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 		return elements.stream().map(SubmodelElement::createAsFacade).collect(Collectors.toList());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void updateSubmodelElement(String idShortPath, Object newValue) {
 		getElementProvider().setValue(SubmodelAPIHelper.getSubmodelElementValuePath(idShortPath), newValue);
@@ -145,6 +145,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 			try {
 				createFile(idShortPath, fileStream, submodelElement);
 			} catch (IOException e) {
+				throw new ProviderException(e);
 			}
 		} else {
 			throw new MalformedRequestException(
@@ -224,7 +225,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 		if (fileSubmodelElement.getValue().isEmpty()) {
 			throw new ResourceNotFoundException("The File Submodel Element does not contain a File");
 		}
-		return new java.io.File((String) fileSubmodelElement.getValue());
+		return new java.io.File(fileSubmodelElement.getValue());
 	}
 
 }
