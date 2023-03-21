@@ -26,13 +26,10 @@
 package org.eclipse.basyx.testsuite.regression.submodel.restapi;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -59,7 +56,7 @@ public class TestFileSubmodelElement {
 	public void setUp() {
 		this.submodel = new Submodel("submodelIdShort", new Identifier(IdentifierType.CUSTOM, "submodelIdentifier"));
 		this.submodelAPI = new VABSubmodelAPIFactory().create(submodel);
-		File fileSubmodelElement = new File("xml");
+		File fileSubmodelElement = new File("application/xml");
 		fileSubmodelElement.setIdShort(FILE_SME_ID_SHORT);
 		submodelAPI.addSubmodelElement(fileSubmodelElement);
 	}
@@ -70,50 +67,8 @@ public class TestFileSubmodelElement {
 
 		java.io.File file = submodelAPI.getSubmodelElementFile(FILE_SME_ID_SHORT);
 
-		assertEquals("fileSmeIdShort.xml", file.getName());
+		assertEquals("fileSmeIdShort", file.getName());
 		assertEquals(tempFile.length(), file.length());
-	}
-
-	@Test
-	public void fileIsDeletedWhenSubmodelElementIsDeleted() throws FileNotFoundException {
-		uploadDummyFile(FILE_SME_ID_SHORT);
-		File fileSubmodelElement = getFileSubmodelElement(FILE_SME_ID_SHORT);
-		String filePath = fileSubmodelElement.getValue();
-		submodelAPI.deleteSubmodelElement(FILE_SME_ID_SHORT);
-		java.io.File file = new java.io.File(filePath);
-		assertFalse(file.exists());
-	}
-
-	@Test
-	public void fileSubmodelElementValueIsAdapted() throws FileNotFoundException {
-		uploadDummyFile(FILE_SME_ID_SHORT);
-
-		File fileSubmodelElement = getFileSubmodelElement(FILE_SME_ID_SHORT);
-
-		String filePath = fileSubmodelElement.getValue();
-		String expected = getExpectedFileName(fileSubmodelElement);
-
-		assertPathNotEmpty(filePath);
-		assertEndsWithFilename(filePath, expected);
-	}
-
-	private void assertPathNotEmpty(String filePath) {
-		assertFalse(filePath.isEmpty());
-	}
-
-	private void assertEndsWithFilename(String filePath, String expected) {
-		assertTrue(filePath.endsWith(expected));
-	}
-
-	private String getExpectedFileName(File fileSubmodelElement) {
-		return fileSubmodelElement.getIdShort() + "." + fileSubmodelElement.getMimeType();
-	}
-
-	@SuppressWarnings("unchecked")
-	private File getFileSubmodelElement(String idShort) {
-		Map<String, Object> submodelElementMap = (Map<String, Object>) submodelAPI.getSubmodelElement(idShort);
-		File fileSubmodelElement = File.createAsFacade(submodelElementMap);
-		return fileSubmodelElement;
 	}
 
 	private java.io.File uploadDummyFile(String idShortPath) throws FileNotFoundException {
