@@ -111,7 +111,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String PDF_PATH = "/aasx/Document/docu.pdf";
 	private static final String PDF_MIMETYPE = "application/pdf";
 	private static final String PDF_IDSHORT = "pdf";
-	private static final String TARGET_PATH = "target/files"; // gets set by BaSyx
+	private static final String TARGET_PATH = "/basyx-temp/files"; // gets set by BaSyx
 	private static final String[] EXPECTED_UNZIPPED_FILES = { TARGET_PATH + PDF_PATH, TARGET_PATH + IMAGE_PATH };
 	private static final String[] EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR = { PDF_PATH, IMAGE_PATH };
 
@@ -234,10 +234,12 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	public void testFilesOfGeneratedAASX() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
 		// Unzip files from the .aasx
 		packageManager.unzipRelatedFiles();
+		
+		String tempDirectory = FileUtils.getTempDirectory().getAbsolutePath();
 
 		// Check if all expected files are present
 		for (String path : EXPECTED_UNZIPPED_FILES) {  
-			assertTrue(new java.io.File(path).exists());
+			assertTrue(new java.io.File(tempDirectory + path).exists());
 		}
 	}
 
