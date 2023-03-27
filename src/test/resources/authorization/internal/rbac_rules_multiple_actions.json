@@ -6,7 +6,6 @@
       "urn:org.eclipse.basyx:scope:aas-aggregator:write",
       "urn:org.eclipse.basyx:scope:aas-api:read",
       "urn:org.eclipse.basyx:scope:aas-api:write",
-      "urn:org.eclipse.basyx:scope:aas-api:read",
       "urn:org.eclipse.basyx:scope:sm-aggregator:read",
       "urn:org.eclipse.basyx:scope:sm-api:read",
       "urn:org.eclipse.basyx:scope:aas-registry:read"
@@ -15,6 +14,7 @@
       "@type": "basyx",
       "aasId": "*",
       "smId": "*",
+      "smSemanticId": "*",
       "smElIdShortPath": "*"
     }
   }

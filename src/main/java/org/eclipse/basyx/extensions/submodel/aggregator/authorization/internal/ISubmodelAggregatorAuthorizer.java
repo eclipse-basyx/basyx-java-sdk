@@ -77,7 +77,8 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public ISubmodel authorizeGetSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException;
+	public ISubmodel authorizeGetSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final Supplier<ISubmodel> smSupplier)
+			throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -88,15 +89,18 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 * @param aas
 	 *            the aas the submodel belongs to as passed in the constructor of
 	 *            {@link AuthorizedSubmodelAggregator}, may be null.
-	 * @param smIdShortPath
-	 *            short path id of the submodel.
+	 * @param smId
+	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smSupplier
 	 *            supplier for the submodel.
 	 * @return the authorized submodel.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public ISubmodel authorizeGetSubmodelbyIdShort(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final String smIdShortPath, final Supplier<ISubmodel> smSupplier) throws InhibitException;
+	public ISubmodel authorizeGetSubmodelbyIdShort(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final Supplier<ISubmodel> smSupplier)
+			throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -117,7 +121,8 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public ISubmodelAPI authorizeGetSubmodelAPIById(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final Supplier<ISubmodelAPI> smAPISupplier) throws InhibitException;
+	public ISubmodelAPI authorizeGetSubmodelAPIById(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final Supplier<ISubmodelAPI> smAPISupplier)
+			throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -128,15 +133,18 @@ public interface ISubmodelAggregatorAuthorizer<SubjectInformationType> {
 	 * @param aas
 	 *            the aas the submodel belongs to as passed in the constructor of
 	 *            {@link AuthorizedSubmodelAggregator}, may be null.
-	 * @param smIdShortPath
-	 *            short path id of the submodel.
+	 * @param smId
+	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smAPISupplier
 	 *            supplier for the submodel API.
 	 * @return the authorized submodel API.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public ISubmodelAPI authorizeGetSubmodelAPIByIdShort(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final String smIdShortPath, final Supplier<ISubmodelAPI> smAPISupplier) throws InhibitException;
+	public ISubmodelAPI authorizeGetSubmodelAPIByIdShort(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId,
+			final Supplier<ISubmodelAPI> smAPISupplier) throws InhibitException;
 
 	/**
 	 * Checks authorization for

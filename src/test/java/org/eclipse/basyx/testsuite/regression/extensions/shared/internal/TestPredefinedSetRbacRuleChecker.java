@@ -308,4 +308,108 @@ public class TestPredefinedSetRbacRuleChecker {
 
 		Assert.assertFalse(result);
 	}
+
+	@Test
+	public void givenRuleAdmin$Write$NullSomeIdOtherIdNull_whenCheckForRuleAdmin$Write$NullSomeOtherNull_thenReturnTrue() {
+		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(null, someId, otherId, null)));
+
+		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
+
+		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.singletonList(adminRole), writeAction, new BaSyxObjectTargetInformation(null, someId, otherId, null));
+
+		Assert.assertTrue(result);
+	}
+
+	@Test
+	public void givenRuleAdmin$Write$NullSomeIdOtherIdNull_whenCheckForRuleAdmin$Write$NullOtherOtherNull_thenReturnFalse() {
+		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(null, someId, otherId, null)));
+
+		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
+
+		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.singletonList(adminRole), writeAction, new BaSyxObjectTargetInformation(null, otherId, otherId, null));
+
+		Assert.assertFalse(result);
+	}
+
+	@Test
+	public void givenRuleAdmin$Write$NullSomeIdOtherIdSomeId_whenCheckForRuleAdmin$Write$NullSomeOtherSome_thenReturnTrue() {
+		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(null, someId, otherId, someId)));
+
+		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
+
+		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.singletonList(adminRole), writeAction, new BaSyxObjectTargetInformation(null, someId, otherId, someId));
+
+		Assert.assertTrue(result);
+	}
+
+	@Test
+	public void givenRuleAdmin$Write$NullSomeIdOtherIdSomeId_whenCheckForRuleAdmin$Write$NullSomeSomeSome_thenReturnFalse() {
+		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+		rbacRuleSet.addRule(new RbacRule(adminRole, writeAction, new BaSyxObjectTargetInformation(null, someId, otherId, someId)));
+
+		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
+
+		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.singletonList(adminRole), writeAction, new BaSyxObjectTargetInformation(null, someId, someId, someId));
+
+		Assert.assertFalse(result);
+	}
+
+	@Test
+	public void givenRuleAdmin$Read$NullSomeIdOtherIdNull_whenCheckForRuleAdmin$Read$NullSomeOtherNull_thenReturnTrue() {
+		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+		rbacRuleSet.addRule(new RbacRule(adminRole, readAction, new BaSyxObjectTargetInformation(null, someId, otherId, null)));
+
+		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
+
+		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.singletonList(adminRole), readAction, new BaSyxObjectTargetInformation(null, someId, otherId, null));
+
+		Assert.assertTrue(result);
+	}
+
+	@Test
+	public void givenRuleAdmin$Read$NullSomeIdOtherIdNull_whenCheckForRuleAdmin$Read$NullOtherOtherNull_thenReturnFalse() {
+		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+		rbacRuleSet.addRule(new RbacRule(adminRole, readAction, new BaSyxObjectTargetInformation(null, someId, otherId, null)));
+
+		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
+
+		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.singletonList(adminRole), readAction, new BaSyxObjectTargetInformation(null, otherId, otherId, null));
+
+		Assert.assertFalse(result);
+	}
+
+	@Test
+	public void givenRuleAdmin$Read$NullSomeIdOtherIdSomeId_whenCheckForRuleAdmin$Read$NullSomeOtherSome_thenReturnTrue() {
+		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+		rbacRuleSet.addRule(new RbacRule(adminRole, readAction, new BaSyxObjectTargetInformation(null, someId, otherId, someId)));
+
+		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
+
+		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.singletonList(adminRole), readAction, new BaSyxObjectTargetInformation(null, someId, otherId, someId));
+
+		Assert.assertTrue(result);
+	}
+
+	@Test
+	public void givenRuleAdmin$Read$NullSomeIdOtherIdSomeId_whenCheckForRuleAdmin$Read$NullSomeSomeSome_thenReturnFalse() {
+		final RbacRuleSet rbacRuleSet = new RbacRuleSet();
+
+		rbacRuleSet.addRule(new RbacRule(adminRole, readAction, new BaSyxObjectTargetInformation(null, someId, otherId, someId)));
+
+		final PredefinedSetRbacRuleChecker testSubject = new PredefinedSetRbacRuleChecker(rbacRuleSet);
+
+		final boolean result = testSubject.checkRbacRuleIsSatisfied(Collections.singletonList(adminRole), readAction, new BaSyxObjectTargetInformation(null, someId, someId, someId));
+
+		Assert.assertFalse(result);
+	}
 }

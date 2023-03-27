@@ -39,9 +39,13 @@ import org.eclipse.basyx.extensions.submodel.aggregator.authorization.SubmodelAg
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
+import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -121,7 +125,9 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected ISubmodel authorizeGetSubmodel(final IIdentifier smId) throws ResourceNotFoundException, InhibitException {
-		return submodelAggregatorAuthorizer.authorizeGetSubmodel(subjectInformationProvider.get(), aas, smId, () -> decoratedSubmodelAggregator.getSubmodel(smId));
+		final ISubmodel sm = getSmUnsecured(smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
+		return submodelAggregatorAuthorizer.authorizeGetSubmodel(subjectInformationProvider.get(), aas, smId, smSemanticId, () -> decoratedSubmodelAggregator.getSubmodel(smId));
 	}
 
 	@Override
@@ -138,7 +144,10 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected ISubmodel authorizeGetSubmodelbyIdShort(final String smIdShortPath) throws ResourceNotFoundException, InhibitException {
-		return submodelAggregatorAuthorizer.authorizeGetSubmodelbyIdShort(subjectInformationProvider.get(), aas, smIdShortPath, () -> decoratedSubmodelAggregator.getSubmodelbyIdShort(smIdShortPath));
+		final ISubmodel sm = getSmUnsecured(smIdShortPath);
+		final IIdentifier smId = getSmIdUnsecured(sm);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
+		return submodelAggregatorAuthorizer.authorizeGetSubmodelbyIdShort(subjectInformationProvider.get(), aas, smId, smSemanticId, () -> decoratedSubmodelAggregator.getSubmodelbyIdShort(smIdShortPath));
 	}
 
 	@Override
@@ -155,7 +164,9 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected ISubmodelAPI authorizeGetSubmodelAPIById(final IIdentifier smId) throws ResourceNotFoundException, InhibitException {
-		return submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(subjectInformationProvider.get(), aas, smId, () -> decoratedSubmodelAggregator.getSubmodelAPIById(smId));
+		final ISubmodel sm = getSmUnsecured(smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
+		return submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(subjectInformationProvider.get(), aas, smId, smSemanticId, () -> decoratedSubmodelAggregator.getSubmodelAPIById(smId));
 	}
 
 	@Override
@@ -172,9 +183,12 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 	}
 
 	protected ISubmodelAPI authorizeGetSubmodelAPIByIdShort(final String smIdShortPath) throws ResourceNotFoundException, InhibitException {
+		final ISubmodel sm = getSmUnsecured(smIdShortPath);
+		final IIdentifier smId = getSmIdUnsecured(sm);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(sm);
 		try {
 			try {
-				return submodelAggregatorAuthorizer.authorizeGetSubmodelAPIByIdShort(subjectInformationProvider.get(), aas, smIdShortPath, () -> decoratedSubmodelAggregator.getSubmodelAPIByIdShort(smIdShortPath));
+				return submodelAggregatorAuthorizer.authorizeGetSubmodelAPIByIdShort(subjectInformationProvider.get(), aas, smId, smSemanticId, () -> decoratedSubmodelAggregator.getSubmodelAPIByIdShort(smIdShortPath));
 			} catch (final InhibitException inhibitException) {
 				throw inhibitException.reduceSmIdToSmIdShortPath(smIdShortPath);
 			}
@@ -183,7 +197,9 @@ public class AuthorizedSubmodelAggregator<SubjectInformationType> implements ISu
 			// submodel,
 			// if no, the authorization will throw an InhibitException, otherwise we throw
 			// the ResourceNotFoundException
-			submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(subjectInformationProvider.get(), aas, new ModelUrn("*"), () -> null);
+			final IIdentifier anySmId = new ModelUrn("*");
+			final IReference anySemanticSmId = new Reference(new Key(KeyElements.SUBMODEL, true, "*", IdentifierType.CUSTOM));
+			submodelAggregatorAuthorizer.authorizeGetSubmodelAPIById(subjectInformationProvider.get(), aas, anySmId, anySemanticSmId, () -> null);
 
 			throw resourceNotFoundException;
 		}
