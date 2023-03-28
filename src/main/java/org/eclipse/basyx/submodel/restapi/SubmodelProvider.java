@@ -256,7 +256,7 @@ public class SubmodelProvider implements IModelProvider {
 		}
 		String[] splitted = VABPathTools.splitPath(path);
 		if (endsWithFileUpload(splitted)) {
-			submodelAPI.uploadSubmodelElementFile(getIdShortFromSplittedPath(splitted), (InputStream) newEntity);
+			submodelAPI.uploadSubmodelElementFile(getFileIdShortFromSplittedPath4FileUpload(splitted), (InputStream) newEntity);
 			return;
 		}
 		throw new MalformedRequestException("POST on \"" + path + "\" not allowed");
@@ -349,13 +349,38 @@ public class SubmodelProvider implements IModelProvider {
 		return splitted[splitted.length - 1].equals(UPLOAD);
 	}
 
+	private String getFileIdShortFromSplittedPath4FileUpload(String[] splitted) {
+		String idShort = "";
+		for (int i = 1; i < splitted.length - 2; i++) {
+			idShort = concatFileIdShortPath(splitted, idShort, i);
+		}
+		return idShort;
+	}
+
+	private String getFileIdShortFromSplittedPath4FileDownload(String[] splitted) {
+		String idShort ="";
+		for (int i = 1; i < splitted.length - 1; i++) {
+			idShort = concatFileIdShortPath(splitted, idShort, i);
+		}
+		return idShort;
+	}
+
+	private String concatFileIdShortPath(String[] splitted, String idShort, int i) {
+		if (idShort.isEmpty()) {
+		idShort = idShort.concat(splitted[i]);
+		} else {
+			idShort = idShort.concat("/" + splitted[i]);
+		}
+		return idShort;
+	}
+
 	private String getIdShortFromSplittedPath(String[] splitted) {
 		return splitted[1];
 	}
 
 	@SuppressWarnings("unchecked")
 	private Object handleFile(String[] splitted) {
-		String idShortPath = getIdShortFromSplittedPath(splitted);
+		String idShortPath = getFileIdShortFromSplittedPath4FileDownload(splitted);
 		Map<String, Object> submodelElement = (Map<String, Object>) submodelAPI.getSubmodelElement(idShortPath);
 
 		if (!File.isFile(submodelElement)) {

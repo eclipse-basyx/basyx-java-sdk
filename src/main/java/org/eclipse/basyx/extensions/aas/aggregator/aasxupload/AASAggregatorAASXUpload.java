@@ -26,10 +26,14 @@
 
 package org.eclipse.basyx.extensions.aas.aggregator.aasxupload;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleHelper;
@@ -37,10 +41,16 @@ import org.eclipse.basyx.aas.factory.aasx.AASXToMetamodelConverter;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.aas.aggregator.aasxupload.api.IAASAggregatorAASXUpload;
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.xml.sax.SAXException;
 
 /**
  * An implementation of the IAASAggregatorAASXUpload interface using maps
@@ -65,9 +75,52 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 			AASXToMetamodelConverter converter = new AASXToMetamodelConverter(aasxStream);
 			Set<AASBundle> bundles = converter.retrieveAASBundles();
 			AASBundleHelper.integrate(this, bundles);
+			uploadFilesInAASX(converter);
 		} catch (Exception e) {
 			throw new MalformedRequestException("invalid request to aasx path without valid aasx input stream");
 		}
+	}
+
+	public void uploadFilesInAASX(AASXToMetamodelConverter converter) throws InvalidFormatException, ParserConfigurationException, SAXException, IOException {
+		converter.retrieveAASBundles().forEach(aasBundle -> {
+			aasBundle.getSubmodels().forEach(submodel -> {
+				submodel.getSubmodelElements().values().forEach(sme -> {
+					uploadFileInSubmodelElement(aasBundle, converter, submodel, sme, getSubmodelElementFileUploadURL(submodel.getIdShort(), sme.getIdShort()));
+
+					if (sme instanceof SubmodelElementCollection)
+						uploadFileInSubmodelElementCollection(aasBundle, converter, submodel, sme);
+
+				});
+			});
+		});
+	}
+
+	private void uploadFileInSubmodelElementCollection(AASBundle aasBundle, AASXToMetamodelConverter converter, ISubmodel submodel, ISubmodelElement sme) {
+		ISubmodelElementCollection smeCollection = (ISubmodelElementCollection) sme;
+		smeCollection.getSubmodelElements().values().forEach(element -> {
+			if (element instanceof File)
+				uploadFileInSubmodelElement(aasBundle, converter, submodel, element, getSubmodelElementCollectionFileUploadURL(submodel.getIdShort(), smeCollection.getIdShort(), element.getIdShort()));
+			if (element instanceof SubmodelElementCollection)
+				uploadFileInSubmodelElementCollection(aasBundle, converter, submodel, element);
+		});
+	}
+
+	private void uploadFileInSubmodelElement(AASBundle aasBundle, AASXToMetamodelConverter converter, ISubmodel submodel, ISubmodelElement sme, String uploadURL) {
+		if (sme instanceof File) {
+			try {
+				getAASProvider(aasBundle.getAAS().getIdentification()).createValue(uploadURL, converter.retrieveFileInputStream((String) sme.getValue()));
+			} catch (InvalidFormatException | IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private String getSubmodelElementFileUploadURL(String submodelIdshort, String smeIdshort) {
+		return "aas/submodels/" + submodelIdshort + "/submodel/submodelElements/" + smeIdshort + "/File/upload";
+	}
+
+	private String getSubmodelElementCollectionFileUploadURL(String submodelIdshort, String collectionIdShort, String smeIdshort) {
+		return "aas/submodels/" + submodelIdshort + "/submodel/submodelElements/" + collectionIdShort + "/" + smeIdshort + "/File/upload";
 	}
 
 	@Override

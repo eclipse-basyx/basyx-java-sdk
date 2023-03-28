@@ -40,7 +40,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -135,6 +137,13 @@ public class AASXToMetamodelConverter {
 		closeOPCPackage();
 
 		return (Set<T>) bundles;
+	}
+
+	public InputStream retrieveFileInputStream(String path) throws InvalidFormatException, IOException {
+		loadAASX();
+		PackagePart filePart = aasxRoot.getPart(PackagingURIHelper.createPartName(path));
+		closeOPCPackage();
+		return filePart.getInputStream();
 	}
 
 	private void loadAASX() throws IOException, InvalidFormatException {
