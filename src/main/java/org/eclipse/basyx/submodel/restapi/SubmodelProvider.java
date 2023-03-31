@@ -86,7 +86,8 @@ public class SubmodelProvider implements IModelProvider {
 	/**
 	 * Creates a SubmodelProvider based on the VAB API, wrapping the passed provider
 	 * 
-	 * @param provider to be wrapped by submodel API
+	 * @param provider
+	 *            to be wrapped by submodel API
 	 */
 	public SubmodelProvider(IModelProvider provider) {
 		submodelAPI = new VABSubmodelAPI(provider);
@@ -120,8 +121,7 @@ public class SubmodelProvider implements IModelProvider {
 		} else if (path.equals(SUBMODEL)) {
 			path = "";
 		} else {
-			throw new MalformedRequestException(
-					"The request " + path + " is not allowed for this endpoint. /" + SUBMODEL + " is missing");
+			throw new MalformedRequestException("The request " + path + " is not allowed for this endpoint. /" + SUBMODEL + " is missing");
 		}
 		path = VABPathTools.stripSlashes(path);
 		return path;
@@ -204,8 +204,9 @@ public class SubmodelProvider implements IModelProvider {
 	/**
 	 * Removes a trailing <code>/value</code> from the path if it exists.
 	 *
-	 * @param path The original path, which might or might not end on
-	 *             {@value Property.VALUE}.
+	 * @param path
+	 *            The original path, which might or might not end on
+	 *            {@value Property.VALUE}.
 	 * @return The new path
 	 */
 	private String removeValueSuffix(String path) {
@@ -235,12 +236,10 @@ public class SubmodelProvider implements IModelProvider {
 				submodelAPI.updateSubmodelElement(idshortPath, newValue);
 			} else {
 
-				ISubmodelElement element = SubmodelElementFacadeFactory
-						.createSubmodelElement((Map<String, Object>) newValue);
+				ISubmodelElement element = SubmodelElementFacadeFactory.createSubmodelElement((Map<String, Object>) newValue);
 
 				if (!path.endsWith(element.getIdShort())) {
-					throw new MalformedRequestException("The idShort of given Element '" + element.getIdShort()
-							+ "' does not match the ending of the given path '" + path + "'");
+					throw new MalformedRequestException("The idShort of given Element '" + element.getIdShort() + "' does not match the ending of the given path '" + path + "'");
 				}
 
 				submodelAPI.addSubmodelElement(idshortPath, element);
@@ -319,8 +318,7 @@ public class SubmodelProvider implements IModelProvider {
 	}
 
 	private Object invokeAsync(String path, Object... parameters) {
-		String pathWithoutAsyncInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC),
-				"");
+		String pathWithoutAsyncInvoke = path.replaceFirst(Pattern.quote(Operation.INVOKE + OperationProvider.ASYNC), "");
 		String strippedPathWithoutAsyncInvoke = VABPathTools.stripSlashes(pathWithoutAsyncInvoke);
 		return submodelAPI.invokeAsync(strippedPathWithoutAsyncInvoke, parameters);
 	}
@@ -358,7 +356,7 @@ public class SubmodelProvider implements IModelProvider {
 	}
 
 	private String getFileIdShortFromSplittedPath4FileDownload(String[] splitted) {
-		String idShort ="";
+		String idShort = "";
 		for (int i = 1; i < splitted.length - 1; i++) {
 			idShort = concatFileIdShortPath(splitted, idShort, i);
 		}
@@ -367,7 +365,7 @@ public class SubmodelProvider implements IModelProvider {
 
 	private String concatFileIdShortPath(String[] splitted, String idShort, int i) {
 		if (idShort.isEmpty()) {
-		idShort = idShort.concat(splitted[i]);
+			idShort = idShort.concat(splitted[i]);
 		} else {
 			idShort = idShort.concat("/" + splitted[i]);
 		}

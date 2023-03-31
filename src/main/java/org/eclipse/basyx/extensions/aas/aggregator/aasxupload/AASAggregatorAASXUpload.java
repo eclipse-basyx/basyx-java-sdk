@@ -92,19 +92,17 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 
 	private void uploadNestedFiles(IIdentifier aasIdentification, AASXToMetamodelConverter converter, ISubmodelElement submodelElement, String submodelCollectionPath) {
 		if (submodelElement instanceof File) {
-			uploadFileInSubmodelElement(aasIdentification, converter, submodelElement, submodelCollectionPath + "/" + submodelElement.getIdShort());
+			uploadFileInSubmodelElement(aasIdentification, converter, (File) submodelElement, submodelCollectionPath + "/" + submodelElement.getIdShort());
 		} else if (submodelElement instanceof SubmodelElementCollection) {
 			uploadFileInSubmodelElementCollection(aasIdentification, converter, submodelElement, submodelCollectionPath + "/" + submodelElement.getIdShort());
 		}
 	}
 
-	private void uploadFileInSubmodelElement(IIdentifier aasIdentification, AASXToMetamodelConverter converter, ISubmodelElement submodelElement, String submodelElementPath) {
-		if (submodelElement instanceof File) {
-			try {
-				getAASProvider(aasIdentification).createValue(submodelElementPath + "/File/upload", converter.retrieveFileInputStream((String) submodelElement.getValue()));
-			} catch (InvalidFormatException | IOException e) {
-				e.printStackTrace();
-			}
+	private void uploadFileInSubmodelElement(IIdentifier aasIdentification, AASXToMetamodelConverter converter, File submodelElement, String submodelElementPath) {
+		try {
+			getAASProvider(aasIdentification).createValue(submodelElementPath + "/File/upload", converter.retrieveFileInputStream((String) submodelElement.getValue()));
+		} catch (InvalidFormatException | IOException e) {
+			e.printStackTrace();
 		}
 	}
 

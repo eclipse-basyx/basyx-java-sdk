@@ -108,7 +108,7 @@ public class TestAASAggregatorProxyWithAASXProvider extends TestAASAggregatorPro
 		assertEquals(readFile(expectedFileInSme.toPath().toString(), Charset.defaultCharset()), readFile(fileInSme.toPath().toString(), Charset.defaultCharset()));
 		fileInSme.delete();
 
-		File expectedFileInSmeCollection = ResourceUtils.getFile("src/test/resources/aas/UL.png");
+		File expectedFileInSmeCollection = ResourceUtils.getFile("src/test/resources/aas/BaSyx.png");
 		File fileInSmeCollection = downloadFile("file_image.png", "testSMCollection/testFileInCollection/File");
 		assertEquals(readFile(expectedFileInSmeCollection.toPath().toString(), Charset.defaultCharset()), readFile(fileInSmeCollection.toPath().toString(), Charset.defaultCharset()));
 		fileInSmeCollection.delete();
