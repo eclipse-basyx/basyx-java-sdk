@@ -26,15 +26,26 @@
 
 package org.eclipse.basyx.testsuite.regression.extensions.aas.aggregator.aasxupload;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collection;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.http.client.ClientProtocolException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.aas.aggregator.AASAggregator;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
@@ -52,6 +63,8 @@ import org.eclipse.basyx.vab.protocol.http.server.BaSyxContext;
 import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.util.ResourceUtils;
+import org.xml.sax.SAXException;
 
 /**
  * Test for the {@link AASAggregatorAASXUploadProxy}
@@ -65,6 +78,7 @@ public class TestAASAggregatorProxyWithAASXProvider extends TestAASAggregatorPro
 	private static final String CONTEXT_PATH = "aggregator";
 	private static final String API_URL = "http://" + SERVER + ":" + PORT + "/" + CONTEXT_PATH + "/shells";
 	public static final String AASX_WITH_EMPTY_BOOLEAN_PATH = "src/test/resources/aas/factory/aasx/aas_with_empty_value.aasx";
+	public static final String AASX_WITH_FILE = "src/test/resources/aas/factory/aasx/test_img.aasx";
 	private AASAggregatorAASXUploadProvider provider = new AASAggregatorAASXUploadProvider(new AASAggregatorAASXUpload(new AASAggregator()));
 
 	@Rule
@@ -82,6 +96,37 @@ public class TestAASAggregatorProxyWithAASXProvider extends TestAASAggregatorPro
 
 		Collection<IAssetAdministrationShell> uploadedShells = proxy.getAASList();
 		TestAASAggregatorAASXUploadSuite.checkAASX(uploadedShells);
+	}
+
+	@Test
+	public void testClientUploadAASXWithFile() throws MalformedURLException, IOException, InvalidFormatException, ParserConfigurationException, SAXException {
+		AASAggregatorAASXUploadProxy proxy = new AASAggregatorAASXUploadProxy(API_URL);
+		proxy.uploadAASX(new FileInputStream(Paths.get(AASX_WITH_FILE).toFile()));
+
+		File expectedFileInSme = ResourceUtils.getFile("src/test/resources/aas/marking_ce.png");
+		File fileInSme = downloadFile("file_image.png", "testfile/File");
+		assertEquals(readFile(expectedFileInSme.toPath().toString(), Charset.defaultCharset()), readFile(fileInSme.toPath().toString(), Charset.defaultCharset()));
+		fileInSme.delete();
+
+		File expectedFileInSmeCollection = ResourceUtils.getFile("src/test/resources/aas/BaSyx.png");
+		File fileInSmeCollection = downloadFile("file_image.png", "testSMCollection/testFileInCollection/File");
+		assertEquals(readFile(expectedFileInSmeCollection.toPath().toString(), Charset.defaultCharset()), readFile(fileInSmeCollection.toPath().toString(), Charset.defaultCharset()));
+		fileInSmeCollection.delete();
+	}
+
+
+	private File downloadFile(String filename, String filePath) throws IOException, MalformedURLException, FileNotFoundException {
+		File actual = new File(filename);
+		BufferedInputStream in = new BufferedInputStream(new URL(API_URL + "/testaas/aas/submodels/testsm/submodel/submodelElements/" + filePath).openStream());
+
+		FileOutputStream fileOutputStream = new FileOutputStream(actual);
+		byte dataBuffer[] = new byte[1024];
+		int bytesRead;
+		while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+			fileOutputStream.write(dataBuffer, 0, bytesRead);
+		}
+		fileOutputStream.close();
+		return actual;
 	}
 
 	@Test
@@ -103,4 +148,8 @@ public class TestAASAggregatorProxyWithAASXProvider extends TestAASAggregatorPro
 		assertNull(intNullValue);
 	}
 
+	static String readFile(String path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		return new String(encoded, encoding);
+	}
 }
