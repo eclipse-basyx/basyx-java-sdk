@@ -41,7 +41,6 @@ import org.eclipse.basyx.aas.factory.aasx.AASXToMetamodelConverter;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.aas.aggregator.aasxupload.api.IAASAggregatorAASXUpload;
-import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
@@ -81,46 +80,43 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 		}
 	}
 
-	public void uploadFilesInAASX(AASXToMetamodelConverter converter) throws InvalidFormatException, ParserConfigurationException, SAXException, IOException {
+	public void uploadFilesInAASX(AASXToMetamodelConverter converter) throws InvalidFormatException, IOException, ParserConfigurationException, SAXException {
 		converter.retrieveAASBundles().forEach(aasBundle -> {
 			aasBundle.getSubmodels().forEach(submodel -> {
-				submodel.getSubmodelElements().values().forEach(sme -> {
-					uploadFileInSubmodelElement(aasBundle, converter, submodel, sme, getSubmodelElementFileUploadURL(submodel.getIdShort(), sme.getIdShort()));
-
-					if (sme instanceof SubmodelElementCollection)
-						uploadFileInSubmodelElementCollection(aasBundle, converter, submodel, sme);
-
+				submodel.getSubmodelElements().values().forEach(submodelElement -> {
+					uploadNestedFiles(aasBundle.getAAS().getIdentification(), converter, submodelElement, getSubmodelElementPath(submodel.getIdShort()));
 				});
 			});
 		});
 	}
 
-	private void uploadFileInSubmodelElementCollection(AASBundle aasBundle, AASXToMetamodelConverter converter, ISubmodel submodel, ISubmodelElement sme) {
-		ISubmodelElementCollection smeCollection = (ISubmodelElementCollection) sme;
-		smeCollection.getSubmodelElements().values().forEach(element -> {
-			if (element instanceof File)
-				uploadFileInSubmodelElement(aasBundle, converter, submodel, element, getSubmodelElementCollectionFileUploadURL(submodel.getIdShort(), smeCollection.getIdShort(), element.getIdShort()));
-			if (element instanceof SubmodelElementCollection)
-				uploadFileInSubmodelElementCollection(aasBundle, converter, submodel, element);
-		});
+	private void uploadNestedFiles(IIdentifier aasIdentification, AASXToMetamodelConverter converter, ISubmodelElement submodelElement, String submodelCollectionPath) {
+		if (submodelElement instanceof File) {
+			uploadFileInSubmodelElement(aasIdentification, converter, submodelElement, submodelCollectionPath + "/" + submodelElement.getIdShort());
+		} else if (submodelElement instanceof SubmodelElementCollection) {
+			uploadFileInSubmodelElementCollection(aasIdentification, converter, submodelElement, submodelCollectionPath + "/" + submodelElement.getIdShort());
+		}
 	}
 
-	private void uploadFileInSubmodelElement(AASBundle aasBundle, AASXToMetamodelConverter converter, ISubmodel submodel, ISubmodelElement sme, String uploadURL) {
-		if (sme instanceof File) {
+	private void uploadFileInSubmodelElement(IIdentifier aasIdentification, AASXToMetamodelConverter converter, ISubmodelElement submodelElement, String submodelElementPath) {
+		if (submodelElement instanceof File) {
 			try {
-				getAASProvider(aasBundle.getAAS().getIdentification()).createValue(uploadURL, converter.retrieveFileInputStream((String) sme.getValue()));
+				getAASProvider(aasIdentification).createValue(submodelElementPath + "/File/upload", converter.retrieveFileInputStream((String) submodelElement.getValue()));
 			} catch (InvalidFormatException | IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	private String getSubmodelElementFileUploadURL(String submodelIdshort, String smeIdshort) {
-		return "aas/submodels/" + submodelIdshort + "/submodel/submodelElements/" + smeIdshort + "/File/upload";
+	private void uploadFileInSubmodelElementCollection(IIdentifier aasIdentification, AASXToMetamodelConverter converter, ISubmodelElement submodelCollection, String submodelCollectionPath) {
+		ISubmodelElementCollection smeCollection = (ISubmodelElementCollection) submodelCollection;
+		smeCollection.getSubmodelElements().values().forEach(submodelElement -> {
+			uploadNestedFiles(aasIdentification, converter, submodelElement, submodelCollectionPath);
+		});
 	}
 
-	private String getSubmodelElementCollectionFileUploadURL(String submodelIdshort, String collectionIdShort, String smeIdshort) {
-		return "aas/submodels/" + submodelIdshort + "/submodel/submodelElements/" + collectionIdShort + "/" + smeIdshort + "/File/upload";
+	private String getSubmodelElementPath(String submodelIdshort) {
+		return "aas/submodels/" + submodelIdshort + "/submodel/submodelElements/";
 	}
 
 	@Override
