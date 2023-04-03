@@ -337,6 +337,37 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return submodelAPIAuthorizer.authorizeGetOperationResult(subjectInformationProvider.get(), aas, smId, smSemanticId, smElIdShortPath, requestId, () -> decoratedSubmodelAPI.getOperationResult(smElIdShortPath, requestId));
 	}
 
+	@Override
+	public File getSubmodelElementFile(String idShortPath) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
+			return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
+		}
+
+		try {
+			// TODO: maybe write own authorize method later and use its return
+			authorizeGetSubmodelElement(idShortPath);
+			return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
+		} catch (final InhibitException e) {
+			throw new NotAuthorizedException(e);
+		}
+	}
+
+	@Override
+	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
+			decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
+			return;
+		}
+
+		try {
+			// TODO: maybe write own authorize method later
+			authorizeUpdateSubmodelElement(idShortPath);
+			decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
+		} catch (final InhibitException e) {
+			throw new NotAuthorizedException(e);
+		}
+	}
+
 	private IIdentifier getSmIdUnsecured() throws ResourceNotFoundException {
 		final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 
@@ -357,15 +388,5 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 			return sm.getSemanticId();
 		}
-	}
-
-	@Override
-	public File getSubmodelElementFile(String idShortPath) {
-		return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
-	}
-
-	@Override
-	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
-		decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
 	}
 }
