@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
-import org.eclipse.basyx.extensions.storage.BaSyxStorageAPI;
+import org.eclipse.basyx.extensions.internal.storage.BaSyxStorageAPI;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
