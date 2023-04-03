@@ -121,6 +121,7 @@ public class TestHttpFileUpload {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private CloseableHttpResponse uploadDummyFileToSubmodelElement(String submodelElementIdShort) throws IOException {
 		CloseableHttpClient client = HttpClients.createDefault();
 
@@ -140,6 +141,7 @@ public class TestHttpFileUpload {
 		return client.execute(uploadFile);
 	}
 
+	@SuppressWarnings("deprecation")
 	private CloseableHttpResponse uploadDummyAAS()
 			throws FileNotFoundException, IOException, UnsupportedEncodingException, ClientProtocolException {
 		File file = ResourceUtils.getFile("src/test/resources/aas/dummyAAS.json");
@@ -154,6 +156,7 @@ public class TestHttpFileUpload {
 		return client.execute(put);
 	}
 
+	@SuppressWarnings("deprecation")
 	private CloseableHttpResponse uploadDummySubmodel()
 			throws FileNotFoundException, IOException, UnsupportedEncodingException, ClientProtocolException {
 		File file = ResourceUtils.getFile("src/test/resources/aas/dummySubmodel.json");
