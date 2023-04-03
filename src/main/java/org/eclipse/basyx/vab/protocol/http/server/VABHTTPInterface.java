@@ -119,7 +119,10 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			String path = extractPath(req);
-
+			if (isFileAccessPath(path)) {
+				providerBackend.processBaSysFileGet(path, resp);
+				return;
+			}
 			// Setup HTML response header
 			resp.setContentType("application/json");
 			resp.setCharacterEncoding("UTF-8");
@@ -134,6 +137,10 @@ public class VABHTTPInterface<ModelProvider extends IModelProvider> extends Basy
 			logger.debug("Exception in HTTP-GET. Response-code: " + httpCode, e);
 		}
 
+	}
+
+	private boolean isFileAccessPath(String path) {
+		return VABPathTools.getLastElement(path).equals("File");
 	}
 
 	/**

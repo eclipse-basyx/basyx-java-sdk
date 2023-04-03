@@ -26,10 +26,14 @@
 
 package org.eclipse.basyx.extensions.aas.aggregator.aasxupload;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleHelper;
@@ -38,9 +42,14 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.extensions.aas.aggregator.aasxupload.api.IAASAggregatorAASXUpload;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
+import org.xml.sax.SAXException;
 
 /**
  * An implementation of the IAASAggregatorAASXUpload interface using maps
@@ -65,9 +74,47 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 			AASXToMetamodelConverter converter = new AASXToMetamodelConverter(aasxStream);
 			Set<AASBundle> bundles = converter.retrieveAASBundles();
 			AASBundleHelper.integrate(this, bundles);
+			uploadFilesInAASX(converter);
 		} catch (Exception e) {
 			throw new MalformedRequestException("invalid request to aasx path without valid aasx input stream");
 		}
+	}
+
+	public void uploadFilesInAASX(AASXToMetamodelConverter converter) throws InvalidFormatException, IOException, ParserConfigurationException, SAXException {
+		converter.retrieveAASBundles().forEach(aasBundle -> {
+			aasBundle.getSubmodels().forEach(submodel -> {
+				submodel.getSubmodelElements().values().forEach(submodelElement -> {
+					uploadNestedFiles(aasBundle.getAAS().getIdentification(), converter, submodelElement, getSubmodelElementPath(submodel.getIdShort()));
+				});
+			});
+		});
+	}
+
+	private void uploadNestedFiles(IIdentifier aasIdentification, AASXToMetamodelConverter converter, ISubmodelElement submodelElement, String submodelCollectionPath) {
+		if (submodelElement instanceof File) {
+			uploadFileInSubmodelElement(aasIdentification, converter, (File) submodelElement, submodelCollectionPath + "/" + submodelElement.getIdShort());
+		} else if (submodelElement instanceof SubmodelElementCollection) {
+			uploadFileInSubmodelElementCollection(aasIdentification, converter, submodelElement, submodelCollectionPath + "/" + submodelElement.getIdShort());
+		}
+	}
+
+	private void uploadFileInSubmodelElement(IIdentifier aasIdentification, AASXToMetamodelConverter converter, File submodelElement, String submodelElementPath) {
+		try {
+			getAASProvider(aasIdentification).createValue(submodelElementPath + "/File/upload", converter.retrieveFileInputStream((String) submodelElement.getValue()));
+		} catch (InvalidFormatException | IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void uploadFileInSubmodelElementCollection(IIdentifier aasIdentification, AASXToMetamodelConverter converter, ISubmodelElement submodelCollection, String submodelCollectionPath) {
+		ISubmodelElementCollection smeCollection = (ISubmodelElementCollection) submodelCollection;
+		smeCollection.getSubmodelElements().values().forEach(submodelElement -> {
+			uploadNestedFiles(aasIdentification, converter, submodelElement, submodelCollectionPath);
+		});
+	}
+
+	private String getSubmodelElementPath(String submodelIdshort) {
+		return "aas/submodels/" + submodelIdshort + "/submodel/submodelElements/";
 	}
 
 	@Override

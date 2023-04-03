@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -38,6 +39,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
@@ -69,6 +71,8 @@ public class SubmodelProvider implements IModelProvider {
 
 	public static final String VALUES = "values";
 	public static final String SUBMODEL = "submodel";
+	public static final String FILE = "File";
+	public static final String UPLOAD = "upload";
 
 	ISubmodelAPI submodelAPI;
 
@@ -128,41 +132,21 @@ public class SubmodelProvider implements IModelProvider {
 		VABPathTools.checkPathForNull(path);
 		path = removeSubmodelPrefix(path);
 		if (path.isEmpty()) {
-			ISubmodel sm = submodelAPI.getSubmodel();
-
-			// Change internal map representation to set
-			if (sm instanceof Submodel) {
-				return SubmodelElementMapCollectionConverter.smToMap((Submodel) sm);
-			} else {
-				return sm;
-			}
-		} else {
-			String[] splitted = VABPathTools.splitPath(path);
-			// Request for submodelElements
-			if (splitted.length == 1 && splitted[0].equals(VALUES)) {
-				// Request for values of all submodelElements
-				return getSubmodelProviderValues();
-			} else if (splitted.length == 1 && splitted[0].equals(MultiSubmodelElementProvider.ELEMENTS)) {
-				return submodelAPI.getSubmodelElements();
-			} else if (splitted.length >= 2 && isQualifier(splitted[0])) { // Request for element with specific idShort
-				// Remove initial "/submodelElements"
-				path = removeSMElementPrefix(path);
-
-				if (endsWithValue(splitted)) { // Request for the value of an property
-					String idShortPath = removeValueSuffix(path);
-					return submodelAPI.getSubmodelElementValue(idShortPath);
-				} else if (isInvocationListPath(splitted)) {
-					List<String> idShorts = getIdShorts(splitted);
-
-					// Remove invocationList/{requestId} from the idShorts
-					idShorts.remove(idShorts.size() - 1);
-					idShorts.remove(idShorts.size() - 1);
-					return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
-				} else {
-					return submodelAPI.getSubmodelElement(path);
-				}
-			}
+			return handleEmptyPath();
 		}
+
+		String[] splitted = VABPathTools.splitPath(path);
+
+		if (isRequestForAllSubmodelElementValues(splitted)) {
+			return getSubmodelProviderValues();
+		} else if (isSubmodelElementsRequest(splitted)) {
+			return submodelAPI.getSubmodelElements();
+		} else if (isSpecificSubmodelElementRequest(splitted)) {
+			// Remove initial "/submodelElements"
+			path = removeSMElementPrefix(path);
+			return handleSpecificSubmodelElementRequest(path, splitted);
+		}
+
 		throw new MalformedRequestException("Unknown path " + path + " was requested");
 	}
 
@@ -265,7 +249,16 @@ public class SubmodelProvider implements IModelProvider {
 
 	@Override
 	public void createValue(String path, Object newEntity) throws ProviderException {
-		throw new MalformedRequestException("POST (create) on '" + path + "' not allowed. Use PUT (set) instead.");
+		path = removeSubmodelPrefix(path);
+		if (path.isEmpty()) {
+			throw new MalformedRequestException("POST on \"" + SUBMODEL + "\" not supported");
+		}
+		String[] splitted = VABPathTools.splitPath(path);
+		if (endsWithFileUpload(splitted)) {
+			submodelAPI.uploadSubmodelElementFile(getFileIdShortFromSplittedPath4FileUpload(splitted), (InputStream) newEntity);
+			return;
+		}
+		throw new MalformedRequestException("POST on \"" + path + "\" not allowed");
 	}
 
 	@Override
@@ -278,7 +271,7 @@ public class SubmodelProvider implements IModelProvider {
 					path = removeSMElementPrefix(path);
 					submodelAPI.deleteSubmodelElement(path);
 				} else {
-					submodelAPI.deleteSubmodelElement(splitted[1]);
+					submodelAPI.deleteSubmodelElement(getIdShortFromSplittedPath(splitted));
 				}
 			} else {
 				throw new MalformedRequestException("Path " + path + " not supported for delete");
@@ -344,5 +337,103 @@ public class SubmodelProvider implements IModelProvider {
 
 	private String removeSMElementPrefix(String path) {
 		return path.replaceFirst(MultiSubmodelElementProvider.ELEMENTS, "");
+	}
+
+	private boolean endsWithFile(String[] splitted) {
+		return splitted[splitted.length - 1].equals(FILE);
+	}
+
+	private boolean endsWithFileUpload(String[] splitted) {
+		return splitted[splitted.length - 1].equals(UPLOAD);
+	}
+
+	private String getFileIdShortFromSplittedPath4FileUpload(String[] splitted) {
+		String idShort = "";
+		for (int i = 1; i < splitted.length - 2; i++) {
+			idShort = concatFileIdShortPath(splitted, idShort, i);
+		}
+		return idShort;
+	}
+
+	private String getFileIdShortFromSplittedPath4FileDownload(String[] splitted) {
+		String idShort = "";
+		for (int i = 1; i < splitted.length - 1; i++) {
+			idShort = concatFileIdShortPath(splitted, idShort, i);
+		}
+		return idShort;
+	}
+
+	private String concatFileIdShortPath(String[] splitted, String idShort, int i) {
+		if (idShort.isEmpty()) {
+			idShort = idShort.concat(splitted[i]);
+		} else {
+			idShort = idShort.concat("/" + splitted[i]);
+		}
+		return idShort;
+	}
+
+	private String getIdShortFromSplittedPath(String[] splitted) {
+		return splitted[1];
+	}
+
+	@SuppressWarnings("unchecked")
+	private Object handleFile(String[] splitted) {
+		String idShortPath = getFileIdShortFromSplittedPath4FileDownload(splitted);
+		Map<String, Object> submodelElement = (Map<String, Object>) submodelAPI.getSubmodelElement(idShortPath);
+
+		if (!File.isFile(submodelElement)) {
+			throw new MalformedRequestException("/File is only allowed for File Submodel Elements");
+		}
+
+		return submodelAPI.getSubmodelElementFile(idShortPath);
+	}
+
+	private Object handleEmptyPath() {
+		ISubmodel sm = submodelAPI.getSubmodel();
+
+		// Change internal map representation to set
+		if (sm instanceof Submodel) {
+			return SubmodelElementMapCollectionConverter.smToMap((Submodel) sm);
+		} else {
+			return sm;
+		}
+	}
+
+	private Object handleSpecificSubmodelElementRequest(String path, String[] splitted) {
+		if (endsWithValue(splitted)) { // Request for the value of an property
+			return handleValue(path);
+		} else if (isInvocationListPath(splitted)) {
+			return handleInvocationListPath(splitted);
+		} else if (endsWithFile(splitted)) {
+			return handleFile(splitted);
+		} else {
+			return submodelAPI.getSubmodelElement(path);
+		}
+	}
+
+	private Object handleValue(String path) {
+		String idShortPath = removeValueSuffix(path);
+		return submodelAPI.getSubmodelElementValue(idShortPath);
+	}
+
+	private Object handleInvocationListPath(String[] splitted) {
+		List<String> idShorts = getIdShorts(splitted);
+
+		// Remove invocationList/{requestId} from the idShorts
+		idShorts.remove(idShorts.size() - 1);
+		idShorts.remove(idShorts.size() - 1);
+		return submodelAPI.getOperationResult(idShorts.get(0), splitted[splitted.length - 1]);
+	}
+
+	private boolean isRequestForAllSubmodelElementValues(String[] splitted) {
+		return splitted.length == 1 && splitted[0].equals(VALUES);
+	}
+
+	private boolean isSubmodelElementsRequest(String[] splitted) {
+		return splitted.length == 1 && splitted[0].equals(MultiSubmodelElementProvider.ELEMENTS);
+	}
+
+	private boolean isSpecificSubmodelElementRequest(String[] splitted) {
+		return splitted.length >= 2 && isQualifier(splitted[0]);
 	}
 }

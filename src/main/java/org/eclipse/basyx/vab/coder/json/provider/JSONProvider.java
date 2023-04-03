@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.coder.json.provider;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.basyx.vab.coder.json.metaprotocol.Result;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
@@ -39,6 +41,7 @@ import org.eclipse.basyx.vab.coder.json.serialization.GSONToolsFactory;
 import org.eclipse.basyx.vab.exception.LostHTTPRequestParameterException;
 import org.eclipse.basyx.vab.exception.provider.MalformedRequestException;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -198,6 +201,26 @@ public class JSONProvider<ModelProvider extends IModelProvider> {
 		} catch (Exception e) {
 			sendException(outputStream, e);
 		}
+	}
+
+	public void processBaSysFileGet(String path, HttpServletResponse resp)
+			throws ResourceNotFoundException, IOException {
+		java.io.File file = (java.io.File) providerBackend.getValue(path);
+		if (!file.exists()) {
+			throw new ResourceNotFoundException("The File Submodel Element does not contain a File");
+		}
+		byte[] fileBytes = new byte[(int) file.length()];
+		FileInputStream fileInputStream = new FileInputStream(file);
+		fileInputStream.read(fileBytes);
+		fileInputStream.close();
+
+
+		// Set the response headers
+		resp.setContentType("application/octet-stream");
+		resp.setContentLength((int) file.length());
+		resp.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
+		resp.getOutputStream().write(fileBytes);
+		resp.getOutputStream().close();
 	}
 
 	/**

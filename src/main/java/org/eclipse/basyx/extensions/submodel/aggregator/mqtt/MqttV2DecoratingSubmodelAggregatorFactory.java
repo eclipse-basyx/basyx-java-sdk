@@ -30,6 +30,7 @@ import java.security.ProviderException;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregator;
 import org.eclipse.basyx.submodel.aggregator.api.ISubmodelAggregatorFactory;
 import org.eclipse.basyx.submodel.aggregator.observing.ObservableSubmodelAggregatorV2;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -59,13 +60,27 @@ public class MqttV2DecoratingSubmodelAggregatorFactory implements ISubmodelAggre
 	public ISubmodelAggregator create() {
 		try {
 			ISubmodelAggregator aggregator = submodelAggregatorFactory.create();
-			observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator, this.aasServerId);
-			observer = new MqttV2SubmodelAggregatorObserver(mqttClient, topicFactory);
-			observedSubmodelAggregator.addObserver(observer);
-			return observedSubmodelAggregator;
+			return decorateAggregator(aggregator);
 		} catch (MqttException e) {
 			throw new ProviderException(e);
 		}
+	}
+
+	@Override
+	public ISubmodelAggregator create(IIdentifier aasIdentifier) {
+		try {
+			ISubmodelAggregator aggregator = submodelAggregatorFactory.create(aasIdentifier);
+			return decorateAggregator(aggregator);
+		} catch (MqttException e) {
+			throw new ProviderException(e);
+		}
+	}
+
+	private ISubmodelAggregator decorateAggregator(ISubmodelAggregator aggregator) throws MqttException {
+		observedSubmodelAggregator = new ObservableSubmodelAggregatorV2(aggregator, this.aasServerId);
+		observer = new MqttV2SubmodelAggregatorObserver(mqttClient, topicFactory);
+		observedSubmodelAggregator.addObserver(observer);
+		return observedSubmodelAggregator;
 	}
 
 }

@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi;
 
+import java.io.FileInputStream;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -117,7 +118,8 @@ public class SubmodelElementProvider implements IModelProvider {
 			throw new MalformedRequestException("The given path '" + path + "' does not end in /value.");
 		}
 
-		if (!specializedProvider && path.equals(MultiSubmodelElementProvider.VALUE)) {
+		if (!specializedProvider && path.equals(MultiSubmodelElementProvider.VALUE)
+				&& !isFileInputStream(newValue)) {
 			// Path is only "value" and no specialized Provider has to be used -> update the
 			// Element of this Provider
 			Map<String, Object> elementMap = (Map<String, Object>) proxy.getValue("");
@@ -168,6 +170,10 @@ public class SubmodelElementProvider implements IModelProvider {
 	@Override
 	public Object invokeOperation(String path, Object... parameter) throws ProviderException {
 		return proxy.invokeOperation(path, parameter);
+	}
+
+	private boolean isFileInputStream(Object newValue) {
+		return newValue instanceof FileInputStream;
 	}
 
 }

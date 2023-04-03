@@ -24,6 +24,8 @@
 ******************************************************************************/
 package org.eclipse.basyx.submodel.restapi.observing;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -159,6 +161,16 @@ public class ObservableSubmodelAPIV2 extends Observable<ISubmodelAPIObserverV2> 
 			return keys.get(0).getValue();
 		}
 		return null;
+	}
+
+	@Override
+	public File getSubmodelElementFile(String idShortPath) {
+		return submodelAPI.getSubmodelElementFile(idShortPath);
+	}
+
+	@Override
+	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
+		submodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
 	}
 
 }

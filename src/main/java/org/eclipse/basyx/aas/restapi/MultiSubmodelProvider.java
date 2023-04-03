@@ -98,6 +98,8 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
 public class MultiSubmodelProvider implements IModelProvider {
 
 	public static final String AAS = "aas";
+	public static final String FILE = "File";
+	public static final String UPLOAD = "upload";
 	public static final String SUBMODELS_PREFIX = VABPathTools.concatenatePaths(AAS, AssetAdministrationShell.SUBMODELS);
 
 	/**
@@ -373,7 +375,40 @@ public class MultiSubmodelProvider implements IModelProvider {
 
 	@Override
 	public void createValue(String path, Object newValue) throws ProviderException {
-		throw new MalformedRequestException("Create is not supported by VABMultiSubmodelProvider. Path was: " + path);
+		throwExceptionIfNoSubmodelPath(path);
+
+		VABPathTools.checkPathForNull(path);
+		path = VABPathTools.stripSlashes(path);
+		String[] pathElements = VABPathTools.splitPath(path);
+		String propertyPath = VABPathTools.buildPath(pathElements, 3);
+
+		if (!propertyPath.isEmpty()) {
+			throwExceptionIfIsNoFileUploadPath(propertyPath);
+			String smIdShort = pathElements[2];
+			IModelProvider provider = retrieveSubmodelProvider(smIdShort);
+			provider.createValue(propertyPath, newValue);
+			return;
+		}
+
+		throw new MalformedRequestException("Create is not supported by Path: " + path);
+	}
+
+	private boolean isPropertyPathFileUploadPath(String propertyPath) {
+		return propertyPath.endsWith(UPLOAD);
+	}
+
+	private void throwExceptionIfIsNoFileUploadPath(String path) {
+		boolean isFileUpload = isPropertyPathFileUploadPath(path);
+		if (!isFileUpload) {
+			throw new MalformedRequestException("Create is not supported by Path: " + path);
+		}
+	}
+
+	private void throwExceptionIfNoSubmodelPath(String path) {
+		if (!path.startsWith(SUBMODELS_PREFIX)) {
+			throw new MalformedRequestException("Access to MultiSubmodelProvider always has to start with \""
+					+ SUBMODELS_PREFIX + "\", was " + path);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -388,9 +423,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	public void deleteValue(String path) throws ProviderException {
 		VABPathTools.checkPathForNull(path);
 		path = VABPathTools.stripSlashes(path);
-		if (!path.startsWith(SUBMODELS_PREFIX)) {
-			throw new MalformedRequestException("Access to MultiSubmodelProvider always has to start with \"" + SUBMODELS_PREFIX + "\", was " + path);
-		}
+		throwExceptionIfNoSubmodelPath(path);
 
 		String[] pathElements = VABPathTools.splitPath(path);
 		String propertyPath = VABPathTools.buildPath(pathElements, 3);
@@ -420,9 +453,7 @@ public class MultiSubmodelProvider implements IModelProvider {
 	public Object invokeOperation(String path, Object... parameter) throws ProviderException {
 		VABPathTools.checkPathForNull(path);
 		path = VABPathTools.stripSlashes(path);
-		if (!path.startsWith(SUBMODELS_PREFIX)) {
-			throw new MalformedRequestException("Access to MultiSubmodelProvider always has to start with \"" + SUBMODELS_PREFIX + "\", was " + path);
-		}
+		throwExceptionIfNoSubmodelPath(path);
 		String[] pathElements = VABPathTools.splitPath(path);
 		String operationPath = VABPathTools.buildPath(pathElements, 3);
 		String smIdShort = pathElements[2];

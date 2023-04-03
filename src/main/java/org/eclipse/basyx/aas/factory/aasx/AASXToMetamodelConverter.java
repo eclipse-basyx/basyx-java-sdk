@@ -40,7 +40,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -75,6 +77,7 @@ public class AASXToMetamodelConverter {
 
 	private static final String XML_TYPE = "http://www.admin-shell.io/aasx/relationships/aas-spec";
 	private static final String AASX_ORIGIN = "/aasx/aasx-origin";
+	public static final String TEMP_DIRECTORY = "basyx-temp";
 
 	private String aasxPath;
 	private OPCPackage aasxRoot;
@@ -134,6 +137,13 @@ public class AASXToMetamodelConverter {
 		closeOPCPackage();
 
 		return (Set<T>) bundles;
+	}
+
+	public InputStream retrieveFileInputStream(String path) throws InvalidFormatException, IOException {
+		loadAASX();
+		PackagePart filePart = aasxRoot.getPart(PackagingURIHelper.createPartName(path));
+		closeOPCPackage();
+		return filePart.getInputStream();
 	}
 
 	private void loadAASX() throws IOException, InvalidFormatException {
@@ -270,7 +280,7 @@ public class AASXToMetamodelConverter {
 	 * @throws InvalidFormatException
 	 */
 	public void unzipRelatedFiles() throws IOException, ParserConfigurationException, SAXException, URISyntaxException, InvalidFormatException {
-		unzipRelatedFiles(getRootFolder());
+		unzipRelatedFiles(getTemporaryDirPath());
 	}
 	
 	/**
@@ -295,13 +305,26 @@ public class AASXToMetamodelConverter {
 	}
 
 	/**
+	 * Creates a temporary directory to hold the unpackaged files.
+	 *
+	 * @return Path of the temporary directory
+	 *
+	 */
+	protected Path getTemporaryDirPath() {
+		return Paths.get(FileUtils.getTempDirectory().getAbsolutePath(), TEMP_DIRECTORY);
+	}
+
+	/**
 	 * Create a folder to hold the unpackaged files The folder has the path
 	 * \target\classes\docs
 	 * 
 	 * @throws IOException
 	 * @throws URISyntaxException
+	 * 
+	 * @deprecated This method is deprecated. Please use the {@link AASXToMetamodelConverter#getTemporaryDirPath()}
 	 */
-	protected Path getRootFolder() throws IOException, URISyntaxException {
+	@Deprecated(since = "1.4.0", forRemoval = true)
+	protected Path getRootFolder() throws URISyntaxException, IOException {
 		URI uri = AASXToMetamodelConverter.class.getProtectionDomain().getCodeSource().getLocation().toURI();
 		URI parent = new File(uri).getParentFile().toURI();
 		return Paths.get(parent);
