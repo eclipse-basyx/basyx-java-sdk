@@ -54,6 +54,8 @@ import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implement a AAS manager backend that communicates via HTTP/REST<br>
@@ -63,6 +65,8 @@ import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnectorFactory;
  * 
  */
 public class ConnectedAssetAdministrationShellManager implements IAssetAdministrationShellManager {
+	
+	private Logger logger = LoggerFactory.getLogger(ConnectedAssetAdministrationShell.class);
 
 	protected IAASRegistry aasDirectory;
 	protected IConnectorFactory connectorFactory;
@@ -141,7 +145,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		proxyFactory.createProxy(addr).deleteValue("");
 
 		// Delete from Registry
-		aasDirectory.delete(id);
+		deleteAasFromRegistryIfPresent(id);
 
 		// TODO: How to handle submodels -> Lifecycle needs to be clarified
 	}
@@ -169,7 +173,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		IAssetAdministrationShell shell = retrieveAAS(aasId);
 		shell.removeSubmodel(submodelId);
 
-		aasDirectory.delete(aasId, submodelId);
+		deleteSubmodelFromDirectoryIfPresent(aasId, submodelId);
 	}
 
 	@Override
@@ -181,6 +185,22 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		proxy.createAAS(aas);
 		String combinedEndpoint = VABPathTools.concatenatePaths(harmonizedEndpoint, AASAggregatorAPIHelper.getAASAccessPath(aas.getIdentification()));
 		aasDirectory.register(new AASDescriptor(aas, combinedEndpoint));
+	}
+	
+	private void deleteAasFromRegistryIfPresent(IIdentifier aasId) {
+		try {
+			aasDirectory.delete(aasId);
+		} catch (ResourceNotFoundException e) {
+			logger.info("The AAS with id {} does not exist in the registry.", aasId.getId());
+		}
+	}
+	
+	private void deleteSubmodelFromDirectoryIfPresent(IIdentifier aasId, IIdentifier submodelId) {
+		try {
+			aasDirectory.delete(aasId, submodelId);
+		} catch (ResourceNotFoundException e) {
+			logger.info("The submodel with id {} does not exist in the registry.", submodelId.getId());
+		}
 	}
 	
 	private VABElementProxy getAASProxyFromId(IIdentifier aasId) {
