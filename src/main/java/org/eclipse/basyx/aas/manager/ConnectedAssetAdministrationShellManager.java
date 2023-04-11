@@ -145,7 +145,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		proxyFactory.createProxy(addr).deleteValue("");
 
 		// Delete from Registry
-		deleteAasFromRegistryIfPresent(id);
+		deleteAasFromDirectoryIfPresent(id);
 
 		// TODO: How to handle submodels -> Lifecycle needs to be clarified
 	}
@@ -187,7 +187,7 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 		aasDirectory.register(new AASDescriptor(aas, combinedEndpoint));
 	}
 	
-	private void deleteAasFromRegistryIfPresent(IIdentifier aasId) {
+	private void deleteAasFromDirectoryIfPresent(IIdentifier aasId) {
 		try {
 			aasDirectory.delete(aasId);
 		} catch (ResourceNotFoundException e) {
