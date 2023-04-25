@@ -165,6 +165,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		IAssetAdministrationShell parsedAAS = bundle.getAAS();
 		assertEquals(AAS_IDSHORT, parsedAAS.getIdShort());
 		assertEquals(AAS_IDENTIFICATION, parsedAAS.getIdentification().getId());
+		assertEquals(ASSET_IDSHORT, parsedAAS.getAsset().getIdShort());
 
 		assertEquals(submodelSize, bundle.getSubmodels().size());
 
