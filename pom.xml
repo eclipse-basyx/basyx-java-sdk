@@ -258,6 +258,12 @@
 			<version>4.1.2</version>
 		</dependency>
 		
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-compress</artifactId>
+		    <version>1.21</version>
+		</dependency>
+		
 		<!-- Used by Logback to compile filter expressions from logback.xml -->
 		<dependency>
     		<groupId>org.codehaus.janino</groupId>
