@@ -73,13 +73,14 @@ public class XMLToMetamodelConverter {
 		Map<String, Object> xmlConceptDescriptions = (Map<String, Object>) root.get(ConceptDescriptionXMLConverter.CONCEPT_DESCRIPTIONS);
 
 		List<IConceptDescription> conceptDescriptions = ConceptDescriptionXMLConverter.parseConceptDescriptions(xmlConceptDescriptions);
+		
+		Map<String, Object> xmlAssets = (Map<String, Object>) root.get(AssetXMLConverter.ASSETS);
+		List<IAsset> assets = AssetXMLConverter.parseAssets(xmlAssets);
 
-		List<IAssetAdministrationShell> shells = AssetAdministrationShellXMLConverter.parseAssetAdministrationShells(xmlAASs, conceptDescriptions);
+		List<IAssetAdministrationShell> shells = AssetAdministrationShellXMLConverter.parseAssetAdministrationShells(xmlAASs, conceptDescriptions, assets);
 
 		Map<String, Object> xmlSubmodels = (Map<String, Object>) root.get(SubmodelXMLConverter.SUBMODELS);
 		List<ISubmodel> submodels = SubmodelXMLConverter.parseSubmodels(xmlSubmodels);
-		Map<String, Object> xmlAssets = (Map<String, Object>) root.get(AssetXMLConverter.ASSETS);
-		List<IAsset> assets = AssetXMLConverter.parseAssets(xmlAssets);
 
 		aasEnv = new AasEnv(shells, assets, conceptDescriptions, submodels);
 	}
