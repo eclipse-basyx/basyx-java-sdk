@@ -22,7 +22,7 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.storage;
+package org.eclipse.basyx.extensions.internal.storage;
 
 import java.util.HashMap;
 import java.util.Map;
