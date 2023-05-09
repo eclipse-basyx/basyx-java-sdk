@@ -193,6 +193,7 @@ public class ValueTypeHelper {
 					target = new BigInteger((String) value);
 				}
 				break;
+			case Decimal:
 			case Double:
 				if (((String) value).isEmpty()) {
 					target = new Double("NaN");
