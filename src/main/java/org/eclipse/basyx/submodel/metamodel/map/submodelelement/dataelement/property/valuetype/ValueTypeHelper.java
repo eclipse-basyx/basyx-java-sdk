@@ -24,6 +24,9 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Period;
@@ -47,6 +50,7 @@ import javax.xml.namespace.QName;
  */
 public class ValueTypeHelper {
 	private static Map<String, ValueType> typeMap = new LinkedHashMap<>();
+	private static Logger logger = LoggerFactory.getLogger(ValueTypeHelper.class);
 
 	// insert all types into a Map to allow getting a PropertyValueType based on a
 	// String
@@ -67,8 +71,11 @@ public class ValueTypeHelper {
 	 * @return
 	 */
 	public static ValueType fromName(String name) {
-		if (typeMap.containsKey(name)) {
-			return typeMap.get(name);
+		if (!name.toLowerCase().equals(name)) {
+			logger.warn("Type " + name + " does not consider standard. Trying to use it in lowercase!");
+		}
+		if (typeMap.containsKey(name.toLowerCase())) {
+			return typeMap.get(name.toLowerCase());
 		} else {
 			throw new RuntimeException("Unknown type name " + name + "; can not handle this PropertyValueType");
 		}
