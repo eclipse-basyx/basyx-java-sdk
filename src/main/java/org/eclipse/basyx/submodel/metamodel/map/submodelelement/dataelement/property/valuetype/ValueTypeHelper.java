@@ -71,10 +71,18 @@ public class ValueTypeHelper {
 	 * @return
 	 */
 	public static ValueType fromName(String name) {
-		if (!name.toLowerCase().equals(name)) {
-			logger.warn("Type " + name + " does not consider standard. Trying to use it in lowercase!");
-		}
-		if (typeMap.containsKey(name.toLowerCase())) {
+
+		String name_with_lowercase_start = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+
+		if (typeMap.containsKey(name)) {
+			return typeMap.get(name);
+		} else if (typeMap.containsKey(name_with_lowercase_start)) {
+			logger.warn("Type " + name + " does not comply to the standard.");
+			logger.warn("Trying to use it as " + name_with_lowercase_start + "!");
+			return typeMap.get(name_with_lowercase_start);
+		} else if (typeMap.containsKey(name.toLowerCase())) {
+			logger.warn("Type " + name + " does not comply to the standard.");
+			logger.warn("Trying to use it as " + name.toLowerCase() + "!");
 			return typeMap.get(name.toLowerCase());
 		} else {
 			throw new RuntimeException("Unknown type name " + name + "; can not handle this PropertyValueType");
