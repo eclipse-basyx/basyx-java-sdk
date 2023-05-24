@@ -24,6 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Period;
@@ -194,6 +195,14 @@ public class ValueTypeHelper {
 				}
 				break;
 			case Decimal:
+				if (((String) value).isEmpty()) {
+					// BigDecimal does not have anything like "NaN", so we set it to 0 to avoid setting it to null
+					// possibly resulting in NullPointerExceptions later on
+					target = BigDecimal.ZERO;
+				} else {
+					target = new BigDecimal((String) value);
+				}
+				break;
 			case Double:
 				if (((String) value).isEmpty()) {
 					target = new Double("NaN");
