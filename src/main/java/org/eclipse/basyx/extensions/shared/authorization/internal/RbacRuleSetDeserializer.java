@@ -24,13 +24,7 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.shared.authorization.internal;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,10 +33,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.NamedType;
 
 /**
  * Deserializer for {@link RbacRuleSet}.
@@ -93,11 +94,7 @@ public class RbacRuleSetDeserializer {
 		}
 
 		logger.info("loading rbac rules...");
-		try (final InputStream inputStream = RbacRuleSet.class.getResourceAsStream(filePath)) {
-			if (inputStream == null) {
-				throw new FileNotFoundException("could not find " + filePath);
-			}
-
+		try (final InputStream inputStream = getInputStreamFromFile(filePath)) {
 			final RbacRule[] rbacRules = deserialize(inputStream);
 
 			logger.info("Read rbac rules: {}", Arrays.toString(rbacRules));
@@ -107,10 +104,42 @@ public class RbacRuleSetDeserializer {
 		}
 	}
 
+	private InputStream getInputStreamFromFile(final String filePath) throws IOException {
+		try {
+			final InputStream inputStream = new FileInputStream(filePath);
+			logger.info("read {} from file system", filePath);
+			return inputStream;
+		} catch (FileNotFoundException e) {
+			// did not find file on file system, fallback to read from classpath next
+			logger.info("did not find {} in file system, try classpath next", filePath);
+		}
+		try {
+			final InputStream inputStream = RbacRuleSet.class.getResourceAsStream(filePath);
+			if (inputStream == null) {
+				throw new FileNotFoundException("could not find " + filePath);
+			}
+			logger.info("read {} from classpath", filePath);
+			return inputStream;
+		} catch (FileNotFoundException e) {
+			// did not find file on classpath, give up
+			logger.info("did not find {} on classpath, give up", filePath);
+		}
+		throw new IOException("could not find " + filePath);
+	}
+
 	private static class RbacRuleMultiple {
 		String role;
 		String[] actions;
 		Map<String, String>[] targetInformation;
+
+		public RbacRuleMultiple() {
+		}
+
+		public RbacRuleMultiple(final @JsonProperty("role") String role, final @JsonProperty("action") String[] actions, final @JsonProperty("targetInformation") Map<String, String>[] targetInformation) {
+			this.role = role;
+			this.actions = actions;
+			this.targetInformation = targetInformation;
+		}
 
 		public String getRole() {
 			return role;
@@ -122,15 +151,6 @@ public class RbacRuleSetDeserializer {
 
 		public Map<String, String>[] getTargetInformation() {
 			return targetInformation;
-		}
-
-		public RbacRuleMultiple() {
-		}
-
-		public RbacRuleMultiple(final @JsonProperty("role") String role, final @JsonProperty("action") String[] actions, final @JsonProperty("targetInformation") Map<String, String>[] targetInformation) {
-			this.role = role;
-			this.actions = actions;
-			this.targetInformation = targetInformation;
 		}
 	}
 
@@ -158,10 +178,7 @@ public class RbacRuleSetDeserializer {
 
 	public RbacRule[] deserialize(final InputStream inputStream) throws IOException {
 		final RbacRuleMultiple[] rbacRulesRaw = objectMapper.readValue(inputStream, RbacRuleMultiple[].class);
-		return Arrays.stream(rbacRulesRaw)
-				.flatMap(raw -> cartesianProduct2(raw.actions, raw.targetInformation)
-					.stream().map(pair -> objectMapper.convertValue(new RbacRuleDTO(raw.role, pair.first, pair.second), RbacRule.class))
-				)
+		return Arrays.stream(rbacRulesRaw).flatMap(raw -> cartesianProduct2(raw.actions, raw.targetInformation).stream().map(pair -> objectMapper.convertValue(new RbacRuleDTO(raw.role, pair.first, pair.second), RbacRule.class)))
 				.toArray(RbacRule[]::new);
 	}
 }
