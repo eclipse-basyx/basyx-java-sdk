@@ -28,6 +28,8 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelel
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Iterator;
+import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -43,6 +45,24 @@ import org.junit.Test;
  *
  */
 public class TestValueTypeHelper {
+
+	@Test
+	public void NonStandardUpperCaseHandling() {
+		List<String> testList = List.of("integer", "Integer", "Float", "dateTime", "base64Binary", "dateTimeStamp",
+				"INTEGER");
+		List<String> correctList = List.of("integer", "integer", "float", "dateTime", "base64Binary", "dateTimeStamp",
+				"integer");
+
+		Iterator<String> testsIterator = testList.iterator();
+		Iterator<String> correctsIterator = correctList.iterator();
+
+		while (testsIterator.hasNext() && correctsIterator.hasNext()) {
+			ValueType type = ValueTypeHelper.fromName(testsIterator.next());
+			ValueType expected = ValueTypeHelper.fromName(correctsIterator.next());
+			assertEquals(expected, type);
+
+		}
+	}
 
 	@Test
 	public void dateFromString() throws DatatypeConfigurationException {
