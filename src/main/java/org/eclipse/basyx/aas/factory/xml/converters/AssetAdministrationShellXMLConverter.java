@@ -30,13 +30,16 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.basyx.aas.factory.xml.api.parts.ViewXMLConverter;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.IConceptDictionary;
 import org.eclipse.basyx.aas.metamodel.api.parts.IView;
+import org.eclipse.basyx.aas.metamodel.api.parts.asset.IAsset;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
 import org.eclipse.basyx.aas.metamodel.map.parts.ConceptDictionary;
 import org.eclipse.basyx.submodel.factory.xml.XMLHelper;
 import org.eclipse.basyx.submodel.factory.xml.converters.qualifier.HasDataSpecificationXMLConverter;
@@ -87,7 +90,7 @@ public class AssetAdministrationShellXMLConverter {
 	 *         Map
 	 */
 	@SuppressWarnings("unchecked")
-	public static List<IAssetAdministrationShell> parseAssetAdministrationShells(Map<String, Object> xmlAASObject, Collection<IConceptDescription> conceptDescriptions) {
+	public static List<IAssetAdministrationShell> parseAssetAdministrationShells(Map<String, Object> xmlAASObject, Collection<IConceptDescription> conceptDescriptions, Collection<IAsset> assets) {
 		if (xmlAASObject == null) {
 			return Collections.emptyList();
 		}
@@ -117,6 +120,11 @@ public class AssetAdministrationShellXMLConverter {
 
 			Collection<IReference> submodelRefs = parseSubmodelRefs(xmlAAS);
 			adminShell.setSubmodelReferences(submodelRefs);
+			
+			Asset asset = parseAsset(assets, assetRef);
+			
+			if (asset != null)
+				adminShell.setAsset(asset);
 
 			aasList.add(adminShell);
 		}
@@ -352,6 +360,28 @@ public class AssetAdministrationShellXMLConverter {
 
 		}
 		return conceptDicts;
+	}
+	
+	private static Asset parseAsset(Collection<IAsset> assets, Reference assetRef) {
+		if (assetRef == null)
+			return null;
+		
+		Optional<IAsset> optionalAsset = assets.stream().filter(asset -> isReferenced(asset, assetRef)).findAny();
+		
+		if (optionalAsset.isEmpty())
+			return null;
+		
+		return (Asset) optionalAsset.get();
+	}
+	
+	private static boolean isReferenced(IAsset asset, Reference assetReference) {
+		Optional<IKey> optionalKey = assetReference.getKeys().stream().filter(key -> hasMatchingAsset(asset, key)).findAny();
+		
+		return optionalKey.isPresent();
+	}
+
+	private static boolean hasMatchingAsset(IAsset asset, IKey key) {
+		return key.getValue().equals(asset.getIdentification().getId());
 	}
 
 }

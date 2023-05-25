@@ -30,6 +30,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,11 +88,7 @@ public class RbacRuleSetDeserializer {
 		}
 
 		logger.info("loading rbac rules...");
-		try (final InputStream inputStream = RbacRuleSet.class.getResourceAsStream(filePath)) {
-			if (inputStream == null) {
-				throw new FileNotFoundException("could not find " + filePath);
-			}
-
+		try (final InputStream inputStream = getInputStreamFromFile(filePath)) {
 			final RbacRule[] rbacRules = deserialize(inputStream);
 
 			logger.info("Read rbac rules: {}", Arrays.toString(rbacRules));
@@ -98,6 +96,31 @@ public class RbacRuleSetDeserializer {
 			Arrays.stream(rbacRules).forEach(rbacRuleSet::addRule);
 			return rbacRuleSet;
 		}
+	}
+
+	private InputStream getInputStreamFromFile(final String filePath) throws IOException {
+		try {
+			final InputStream inputStream = new FileInputStream(filePath);
+			logger.info("read {} from file system", filePath);
+			return inputStream;
+		} catch (FileNotFoundException e) {
+			// did not find file on file system, fallback to read from classpath next
+			logger.info("did not find {} in file system, try classpath next", filePath);
+		}
+
+		try {
+			final InputStream inputStream = RbacRuleSet.class.getResourceAsStream(filePath);
+			if (inputStream == null) {
+				throw new FileNotFoundException("could not find " + filePath);
+			}
+			logger.info("read {} from classpath", filePath);
+			return inputStream;
+		} catch (FileNotFoundException e) {
+			// did not find file on classpath, give up
+			logger.info("did not find {} on classpath, give up", filePath);
+		}
+
+		throw new IOException("could not find " + filePath);
 	}
 
 	public RbacRule[] deserialize(final InputStream inputStream) throws IOException {
