@@ -351,13 +351,13 @@ public class AASXToMetamodelConverter {
 			return;
 		}
 		
-		logger.info("Unzipping " + filePath);
+		logger.debug("Unzipping " + filePath);
 		String relativePath = "files/" + VABPathTools.getParentPath(filePath);
 		Path destDir;
 
 	    destDir = pathToDirectory.resolve(relativePath);
 
-		logger.info("Unzipping to " + destDir);
+		logger.debug("Unzipping to " + destDir);
 		Files.createDirectories(destDir);
 
 		PackagePart part = aasxRoot.getPart(PackagingURIHelper.createPartName("/" + filePath));
