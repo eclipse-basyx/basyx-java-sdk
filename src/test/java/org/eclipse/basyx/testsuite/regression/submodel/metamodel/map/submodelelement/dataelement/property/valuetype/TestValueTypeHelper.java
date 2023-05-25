@@ -38,6 +38,8 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 /**
  * Tests the ValueTypeHelper class
  * 
@@ -70,6 +72,24 @@ public class TestValueTypeHelper {
 		Object javaObject = ValueTypeHelper.getJavaObject(date, ValueType.Date);
 
 		XMLGregorianCalendar expected = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
+		assertEquals(expected, javaObject);
+	}
+
+	@Test
+	public void decimalDataType() {
+		String data = "10.10";
+		Object javaObject = ValueTypeHelper.getJavaObject(data, ValueType.Decimal);
+
+		BigDecimal expected = new BigDecimal(data);
+		assertEquals(expected, javaObject);
+	}
+
+	@Test
+	public void decimalDataTypeNaN() {
+		String data = "";
+		Object javaObject = ValueTypeHelper.getJavaObject(data, ValueType.Decimal);
+
+		BigDecimal expected = new BigDecimal("0");
 		assertEquals(expected, javaObject);
 	}
 }
