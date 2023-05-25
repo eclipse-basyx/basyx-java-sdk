@@ -170,7 +170,15 @@
     		<groupId>ch.qos.logback</groupId>
     		<artifactId>logback-classic</artifactId>
     		<version>1.4.7</version>
+    		<scope>runtime</scope>
 		</dependency>
+	
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>2.0.7</version>
+		</dependency>
+
 	
 		<!-- JUnit 4 for running JUnit tests -->
 		<dependency>
@@ -269,6 +277,7 @@
     		<groupId>org.codehaus.janino</groupId>
     		<artifactId>janino</artifactId>
     		<version>3.1.9</version>
+    		<scope>runtime</scope>
 		</dependency>
 		
 		<!-- Paho Java Client for MQTT -->
