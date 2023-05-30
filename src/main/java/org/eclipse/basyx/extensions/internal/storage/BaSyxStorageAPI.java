@@ -106,10 +106,6 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 
 	public abstract void deleteFile(Submodel submodel, String idShort);
 
-	public abstract ISubmodelElement getTopLevelSubmodelElement(Submodel submodel, String idShortPath);
-
-	public abstract Object getTopLevelSubmodelElementValue(Submodel submodel, String idShortPath);
-
 	/**
 	 * Returns a Object that was originally retrieved from the abstract method
 	 * {@code rawRetrieve}. If the object to be returned is a submodel type, it will
