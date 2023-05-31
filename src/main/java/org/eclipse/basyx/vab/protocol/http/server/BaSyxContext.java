@@ -24,8 +24,12 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.server;
 
+import org.apache.catalina.Context;
 import org.springframework.lang.Nullable;
+
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpServlet;
@@ -89,6 +93,8 @@ public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
 	private JwtBearerTokenAuthenticationConfiguration jwtBearerTokenAuthenticationConfiguration;
 	
 	private String accessControlAllowOrigin;
+	
+	private List<BaSyxChildContext> baSyxChildContext = new ArrayList<>();
 
 	/**
 	 * Constructor with default port
@@ -179,6 +185,19 @@ public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
 
 		// Return 'this' reference to enable chaining of operations
 		return this;
+	}
+	
+	/**
+	 * Add childContext
+	 */
+	public BaSyxContext addChildContext(BaSyxChildContext childContext) {
+		this.baSyxChildContext.add(childContext);
+
+		return this;
+	}
+	
+	public List<BaSyxChildContext> getChildContexts() {
+		return this.baSyxChildContext;
 	}
 
 	/**
@@ -274,4 +293,5 @@ public class BaSyxContext extends LinkedHashMap<String, HttpServlet> {
 	public void setAccessControlAllowOrigin(String accessControlAllowOrigin) {
 		this.accessControlAllowOrigin = accessControlAllowOrigin;
 	}
+	
 }
