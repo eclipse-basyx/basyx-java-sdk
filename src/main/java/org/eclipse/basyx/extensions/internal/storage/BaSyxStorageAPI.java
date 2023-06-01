@@ -24,6 +24,8 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.internal.storage;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -97,6 +99,12 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	 * @return
 	 */
 	public abstract T rawRetrieve(String key);
+
+	public abstract File getFile(String key, String parentKey, Map<String, Object> objMap);
+
+	public abstract String writeFile(String key, String parentKey, InputStream fileStream, ISubmodelElement submodelElement);
+
+	public abstract void deleteFile(Submodel submodel, String idShort);
 
 	/**
 	 * Returns a Object that was originally retrieved from the abstract method
@@ -183,4 +191,5 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	protected boolean isBaSyxType(Class<?> type) {
 		return (isShellType(type) || isSubmodelType(type) || isAASDescriptorType(type));
 	}
+
 }
