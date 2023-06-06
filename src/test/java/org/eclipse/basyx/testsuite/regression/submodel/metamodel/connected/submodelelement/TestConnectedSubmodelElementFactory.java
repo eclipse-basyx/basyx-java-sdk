@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.dataelement.IProperty;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.entity.EntityType;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.ConnectedCapability;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.ConnectedSubmodelElementCollection;
@@ -42,6 +43,7 @@ import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelemen
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedProperty;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedRange;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedReferenceElement;
+import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.entity.ConnectedEntity;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.event.ConnectedBasicEvent;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.operation.ConnectedOperation;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.relationship.ConnectedRelationshipElement;
@@ -55,6 +57,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.Refe
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.Range;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.Entity;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.event.BasicEvent;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.relationship.RelationshipElement;
@@ -86,6 +89,7 @@ public class TestConnectedSubmodelElementFactory {
 	private static final String OPERATION_ID = "OperationId";
 	private static final String RELELEMENT_ID = "RelElementId";
 	private static final String SMELEMCOLLECTION_ID = "SmElemCollectionId";
+	private static final String ENTITY_ID = "EntityId";
 
 	VABElementProxy proxy;
 
@@ -180,6 +184,9 @@ public class TestConnectedSubmodelElementFactory {
 		SubmodelElementCollection smElemCollection = new SubmodelElementCollection();
 		smElemCollection.setIdShort(SMELEMCOLLECTION_ID);
 		ret.put(SMELEMCOLLECTION_ID, smElemCollection);
+		
+		Entity entity = new Entity(ENTITY_ID, EntityType.COMANAGEDENTITY);
+		ret.put(ENTITY_ID, entity);
 
 		return ret;
 	}
@@ -213,7 +220,7 @@ public class TestConnectedSubmodelElementFactory {
 	public void testGetSubmodelElements() {
 		Map<String, ISubmodelElement> submodelElements = ConnectedSubmodelElementFactory.getConnectedSubmodelElements(proxy, Submodel.SUBMODELELEMENT, Submodel.SUBMODELELEMENT);
 
-		assertEquals(11, submodelElements.size());
+		assertEquals(12, submodelElements.size());
 		assertTrue(submodelElements.get(PROPERTY_ID) instanceof ConnectedProperty);
 		assertTrue(submodelElements.get(BLOB_ID) instanceof ConnectedBlob);
 		assertTrue(submodelElements.get(FILE_ID) instanceof ConnectedFile);
@@ -225,6 +232,7 @@ public class TestConnectedSubmodelElementFactory {
 		assertTrue(submodelElements.get(CAPABILITY_ID) instanceof ConnectedCapability);
 		assertTrue(submodelElements.get(RELELEMENT_ID) instanceof ConnectedRelationshipElement);
 		assertTrue(submodelElements.get(SMELEMCOLLECTION_ID) instanceof ConnectedSubmodelElementCollection);
+		assertTrue(submodelElements.get(ENTITY_ID) instanceof ConnectedEntity);
 	}
 
 }

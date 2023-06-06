@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -22,55 +22,63 @@
  * 
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.submodel.metamodel.api.submodelelement.entity;
+
+
+package org.eclipse.basyx.submodel.metamodel.connected.submodelelement.entity;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.entity.EntityType;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.entity.IEntity;
+import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.ConnectedSubmodelElement;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.Entity;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.EntityValue;
+import org.eclipse.basyx.vab.modelprovider.VABElementProxy;
 
 /**
- * An entity is a submodel element that is used to model entities.
+ * Connected implementation of IEntity
  * 
  * @author schnicke
  *
  */
-public interface IEntity extends ISubmodelElement {
-	/**
-	 * Gets statements applicable to the entity by a set of submodel elements,
-	 * typically with a qualified value.
-	 * 
-	 * @return
-	 */
-	Collection<ISubmodelElement> getStatements();
+public class ConnectedEntity extends ConnectedSubmodelElement implements IEntity {
 
 	/**
-	 * Gets EntityType describing whether the entity is a comanaged entity or a
-	 * self-managed entity.
+	 * Constructs an ConnectedEntity representing the data pointed to by the
+	 * elementProxy
 	 * 
-	 * @return
+	 * @param elementProxy
 	 */
-	EntityType getEntityType();
-
-	/**
-	 * Gets the reference to the asset the entity is representing.
-	 * 
-	 * @return
-	 */
-	IReference getAsset();
-
-	@Override
-	default EntityValue getValue() {
-		throw new RuntimeException("Fallback to default implementation is not intended, please override!");
+	public ConnectedEntity(VABElementProxy elementProxy) {
+		super(elementProxy);
 	}
 
-	/**
-	 * Sets value of the Entity using the passed EntityValue
-	 * 
-	 * @param value
-	 */
-	default void setValue(EntityValue value) {
-	throw new RuntimeException("Fallback to default implementation is not intended, please override!");
+	@Override
+	public Collection<ISubmodelElement> getStatements() {
+		return getValue().getStatement();
+	}
+
+	@Override
+	public EntityType getEntityType() {
+		return Entity.createAsFacade(getElem()).getEntityType();
+	}
+
+	@Override
+	public IReference getAsset() {
+		return getValue().getAsset();
+	}
+
+	@Override
+	public void setValue(EntityValue value) {
+		super.setValue(value);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public EntityValue getValue() {
+		return EntityValue.createAsFacade((Map<String, Object>) super.getValue());
 	}
 }
