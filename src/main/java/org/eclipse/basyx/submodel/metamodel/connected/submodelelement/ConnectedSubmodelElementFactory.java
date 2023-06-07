@@ -40,6 +40,7 @@ import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelemen
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedProperty;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedRange;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.dataelement.ConnectedReferenceElement;
+import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.entity.ConnectedEntity;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.event.ConnectedBasicEvent;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.operation.ConnectedOperation;
 import org.eclipse.basyx.submodel.metamodel.connected.submodelelement.relationship.ConnectedAnnotatedRelationshipElement;
@@ -53,6 +54,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.Mult
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.ReferenceElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.range.Range;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.entity.Entity;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.event.BasicEvent;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.relationship.AnnotatedRelationshipElement;
@@ -159,6 +161,8 @@ public class ConnectedSubmodelElementFactory {
 			return new ConnectedBasicEvent(proxy);
 		} else if (Capability.isCapability(mapContent)) {
 			return new ConnectedCapability(proxy);
+		} else if (Entity.isEntity(mapContent)) {
+			return new ConnectedEntity(proxy);
 		} else {
 			return null;
 		}
