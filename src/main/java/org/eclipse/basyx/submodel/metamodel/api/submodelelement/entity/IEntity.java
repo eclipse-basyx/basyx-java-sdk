@@ -71,6 +71,6 @@ public interface IEntity extends ISubmodelElement {
 	 * @param value
 	 */
 	default void setValue(EntityValue value) {
-	throw new RuntimeException("Fallback to default implementation is not intended, please override!");
+		throw new RuntimeException("Fallback to default implementation is not intended, please override!");
 	}
 }

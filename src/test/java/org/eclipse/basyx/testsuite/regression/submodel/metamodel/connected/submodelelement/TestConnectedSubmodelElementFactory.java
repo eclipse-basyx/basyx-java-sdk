@@ -78,6 +78,7 @@ import org.junit.Test;
  */
 public class TestConnectedSubmodelElementFactory {
 
+	private static final int SUBMODELEELEMENT_COUNT = 12;
 	private static final String PROPERTY_ID = "PropertyId";
 	private static final String BLOB_ID = "BlobId";
 	private static final String FILE_ID = "FileId";
@@ -220,7 +221,7 @@ public class TestConnectedSubmodelElementFactory {
 	public void testGetSubmodelElements() {
 		Map<String, ISubmodelElement> submodelElements = ConnectedSubmodelElementFactory.getConnectedSubmodelElements(proxy, Submodel.SUBMODELELEMENT, Submodel.SUBMODELELEMENT);
 
-		assertEquals(12, submodelElements.size());
+		assertEquals(SUBMODELEELEMENT_COUNT, submodelElements.size());
 		assertTrue(submodelElements.get(PROPERTY_ID) instanceof ConnectedProperty);
 		assertTrue(submodelElements.get(BLOB_ID) instanceof ConnectedBlob);
 		assertTrue(submodelElements.get(FILE_ID) instanceof ConnectedFile);
