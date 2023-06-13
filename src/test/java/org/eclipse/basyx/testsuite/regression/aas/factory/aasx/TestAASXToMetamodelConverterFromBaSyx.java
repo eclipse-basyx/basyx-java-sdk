@@ -133,7 +133,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private int submodelSize;
 	private int submodelElementsSize;
 
-	private AASXToMetamodelConverter packageManager;
+	private static AASXToMetamodelConverter packageManager;
 
 	@Before
 	public void setup() throws IOException, TransformerException, ParserConfigurationException {
@@ -548,6 +548,8 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 			new java.io.File(path).delete();
 		}
 		new java.io.File(CREATED_AASX_FILE_PATH).delete();
+		
+		packageManager.close();
 	}
 
 	/**
