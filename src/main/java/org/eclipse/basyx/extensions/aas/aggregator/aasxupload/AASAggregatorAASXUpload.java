@@ -70,8 +70,7 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 
 	@Override
 	public void uploadAASX(InputStream aasxStream) {
-		try {
-			AASXToMetamodelConverter converter = new AASXToMetamodelConverter(aasxStream);
+		try (AASXToMetamodelConverter converter = new AASXToMetamodelConverter(aasxStream)) {
 			Set<AASBundle> bundles = converter.retrieveAASBundles();
 			AASBundleHelper.integrate(this, bundles);
 			uploadFilesInAASX(converter);
