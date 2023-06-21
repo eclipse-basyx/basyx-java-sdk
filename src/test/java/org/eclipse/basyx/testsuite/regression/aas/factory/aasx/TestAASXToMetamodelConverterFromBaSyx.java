@@ -71,6 +71,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -133,13 +134,18 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private int submodelSize;
 	private int submodelElementsSize;
 
-	private static AASXToMetamodelConverter packageManager;
+	private AASXToMetamodelConverter packageManager;
 
 	@Before
 	public void setup() throws IOException, TransformerException, ParserConfigurationException {
 		createAASXFile(CREATED_AASX_FILE_PATH);
 
 		packageManager = new AASXToMetamodelConverter(CREATED_AASX_FILE_PATH);
+	}
+	
+	@After
+	public void close() {
+		packageManager.close();
 	}
 	
 	@Test
@@ -548,8 +554,6 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 			new java.io.File(path).delete();
 		}
 		new java.io.File(CREATED_AASX_FILE_PATH).delete();
-		
-		packageManager.close();
 	}
 
 	/**
