@@ -56,6 +56,11 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	protected final String COLLECTION_NAME;
 	protected final Class<T> TYPE;
 
+	BaSyxStorageAPI() {
+		this.COLLECTION_NAME = null;
+		this.TYPE = null;
+	}
+
 	/**
 	 * 
 	 * @param collectionName
@@ -137,7 +142,7 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	@SuppressWarnings("unchecked")
 	protected Submodel handleRetrievedSubmodel(Submodel retrieved) {
 		Map<String, Map<String, Object>> elementMaps = (Map<String, Map<String, Object>>) retrieved.get(Submodel.SUBMODELELEMENT);
-		Map<String, ISubmodelElement> elements = forceToISubmodelElements(elementMaps);
+		Map<String, ISubmodelElement> elements = enforceISubmodelElements(elementMaps);
 		retrieved.put(Submodel.SUBMODELELEMENT, elements);
 		return retrieved;
 	}
@@ -154,7 +159,7 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	 *            can be get with {@code submodel.get(Submodel.SUBMODELELEMENT)}))
 	 * @return A map in the expected form of {@code Map<String, ISubmodelElement>}
 	 */
-	private Map<String, ISubmodelElement> forceToISubmodelElements(Map<String, Map<String, Object>> submodelElementObjectMap) {
+	private Map<String, ISubmodelElement> enforceISubmodelElements(Map<String, Map<String, Object>> submodelElementObjectMap) {
 		Map<String, ISubmodelElement> elements = new HashMap<>();
 
 		submodelElementObjectMap.forEach((idShort, elementMap) -> {

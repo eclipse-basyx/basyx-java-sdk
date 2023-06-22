@@ -83,7 +83,6 @@ public abstract class BaSyxStorageAPISuite {
 
 	@Test
 	public void delete() {
-		System.out.println(testType);
 		storageAPI.createOrUpdate(testType);
 		assertTrue(storageAPI.delete(testType.getIdentification().getId()));
 		Collection<Submodel> allElements = storageAPI.retrieveAll();
