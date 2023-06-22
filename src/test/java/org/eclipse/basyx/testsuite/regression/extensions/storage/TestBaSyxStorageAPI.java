@@ -53,7 +53,7 @@ public class TestBaSyxStorageAPI extends BaSyxStorageAPISuite {
 		Mockito.when(mockedStorageAPI.createOrUpdate(Mockito.any(Submodel.class))).then(this::mockedCreateOrUpdate);
 		Mockito.when(mockedStorageAPI.update(Mockito.any(Submodel.class), Mockito.anyString())).then(this::mockedupdate);
 		Mockito.when(mockedStorageAPI.rawRetrieve(Mockito.anyString())).then(this::mockedRawRetrieve);
-		Mockito.when(mockedStorageAPI.retrieveAll()).then(this::mockedRetrieveAll);
+		Mockito.when(mockedStorageAPI.rawRetrieveAll()).then(this::mockedRawRetrieveAll);
 		Mockito.when(mockedStorageAPI.delete(Mockito.anyString())).then(this::mockedDelete);
 	}
 
@@ -87,7 +87,7 @@ public class TestBaSyxStorageAPI extends BaSyxStorageAPISuite {
 		return mockedStorage.get(key);
 	}
 
-	private Collection<Submodel> mockedRetrieveAll(InvocationOnMock invocation) {
+	private Collection<Submodel> mockedRawRetrieveAll(InvocationOnMock invocation) {
 		return this.mockedStorage.values();
 	}
 

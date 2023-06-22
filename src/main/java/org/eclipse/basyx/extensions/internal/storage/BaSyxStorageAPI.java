@@ -26,9 +26,13 @@ package org.eclipse.basyx.extensions.internal.storage;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
@@ -105,6 +109,8 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	 */
 	public abstract T rawRetrieve(String key);
 
+	public abstract Collection<T> rawRetrieveAll();
+
 	public abstract File getFile(String key, String parentKey, Map<String, Object> objMap);
 
 	public abstract String writeFile(String key, String parentKey, InputStream fileStream, ISubmodelElement submodelElement);
@@ -124,6 +130,20 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 			return (T) handleRetrievedSubmodel((Submodel) retrieved);
 		}
 		return retrieved;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<T> retrieveAll() {
+		Collection<T> retrieves = rawRetrieveAll();
+		if (!CollectionUtils.isEmpty(retrieves) && isSubmodelType(getElementClass(retrieves))) {
+			return (Collection<T>) retrieves.stream().map(submodel -> handleRetrievedSubmodel((Submodel) submodel)).collect(Collectors.toList());
+		}
+		return retrieves;
+	}
+
+	private Class<? extends Object> getElementClass(Collection<T> collection) {
+		return collection.iterator().next().getClass();
 	}
 
 	/**

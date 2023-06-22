@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.basyx.extensions.internal.storage.BaSyxStorageAPI;
@@ -70,6 +71,29 @@ public abstract class BaSyxStorageAPISuite {
 		storageAPI.createOrUpdate(testType);
 		Submodel actual = storageAPI.retrieve(testType.getIdentification().getId());
 		assertEquals(testType, actual);
+	}
+
+	@Test
+	public void retrieveAll() {
+		Submodel[] testTypes = createTestTypes();
+		uploadMultiple(testTypes);
+
+		Collection<Submodel> retrieves = storageAPI.retrieveAll();
+		for (Submodel submodel : testTypes) {
+			assertTrue(retrieves.contains(submodel));
+		}
+	}
+
+	private Submodel[] createTestTypes() {
+		Submodel[] testTypes = new Submodel[3];
+		Arrays.setAll(testTypes, i -> new Submodel(testType.getIdShort() + i, new Identifier(IdentifierType.CUSTOM, "test" + i)));
+		return testTypes;
+	}
+
+	private void uploadMultiple(Submodel[] testTypes) {
+		for (Submodel submodel : testTypes) {
+			storageAPI.createOrUpdate(submodel);
+		}
 	}
 
 	@Test
