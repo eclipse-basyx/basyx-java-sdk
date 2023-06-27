@@ -26,6 +26,9 @@ package org.eclipse.basyx.testsuite.regression.extensions.submodel.authorization
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.eclipse.basyx.extensions.shared.authorization.internal.AuthenticationContextProvider;
@@ -368,5 +371,47 @@ public class TestGrantedAuthorityAuthorizedSubmodelAPI {
 
 		final Object returnedValue = authorizedSubmodelAPI.getOperationResult(PROPERTY_IDSHORT, ASYNC_REQUEST_ID);
 		assertEquals(PROPERTY_VALUE, returnedValue);
+	}
+
+	@Test(expected = NotAuthorizedException.class)
+	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelElementFile_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutAuthorities();
+		authorizedSubmodelAPI.getSubmodelElementFile(PROPERTY_IDSHORT);
+	}
+
+	@Test(expected = NotAuthorizedException.class)
+	public void givenSecurityContextIsEmpty_whenGetSubmodelElementFile_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
+		authorizedSubmodelAPI.getSubmodelElementFile(PROPERTY_IDSHORT);
+	}
+
+	@Test
+	public void givenPrincipalHasReadAuthority_whenGetSubmodelElementFile_thenInvocationIsForwarded() {
+		final File expectedFile = new File("returnFile");
+		securityContextProvider.setSecurityContextWithReadAuthority();
+		Mockito.when(apiMock.getSubmodelElement(PROPERTY_IDSHORT)).thenReturn(PROPERTY);
+		Mockito.when(apiMock.getSubmodelElementFile(PROPERTY_IDSHORT)).thenReturn(expectedFile);
+		final Object returnedValue = authorizedSubmodelAPI.getSubmodelElementFile(PROPERTY_IDSHORT);
+		assertEquals(expectedFile, returnedValue);
+	}
+
+	@Test(expected = NotAuthorizedException.class)
+	public void givenPrincipalIsMissingWriteAuthority_whenUploadSubmodelElementFile_thenThrowNotAuthorized() {
+		securityContextProvider.setSecurityContextWithoutAuthorities();
+		authorizedSubmodelAPI.uploadSubmodelElementFile(PROPERTY_IDSHORT, new ByteArrayInputStream("hello file".getBytes()));
+	}
+
+	@Test(expected = NotAuthorizedException.class)
+	public void givenSecurityContextIsEmpty_whenUploadSubmodelElementFile_thenThrowNotAuthorized() {
+		securityContextProvider.setEmptySecurityContext();
+		authorizedSubmodelAPI.uploadSubmodelElementFile(PROPERTY_IDSHORT, new ByteArrayInputStream("hello file".getBytes()));
+	}
+
+	@Test
+	public void givenPrincipalHasWriteAuthority_whenUploadSubmodelElementFile_thenInvocationIsForwarded() {
+		final InputStream inputStream = new ByteArrayInputStream("hello file".getBytes());
+		securityContextProvider.setSecurityContextWithWriteAuthority();
+		authorizedSubmodelAPI.uploadSubmodelElementFile(PROPERTY_IDSHORT, inputStream);
+		Mockito.verify(apiMock).uploadSubmodelElementFile(PROPERTY_IDSHORT, inputStream);
 	}
 }

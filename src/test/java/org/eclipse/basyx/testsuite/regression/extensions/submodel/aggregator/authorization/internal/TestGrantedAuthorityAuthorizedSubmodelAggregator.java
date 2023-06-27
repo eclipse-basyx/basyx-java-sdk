@@ -118,6 +118,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodel_thenThrowProviderException() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
 	}
@@ -125,6 +126,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenSecurityContextIsEmpty_whenGetSubmodel_thenThrowProviderException() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.getSubmodel(SUBMODEL_IDENTIFIER);
 	}
@@ -141,6 +143,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelbyIdShort_thenThrowProviderException() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
+		Mockito.when(apiMock.getSubmodelbyIdShort(SUBMODEL_IDSHORT)).thenReturn(submodel);
 
 		testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
 	}
@@ -148,6 +151,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenSecurityContextIsEmpty_whenGetSubmodelbyIdShort_thenThrowProviderException() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getSubmodelbyIdShort(SUBMODEL_IDSHORT)).thenReturn(submodel);
 
 		testSubject.getSubmodelbyIdShort(SUBMODEL_IDSHORT);
 	}
@@ -164,6 +168,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIById_thenThrowProviderException() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
 	}
@@ -171,6 +176,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIById_thenThrowProviderException() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
 	}
@@ -179,6 +185,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelAPIById_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithReadAuthority();
 		Mockito.when(apiMock.getSubmodelAPIById(SUBMODEL_IDENTIFIER)).thenReturn(submodelAPI);
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		final ISubmodelAPI returnedSubmodelAPI = testSubject.getSubmodelAPIById(SUBMODEL_IDENTIFIER);
 		assertEquals(submodelAPI, returnedSubmodelAPI);
@@ -188,6 +195,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	public void givenPrincipalHasReadAuthority_whenGetSubmodelAPIByIdShort_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithReadAuthority();
 		Mockito.when(apiMock.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT)).thenReturn(submodelAPI);
+		Mockito.when(apiMock.getSubmodelbyIdShort(SUBMODEL_IDSHORT)).thenReturn(submodel);
 
 		final ISubmodelAPI returnedSubmodelAPI = testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
 		assertEquals(submodelAPI, returnedSubmodelAPI);
@@ -196,6 +204,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenGetSubmodelAPIByIdShort_thenThrowProviderException() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
+		Mockito.when(apiMock.getSubmodelbyIdShort(SUBMODEL_IDSHORT)).thenReturn(null);
 
 		testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
 	}
@@ -203,6 +212,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenSecurityContextIsEmpty_whenGetSubmodelAPIByIdShort_thenThrowProviderException() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getSubmodelbyIdShort(SUBMODEL_IDSHORT)).thenReturn(null);
 
 		testSubject.getSubmodelAPIByIdShort(SUBMODEL_IDSHORT);
 	}
@@ -210,6 +220,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenCreateSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithWriteAuthority();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.createSubmodel(submodel);
 		Mockito.verify(apiMock).createSubmodel(submodel);
@@ -218,6 +229,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodel_thenThrowProviderException() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.createSubmodel(submodel);
 	}
@@ -225,6 +237,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenSecurityContextIsEmpty_whenCreateSubmodel_thenThrowProviderException() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.createSubmodel(submodel);
 	}
@@ -232,6 +245,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenCreateSubmodelAPI_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithWriteAuthority();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.createSubmodel(submodelAPI);
 		Mockito.verify(apiMock).createSubmodel(submodelAPI);
@@ -240,6 +254,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenCreateSubmodelAPI_thenThrowProviderException() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.createSubmodel(submodelAPI);
 	}
@@ -247,6 +262,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenSecurityContextIsEmpty_whenCreateSubmodelAPI_thenThrowProviderException() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.createSubmodel(submodelAPI);
 	}
@@ -254,6 +270,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenUpdateSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithWriteAuthority();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.updateSubmodel(submodel);
 		Mockito.verify(apiMock).updateSubmodel(submodel);
@@ -262,6 +279,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenUpdateSubmodel_thenThrowProviderException() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.updateSubmodel(submodel);
 	}
@@ -269,6 +287,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenSecurityContextIsEmpty_whenUpdateSubmodel_thenThrowProviderException() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.updateSubmodel(submodel);
 	}
@@ -276,6 +295,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenDeleteSubmodelByIdentifier_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithWriteAuthority();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 		Mockito.verify(apiMock).deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
@@ -284,6 +304,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenDeleteSubmodelByIdentifier_thenThrowProviderException() {
 		securityContextProvider.setSecurityContextWithoutAuthorities();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 	}
@@ -291,6 +312,7 @@ public class TestGrantedAuthorityAuthorizedSubmodelAggregator {
 	@Test(expected = ProviderException.class)
 	public void givenSecurityContextIsEmpty_whenDeleteSubmodelByIdentifier_thenThrowProviderException() {
 		securityContextProvider.setEmptySecurityContext();
+		Mockito.when(apiMock.getSubmodel(SUBMODEL_IDENTIFIER)).thenReturn(submodel);
 
 		testSubject.deleteSubmodelByIdentifier(SUBMODEL_IDENTIFIER);
 	}

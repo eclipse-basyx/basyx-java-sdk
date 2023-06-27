@@ -40,7 +40,9 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAu
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -90,7 +92,8 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 	}
 
 	protected void authorizeRegister(final AASDescriptor aasDescriptor) throws InhibitException {
-		aasRegistryAuthorizer.authorizeRegisterAas(subjectInformationProvider.get(), aasDescriptor);
+		final IIdentifier aasId = getAasIdUnsecured(aasDescriptor);
+		aasRegistryAuthorizer.authorizeRegisterAas(subjectInformationProvider.get(), aasId, aasDescriptor);
 	}
 
 	@Override
@@ -109,7 +112,9 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 	}
 
 	protected void authorizeRegister(final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException {
-		aasRegistryAuthorizer.authorizeRegisterSubmodel(subjectInformationProvider.get(), aasId, smDescriptor);
+		final IIdentifier smId = getSmIdUnsecured(smDescriptor);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(smDescriptor);
+		aasRegistryAuthorizer.authorizeRegisterSubmodel(subjectInformationProvider.get(), aasId, smId, smSemanticId, smDescriptor);
 	}
 
 	@Override
@@ -147,7 +152,9 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 	}
 
 	protected void authorizeDelete(final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-		aasRegistryAuthorizer.authorizeUnregisterSubmodel(subjectInformationProvider.get(), aasId, smId);
+		final SubmodelDescriptor smDescriptor = getSmDescriptorUnsecured(aasId, smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(smDescriptor);
+		aasRegistryAuthorizer.authorizeUnregisterSubmodel(subjectInformationProvider.get(), aasId, smId, smSemanticId);
 	}
 
 	@Override
@@ -278,6 +285,43 @@ public class AuthorizedAASRegistry<SubjectInformationType> implements IAASRegist
 	}
 
 	protected SubmodelDescriptor authorizeLookupSubmodel(final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
-		return aasRegistryAuthorizer.authorizeLookupSubmodel(subjectInformationProvider.get(), aasId, smId, () -> decoratedRegistry.lookupSubmodel(aasId, smId));
+		final SubmodelDescriptor smDescriptor = getSmDescriptorUnsecured(aasId, smId);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(smDescriptor);
+		return aasRegistryAuthorizer.authorizeLookupSubmodel(subjectInformationProvider.get(), aasId, smId, smSemanticId, () -> decoratedRegistry.lookupSubmodel(aasId, smId));
+	}
+
+	protected IIdentifier getAasIdUnsecured(final AASDescriptor aasDescriptor) throws ResourceNotFoundException {
+		if (aasDescriptor == null) {
+			return null;
+		}
+
+		try (final ElevatedCodeAuthentication.ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+			return aasDescriptor.getIdentifier();
+		}
+	}
+
+	protected SubmodelDescriptor getSmDescriptorUnsecured(final IIdentifier aasId, final IIdentifier smId) throws ResourceNotFoundException {
+		try (final ElevatedCodeAuthentication.ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+			return decoratedRegistry.lookupSubmodel(aasId, smId);
+		}
+	}
+
+	protected IIdentifier getSmIdUnsecured(final SubmodelDescriptor smDescriptor) throws ResourceNotFoundException {
+		if (smDescriptor == null) {
+			return null;
+		}
+
+		try (final ElevatedCodeAuthentication.ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+			return smDescriptor.getIdentifier();
+		}
+	}
+	protected IReference getSmSemanticIdUnsecured(final SubmodelDescriptor smDescriptor) throws ResourceNotFoundException {
+		if (smDescriptor == null) {
+			return null;
+		}
+
+		try (final ElevatedCodeAuthentication.ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+			return smDescriptor.getSemanticId();
+		}
 	}
 }

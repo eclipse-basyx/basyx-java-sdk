@@ -78,16 +78,28 @@ public class RbacRule {
 
 		final RbacRule rbacRule = (RbacRule) o;
 
-		return new EqualsBuilder().append(getRole(), rbacRule.getRole()).append(getAction(), rbacRule.getAction()).append(getTargetInformation(), rbacRule.getTargetInformation()).isEquals();
+		return new EqualsBuilder()
+				.append(getRole(), rbacRule.getRole())
+				.append(getAction(), rbacRule.getAction())
+				.append(getTargetInformation(), rbacRule.getTargetInformation())
+				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(17, 37).append(getRole()).append(getAction()).append(getTargetInformation()).toHashCode();
+		return new HashCodeBuilder(17, 37)
+				.append(getRole())
+				.append(getAction())
+				.append(getTargetInformation())
+				.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new StringBuilder("RbacRule{").append("role='").append(role).append('\'').append(", action='").append(action).append('\'').append(", targetInformation='").append(targetInformation).append('\'').append('}').toString();
+		return new StringBuilder("RbacRule{").append("role='")
+				.append(role).append('\'').append(", action='")
+				.append(action).append('\'').append(", targetInformation='")
+				.append(targetInformation).append('\'').append('}')
+				.toString();
 	}
 }

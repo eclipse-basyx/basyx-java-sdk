@@ -161,5 +161,17 @@
       "@type": "tag",
       "tag": "tag"
     }
+  },
+
+  {
+    "role": "reader",
+    "action": "urn:org.eclipse.basyx:scope:aas-registry:read",
+    "targetInformation": {
+      "@type": "basyx",
+      "aasId": "*",
+      "smId": "*",
+      "smSemanticId": "example-semantic-id",
+      "smElIdShortPath": "*"
+    }
   }
 ]
