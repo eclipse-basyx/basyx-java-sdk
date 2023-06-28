@@ -49,9 +49,15 @@ public class RbacRuleDTO {
 		return targetInformation;
 	}
 
-	private RbacRuleDTO() {
+	public RbacRuleDTO() {
 		role = "";
 		action = "";
 		targetInformation = new HashMap<>();
+	}
+
+	public RbacRuleDTO(final String role, final String action, final Map<String, String> targetInformation) {
+		this.role = role;
+		this.action = action;
+		this.targetInformation = targetInformation;
 	}
 }

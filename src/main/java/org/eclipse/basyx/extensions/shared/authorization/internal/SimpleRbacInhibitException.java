@@ -64,7 +64,7 @@ public class SimpleRbacInhibitException extends InhibitException {
 
 	private TargetInformation reduceSmIdToSmIdShortPath_convertTargetInformation(final String smIdShortPath) {
 		if (targetInformation instanceof BaSyxObjectTargetInformation) {
-			return new BaSyxObjectTargetInformation(((BaSyxObjectTargetInformation) targetInformation).getAasId(), ((BaSyxObjectTargetInformation) targetInformation).getSmId(), String.format("(id of %s)", smIdShortPath));
+			return new BaSyxObjectTargetInformation(((BaSyxObjectTargetInformation) targetInformation).getAasId(), ((BaSyxObjectTargetInformation) targetInformation).getSmId(), ((BaSyxObjectTargetInformation) targetInformation).getSmSemanticId(), String.format("(id of %s)", smIdShortPath));
 		}
 
 		return targetInformation;
