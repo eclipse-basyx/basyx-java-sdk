@@ -164,13 +164,10 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 		java.io.File targetFile = new java.io.File(filePath);
 
-		FileOutputStream outStream = new FileOutputStream(targetFile);
-		InputStream inStream = (InputStream) newValue;
-
-		IOUtils.copy(inStream, outStream);
-
-		inStream.close();
-		outStream.close();
+		try (FileOutputStream outStream = new FileOutputStream(targetFile);
+				InputStream inStream = (InputStream) newValue) {
+			IOUtils.copy(inStream, outStream);		
+		}
 	}
 
 	private String getFilePath(String idShortPath, File file) {
