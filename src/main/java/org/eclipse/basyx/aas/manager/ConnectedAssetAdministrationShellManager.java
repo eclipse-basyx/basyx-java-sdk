@@ -127,23 +127,26 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 
 	@Override
 	public void deleteAAS(IIdentifier id) {
-		// Lookup AAS descriptor
 		AASDescriptor aasDescriptor = aasDirectory.lookupAAS(id);
 
-		// Get AAS address from AAS descriptor
 		String addr = aasDescriptor.getFirstEndpoint();
 
-		// Address ends in "/aas", has to be stripped for removal
-		addr = VABPathTools.stripSlashes(addr);
-		addr = addr.substring(0, addr.length() - "/aas".length());
+		String harmonizedAddress = getHarmonizedAddress(addr);
 
-		// Delete from server
-		proxyFactory.createProxy(addr).deleteValue("");
-
-		// Delete from Registry
 		aasDirectory.delete(id);
 
+		deleteAasFromAddress(harmonizedAddress);
+
 		// TODO: How to handle submodels -> Lifecycle needs to be clarified
+	}
+
+	private void deleteAasFromAddress(String address) {
+		proxyFactory.createProxy(address).deleteValue("");
+	}
+
+	private String getHarmonizedAddress(String address) {
+		String strippedAddr = VABPathTools.stripSlashes(address);
+		return strippedAddr.substring(0, strippedAddr.length() - "/aas".length());
 	}
 
 	@Override
@@ -167,9 +170,10 @@ public class ConnectedAssetAdministrationShellManager implements IAssetAdministr
 	@Override
 	public void deleteSubmodel(IIdentifier aasId, IIdentifier submodelId) {
 		IAssetAdministrationShell shell = retrieveAAS(aasId);
-		shell.removeSubmodel(submodelId);
 
 		aasDirectory.delete(aasId, submodelId);
+
+		shell.removeSubmodel(submodelId);
 	}
 
 	@Override
