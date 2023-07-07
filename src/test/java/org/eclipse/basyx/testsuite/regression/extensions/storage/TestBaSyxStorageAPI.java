@@ -51,7 +51,7 @@ public class TestBaSyxStorageAPI extends BaSyxStorageAPISuite {
 
 	private void initMockedStorageAPI() {
 		Mockito.when(mockedStorageAPI.createOrUpdate(Mockito.any(Submodel.class))).then(this::mockedCreateOrUpdate);
-		Mockito.when(mockedStorageAPI.update(Mockito.any(Submodel.class), Mockito.anyString())).then(this::mockedupdate);
+		Mockito.when(mockedStorageAPI.update(Mockito.any(Submodel.class), Mockito.anyString())).then(this::mockedUpdate);
 		Mockito.when(mockedStorageAPI.rawRetrieve(Mockito.anyString())).then(this::mockedRawRetrieve);
 		Mockito.when(mockedStorageAPI.rawRetrieveAll()).then(this::mockedRawRetrieveAll);
 		Mockito.when(mockedStorageAPI.delete(Mockito.anyString())).then(this::mockedDelete);
@@ -62,18 +62,33 @@ public class TestBaSyxStorageAPI extends BaSyxStorageAPISuite {
 		return mockedStorageAPI;
 	}
 
+	/**
+	 * Please DON'T implement this method as below for Production tests. This method
+	 * shall help proof the data persistency. Therefore in production this method
+	 * must return a BaSyxStorageAPI that is not the same as the one returned by
+	 * {@link #getStorageAPI()}
+	 */
+	@Override
+	protected BaSyxStorageAPI<Submodel> getSecondStorageAPI() {
+		return getStorageAPI();
+	}
+
 	private Submodel mockedCreateOrUpdate(InvocationOnMock invocation) {
 		Submodel submodel = invocation.getArgument(0);
+		return createOrUpdate(submodel);
+	}
+
+	private Submodel createOrUpdate(Submodel submodel) {
 		String identificationId = submodel.getIdentification().getId();
 		mockedStorage.put(identificationId, submodel);
 		return submodel;
 	}
 
-	private Submodel mockedupdate(InvocationOnMock invocation) {
-		String key = invocation.getArgument(0);
-		Submodel submodel = invocation.getArgument(1);
+	private Submodel mockedUpdate(InvocationOnMock invocation) {
+		String key = invocation.getArgument(1);
+		Submodel submodel = invocation.getArgument(0);
 		if (!mockedStorageHasKey(key)) {
-			return null;
+			createOrUpdate(submodel);
 		}
 		mockedStorage.put(key, submodel);
 		return submodel;
@@ -103,4 +118,17 @@ public class TestBaSyxStorageAPI extends BaSyxStorageAPISuite {
 	private boolean mockedStorageHasKey(String identificationId) {
 		return mockedStorage.containsKey(identificationId);
 	}
+
+	@Override
+	public void createCollectionIfNotExists() {
+		mockedStorageAPI.createCollectionIfNotExists("testCollection");
+		Mockito.verify(mockedStorageAPI, Mockito.times(1)).createCollectionIfNotExists("testCollection");
+	}
+
+	@Override
+	public void deleteCollection() {
+		mockedStorageAPI.deleteCollection();
+		Mockito.verify(mockedStorageAPI, Mockito.times(1)).deleteCollection();
+	}
+
 }

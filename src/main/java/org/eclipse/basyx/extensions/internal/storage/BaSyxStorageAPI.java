@@ -60,9 +60,11 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	protected final String COLLECTION_NAME;
 	protected final Class<T> TYPE;
 
+	/**
+	 * The default constructor is primarily used for mocking purposes of the class.
+	 */
 	BaSyxStorageAPI() {
-		this.COLLECTION_NAME = null;
-		this.TYPE = null;
+		this(null, null);
 	}
 
 	/**
@@ -204,30 +206,18 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 		return elements;
 	}
 
-	/*
-	 * Not yet tested
-	 */
 	protected boolean isSubmodelType(Class<?> type) {
 		return ISubmodel.class.isAssignableFrom(type);
 	}
 
-	/*
-	 * Not yet tested
-	 */
 	protected boolean isShellType(Class<?> type) {
 		return IAssetAdministrationShell.class.isAssignableFrom(type);
 	}
 
-	/*
-	 * Not yet tested
-	 */
 	protected boolean isAASDescriptorType(Class<?> type) {
 		return AASDescriptor.class.isAssignableFrom(type);
 	}
 
-	/*
-	 * Not yet tested
-	 */
 	protected boolean isBaSyxType(Class<?> type) {
 		return (isShellType(type) || isSubmodelType(type) || isAASDescriptorType(type));
 	}
