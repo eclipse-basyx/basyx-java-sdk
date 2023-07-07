@@ -34,6 +34,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
+import org.eclipse.basyx.vab.modelprovider.VABPathTools;
 
 /**
  * A utility class for configuring file endpoints in submodels
@@ -55,7 +56,7 @@ public class SubmodelFileEndpointLoader {
 	 *            path at which the files are hosted on the host (e.g. "/files")
 	 */
 	public static void setRelativeFileEndpoints(ISubmodel submodel, String host, int port, String path) {
-		String fileRoot = "http://" + host + ":" + port + path;
+		String fileRoot = VABPathTools.append("http://" + host + ":" + port, path);
 		setRelativeFileEndpoints(submodel, fileRoot);
 	}
 
@@ -108,7 +109,7 @@ public class SubmodelFileEndpointLoader {
 		} catch (MalformedURLException e1) {
 			// assume that the file value is already a relative path
 		}
-		String newEndpoint = fileRoot + relativePath;
+		String newEndpoint = VABPathTools.append(fileRoot, relativePath);
 		file.setValue(newEndpoint);
 	}
 }
