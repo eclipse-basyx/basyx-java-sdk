@@ -159,6 +159,7 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenDeleteSubmodel_thenInvocationIsForwarded() {
 		SecurityContextHolder.setContext(getSecurityContextWithWriteAuthority());
+		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 
 		testSubject.delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 		Mockito.verify(apiMock).delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
@@ -167,6 +168,7 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
 	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodel_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
+		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 
 		testSubject.delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 	}
@@ -237,6 +239,7 @@ public class TestGrantedAuthorityAuthorizedAASRegistry {
 	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodel_thenThrowNotAuthorized() {
 		SecurityContextHolder.setContext(getSecurityContextWithoutAuthorities());
+		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 
 		testSubject.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 	}

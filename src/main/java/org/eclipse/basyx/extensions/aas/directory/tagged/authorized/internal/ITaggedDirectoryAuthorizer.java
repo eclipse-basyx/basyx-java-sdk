@@ -33,6 +33,7 @@ import org.eclipse.basyx.extensions.aas.directory.tagged.api.TaggedSubmodelDescr
 import org.eclipse.basyx.extensions.aas.registration.authorization.internal.IAASRegistryAuthorizer;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
  * Interface for the authorization points used in
@@ -46,12 +47,14 @@ public interface ITaggedDirectoryAuthorizer<SubjectInformationType> extends IAAS
 	 *
 	 * @param subjectInformation
 	 *            information of the requester.
+	 * @param aasId
+	 *            id of the AAS.
 	 * @param taggedAASDescriptor
 	 *            the AAS descriptor.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeRegister(final SubjectInformationType subjectInformation, final TaggedAASDescriptor taggedAASDescriptor) throws InhibitException;
+	public void authorizeRegister(final SubjectInformationType subjectInformation, final IIdentifier aasId, final TaggedAASDescriptor taggedAASDescriptor) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link IAASTaggedDirectory#lookupTag(String)}.
@@ -91,12 +94,16 @@ public interface ITaggedDirectoryAuthorizer<SubjectInformationType> extends IAAS
 	 *            information of the requester.
 	 * @param aasId
 	 *            id of the AAS.
+	 * @param smId
+	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            smenatic id of the submodel.
 	 * @param taggedSubmodelDescriptor
 	 *            supplier for the submodel descriptor.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final TaggedSubmodelDescriptor taggedSubmodelDescriptor) throws InhibitException;
+	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId, final TaggedSubmodelDescriptor taggedSubmodelDescriptor) throws InhibitException;
 
 	/**
 	 * Checks authorization for

@@ -71,6 +71,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -140,6 +141,11 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		createAASXFile(CREATED_AASX_FILE_PATH);
 
 		packageManager = new AASXToMetamodelConverter(CREATED_AASX_FILE_PATH);
+	}
+	
+	@After
+	public void close() {
+		packageManager.close();
 	}
 	
 	@Test

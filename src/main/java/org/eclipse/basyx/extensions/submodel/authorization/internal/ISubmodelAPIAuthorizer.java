@@ -30,6 +30,7 @@ import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -48,6 +49,10 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 * @param aas
 	 *            the aas the submodel belongs to as passed in the constructor of
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
+	 * @param smId
+	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smSupplier
 	 *            supplier for the submodel.
 	 * @param smElListSupplier
@@ -56,8 +61,8 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public Collection<ISubmodelElement> authorizeGetSubmodelElements(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final Supplier<ISubmodel> smSupplier,
-			final Supplier<Collection<ISubmodelElement>> smElListSupplier) throws InhibitException;
+	public Collection<ISubmodelElement> authorizeGetSubmodelElements(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId,
+			final Supplier<ISubmodel> smSupplier, final Supplier<Collection<ISubmodelElement>> smElListSupplier) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link ISubmodelAPI#getSubmodelElement(String)}.
@@ -69,6 +74,8 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smElIdShortPath
 	 *            short path id of the submodel element.
 	 * @param smElSupplier
@@ -77,7 +84,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public ISubmodelElement authorizeGetSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath,
+	public ISubmodelElement authorizeGetSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final String smElIdShortPath,
 			final Supplier<ISubmodelElement> smElSupplier) throws InhibitException;
 
 	/**
@@ -90,13 +97,16 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smSupplier
 	 *            supplier for the submodel.
 	 * @return the authorized submodel.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public ISubmodel authorizeGetSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final Supplier<ISubmodel> smSupplier) throws InhibitException;
+	public ISubmodel authorizeGetSubmodel(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final Supplier<ISubmodel> smSupplier)
+			throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -109,12 +119,14 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smElIdShortPath
 	 *            short path id of the submodel element.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeAddSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException;
+	public void authorizeAddSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final String smElIdShortPath) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link ISubmodelAPI#deleteSubmodelElement(String)}.
@@ -126,12 +138,15 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smElIdShortPath
 	 *            short path id of the submodel element.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeDeleteSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException;
+	public void authorizeDeleteSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final String smElIdShortPath)
+			throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -144,12 +159,15 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smElIdShortPath
 	 *            short path id of the submodel element.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeUpdateSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException;
+	public void authorizeUpdateSubmodelElement(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final String smElIdShortPath)
+			throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -162,6 +180,8 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smElIdShortPath
 	 *            short path id of the submodel element.
 	 * @param valueSupplier
@@ -170,8 +190,8 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public Object authorizeGetSubmodelElementValue(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath, final Supplier<Object> valueSupplier)
-			throws InhibitException;
+	public Object authorizeGetSubmodelElementValue(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final String smElIdShortPath,
+			final Supplier<Object> valueSupplier) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link ISubmodelAPI#getOperations()}.
@@ -181,6 +201,10 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 * @param aas
 	 *            the aas the submodel belongs to as passed in the constructor of
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
+	 * @param smId
+	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smSupplier
 	 *            supplier for the submodel.
 	 * @param operationListSupplier
@@ -189,7 +213,7 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public Collection<IOperation> authorizeGetOperations(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final Supplier<ISubmodel> smSupplier,
+	public Collection<IOperation> authorizeGetOperations(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final Supplier<ISubmodel> smSupplier,
 			final Supplier<Collection<IOperation>> operationListSupplier) throws InhibitException;
 
 	/**
@@ -204,12 +228,14 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smElIdShortPath
 	 *            short path id of the submodel element.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeInvokeOperation(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath) throws InhibitException;
+	public void authorizeInvokeOperation(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final String smElIdShortPath) throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -222,6 +248,8 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 *            {@link AuthorizedSubmodelAPI}, may be null.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smElIdShortPath
 	 *            short path id of the submodel element.
 	 * @param requestId
@@ -232,6 +260,6 @@ public interface ISubmodelAPIAuthorizer<SubjectInformationType> {
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public Object authorizeGetOperationResult(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final String smElIdShortPath, final String requestId,
+	public Object authorizeGetOperationResult(final SubjectInformationType subjectInformation, final IAssetAdministrationShell aas, final IIdentifier smId, final IReference smSemanticId, final String smElIdShortPath, final String requestId,
 			final Supplier<Object> operationResultSupplier) throws InhibitException;
 }

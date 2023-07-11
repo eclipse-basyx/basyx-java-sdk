@@ -31,6 +31,7 @@ import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
  * Interface for the authorization points used in {@link AuthorizedAASRegistry}.
@@ -43,12 +44,14 @@ public interface IAASRegistryAuthorizer<SubjectInformationType> {
 	 *
 	 * @param subjectInformation
 	 *            information of the requester.
+	 * @param aasId
+	 *            id of the AAS.
 	 * @param aasDescriptor
 	 *            descriptor of the AAS.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeRegisterAas(final SubjectInformationType subjectInformation, final AASDescriptor aasDescriptor) throws InhibitException;
+	public void authorizeRegisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId, final AASDescriptor aasDescriptor) throws InhibitException;
 
 	/**
 	 * Checks authorization for
@@ -58,12 +61,16 @@ public interface IAASRegistryAuthorizer<SubjectInformationType> {
 	 *            information of the requester.
 	 * @param aasId
 	 *            id of the AAS.
+	 * @param smId
+	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smDescriptor
 	 *            the submodel descriptor.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException;
+	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId, final SubmodelDescriptor smDescriptor) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link IAASRegistry#delete(IIdentifier)}.
@@ -87,10 +94,12 @@ public interface IAASRegistryAuthorizer<SubjectInformationType> {
 	 *            id of the AAS.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public void authorizeUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException;
+	public void authorizeUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId) throws InhibitException;
 
 	/**
 	 * Checks authorization for {@link IAASRegistry#lookupAAS(IIdentifier)}.
@@ -145,11 +154,13 @@ public interface IAASRegistryAuthorizer<SubjectInformationType> {
 	 *            id of the AAS.
 	 * @param smId
 	 *            id of the submodel.
+	 * @param smSemanticId
+	 *            semantic id of the submodel.
 	 * @param smSupplier
 	 *            supplier for the submodel.
 	 * @return the authorized submodel descriptor.
 	 * @throws InhibitException
 	 *             if authorization failed
 	 */
-	public SubmodelDescriptor authorizeLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException;
+	public SubmodelDescriptor authorizeLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException;
 }

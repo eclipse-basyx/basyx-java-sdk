@@ -37,4 +37,12 @@ public class FeatureNotImplementedException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	public FeatureNotImplementedException() {
+		super();
+	}
+
+	public FeatureNotImplementedException(final String message) {
+		super(message);
+	}
+
 }
