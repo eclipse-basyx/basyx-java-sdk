@@ -32,8 +32,8 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -684,6 +684,26 @@ public class SubmodelProviderTest {
 			fail();
 		} catch (ResourceNotFoundException e) {
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testIndirectSubmodelElementCollectionValueType() {
+		VABElementProxy submodelProvider = getConnectionManager().connectToVABElement(submodelAddr);
+		String containerRootPath = VABPathTools.concatenatePaths(SubmodelProvider.SUBMODEL, MultiSubmodelElementProvider.ELEMENTS, "containerRoot");
+		Map<String, Object> directCollection = (Map<String, Object>) submodelProvider.getValue(containerRootPath);
+		Object indirectCollectionValue = directCollection.get(Property.VALUE);
+
+		assertTrue(indirectCollectionValue instanceof Collection<?>);
+	}
+
+	@Test
+	public void testDirectSubmodelElementCollectionValueType() {
+		VABElementProxy submodelProvider = getConnectionManager().connectToVABElement(submodelAddr);
+		String containerRootValuePath = VABPathTools.concatenatePaths(SubmodelProvider.SUBMODEL, MultiSubmodelElementProvider.ELEMENTS, "containerRoot", Property.VALUE);
+		Object directCollectionValue = submodelProvider.getValue(containerRootValuePath);
+
+		assertTrue(directCollectionValue instanceof Collection<?>);
 	}
 
 	protected Map<String, Object> wrapParameter(String name, Object value) {

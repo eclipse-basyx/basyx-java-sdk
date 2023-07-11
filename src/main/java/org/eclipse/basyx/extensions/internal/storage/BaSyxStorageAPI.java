@@ -26,11 +26,15 @@ package org.eclipse.basyx.extensions.internal.storage;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelDescriptor;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.IIdentifiable;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -57,6 +61,13 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	protected final Class<T> TYPE;
 
 	/**
+	 * The default constructor is primarily used for mocking purposes of the class.
+	 */
+	BaSyxStorageAPI() {
+		this(null, null);
+	}
+
+	/**
 	 * 
 	 * @param collectionName
 	 *            The name of the collection, managed by this API
@@ -70,9 +81,10 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	}
 
 	/**
-	 * DISCLAIMER: Currently only supports to extract keys from IIdentifiables.
-	 * Helper method that extracts a key for persistence storage requests from an
-	 * object.
+	 * DISCLAIMER: Currently only supports to extract keys from IIdentifiables and
+	 * ModelDescriptors.
+	 * Helper method that extracts a key for persistence storage
+	 * requests from an object.
 	 * 
 	 * @param obj
 	 *            An object that contains a key that can be used to find the
@@ -80,10 +92,16 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	 * @return The key
 	 */
 	protected String getKey(T obj) {
-		if (!(obj instanceof IIdentifiable)) {
-			throw new IllegalArgumentException("Can only extract a key from a object of type " + IIdentifiable.class.getName());
+		if (!(obj instanceof IIdentifiable || obj instanceof ModelDescriptor)) {
+			throw new IllegalArgumentException("Can only extract a key from a object of types " + IIdentifiable.class.getName() + " or " + ModelDescriptor.class.getName());
 		}
-		return ((IIdentifiable) obj).getIdentification().getId();
+
+		if (obj instanceof ModelDescriptor) {
+			return ((ModelDescriptor) obj).getIdentifier().getId();
+		} else {
+			return ((IIdentifiable) obj).getIdentification().getId();
+
+		}
 	}
 
 	/**
@@ -100,11 +118,21 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	 */
 	public abstract T rawRetrieve(String key);
 
+	public abstract Collection<T> rawRetrieveAll();
+
 	public abstract File getFile(String key, String parentKey, Map<String, Object> objMap);
 
 	public abstract String writeFile(String key, String parentKey, InputStream fileStream, ISubmodelElement submodelElement);
 
 	public abstract void deleteFile(Submodel submodel, String idShort);
+
+	/**
+	 * This Method shall return an implementation specific connection object which
+	 * can be used to implement more advanced operations on the storage.
+	 * 
+	 * @return An object that can be used for direct storage access
+	 */
+	public abstract Object getStorageConnection();
 
 	/**
 	 * Returns a Object that was originally retrieved from the abstract method
@@ -119,6 +147,20 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 			return (T) handleRetrievedSubmodel((Submodel) retrieved);
 		}
 		return retrieved;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<T> retrieveAll() {
+		Collection<T> retrieves = rawRetrieveAll();
+		if (!CollectionUtils.isEmpty(retrieves) && isSubmodelType(getElementClass(retrieves))) {
+			return (Collection<T>) retrieves.stream().map(submodel -> handleRetrievedSubmodel((Submodel) submodel)).collect(Collectors.toList());
+		}
+		return retrieves;
+	}
+
+	private Class<? extends Object> getElementClass(Collection<T> collection) {
+		return collection.iterator().next().getClass();
 	}
 
 	/**
@@ -137,7 +179,7 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	@SuppressWarnings("unchecked")
 	protected Submodel handleRetrievedSubmodel(Submodel retrieved) {
 		Map<String, Map<String, Object>> elementMaps = (Map<String, Map<String, Object>>) retrieved.get(Submodel.SUBMODELELEMENT);
-		Map<String, ISubmodelElement> elements = forceToISubmodelElements(elementMaps);
+		Map<String, ISubmodelElement> elements = enforceISubmodelElements(elementMaps);
 		retrieved.put(Submodel.SUBMODELELEMENT, elements);
 		return retrieved;
 	}
@@ -154,7 +196,7 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 	 *            can be get with {@code submodel.get(Submodel.SUBMODELELEMENT)}))
 	 * @return A map in the expected form of {@code Map<String, ISubmodelElement>}
 	 */
-	private Map<String, ISubmodelElement> forceToISubmodelElements(Map<String, Map<String, Object>> submodelElementObjectMap) {
+	private Map<String, ISubmodelElement> enforceISubmodelElements(Map<String, Map<String, Object>> submodelElementObjectMap) {
 		Map<String, ISubmodelElement> elements = new HashMap<>();
 
 		submodelElementObjectMap.forEach((idShort, elementMap) -> {
@@ -164,32 +206,23 @@ public abstract class BaSyxStorageAPI<T> implements IBaSyxStorageAPI<T> {
 		return elements;
 	}
 
-	/*
-	 * Not yet tested
-	 */
 	protected boolean isSubmodelType(Class<?> type) {
 		return ISubmodel.class.isAssignableFrom(type);
 	}
 
-	/*
-	 * Not yet tested
-	 */
 	protected boolean isShellType(Class<?> type) {
 		return IAssetAdministrationShell.class.isAssignableFrom(type);
 	}
 
-	/*
-	 * Not yet tested
-	 */
 	protected boolean isAASDescriptorType(Class<?> type) {
 		return AASDescriptor.class.isAssignableFrom(type);
 	}
 
-	/*
-	 * Not yet tested
-	 */
 	protected boolean isBaSyxType(Class<?> type) {
 		return (isShellType(type) || isSubmodelType(type) || isAASDescriptorType(type));
 	}
 
+	public String getCollectionName() {
+		return COLLECTION_NAME;
+	}
 }

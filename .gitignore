@@ -73,3 +73,5 @@ local.properties
 
 .idea
 *.iml
+.moquette_uuid
+file_sme.json
