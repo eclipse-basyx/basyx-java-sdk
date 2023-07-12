@@ -185,8 +185,12 @@ public class VABPathToolsTest {
 	public void testAppend() {
 		assertEquals("/parent/child", VABPathTools.append("/parent", "child"));
 		assertEquals("/parent/child", VABPathTools.append("/parent/", "child"));
+		assertEquals("/parent/child", VABPathTools.append("/parent", "/child"));
+		assertEquals("/parent/child", VABPathTools.append("/parent/", "/child"));
 		assertEquals("/parent/x/child", VABPathTools.append("/parent/x", "child"));
 		assertEquals("/parent/x/child", VABPathTools.append("/parent/x/", "child"));
+		assertEquals("/parent", VABPathTools.append("/parent", ""));
+		assertEquals("child", VABPathTools.append("", "child"));
 		assertNull(VABPathTools.append(null, ""));
 		assertNull(VABPathTools.append("", null));
 	}

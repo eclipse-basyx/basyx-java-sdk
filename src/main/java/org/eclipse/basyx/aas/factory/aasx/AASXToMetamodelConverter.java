@@ -298,6 +298,15 @@ public class AASXToMetamodelConverter implements AutoCloseable {
 	}
 	
 	/**
+	 * Unzips all files referenced by the aasx file according to its relationships
+	 * and a relative child path
+	 */
+	public void unzipRelatedFilesToChildPath(String childPath) throws IOException, ParserConfigurationException, SAXException, URISyntaxException, InvalidFormatException {
+		Path tempPath = getTemporaryDirPath().resolve(childPath);
+		unzipRelatedFiles(tempPath);
+	}
+
+	/**
 	 * Unzips all files referenced by the aasx file to a specified directory
 	 *
 	 * @param pathToDirectory
