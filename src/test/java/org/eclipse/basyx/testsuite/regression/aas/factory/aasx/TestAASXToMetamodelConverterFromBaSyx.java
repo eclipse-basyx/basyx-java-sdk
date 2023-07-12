@@ -258,13 +258,13 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	 */
 	@Test
 	public void testFilesOfGeneratedAASXChildPaths() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
-		String childPath = "/testChildPath";
+		String childPath = "testChildPath";
 		packageManager.unzipRelatedFilesToChildPath(childPath);
 
 		String tempDirectory = FileUtils.getTempDirectory().getAbsolutePath();
 
 		for (String path : EXPECTED_UNZIPPED_FILES) {
-			String fullFilePath = tempDirectory + BASYX_PATH + childPath + FILES_PATH + path;
+			String fullFilePath = tempDirectory + BASYX_PATH + "/" + childPath + FILES_PATH + path;
 			assertTrue(new java.io.File(fullFilePath).exists());
 		}
 	}
