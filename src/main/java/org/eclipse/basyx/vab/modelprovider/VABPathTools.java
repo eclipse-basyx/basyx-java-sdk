@@ -221,14 +221,14 @@ public class VABPathTools {
 		if (element.length() == 0) {
 			return path;
 		}
-		boolean pathHasLastSeparator = path.lastIndexOf(SEPERATOR) == path.length() - 1;
-		boolean elementHasFirstSeparator = SEPERATOR.charAt(0) == element.charAt(0);
-		boolean separatorInTheMiddle = pathHasLastSeparator || elementHasFirstSeparator;
-		boolean twoSeperators = pathHasLastSeparator && elementHasFirstSeparator;
+		boolean lastPathCharIsSeperator = path.lastIndexOf(SEPERATOR) == path.length() - 1;
+		boolean firstElementCharIsSeparator = SEPERATOR.charAt(0) == element.charAt(0);
+		boolean atLeastOneSeparatorInTheMiddle = lastPathCharIsSeperator || firstElementCharIsSeparator;
+		boolean twoSeperatorsInTheMiddle = lastPathCharIsSeperator && firstElementCharIsSeparator;
 		
-		if (twoSeperators) {
+		if (twoSeperatorsInTheMiddle) {
 			return path + element.substring(1);
-		} else if (separatorInTheMiddle) {
+		} else if (atLeastOneSeparatorInTheMiddle) {
 			return path + element;
 		} else {
 			return path + SEPERATOR + element;

@@ -56,7 +56,8 @@ public class SubmodelFileEndpointLoader {
 	 *            path at which the files are hosted on the host (e.g. "/files")
 	 */
 	public static void setRelativeFileEndpoints(ISubmodel submodel, String host, int port, String path) {
-		String fileRoot = VABPathTools.append("http://" + host + ":" + port, path);
+		String basePath = "http://" + host + ":" + port;
+		String fileRoot = VABPathTools.append(basePath, path);
 		setRelativeFileEndpoints(submodel, fileRoot);
 	}
 
