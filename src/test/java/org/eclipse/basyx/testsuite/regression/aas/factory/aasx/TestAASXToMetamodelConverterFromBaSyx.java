@@ -42,8 +42,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -112,9 +114,9 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String PDF_PATH = "/aasx/Document/docu.pdf";
 	private static final String PDF_MIMETYPE = "application/pdf";
 	private static final String PDF_IDSHORT = "pdf";
-	private static final String TARGET_PATH = "/basyx-temp/files"; // gets set by BaSyx
-	private static final String[] EXPECTED_UNZIPPED_FILES = { TARGET_PATH + PDF_PATH, TARGET_PATH + IMAGE_PATH };
-	private static final String[] EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR = { PDF_PATH, IMAGE_PATH };
+	private static final String BASYX_PATH = "/basyx-temp"; // gets set by BaSyx
+	private static final String FILES_PATH = "/files";
+	private static final String[] EXPECTED_UNZIPPED_FILES = { PDF_PATH, IMAGE_PATH };
 
 	private static final String REL_PATH = "_rels/.rels";
 	private static final String ORIGIN_REL_PATH = "aasx/_rels/aasx-origin.rels";
@@ -127,7 +129,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	private static final String TARGET_PATH_REGEX_START = "Target=.*";
 	private static final String TARGET_PATH_REGEX_FULL = "Target=\"/.*";
 	private static final String DOCPROPS_PATH_REGEX = "Target=\"docProps.*";
-	
+
 	private static final byte[] THUMBNAIL = { 22, 23, 24, 25, 26 };
 
 	private int bundleSize;
@@ -142,12 +144,12 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 
 		packageManager = new AASXToMetamodelConverter(CREATED_AASX_FILE_PATH);
 	}
-	
+
 	@After
 	public void close() {
 		packageManager.close();
 	}
-	
+
 	@Test
 	public void thumbnailInPackage() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException {
 		assertTrue(IOUtils.contentEquals(new ByteArrayInputStream(THUMBNAIL), packageManager.retrieveThumbnail()));
@@ -224,7 +226,7 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 
 		ISubmodelElement operationWithQualifer = submodelElements.get(OPERATION_WITH_QUALIFIER_IDSHORT);
 		IConstraint[] constraints = operationWithQualifer.getQualifiers().toArray(new IConstraint[] {});
-		Qualifier qualifier = (Qualifier)constraints[0];
+		Qualifier qualifier = (Qualifier) constraints[0];
 		assertEquals(QUALIFIER_VALUE, qualifier.getValue());
 	}
 
@@ -241,12 +243,29 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	public void testFilesOfGeneratedAASX() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
 		// Unzip files from the .aasx
 		packageManager.unzipRelatedFiles();
-		
+
 		String tempDirectory = FileUtils.getTempDirectory().getAbsolutePath();
 
 		// Check if all expected files are present
-		for (String path : EXPECTED_UNZIPPED_FILES) {  
-			assertTrue(new java.io.File(tempDirectory + path).exists());
+		for (String path : EXPECTED_UNZIPPED_FILES) {
+			String fullFilePath = tempDirectory + BASYX_PATH + FILES_PATH + path;
+			assertTrue(new java.io.File(fullFilePath).exists());
+		}
+	}
+
+	/**
+	 * Tests the connected files of the parsed AASX file for subdirs
+	 */
+	@Test
+	public void testFilesOfGeneratedAASXChildPaths() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
+		String childPath = "testChildPath";
+		packageManager.unzipRelatedFilesToChildPath(childPath);
+
+		String tempDirectory = FileUtils.getTempDirectory().getAbsolutePath();
+
+		for (String path : EXPECTED_UNZIPPED_FILES) {
+			String fullFilePath = tempDirectory + BASYX_PATH + "/" + childPath + FILES_PATH + path;
+			assertTrue(new java.io.File(fullFilePath).exists());
 		}
 	}
 
@@ -261,13 +280,13 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 	 */
 	@Test
 	public void testFilesUnzippedToSpecifiedDirectory() throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
-	  Path pathToTempDir = Files.createTempDirectory("aasx");	  
-	  packageManager.unzipRelatedFiles(pathToTempDir);
+		Path pathToTempDir = Files.createTempDirectory("aasx");
+		packageManager.unzipRelatedFiles(pathToTempDir);
 
-	  for (String p : EXPECTED_UNZIPPED_FILES_IN_TEMP_DIR) {
-	    Path path = Path.of(pathToTempDir.toString() + "/files" + p);
-	    assertTrue(new java.io.File(path.toString()).exists());
-	  }
+		for (String p : EXPECTED_UNZIPPED_FILES) {
+			Path path = Path.of(pathToTempDir.toString() + "/files" + p);
+			assertTrue(new java.io.File(path.toString()).exists());
+		}
 	}
 
 	/**
@@ -483,9 +502,9 @@ public class TestAASXToMetamodelConverterFromBaSyx {
 		fileList.add(createInMemoryFile(IMAGE_PATH));
 		fileList.add(createInMemoryFile(PDF_PATH));
 		submodelElementsSize = 8;
-		
-        Thumbnail thumbnail = new Thumbnail(ThumbnailExtension.PNG, new ByteArrayInputStream(THUMBNAIL));
-		
+
+		Thumbnail thumbnail = new Thumbnail(ThumbnailExtension.PNG, new ByteArrayInputStream(THUMBNAIL));
+
 		try (FileOutputStream out = new FileOutputStream(filePath)) {
 			MetamodelToAASXConverter.buildAASX(aasList, assetList, conceptDescriptionList, submodelList, fileList, thumbnail, out);
 		}
