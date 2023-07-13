@@ -42,6 +42,7 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
@@ -67,6 +68,7 @@ public class SubmodelProviderTest {
 	private VABConnectionManager connManager;
 	protected static final String submodelAddr = "urn:fhg:es.iese:aas:1:1:submodel";
 	protected static final String SMPROVIDER_PATH_PREFIX = "/" + SubmodelProvider.SUBMODEL + "/";
+	protected static final String SIMPLE_FILE_VALUE = "simpleFile.xml";
 
 	protected VABConnectionManager getConnectionManager() {
 		if (connManager == null) {
@@ -389,6 +391,67 @@ public class SubmodelProviderTest {
 
 		value = (Integer) submodelElement.getValue(path);
 		assertEquals(321, value.intValue());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void collectionIdShortFileCollision() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+
+		String colIdShort = "Files";
+		String fileIdShort = "File";
+
+		SubmodelElementCollection fileCollection = new SubmodelElementCollection(colIdShort);
+		File fileSubmodelElement = new File("application/xml");
+		String fileValue = "simpleFile.xml";
+		fileSubmodelElement.setValue(fileValue);
+		fileSubmodelElement.setIdShort(fileIdShort);
+		fileCollection.addSubmodelElement(fileSubmodelElement);
+
+		String smeCollectionPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, colIdShort);
+		submodelProxy.setValue(smeCollectionPath, fileCollection);
+
+		String fileValuePath = VABPathTools.concatenatePaths(smeCollectionPath, fileIdShort);
+		Map<String, Object> resultingFileMap = (Map<String, Object>) submodelProxy.getValue(fileValuePath);
+		File resultingFile = File.createAsFacade(resultingFileMap);
+		assertEquals(fileValue, resultingFile.getValue());
+	}
+
+	/**
+	 * Test getting a File with "File" as IdShort
+	 */
+	@Test
+	public void getFileSubmodelElement() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+		String fileIdShort = "MySimpleFile";
+		createSimpleFile(submodelProxy, fileIdShort);
+		assertSimpleFileValue(submodelProxy, fileIdShort);
+	}
+
+	@Test
+	public void getFileIdShortCollision() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+		String fileIdShort = "File";
+		createSimpleFile(submodelProxy, fileIdShort);
+		assertSimpleFileValue(submodelProxy, fileIdShort);
+	}
+
+	private void createSimpleFile(VABElementProxy submodelProxy, String fileIdShort) {
+		File fileSubmodelElement = new File("application/xml");
+		fileSubmodelElement.setValue(SIMPLE_FILE_VALUE);
+		fileSubmodelElement.setIdShort(fileIdShort);
+
+		String fileAccessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, fileIdShort);
+		submodelProxy.setValue(fileAccessPath, fileSubmodelElement);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void assertSimpleFileValue(VABElementProxy submodelProxy, String fileIdShort) {
+		String fileAccessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, fileIdShort);
+		String fileValuePath = VABPathTools.concatenatePaths(fileAccessPath);
+		Map<String, Object> resultingFileMap = (Map<String, Object>) submodelProxy.getValue(fileValuePath);
+		File resultingFile = File.createAsFacade(resultingFileMap);
+		assertEquals(SIMPLE_FILE_VALUE, resultingFile.getValue());
 	}
 
 	/**
