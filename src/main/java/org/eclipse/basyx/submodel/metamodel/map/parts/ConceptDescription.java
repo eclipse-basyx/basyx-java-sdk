@@ -143,6 +143,10 @@ public class ConceptDescription extends VABModelMap<Object> implements IConceptD
 		Identifiable.createAsFacade(this, getKeyElement()).setAdministration(information);
 	}
 
+	public void setIdentification(IIdentifier id) {
+		setIdentification(id.getIdType(), id.getId());
+	}
+
 	public void setIdentification(IdentifierType idType, String id) {
 		Identifiable.createAsFacadeNonStrict(this, getKeyElement()).setIdentification(idType, id);
 	}
