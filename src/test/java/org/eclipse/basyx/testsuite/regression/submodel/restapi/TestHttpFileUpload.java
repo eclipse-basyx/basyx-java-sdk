@@ -129,7 +129,7 @@ public class TestHttpFileUpload {
 		
 		HttpPost uploadFile = new HttpPost(
 				API_URL + "/basyx.examples.test/aas/submodels/test_sm/submodel/submodelElements/"
-						+ submodelElementIdShort + "/File/upload");
+						+ submodelElementIdShort + "/upload");
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
 		builder.addPart("file", new FileBody(file));

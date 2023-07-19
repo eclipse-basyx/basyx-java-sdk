@@ -349,7 +349,7 @@ public class SubmodelProvider implements IModelProvider {
 
 	private String getFileIdShortFromSplittedPath4FileUpload(String[] splitted) {
 		String idShort = "";
-		for (int i = 1; i < splitted.length - 2; i++) {
+		for (int i = 1; i < splitted.length - 1; i++) {
 			idShort = concatFileIdShortPath(splitted, idShort, i);
 		}
 		return idShort;
