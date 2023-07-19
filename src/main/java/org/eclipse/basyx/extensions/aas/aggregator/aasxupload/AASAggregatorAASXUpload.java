@@ -99,7 +99,7 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 
 	private void uploadFileInSubmodelElement(IIdentifier aasIdentification, AASXToMetamodelConverter converter, File submodelElement, String submodelElementPath) {
 		try {
-			getAASProvider(aasIdentification).createValue(submodelElementPath + "/File/upload", converter.retrieveFileInputStream((String) submodelElement.getValue()));
+			getAASProvider(aasIdentification).createValue(submodelElementPath + "/upload", converter.retrieveFileInputStream((String) submodelElement.getValue()));
 		} catch (InvalidFormatException | IOException e) {
 			e.printStackTrace();
 		}
