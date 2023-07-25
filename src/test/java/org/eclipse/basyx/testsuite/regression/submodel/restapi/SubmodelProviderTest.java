@@ -69,6 +69,7 @@ public class SubmodelProviderTest {
 	protected static final String submodelAddr = "urn:fhg:es.iese:aas:1:1:submodel";
 	protected static final String SMPROVIDER_PATH_PREFIX = "/" + SubmodelProvider.SUBMODEL + "/";
 	protected static final String SIMPLE_FILE_VALUE = "simpleFile.xml";
+	protected static final String SIMPLE_PROPERTY_VALUE = "simpleProperty";
 
 	protected VABConnectionManager getConnectionManager() {
 		if (connManager == null) {
@@ -429,6 +430,18 @@ public class SubmodelProviderTest {
 	}
 
 	@Test
+	public void getIdShortCollision() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+		String fileIdShort = "File";
+
+		Property fileProperty = new Property(fileIdShort, SIMPLE_PROPERTY_VALUE);
+		String propertyAccessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, fileIdShort);
+		submodelProxy.setValue(propertyAccessPath, fileProperty);
+
+		assertSimplePropertyValue(submodelProxy, fileIdShort);
+	}
+
+	@Test
 	public void getFileIdShortCollision() {
 		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
 		String fileIdShort = "File";
@@ -448,10 +461,17 @@ public class SubmodelProviderTest {
 	@SuppressWarnings("unchecked")
 	private void assertSimpleFileValue(VABElementProxy submodelProxy, String fileIdShort) {
 		String fileAccessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, fileIdShort);
-		String fileValuePath = VABPathTools.concatenatePaths(fileAccessPath);
-		Map<String, Object> resultingFileMap = (Map<String, Object>) submodelProxy.getValue(fileValuePath);
+		Map<String, Object> resultingFileMap = (Map<String, Object>) submodelProxy.getValue(fileAccessPath);
 		File resultingFile = File.createAsFacade(resultingFileMap);
 		assertEquals(SIMPLE_FILE_VALUE, resultingFile.getValue());
+	}
+
+	@SuppressWarnings("unchecked")
+	private void assertSimplePropertyValue(VABElementProxy submodelProxy, String propertyIdShort) {
+		String accessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, propertyIdShort);
+		Map<String, Object> resultingPropertyMap = (Map<String, Object>) submodelProxy.getValue(accessPath);
+		Property resultingProperty = Property.createAsFacade(resultingPropertyMap);
+		assertEquals(SIMPLE_PROPERTY_VALUE, resultingProperty.getValue());
 	}
 
 	/**
