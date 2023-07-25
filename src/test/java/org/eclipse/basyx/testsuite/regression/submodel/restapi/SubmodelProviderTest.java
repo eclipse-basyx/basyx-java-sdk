@@ -474,6 +474,34 @@ public class SubmodelProviderTest {
 		assertEquals(SIMPLE_PROPERTY_VALUE, resultingProperty.getValue());
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void nestedCollectionIdShortFileCollision() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+
+		String fileIdShort = "File";
+		File fileSubmodelElement = new File("application/xml");
+		String fileValue = "simpleFile.xml";
+		fileSubmodelElement.setValue(fileValue);
+		fileSubmodelElement.setIdShort(fileIdShort);
+
+		String innerColIdShort = "Files";
+		SubmodelElementCollection innerCollection = new SubmodelElementCollection(innerColIdShort);
+		innerCollection.addSubmodelElement(fileSubmodelElement);
+
+		String outerColIdShort = "Files";
+		SubmodelElementCollection outerCollection = new SubmodelElementCollection(outerColIdShort);
+		outerCollection.addSubmodelElement(innerCollection);
+
+		String outerCollectionPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, outerColIdShort);
+		submodelProxy.setValue(outerCollectionPath, outerCollection);
+
+		String fileValuePath = VABPathTools.concatenatePaths(outerCollectionPath, innerColIdShort, fileIdShort);
+		Map<String, Object> resultingFileMap = (Map<String, Object>) submodelProxy.getValue(fileValuePath);
+		File resultingFile = File.createAsFacade(resultingFileMap);
+		assertEquals(fileValue, resultingFile.getValue());
+	}
+
 	/**
 	 * Test reading a single operation
 	 */
