@@ -394,9 +394,13 @@ public class SubmodelProviderTest {
 		assertEquals(321, value.intValue());
 	}
 
+	/**
+	 * Test getting a file in a collection having the "File" keyword as the start of
+	 * its IdShort.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void collectionIdShortFileCollision() {
+	public void getFileFromCollectionWithFileKeywordCollision() {
 		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
 
 		String colIdShort = "Files";
@@ -419,18 +423,22 @@ public class SubmodelProviderTest {
 	}
 
 	/**
-	 * Test getting a File with "File" as IdShort
+	 * Test getting a file with a non colliding IdShort.
 	 */
 	@Test
-	public void getFileSubmodelElement() {
+	public void getSimpleFileSubmodelElement() {
 		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
 		String fileIdShort = "MySimpleFile";
 		createSimpleFile(submodelProxy, fileIdShort);
 		assertSimpleFileValue(submodelProxy, fileIdShort);
 	}
 
+	/**
+	 * Test getting a property that happens to have the "File" keyword as its
+	 * IdShort.
+	 */
 	@Test
-	public void getIdShortCollision() {
+	public void getPropertyWithFileKeywordCollision() {
 		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
 		String fileIdShort = "File";
 
@@ -441,8 +449,11 @@ public class SubmodelProviderTest {
 		assertSimplePropertyValue(submodelProxy, fileIdShort);
 	}
 
+	/**
+	 * Test getting a File with the "File" keyword as its IdShort.
+	 */
 	@Test
-	public void getFileIdShortCollision() {
+	public void getFileWithFileKeywordCollision() {
 		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
 		String fileIdShort = "File";
 		createSimpleFile(submodelProxy, fileIdShort);
