@@ -36,7 +36,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
-import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
@@ -90,7 +89,7 @@ public class VABSubmodelAPI implements ISubmodelAPI {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ISubmodel getSubmodel() {
+	public Submodel getSubmodel() {
 		// For access on the container property root, return the whole model
 		Map<String, Object> map = (Map<String, Object>) modelProvider.getValue(SubmodelAPIHelper.getSubmodelPath());
 
