@@ -68,12 +68,10 @@ public class EmbeddedDataSpecification extends VABModelMap<Object> implements IE
 	@SuppressWarnings("unchecked")
 	@Override
 	public IDataSpecificationContent getContent() {
-		// Assume the concent complies to the IEC61360 template
-		// => only this template is supported currently
-		return DataSpecificationIEC61360Content.createAsFacade((Map<String, Object>) get(CONTENT));
+		return DataSpecificationContent.createAsFacade((Map<String, Object>) get(CONTENT));
 	}
 
-	public void setContent(IDataSpecificationIEC61360Content content) {
+	public void setContent(IDataSpecificationContent content) {
 		put(CONTENT, content);
 	}
 }
