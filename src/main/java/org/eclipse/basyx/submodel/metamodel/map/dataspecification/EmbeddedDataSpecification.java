@@ -27,7 +27,6 @@ package org.eclipse.basyx.submodel.metamodel.map.dataspecification;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.dataspecification.IDataSpecificationContent;
-import org.eclipse.basyx.submodel.metamodel.api.dataspecification.IDataSpecificationIEC61360Content;
 import org.eclipse.basyx.submodel.metamodel.api.dataspecification.IEmbeddedDataSpecification;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
