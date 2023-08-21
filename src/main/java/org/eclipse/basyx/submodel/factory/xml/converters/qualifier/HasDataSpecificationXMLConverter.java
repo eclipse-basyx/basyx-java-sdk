@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (C) 2021 the Eclipse BaSyx Authors
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,7 +19,7 @@
  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
+ *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
 package org.eclipse.basyx.submodel.factory.xml.converters.qualifier;
@@ -49,12 +49,13 @@ import org.w3c.dom.Element;
  * Handles the conversion between an IHasDataSpecification object and the XML
  * tag<br>
  * &lt;aas:embeddedDataSpecification&gt; in both directions
- * 
+ *
  * @author conradi, espen
  *
  */
 public class HasDataSpecificationXMLConverter {
 	public static final String EMBEDDED_DATA_SPECIFICATION = "aas:embeddedDataSpecification";
+	public static final String DATA_SPECIFICATION = "aas:dataSpecification";
 	public static final String DATA_SPECIFICATION_IEC61360 = "aas:dataSpecificationIEC61360";
 	public static final String DATA_SPECIFICATION_REFERENCE = "aas:dataSpecification";
 	public static final String DATA_SPECIFICATION_CONTENT = "aas:dataSpecificationContent";
@@ -62,7 +63,7 @@ public class HasDataSpecificationXMLConverter {
 	/**
 	 * Populates a given IHasDataSpecification object with the data form the given
 	 * XML
-	 * 
+	 *
 	 * @param xmlObject
 	 *            the XML map containing the &lt;aas:embeddedDataSpecification&gt;
 	 *            tag
@@ -83,23 +84,17 @@ public class HasDataSpecificationXMLConverter {
 				IDataSpecificationContent content = parseContent(xmlSpec);
 				EmbeddedDataSpecification spec = new EmbeddedDataSpecification();
 				spec.setDataSpecificationTemplate(ref);
-				// TODO: Also support other templates
-				spec.setContent((DataSpecificationIEC61360Content) content);
+				spec.setContent((DataSpecificationContent) content);
 				embeddedSpecList.add(spec);
 			}
 			hasDataSpecification.setEmbeddedDataSpecifications(embeddedSpecList);
 		}
-
-		// Note: DataSpecificationReferences are not serialized in XML
-		// "http://admin-shell.io/DataSpecificationTemplates/DataSpecificationIEC61360/2/0"
-		// could always be added here,
-		// as the serialization only supports this template
 	}
 
 	/**
 	 * Parses a Reference Object from the &lt;aas:embeddedDataSpecification&gt; XML
 	 * tag
-	 * 
+	 *
 	 * @param xmlObject
 	 *            the XML map containing the &lt;aas:embeddedDataSpecification&gt;
 	 *            XML tag
@@ -117,7 +112,7 @@ public class HasDataSpecificationXMLConverter {
 	/**
 	 * Parses a DataSpecificationContent Object from the
 	 * &lt;aas:embeddedDataSpecification&gt; XML tag
-	 * 
+	 *
 	 * @param xmlObject
 	 *            the XML map containing the &lt;aas:embeddedDataSpecification&gt;
 	 *            XML tag
@@ -130,7 +125,6 @@ public class HasDataSpecificationXMLConverter {
 			return null;
 		}
 
-		// Only supports parsing the IEC61360 content
 		if (contentMap.containsKey(DATA_SPECIFICATION_IEC61360)) {
 			Map<String, Object> iec61360ContentMap = (Map<String, Object>) contentMap.get(DATA_SPECIFICATION_IEC61360);
 			return DataSpecificationIEC61360XMLConverter.parseDataSpecificationContent(iec61360ContentMap);
@@ -143,7 +137,7 @@ public class HasDataSpecificationXMLConverter {
 	 * Populates a given XML map with the data from a given IHasDataSpecification
 	 * object<br>
 	 * Creates the &lt;aas:embeddedDataSpecification&gt; tag in the given root
-	 * 
+	 *
 	 * @param document
 	 *            the XML document
 	 * @param root
@@ -162,11 +156,14 @@ public class HasDataSpecificationXMLConverter {
 			IDataSpecificationContent content = spec.getContent();
 			Element dataSpecContentRoot = document.createElement(DATA_SPECIFICATION_CONTENT);
 			embeddedDataSpecRoot.appendChild(dataSpecContentRoot);
-			if (content instanceof Map<?, ?>) {
-				// Assume its an IEC61360Content (only type of content supported)
+			if (spec.getDataSpecificationTemplate().getKeys().stream().anyMatch(key -> key.getValue().contains("DataSpecificationIEC61360"))) {
 				Element dataSpecIEC61360Root = document.createElement(DATA_SPECIFICATION_IEC61360);
 				dataSpecContentRoot.appendChild(dataSpecIEC61360Root);
 				populateContent(document, dataSpecIEC61360Root, DataSpecificationIEC61360Content.createAsFacade((Map<String, Object>) content));
+			} else {
+				Element dataSpecRoot = document.createElement(DATA_SPECIFICATION);
+				dataSpecContentRoot.appendChild(dataSpecRoot);
+				populateContent(document, dataSpecRoot, DataSpecificationContent.createAsFacade((Map<String, Object>) content));
 			}
 			// Add template reference
 			IReference dataSpecTemplate = spec.getDataSpecificationTemplate();
@@ -180,7 +177,7 @@ public class HasDataSpecificationXMLConverter {
 	/**
 	 * Populates a DataSpecificationContent XML from the IDataSpecificationContent
 	 * object
-	 * 
+	 *
 	 * @param document
 	 *            the XML document
 	 * @param contentRoot
@@ -189,9 +186,11 @@ public class HasDataSpecificationXMLConverter {
 	 *            the IDataSpecification object to be converted to XML
 	 */
 	private static void populateContent(Document document, Element contentRoot, IDataSpecificationContent content) {
-		// Currently, the XML-Schema only supports this data specification -
-		// for the future, this method will also need to support additionaly data
-		// specification templates
-		DataSpecificationIEC61360XMLConverter.populateIEC61360ContentXML(document, contentRoot, (IDataSpecificationIEC61360Content) content);
+		if (content instanceof DataSpecificationIEC61360Content) {
+			DataSpecificationIEC61360XMLConverter.populateIEC61360ContentXML(document, contentRoot, (IDataSpecificationIEC61360Content) content);
+		} else {
+			// TODO Implement DataSpecificationXMLConverter, see DataSpecificationIEC61360XMLConverter
+			// DataSpecificationXMLConverter.populateEClassContentXML(document, contentRoot, (IDataSpecificationContent) content);
+		}
 	}
 }
