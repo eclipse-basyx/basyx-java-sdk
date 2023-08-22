@@ -228,6 +228,7 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 
 	public void setAsset(Asset asset) {
 		put(AssetAdministrationShell.ASSET, asset);
+		setAssetReference(asset.getReference());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -242,7 +243,7 @@ public class AssetAdministrationShell extends VABModelMap<Object> implements IAs
 		return Reference.createAsFacade((Map<String, Object>) get(ASSETREF));
 	}
 
-	public void setAssetReference(Reference ref) {
+	public void setAssetReference(IReference ref) {
 		put(ASSETREF, ref);
 	}
 
