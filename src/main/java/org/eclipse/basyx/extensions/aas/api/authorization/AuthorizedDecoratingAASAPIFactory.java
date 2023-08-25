@@ -12,6 +12,7 @@ package org.eclipse.basyx.extensions.aas.api.authorization;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * Api provider for constructing a new AAS API that is authorized
@@ -28,5 +29,10 @@ public class AuthorizedDecoratingAASAPIFactory implements IAASAPIFactory {
 	@Override
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
 		return new AuthorizedAASAPI(apiFactory.create(aas));
+	}
+
+	@Override
+	public IAASAPI create(IIdentifier aasId) {
+		return new AuthorizedAASAPI(apiFactory.create(aasId));
 	}
 }

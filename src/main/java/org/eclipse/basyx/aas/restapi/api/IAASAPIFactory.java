@@ -25,6 +25,7 @@
 package org.eclipse.basyx.aas.restapi.api;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * Interface for providing an AAS API
@@ -47,4 +48,6 @@ public interface IAASAPIFactory {
 	public default IAASAPI create(AssetAdministrationShell aas) {
 		return getAASApi(aas);
 	}
+
+	public IAASAPI create(IIdentifier aasId);
 }
