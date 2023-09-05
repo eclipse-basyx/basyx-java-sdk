@@ -45,9 +45,12 @@ public interface IAASAPIFactory {
 	@Deprecated
 	public IAASAPI getAASApi(AssetAdministrationShell aas);
 
+
 	public default IAASAPI create(AssetAdministrationShell aas) {
 		return getAASApi(aas);
 	}
 
-	public IAASAPI create(IIdentifier aasId);
+	public default IAASAPI create(IIdentifier aasId) {
+		return null;
+	}
 }
