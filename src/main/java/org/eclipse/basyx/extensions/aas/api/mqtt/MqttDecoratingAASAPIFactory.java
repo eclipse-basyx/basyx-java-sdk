@@ -13,6 +13,7 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.observing.ObservableAASAPI;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -33,13 +34,22 @@ public class MqttDecoratingAASAPIFactory implements IAASAPIFactory {
 
 	@Override
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
+		return createMqttDecoratingAASAPI(apiFactory.create(aas));
+	}
+
+	private IAASAPI createMqttDecoratingAASAPI(IAASAPI aasAPI) {
 		try {
-			ObservableAASAPI observedAPI = new ObservableAASAPI(apiFactory.create(aas));
+			ObservableAASAPI observedAPI = new ObservableAASAPI(aasAPI);
 			MqttAASAPIObserver mqttAASAPIObserver = new MqttAASAPIObserver(client, MqttAASAPIHelper.getAASIdShort(observedAPI));
 			observedAPI.addObserver(mqttAASAPIObserver);
 			return observedAPI;
 		} catch (MqttException e) {
 			throw new ProviderException(e);
 		}
+	}
+
+	@Override
+	public IAASAPI create(IIdentifier aasId) {
+		return createMqttDecoratingAASAPI(apiFactory.create(aasId));
 	}
 }

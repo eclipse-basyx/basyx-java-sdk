@@ -28,6 +28,7 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.aas.restapi.vab.VABAASAPIFactory;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * AAS API provider that provides the default AAS API
@@ -48,6 +49,11 @@ public class AASAPIFactory implements IAASAPIFactory {
 	@Override
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
 		return aasAPIFactory.create(aas);
+	}
+
+	@Override
+	public IAASAPI create(IIdentifier aasId) {
+		return aasAPIFactory.create(aasId);
 	}
 
 }

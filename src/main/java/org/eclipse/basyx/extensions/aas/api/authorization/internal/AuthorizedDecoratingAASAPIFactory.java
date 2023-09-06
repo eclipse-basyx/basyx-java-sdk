@@ -28,6 +28,7 @@ import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 
 /**
  * Api provider for constructing a new AAS API that is authorized
@@ -49,5 +50,10 @@ public class AuthorizedDecoratingAASAPIFactory<SubjectInformationType> implement
 	@Override
 	public IAASAPI getAASApi(final AssetAdministrationShell aas) {
 		return new AuthorizedAASAPI<>(apiFactory.create(aas), aasAPIAuthorizer, subjectInformationProvider);
+	}
+
+	@Override
+	public IAASAPI create(IIdentifier aasId) {
+		return new AuthorizedAASAPI<>(apiFactory.create(aasId), aasAPIAuthorizer, subjectInformationProvider);
 	}
 }

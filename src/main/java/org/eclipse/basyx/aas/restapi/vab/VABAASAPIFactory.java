@@ -27,6 +27,8 @@ package org.eclipse.basyx.aas.restapi.vab;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.restapi.api.IAASAPI;
 import org.eclipse.basyx.aas.restapi.api.IAASAPIFactory;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.vab.exception.FeatureNotImplementedException;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProvider;
 
 /**
@@ -38,5 +40,11 @@ public class VABAASAPIFactory implements IAASAPIFactory {
 	@Override
 	public IAASAPI getAASApi(AssetAdministrationShell aas) {
 		return new VABAASAPI(new VABLambdaProvider(aas));
+	}
+
+	@Override
+	public IAASAPI create(IIdentifier aasId) {
+		// This should not be used for VABAASAPI
+		throw new FeatureNotImplementedException();
 	}
 }
