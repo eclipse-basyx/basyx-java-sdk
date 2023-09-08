@@ -66,8 +66,7 @@ public abstract class AASAggregatorSuite {
 	private static final String aas2Category = "TestCategory2";
 
 	// initializing dummy test data
-	@Before
-	public void initAASDummies() {
+	private void initAASDummies() {
 		aas1 = new AssetAdministrationShell(aas1Id, new Identifier(IdentifierType.CUSTOM, aas1Id), new Asset("asset1IdShort", new Identifier(IdentifierType.CUSTOM, "asset1"), AssetKind.INSTANCE));
 		aas1.setDescription(description1);
 		aas1.setCategory(aas1Category);
@@ -79,10 +78,15 @@ public abstract class AASAggregatorSuite {
 
 	protected abstract IAASAggregator getAggregator();
 
-	@Before
-	public void clearAASAggregator() {
+	private void clearAASAggregator() {
 		IAASAggregator aggregator = getAggregator();
 		aggregator.getAASList().stream().map(a -> a.getIdentification()).forEach(id -> aggregator.deleteAAS(id));
+	}
+
+	@Before
+	public void setup() {
+		initAASDummies();
+		clearAASAggregator();
 	}
 
 	@Test
