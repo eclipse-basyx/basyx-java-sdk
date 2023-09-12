@@ -214,7 +214,7 @@
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>sdk-client</artifactId>
-			<version>0.6.10</version>
+			<version>0.6.11</version>
 		</dependency>
 
 		<!-- Eclipse Milo (for OPC-UA server) -->
