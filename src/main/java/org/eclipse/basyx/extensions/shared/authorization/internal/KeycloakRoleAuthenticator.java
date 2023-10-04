@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -97,6 +98,7 @@ public class KeycloakRoleAuthenticator implements IRoleAuthenticator<Jwt> {
 		return resourceAccess.values().stream().map(this::getCategoryRoles).flatMap(List::stream).collect(Collectors.toList());
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<String> getCategoryRoles(Object categoryObject) {
 		final Map<?, ?> category = (Map<?, ?>) categoryObject;
 

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
@@ -40,7 +41,6 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.ElevatedCodeAu
 import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInformationProvider;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
-import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
