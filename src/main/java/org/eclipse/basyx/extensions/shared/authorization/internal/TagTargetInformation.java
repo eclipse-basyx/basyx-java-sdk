@@ -81,6 +81,6 @@ public class TagTargetInformation implements TargetInformation {
 
 	@Override
 	public String toString() {
-		return new StringBuilder("BaSyxObjectTargetInformation{").append("tag='").append(tag).append('\'').append('}').toString();
+		return new StringBuilder("TagTargetInformation{").append("tag='").append(tag).append('\'').append('}').toString();
 	}
 }
