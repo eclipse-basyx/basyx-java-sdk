@@ -24,15 +24,15 @@
  ******************************************************************************/
 package org.eclipse.basyx.vab.protocol.http.server;
 
-import org.apache.catalina.Context;
-import org.springframework.lang.Nullable;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import javax.servlet.http.HttpServlet;
+
+import org.springframework.lang.Nullable;
 
 /**
  * BaSyx context that contains an Industrie 4.0 Servlet infrastructure

@@ -127,6 +127,7 @@ public class RbacRuleSetDeserializer {
 		throw new IOException("could not find " + filePath);
 	}
 
+	@SuppressWarnings("unused")
 	private static class RbacRuleMultiple {
 		String role;
 		String[] actions;
