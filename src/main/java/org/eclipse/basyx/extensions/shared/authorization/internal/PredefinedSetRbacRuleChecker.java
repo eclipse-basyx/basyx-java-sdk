@@ -75,15 +75,23 @@ public class PredefinedSetRbacRuleChecker implements IRbacRuleChecker {
 		return rbacRule.getAction().equals("*") || rbacRule.getAction().equals(action);
 	}
 
-	private boolean checkRbacRuleMatchesTargetInformation(final RbacRule rbacRule, final TargetInformation targetInformation) {
-		final Map<String, String> targetInformationMap = targetInformation.toMap();
+	private boolean checkRbacRuleMatchesTargetInformation(final RbacRule rbacRule, final TargetInformation matchTargetInformation) {
+		final TargetInformation rbacRuleTargetInformation = rbacRule.getTargetInformation();
+		if (!rbacRuleTargetInformation.getClass().isAssignableFrom(matchTargetInformation.getClass())) {
+			// return false if the type of the target is not the same or a subtype of the target information specified in the rbac rule
+			// otherwise two target information objects of unrelated types may be found equal if their properties match since
+			// the type property is not considered
+			return false;
+		}
+
+		final Map<String, String> matchTargetInformationMap = matchTargetInformation.toMap();
 		final Map<String, String> rbacRuleTargetInformationMap = rbacRule.getTargetInformation().toMap();
-		for (final Map.Entry<String, String> targetInfo : targetInformationMap.entrySet()) {
-			final String key = targetInfo.getKey();
-			final String targetInfoValue = targetInfo.getValue();
+		for (final Map.Entry<String, String> matchTargetInformationMapEntry : matchTargetInformationMap.entrySet()) {
+			final String key = matchTargetInformationMapEntry.getKey();
+			final String matchTargetInformationSingleValue = matchTargetInformationMapEntry.getValue();
 			final String rbacRuleValue = rbacRuleTargetInformationMap.get(key);
 
-			if (!checkRegexStringMatch(rbacRuleValue, targetInfoValue)) {
+			if (!checkRegexStringMatch(rbacRuleValue, matchTargetInformationSingleValue)) {
 				return false;
 			}
 		}
