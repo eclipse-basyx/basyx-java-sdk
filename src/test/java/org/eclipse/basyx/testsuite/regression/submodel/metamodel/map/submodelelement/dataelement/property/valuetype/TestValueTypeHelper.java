@@ -28,6 +28,8 @@ package org.eclipse.basyx.testsuite.regression.submodel.metamodel.map.submodelel
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Iterator;
+import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -35,6 +37,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
 import org.junit.Test;
+
+import java.math.BigDecimal;
 
 /**
  * Tests the ValueTypeHelper class
@@ -45,11 +49,47 @@ import org.junit.Test;
 public class TestValueTypeHelper {
 
 	@Test
+	public void NonStandardUpperCaseHandling() {
+		List<String> testList = List.of("integer", "Integer", "Float", "dateTime", "base64Binary", "dateTimeStamp",
+				"INTEGER");
+		List<String> correctList = List.of("integer", "integer", "float", "dateTime", "base64Binary", "dateTimeStamp",
+				"integer");
+
+		Iterator<String> testsIterator = testList.iterator();
+		Iterator<String> correctsIterator = correctList.iterator();
+
+		while (testsIterator.hasNext() && correctsIterator.hasNext()) {
+			ValueType type = ValueTypeHelper.fromName(testsIterator.next());
+			ValueType expected = ValueTypeHelper.fromName(correctsIterator.next());
+			assertEquals(expected, type);
+
+		}
+	}
+
+	@Test
 	public void dateFromString() throws DatatypeConfigurationException {
 		String date = "2002-09-24";
 		Object javaObject = ValueTypeHelper.getJavaObject(date, ValueType.Date);
 
 		XMLGregorianCalendar expected = DatatypeFactory.newInstance().newXMLGregorianCalendar(date);
+		assertEquals(expected, javaObject);
+	}
+
+	@Test
+	public void decimalDataType() {
+		String data = "10.10";
+		Object javaObject = ValueTypeHelper.getJavaObject(data, ValueType.Decimal);
+
+		BigDecimal expected = new BigDecimal(data);
+		assertEquals(expected, javaObject);
+	}
+
+	@Test
+	public void decimalDataTypeNaN() {
+		String data = "";
+		Object javaObject = ValueTypeHelper.getJavaObject(data, ValueType.Decimal);
+
+		BigDecimal expected = new BigDecimal("0");
 		assertEquals(expected, javaObject);
 	}
 }

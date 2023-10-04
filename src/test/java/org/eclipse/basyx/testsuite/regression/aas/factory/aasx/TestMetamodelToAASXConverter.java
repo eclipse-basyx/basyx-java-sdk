@@ -313,22 +313,21 @@ public class TestMetamodelToAASXConverter {
 	}
 
 	private Set<AASBundle> deserializeAASX(ByteArrayOutputStream byteStream) throws IOException, InvalidFormatException, ParserConfigurationException, SAXException {
-		AASXToMetamodelConverter aasxDeserializer = getDeserializedAASX(byteStream);
-		
-		return aasxDeserializer.retrieveAASBundles();
+		try (AASXToMetamodelConverter aasxDeserializer = getDeserializedAASX(byteStream)) {
+			return aasxDeserializer.retrieveAASBundles();
+		}
 	}
 	
 	private InputStream getThumbnailStreamFromAASX(ByteArrayOutputStream byteStream) throws IOException, InvalidFormatException, ParserConfigurationException, SAXException {
-		AASXToMetamodelConverter aasxDeserializer = getDeserializedAASX(byteStream);
-		
-		return aasxDeserializer.retrieveThumbnail();
+		try (AASXToMetamodelConverter aasxDeserializer = getDeserializedAASX(byteStream)) {
+			return aasxDeserializer.retrieveThumbnail();
+		}		
 	}
 
 	private AASXToMetamodelConverter getDeserializedAASX(ByteArrayOutputStream byteStream) {
 		InputStream in = new ByteArrayInputStream(byteStream.toByteArray());
 
-		AASXToMetamodelConverter aasxDeserializer = new AASXToMetamodelConverter(in);
-		return aasxDeserializer;
+		return new AASXToMetamodelConverter(in);
 	}
 
 	private void assertFilepathsAreCorrect(Set<AASBundle> aasBundles) {

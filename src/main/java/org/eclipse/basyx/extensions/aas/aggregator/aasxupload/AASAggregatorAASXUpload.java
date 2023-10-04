@@ -70,8 +70,7 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 
 	@Override
 	public void uploadAASX(InputStream aasxStream) {
-		try {
-			AASXToMetamodelConverter converter = new AASXToMetamodelConverter(aasxStream);
+		try (AASXToMetamodelConverter converter = new AASXToMetamodelConverter(aasxStream)) {
 			Set<AASBundle> bundles = converter.retrieveAASBundles();
 			AASBundleHelper.integrate(this, bundles);
 			uploadFilesInAASX(converter);
@@ -100,7 +99,7 @@ public class AASAggregatorAASXUpload implements IAASAggregatorAASXUpload {
 
 	private void uploadFileInSubmodelElement(IIdentifier aasIdentification, AASXToMetamodelConverter converter, File submodelElement, String submodelElementPath) {
 		try {
-			getAASProvider(aasIdentification).createValue(submodelElementPath + "/File/upload", converter.retrieveFileInputStream((String) submodelElement.getValue()));
+			getAASProvider(aasIdentification).createValue(submodelElementPath + "/upload", converter.retrieveFileInputStream((String) submodelElement.getValue()));
 		} catch (InvalidFormatException | IOException e) {
 			e.printStackTrace();
 		}

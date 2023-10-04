@@ -86,10 +86,10 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 
 	@Before
 	public void setUp() {
-		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(readerRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(partialReaderRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(SHELL_IDENTIFIER.getId(), SUBMODEL_IDENTIFIER.getId(), "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASRegistryScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(readerRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(partialReaderRole, AASRegistryScopes.READ_SCOPE, new BaSyxObjectTargetInformation(SHELL_IDENTIFIER.getId(), SUBMODEL_IDENTIFIER.getId(), "*", "*")));
 		testSubject = new AuthorizedAASRegistry<>(apiMock, new SimpleRbacAASRegistryAuthorizer<>(new PredefinedSetRbacRuleChecker(rbacRuleSet), new KeycloakRoleAuthenticator()), new JWTAuthenticationContextProvider());
 		aasDescriptor = new AASDescriptor(SHELL_ID, SHELL_IDENTIFIER, "");
 		smDescriptor = new SubmodelDescriptor(SUBMODEL_ID, SUBMODEL_IDENTIFIER, "");
@@ -158,6 +158,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 	@Test
 	public void givenPrincipalHasWriteAuthority_whenDeleteSubmodel_thenInvocationIsForwarded() {
 		securityContextProvider.setSecurityContextWithRoles(adminRole);
+		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 
 		testSubject.delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 		Mockito.verify(apiMock).delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
@@ -166,6 +167,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingWriteAuthority_whenDeleteSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
+		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 
 		testSubject.delete(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 	}
@@ -240,6 +242,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 		final List<SubmodelDescriptor> expectedSubmodelDescriptorList = Collections.singletonList(smDescriptor);
 		Mockito.when(apiMock.lookupSubmodels(SHELL_IDENTIFIER)).thenReturn(Arrays.asList(smDescriptor, secondSmDescriptor));
 		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
+		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SECOND_SUBMODEL_IDENTIFIER)).thenReturn(secondSmDescriptor);
 
 		final List<SubmodelDescriptor> returnedSubmodelDescriptorList = testSubject.lookupSubmodels(SHELL_IDENTIFIER);
 		Assert.assertEquals(expectedSubmodelDescriptorList, returnedSubmodelDescriptorList);
@@ -258,6 +261,7 @@ public class TestSimpleRbacAuthorizedAASRegistry {
 	@Test(expected = NotAuthorizedException.class)
 	public void givenPrincipalIsMissingReadAuthority_whenLookupSubmodel_thenThrowNotAuthorized() {
 		securityContextProvider.setSecurityContextWithoutRoles();
+		Mockito.when(apiMock.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER)).thenReturn(smDescriptor);
 
 		testSubject.lookupSubmodel(SHELL_IDENTIFIER, SUBMODEL_IDENTIFIER);
 	}

@@ -32,6 +32,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.GrantedAuthori
 import org.eclipse.basyx.extensions.shared.authorization.internal.IGrantedAuthorityAuthenticator;
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 
 /**
  * Scope based implementation for {@link IAASRegistryAuthorizer}.
@@ -46,12 +47,12 @@ public class GrantedAuthorityAASRegistryAuthorizer<SubjectInformationType> imple
 	}
 
 	@Override
-	public void authorizeRegisterAas(final SubjectInformationType subjectInformation, final AASDescriptor aasDescriptor) throws InhibitException {
+	public void authorizeRegisterAas(final SubjectInformationType subjectInformation, final IIdentifier aasId, final AASDescriptor aasDescriptor) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
 	@Override
-	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final SubmodelDescriptor smDescriptor) throws InhibitException {
+	public void authorizeRegisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId, final SubmodelDescriptor smDescriptor) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
@@ -61,7 +62,7 @@ public class GrantedAuthorityAASRegistryAuthorizer<SubjectInformationType> imple
 	}
 
 	@Override
-	public void authorizeUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId) throws InhibitException {
+	public void authorizeUnregisterSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.WRITE_AUTHORITY);
 	}
 
@@ -87,7 +88,7 @@ public class GrantedAuthorityAASRegistryAuthorizer<SubjectInformationType> imple
 	}
 
 	@Override
-	public SubmodelDescriptor authorizeLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException {
+	public SubmodelDescriptor authorizeLookupSubmodel(final SubjectInformationType subjectInformation, final IIdentifier aasId, final IIdentifier smId, final IReference smSemanticId, final Supplier<SubmodelDescriptor> smSupplier) throws InhibitException {
 		GrantedAuthorityHelper.checkAuthority(grantedAuthorityAuthenticator, subjectInformation, AuthorizedAASRegistry.READ_AUTHORITY);
 
 		return smSupplier.get();

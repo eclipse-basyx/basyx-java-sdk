@@ -89,10 +89,10 @@ public class TestSimpleRbacAuthorizedAASAggregator {
 
 	@Before
 	public void setUp() {
-		rbacRuleSet.addRule(new RbacRule(adminRole, AASAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(adminRole, AASAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(readerRole, AASAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*")));
-		rbacRuleSet.addRule(new RbacRule(partialReaderRole, AASAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation(SHELL_IDENTIFIER.getId(), "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(adminRole, AASAggregatorScopes.WRITE_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(readerRole, AASAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation("*", "*", "*", "*")));
+		rbacRuleSet.addRule(new RbacRule(partialReaderRole, AASAggregatorScopes.READ_SCOPE, new BaSyxObjectTargetInformation(SHELL_IDENTIFIER.getId(), "*", "*", "*")));
 		testSubject = new AuthorizedAASAggregator<>(apiMock, new SimpleRbacAASAggregatorAuthorizer<>(new PredefinedSetRbacRuleChecker(rbacRuleSet), new KeycloakRoleAuthenticator()), new JWTAuthenticationContextProvider());
 		shell = new AssetAdministrationShell(SHELL_ID, SHELL_IDENTIFIER, SHELL_ASSET);
 		secondShell = new AssetAdministrationShell(SECOND_SHELL_ID, SECOND_SHELL_IDENTIFIER, SECOND_SHELL_ASSET);

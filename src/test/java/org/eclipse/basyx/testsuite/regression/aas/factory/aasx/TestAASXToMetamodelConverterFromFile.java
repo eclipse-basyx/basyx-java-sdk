@@ -50,6 +50,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -140,6 +141,11 @@ public class TestAASXToMetamodelConverterFromFile {
 		specificSubmodelOptional = getSpecificSubmodelAsOptional(submodelsFromConverter, EXPECTED_SUBMODEL_IDSHORT);
 		specificSubmodel = specificSubmodelOptional.get();
 		specificSubmodelElements = specificSubmodel.getSubmodelElements();
+	}
+	
+	@AfterClass
+	public static void tearDown() {
+		packageConverter.close();
 	}
 
 	/**

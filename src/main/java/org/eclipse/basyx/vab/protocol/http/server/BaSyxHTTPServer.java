@@ -25,6 +25,7 @@
 package org.eclipse.basyx.vab.protocol.http.server;
 
 import java.io.File;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -32,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServlet;
@@ -124,7 +126,9 @@ public class BaSyxHTTPServer {
 		tomcat.getHost().setAppBase(".");
 		
 		configureHealthEndpoint();
-
+		
+		addChildContextsIfConfigured(context);
+	
 		// Create servlet context
 		// - Base path for resource files
 		File docBase = new File(context.docBasePath); // System.getProperty("java.io.tmpdir"));
@@ -138,6 +142,22 @@ public class BaSyxHTTPServer {
 		while (servletIterator.hasNext()) {
 			addNewServletAndMappingToTomcatEnvironment(context, rootCtx, servletIterator.next());
 		}
+		
+	}
+
+	private void addChildContextsIfConfigured(BaSyxContext context) {
+		List<BaSyxChildContext> childContexts = context.getChildContexts();
+		
+		if (childContexts.isEmpty())
+			return;
+		
+		childContexts.stream().forEach(childContext -> addNewServletAndMappingToTomcatEnvironment(context, childContext.getChildContext(), new AbstractMap.SimpleEntry<>(childContext.getServletMappingPattern(), childContext.getServlet())));
+		
+		childContexts.stream().forEach(addChildContextToTomcat());
+	}
+
+	private Consumer<? super BaSyxChildContext> addChildContextToTomcat() {
+		return childContext -> tomcat.getHost().addChild(childContext.getChildContext());
 	}
 
 	private void configureHealthEndpoint() {

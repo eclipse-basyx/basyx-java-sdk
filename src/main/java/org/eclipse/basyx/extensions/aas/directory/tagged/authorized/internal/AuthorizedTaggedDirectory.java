@@ -24,12 +24,6 @@
  ******************************************************************************/
 package org.eclipse.basyx.extensions.aas.directory.tagged.authorized.internal;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.extensions.aas.directory.tagged.api.IAASTaggedDirectory;
@@ -41,8 +35,12 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.ISubjectInform
 import org.eclipse.basyx.extensions.shared.authorization.internal.InhibitException;
 import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of {@link IAASTaggedDirectory} for restricting access to
@@ -93,7 +91,8 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	}
 
 	protected void authorizeRegister(final TaggedAASDescriptor descriptor) throws InhibitException {
-		taggedDirectoryAuthorizer.authorizeRegister(subjectInformationProvider.get(), descriptor);
+		final IIdentifier aasId = getAasIdUnsecured(descriptor);
+		taggedDirectoryAuthorizer.authorizeRegister(subjectInformationProvider.get(), aasId, descriptor);
 	}
 
 	@Override
@@ -186,7 +185,9 @@ public class AuthorizedTaggedDirectory<SubjectInformationType> extends Authorize
 	}
 
 	protected void authorizeRegisterSubmodel(final IIdentifier aasId, final TaggedSubmodelDescriptor smDescriptor) throws InhibitException {
-		taggedDirectoryAuthorizer.authorizeRegisterSubmodel(subjectInformationProvider.get(), aasId, smDescriptor);
+		final IIdentifier smId = getSmIdUnsecured(smDescriptor);
+		final IReference smSemanticId = getSmSemanticIdUnsecured(smDescriptor);
+		taggedDirectoryAuthorizer.authorizeRegisterSubmodel(subjectInformationProvider.get(), aasId, smId, smSemanticId, smDescriptor);
 	}
 
 	@Override

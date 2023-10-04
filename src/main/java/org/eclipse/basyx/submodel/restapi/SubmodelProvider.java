@@ -39,6 +39,7 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement
 import org.eclipse.basyx.submodel.metamodel.facade.SubmodelElementMapCollectionConverter;
 import org.eclipse.basyx.submodel.metamodel.facade.submodelelement.SubmodelElementFacadeFactory;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
@@ -349,7 +350,7 @@ public class SubmodelProvider implements IModelProvider {
 
 	private String getFileIdShortFromSplittedPath4FileUpload(String[] splitted) {
 		String idShort = "";
-		for (int i = 1; i < splitted.length - 2; i++) {
+		for (int i = 1; i < splitted.length - 1; i++) {
 			idShort = concatFileIdShortPath(splitted, idShort, i);
 		}
 		return idShort;
@@ -379,9 +380,17 @@ public class SubmodelProvider implements IModelProvider {
 	@SuppressWarnings("unchecked")
 	private Object handleFile(String[] splitted) {
 		String idShortPath = getFileIdShortFromSplittedPath4FileDownload(splitted);
+
+		if (idShortPath.isEmpty()) {
+			return submodelAPI.getSubmodelElement(FILE);
+		}
+
 		Map<String, Object> submodelElement = (Map<String, Object>) submodelAPI.getSubmodelElement(idShortPath);
 
-		if (!File.isFile(submodelElement)) {
+		if (SubmodelElementCollection.isSubmodelElementCollection(submodelElement)) {
+			SubmodelElementCollection smeCollection = SubmodelElementCollection.createAsFacade(submodelElement);
+			return smeCollection.getSubmodelElement(FILE);
+		} else if (!File.isFile(submodelElement)) {
 			throw new MalformedRequestException("/File is only allowed for File Submodel Elements");
 		}
 

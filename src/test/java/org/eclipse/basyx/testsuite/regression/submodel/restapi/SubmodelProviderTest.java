@@ -32,8 +32,8 @@ import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
@@ -42,6 +42,7 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Identifiable;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.Referable;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.File;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueTypeHelper;
@@ -67,6 +68,8 @@ public class SubmodelProviderTest {
 	private VABConnectionManager connManager;
 	protected static final String submodelAddr = "urn:fhg:es.iese:aas:1:1:submodel";
 	protected static final String SMPROVIDER_PATH_PREFIX = "/" + SubmodelProvider.SUBMODEL + "/";
+	protected static final String SIMPLE_FILE_VALUE = "simpleFile.xml";
+	protected static final String SIMPLE_PROPERTY_VALUE = "simpleProperty";
 
 	protected VABConnectionManager getConnectionManager() {
 		if (connManager == null) {
@@ -392,6 +395,125 @@ public class SubmodelProviderTest {
 	}
 
 	/**
+	 * Test getting a file in a collection having the "File" keyword as the start of
+	 * its IdShort.
+	 */
+	@SuppressWarnings("unchecked")
+	@Test
+	public void getFileFromCollectionWithFileKeywordCollision() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+
+		String colIdShort = "Files";
+		String fileIdShort = "File";
+
+		SubmodelElementCollection fileCollection = new SubmodelElementCollection(colIdShort);
+		File fileSubmodelElement = new File("application/xml");
+		String fileValue = "simpleFile.xml";
+		fileSubmodelElement.setValue(fileValue);
+		fileSubmodelElement.setIdShort(fileIdShort);
+		fileCollection.addSubmodelElement(fileSubmodelElement);
+
+		String smeCollectionPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, colIdShort);
+		submodelProxy.setValue(smeCollectionPath, fileCollection);
+
+		String fileValuePath = VABPathTools.concatenatePaths(smeCollectionPath, fileIdShort);
+		Map<String, Object> resultingFileMap = (Map<String, Object>) submodelProxy.getValue(fileValuePath);
+		File resultingFile = File.createAsFacade(resultingFileMap);
+		assertEquals(fileValue, resultingFile.getValue());
+	}
+
+	/**
+	 * Test getting a file with a non colliding IdShort.
+	 */
+	@Test
+	public void getSimpleFileSubmodelElement() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+		String fileIdShort = "MySimpleFile";
+		createSimpleFile(submodelProxy, fileIdShort);
+		assertSimpleFileValue(submodelProxy, fileIdShort);
+	}
+
+	/**
+	 * Test getting a property that happens to have the "File" keyword as its
+	 * IdShort.
+	 */
+	@Test
+	public void getPropertyWithFileKeywordCollision() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+		String fileIdShort = "File";
+
+		Property fileProperty = new Property(fileIdShort, SIMPLE_PROPERTY_VALUE);
+		String propertyAccessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, fileIdShort);
+		submodelProxy.setValue(propertyAccessPath, fileProperty);
+
+		assertSimplePropertyValue(submodelProxy, fileIdShort);
+	}
+
+	/**
+	 * Test getting a File with the "File" keyword as its IdShort.
+	 */
+	@Test
+	public void getFileWithFileKeywordCollision() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+		String fileIdShort = "File";
+		createSimpleFile(submodelProxy, fileIdShort);
+		assertSimpleFileValue(submodelProxy, fileIdShort);
+	}
+
+	private void createSimpleFile(VABElementProxy submodelProxy, String fileIdShort) {
+		File fileSubmodelElement = new File("application/xml");
+		fileSubmodelElement.setValue(SIMPLE_FILE_VALUE);
+		fileSubmodelElement.setIdShort(fileIdShort);
+
+		String fileAccessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, fileIdShort);
+		submodelProxy.setValue(fileAccessPath, fileSubmodelElement);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void assertSimpleFileValue(VABElementProxy submodelProxy, String fileIdShort) {
+		String fileAccessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, fileIdShort);
+		Map<String, Object> resultingFileMap = (Map<String, Object>) submodelProxy.getValue(fileAccessPath);
+		File resultingFile = File.createAsFacade(resultingFileMap);
+		assertEquals(SIMPLE_FILE_VALUE, resultingFile.getValue());
+	}
+
+	@SuppressWarnings("unchecked")
+	private void assertSimplePropertyValue(VABElementProxy submodelProxy, String propertyIdShort) {
+		String accessPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, propertyIdShort);
+		Map<String, Object> resultingPropertyMap = (Map<String, Object>) submodelProxy.getValue(accessPath);
+		Property resultingProperty = Property.createAsFacade(resultingPropertyMap);
+		assertEquals(SIMPLE_PROPERTY_VALUE, resultingProperty.getValue());
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void nestedCollectionIdShortFileCollision() {
+		VABElementProxy submodelProxy = getConnectionManager().connectToVABElement(submodelAddr);
+
+		String fileIdShort = "File";
+		File fileSubmodelElement = new File("application/xml");
+		String fileValue = "simpleFile.xml";
+		fileSubmodelElement.setValue(fileValue);
+		fileSubmodelElement.setIdShort(fileIdShort);
+
+		String innerColIdShort = "Files";
+		SubmodelElementCollection innerCollection = new SubmodelElementCollection(innerColIdShort);
+		innerCollection.addSubmodelElement(fileSubmodelElement);
+
+		String outerColIdShort = "Files";
+		SubmodelElementCollection outerCollection = new SubmodelElementCollection(outerColIdShort);
+		outerCollection.addSubmodelElement(innerCollection);
+
+		String outerCollectionPath = VABPathTools.concatenatePaths(SMPROVIDER_PATH_PREFIX, MultiSubmodelElementProvider.ELEMENTS, outerColIdShort);
+		submodelProxy.setValue(outerCollectionPath, outerCollection);
+
+		String fileValuePath = VABPathTools.concatenatePaths(outerCollectionPath, innerColIdShort, fileIdShort);
+		Map<String, Object> resultingFileMap = (Map<String, Object>) submodelProxy.getValue(fileValuePath);
+		File resultingFile = File.createAsFacade(resultingFileMap);
+		assertEquals(fileValue, resultingFile.getValue());
+	}
+
+	/**
 	 * Test reading a single operation
 	 */
 	@SuppressWarnings("unchecked")
@@ -684,6 +806,26 @@ public class SubmodelProviderTest {
 			fail();
 		} catch (ResourceNotFoundException e) {
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testIndirectSubmodelElementCollectionValueType() {
+		VABElementProxy submodelProvider = getConnectionManager().connectToVABElement(submodelAddr);
+		String containerRootPath = VABPathTools.concatenatePaths(SubmodelProvider.SUBMODEL, MultiSubmodelElementProvider.ELEMENTS, "containerRoot");
+		Map<String, Object> directCollection = (Map<String, Object>) submodelProvider.getValue(containerRootPath);
+		Object indirectCollectionValue = directCollection.get(Property.VALUE);
+
+		assertTrue(indirectCollectionValue instanceof Collection<?>);
+	}
+
+	@Test
+	public void testDirectSubmodelElementCollectionValueType() {
+		VABElementProxy submodelProvider = getConnectionManager().connectToVABElement(submodelAddr);
+		String containerRootValuePath = VABPathTools.concatenatePaths(SubmodelProvider.SUBMODEL, MultiSubmodelElementProvider.ELEMENTS, "containerRoot", Property.VALUE);
+		Object directCollectionValue = submodelProvider.getValue(containerRootValuePath);
+
+		assertTrue(directCollectionValue instanceof Collection<?>);
 	}
 
 	protected Map<String, Object> wrapParameter(String name, Object value) {

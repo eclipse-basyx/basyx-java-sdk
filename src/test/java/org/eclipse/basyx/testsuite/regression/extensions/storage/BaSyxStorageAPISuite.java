@@ -28,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.basyx.extensions.internal.storage.BaSyxStorageAPI;
@@ -49,11 +50,21 @@ import org.junit.Test;
  */
 public abstract class BaSyxStorageAPISuite {
 
-	private static final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.CUSTOM, "testSubmodelIidentifier");
-	protected static Submodel testType = new Submodel("testSubmodel", SUBMODEL_IDENTIFIER);
-	private BaSyxStorageAPI<Submodel> storageAPI;
+	private final Identifier SUBMODEL_IDENTIFIER = new Identifier(IdentifierType.CUSTOM, "testSubmodelIidentifier");
+	protected Submodel testSubmodel = new Submodel("testSubmodel", SUBMODEL_IDENTIFIER);
+	protected BaSyxStorageAPI<Submodel> storageAPI;
 
 	protected abstract BaSyxStorageAPI<Submodel> getStorageAPI();
+
+	/**
+	 * This Storage API is used to approve data persistency. Therefore this method
+	 * shall not return the very same object returned by {@link #getStorageAPI()}
+	 * but still connect to the same storage.
+	 * 
+	 * @return A BaSyxStorageAPI that is not same as returned by
+	 *         {@link #getStorageAPI()}
+	 */
+	protected abstract BaSyxStorageAPI<Submodel> getSecondStorageAPI();
 
 	@Before
 	public void setUp() {
@@ -62,31 +73,80 @@ public abstract class BaSyxStorageAPISuite {
 
 	@After
 	public void cleanUp() {
-		storageAPI.delete(testType.getIdentification().getId());
+		storageAPI.delete(testSubmodel.getIdentification().getId());
 	}
 
 	@Test
-	public void retrieve() {
-		storageAPI.createOrUpdate(testType);
-		Submodel actual = storageAPI.retrieve(testType.getIdentification().getId());
-		assertEquals(testType, actual);
+	public void createOrUpdateAndretrieve() {
+		storageAPI.createOrUpdate(testSubmodel);
+		Submodel actual = storageAPI.retrieve(testSubmodel.getIdentification().getId());
+		assertEquals(testSubmodel, actual);
+	}
+
+	@Test
+	public void retrieveAll() {
+		Submodel[] testSubmodels = createTestSubmodels();
+		uploadMultiple(testSubmodels);
+
+		Collection<Submodel> retrieves = storageAPI.retrieveAll();
+		for (Submodel submodel : testSubmodels) {
+			assertTrue(retrieves.contains(submodel));
+		}
+	}
+
+	private Submodel[] createTestSubmodels() {
+		Submodel[] testTypes = new Submodel[3];
+		Arrays.setAll(testTypes, i -> new Submodel(testSubmodel.getIdShort() + i, new Identifier(IdentifierType.CUSTOM, "test" + i)));
+		return testTypes;
+	}
+
+	private void uploadMultiple(Submodel[] testTypes) {
+		for (Submodel submodel : testTypes) {
+			storageAPI.createOrUpdate(submodel);
+		}
 	}
 
 	@Test
 	public void update() {
-		storageAPI.createOrUpdate(testType);
-		testType.setIdShort("updated");
-		Submodel actual = storageAPI.createOrUpdate(testType);
+		storageAPI.createOrUpdate(testSubmodel);
+		testSubmodel.setIdShort("updated");
+		Submodel actual = storageAPI.update(testSubmodel, testSubmodel.getIdentification().getId());
 
-		assertEquals(testType, actual);
+		assertEquals(testSubmodel, actual);
+	}
+
+	@Test
+	public void updateShallServeAsCreate() {
+		Submodel actual = storageAPI.update(testSubmodel, testSubmodel.getIdentification().getId());
+
+		assertEquals(testSubmodel, actual);
 	}
 
 	@Test
 	public void delete() {
-		System.out.println(testType);
-		storageAPI.createOrUpdate(testType);
-		assertTrue(storageAPI.delete(testType.getIdentification().getId()));
+		storageAPI.createOrUpdate(testSubmodel);
+		assertTrue(storageAPI.delete(testSubmodel.getIdentification().getId()));
 		Collection<Submodel> allElements = storageAPI.retrieveAll();
-		assertFalse(allElements.contains(testType));
+		assertFalse(allElements.contains(testSubmodel));
 	}
+
+	@Test
+	public void proofPersistency() {
+		storageAPI.createOrUpdate(testSubmodel);
+		Submodel persistentSubmodel = getSecondStorageAPI().retrieve(testSubmodel.getIdentification().getId());
+		assertEquals(testSubmodel, persistentSubmodel);
+	}
+
+	/**
+	 * This test must be implemented individually for every storage backend
+	 */
+	@Test
+	public abstract void createCollectionIfNotExists();
+
+	/**
+	 * This test must be implemented individually for every storage backend
+	 */
+	@Test
+	public abstract void deleteCollection();
+
 }

@@ -31,21 +31,15 @@ import static org.junit.Assert.fail;
 import java.util.Collection;
 
 import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
-import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
-import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.api.parts.asset.AssetKind;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.ModelUrn;
 import org.eclipse.basyx.aas.metamodel.map.parts.Asset;
-import org.eclipse.basyx.aas.registration.memory.InMemoryRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
-import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
-import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
-import org.eclipse.basyx.vab.protocol.api.IConnectorFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,8 +66,7 @@ public abstract class AASAggregatorSuite {
 	private static final String aas2Category = "TestCategory2";
 
 	// initializing dummy test data
-	@Before
-	public void initAASDummies() {
+	private void initAASDummies() {
 		aas1 = new AssetAdministrationShell(aas1Id, new Identifier(IdentifierType.CUSTOM, aas1Id), new Asset("asset1IdShort", new Identifier(IdentifierType.CUSTOM, "asset1"), AssetKind.INSTANCE));
 		aas1.setDescription(description1);
 		aas1.setCategory(aas1Category);
@@ -85,10 +78,15 @@ public abstract class AASAggregatorSuite {
 
 	protected abstract IAASAggregator getAggregator();
 
-	@Before
-	public void clearAASAggregator() {
+	private void clearAASAggregator() {
 		IAASAggregator aggregator = getAggregator();
 		aggregator.getAASList().stream().map(a -> a.getIdentification()).forEach(id -> aggregator.deleteAAS(id));
+	}
+
+	@Before
+	public void setup() {
+		initAASDummies();
+		clearAASAggregator();
 	}
 
 	@Test
@@ -148,40 +146,6 @@ public abstract class AASAggregatorSuite {
 		// Get the updated AAS and check its category
 		IAssetAdministrationShell aas = aggregator.getAAS(aasUrn);
 		assertEquals(aas1AltCategory, aas.getCategory());
-	}
-
-	@Test
-	public void submodelReferencesPresentAfterUpdate() {
-		IAASAggregator aggregator = getAggregator();
-
-		ModelUrn aasUrn = new ModelUrn(aas1Id);
-
-		ConnectedAssetAdministrationShellManager manager = createConnectedAASManager(aggregator);
-		manager.createAAS(aas1, "");
-
-		Submodel submodel = createSubmodel("testSm", "testSmIdentifier");
-		manager.createSubmodel(aasUrn, submodel);
-
-		aggregator.updateAAS(aas1);
-
-		assertEquals(submodel.getIdShort(), manager.retrieveSubmodel(aasUrn, submodel.getIdentification()).getIdShort());
-	}
-
-	private Submodel createSubmodel(String idShort, String customId) {
-		String submodelId = idShort;
-		Identifier submodelIdentifier = new Identifier(IdentifierType.CUSTOM, customId);
-		Submodel submodel = new Submodel(submodelId, submodelIdentifier);
-		return submodel;
-	}
-
-	private ConnectedAssetAdministrationShellManager createConnectedAASManager(IAASAggregator aggregator) {
-		return new ConnectedAssetAdministrationShellManager(new InMemoryRegistry(), new IConnectorFactory() {
-
-			@Override
-			public IModelProvider getConnector(String addr) {
-				return new AASAggregatorProvider(aggregator);
-			}
-		});
 	}
 
 	@Test

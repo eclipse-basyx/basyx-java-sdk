@@ -218,8 +218,17 @@ public class VABPathTools {
 		if (path == null || element == null) {
 			return null;
 		}
-
-		if (path.lastIndexOf(SEPERATOR) == path.length() - 1) {
+		if (element.length() == 0) {
+			return path;
+		}
+		boolean lastPathCharIsSeperator = path.lastIndexOf(SEPERATOR) == path.length() - 1;
+		boolean firstElementCharIsSeparator = SEPERATOR.charAt(0) == element.charAt(0);
+		boolean atLeastOneSeparatorInTheMiddle = lastPathCharIsSeperator || firstElementCharIsSeparator;
+		boolean twoSeperatorsInTheMiddle = lastPathCharIsSeperator && firstElementCharIsSeparator;
+		
+		if (twoSeperatorsInTheMiddle) {
+			return path + element.substring(1);
+		} else if (atLeastOneSeparatorInTheMiddle) {
 			return path + element;
 		} else {
 			return path + SEPERATOR + element;

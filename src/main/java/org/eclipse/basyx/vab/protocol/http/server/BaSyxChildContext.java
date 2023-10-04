@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2021 the Eclipse BaSyx Authors
+ * Copyright (C) 2023 the Eclipse BaSyx Authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -8,10 +8,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -22,42 +22,42 @@
  *
  * SPDX-License-Identifier: MIT
  ******************************************************************************/
-package org.eclipse.basyx.extensions.shared.authorization.internal;
 
-import java.util.HashMap;
-import java.util.Map;
+package org.eclipse.basyx.vab.protocol.http.server;
+
+import javax.servlet.http.HttpServlet;
+
+import org.apache.catalina.Context;
 
 /**
- * DTO for {@link RbacRule} for deserialization.
+ * Child context definition
+ * 
+ * @author danish
  *
- * @author wege
  */
-public class RbacRuleDTO {
-	private String role;
-	private String action;
-	private Map<String, String> targetInformation;
-
-	public String getRole() {
-		return role;
+public class BaSyxChildContext {
+	
+	private Context childContext;
+	private HttpServlet servlet;
+	private String servletMappingPattern;
+	
+	public BaSyxChildContext(Context childContext, HttpServlet servlet, String servletMappingPattern) {
+		super();
+		this.childContext = childContext;
+		this.servlet = servlet;
+		this.servletMappingPattern = servletMappingPattern;
+	}
+	
+	public Context getChildContext() {
+		return childContext;
+	}
+	
+	public HttpServlet getServlet() {
+		return servlet;
+	}
+	
+	public String getServletMappingPattern() {
+		return servletMappingPattern;
 	}
 
-	public String getAction() {
-		return action;
-	}
-
-	public Map<String, String> getTargetInformation() {
-		return targetInformation;
-	}
-
-	public RbacRuleDTO() {
-		role = "";
-		action = "";
-		targetInformation = new HashMap<>();
-	}
-
-	public RbacRuleDTO(final String role, final String action, final Map<String, String> targetInformation) {
-		this.role = role;
-		this.action = action;
-		this.targetInformation = targetInformation;
-	}
 }

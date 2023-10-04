@@ -25,6 +25,8 @@
 package org.eclipse.basyx.aas.restapi.api;
 
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.vab.exception.FeatureNotImplementedException;
 
 /**
  * Interface for providing an AAS API
@@ -44,7 +46,12 @@ public interface IAASAPIFactory {
 	@Deprecated
 	public IAASAPI getAASApi(AssetAdministrationShell aas);
 
+
 	public default IAASAPI create(AssetAdministrationShell aas) {
 		return getAASApi(aas);
+	}
+
+	public default IAASAPI create(IIdentifier aasId) {
+		throw new FeatureNotImplementedException();
 	}
 }

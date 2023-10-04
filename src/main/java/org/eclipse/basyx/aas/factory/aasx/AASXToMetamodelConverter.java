@@ -70,10 +70,24 @@ import org.xml.sax.SAXException;
  * 
  * The aas provides the references to the submodels and assets
  * 
+ * <p>
+ * The AASXToMetamodelConverter implements the AutoCloseable interface, indicating that it manages
+ * resources that need to be released after usage. To ensure proper resource cleanup,
+ * it is recommended to use one of the following approaches: <br>
+ * 
+ * 1. Try-with-resources <br>
+ * 2. Finally block <br>
+ * 3. Explicitly calling close {@link AASXToMetamodelConverter#close()}
+ * <br>
+ * Please choose the appropriate method based on your specific use case to ensure
+ * proper resource management and cleanup.
+ * 
+ * </p>
+ * 
  * @author zhangzai, conradi, danish
  *
  */
-public class AASXToMetamodelConverter {
+public class AASXToMetamodelConverter implements AutoCloseable {
 
 	private static final String XML_TYPE = "http://www.admin-shell.io/aasx/relationships/aas-spec";
 	private static final String AASX_ORIGIN = "/aasx/aasx-origin";
@@ -91,33 +105,27 @@ public class AASXToMetamodelConverter {
 
 	public AASXToMetamodelConverter(String path) {
 		this.aasxPath = path;
+		loadAASX();
 	}
 
 	public AASXToMetamodelConverter(InputStream stream) {
 		this.aasxInputStream = stream;
+		loadAASX();
 	}
 
 	public AasEnv retrieveAasEnv() throws ParserConfigurationException, SAXException, IOException, InvalidFormatException {
 		if (aasEnv != null) {
 			return aasEnv;
 		}
-
-		loadAASX();
-
+		
 		String xmlContent = getXMLResourceString(aasxRoot);
 		XMLToMetamodelConverter converter = new XMLToMetamodelConverter(xmlContent);
-		closeOPCPackage();
+		
 		return converter.parseAasEnv();
 	}
 	
-	public InputStream retrieveThumbnail() throws IOException, InvalidFormatException {
-		loadAASX();
-
-		InputStream thumbnailStream = getThumbnailStream(aasxRoot);
-		
-		closeOPCPackage();
-		
-		return thumbnailStream;
+	public InputStream retrieveThumbnail() throws IOException {
+		return getThumbnailStream(aasxRoot);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -128,36 +136,42 @@ public class AASXToMetamodelConverter {
 			return (Set<T>) bundles;
 		}
 
-		loadAASX();
-
 		AasEnv localAasEnv = retrieveAasEnv();
 
 		bundles = new AASBundleFactory().create(localAasEnv.getAssetAdministrationShells(), localAasEnv.getSubmodels(), localAasEnv.getAssets());
-
-		closeOPCPackage();
 
 		return (Set<T>) bundles;
 	}
 
 	public InputStream retrieveFileInputStream(String path) throws InvalidFormatException, IOException {
-		loadAASX();
 		PackagePart filePart = aasxRoot.getPart(PackagingURIHelper.createPartName(path));
-		closeOPCPackage();
+		
 		return filePart.getInputStream();
 	}
 
-	private void loadAASX() throws IOException, InvalidFormatException {
-		if (aasxInputStream == null) {
-			aasxInputStream = FileLoaderHelper.getInputStream(aasxPath);
+	/**
+	 * Closes the resources associated with the AASXToMetamodelConverter instance.
+	* After calling this method, the instance becomes unusable and subsequent method 
+	* invocations may result in undefined behavior.
+	* 
+	*/
+	@Override
+	public void close() {
+		try {
+			aasxRoot.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.error("Error clearing the resource OPCPackage");
 		}
-
-		if (aasxRoot == null) {
-			aasxRoot = OPCPackage.open(aasxInputStream);
+		
+		if (aasxInputStream != null) {
+			try {
+				aasxInputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				logger.error("Error clearing the resource InputStream");
+			}
 		}
-	}
-
-	private void closeOPCPackage() throws IOException {
-		aasxRoot.close();
 	}
 
 	/**
@@ -284,6 +298,15 @@ public class AASXToMetamodelConverter {
 	}
 	
 	/**
+	 * Unzips all files referenced by the aasx file according to its relationships
+	 * and a relative child path
+	 */
+	public void unzipRelatedFilesToChildPath(String childPath) throws IOException, ParserConfigurationException, SAXException, URISyntaxException, InvalidFormatException {
+		Path tempPath = getTemporaryDirPath().resolve(childPath);
+		unzipRelatedFiles(tempPath);
+	}
+
+	/**
 	 * Unzips all files referenced by the aasx file to a specified directory
 	 *
 	 * @param pathToDirectory
@@ -294,14 +317,12 @@ public class AASXToMetamodelConverter {
 	 * @throws URISyntaxException
 	 */
 	public void unzipRelatedFiles(Path pathToDirectory) throws InvalidFormatException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
-	  loadAASX();
-	  
 	  List<String> files = parseReferencedFilePathsFromAASX();
+	  
 	  for (String filePath: files) {
 	    unzipFile(filePath, aasxRoot, pathToDirectory);
 	  }
 	  
-	  closeOPCPackage();
 	}
 
 	/**
@@ -351,13 +372,13 @@ public class AASXToMetamodelConverter {
 			return;
 		}
 		
-		logger.info("Unzipping " + filePath);
+		logger.debug("Unzipping " + filePath);
 		String relativePath = "files/" + VABPathTools.getParentPath(filePath);
 		Path destDir;
 
 	    destDir = pathToDirectory.resolve(relativePath);
 
-		logger.info("Unzipping to " + destDir);
+		logger.debug("Unzipping to " + destDir);
 		Files.createDirectories(destDir);
 
 		PackagePart part = aasxRoot.getPart(PackagingURIHelper.createPartName("/" + filePath));
@@ -370,5 +391,25 @@ public class AASXToMetamodelConverter {
 		String targetPath = destDir.toString() + "/" + VABPathTools.getLastElement(filePath);
 		InputStream stream = part.getInputStream();
 		FileUtils.copyInputStreamToFile(stream, new File(targetPath));
+	}
+	
+	private void loadAASX() {
+		if (aasxInputStream == null) {
+			try {
+				aasxInputStream = FileLoaderHelper.getInputStream(aasxPath);
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("IO Exception occurred while getting input stream from path " + aasxPath);
+			}
+		}
+
+		if (aasxRoot == null) {
+			try {
+				aasxRoot = OPCPackage.open(aasxInputStream);
+			} catch (InvalidFormatException | IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Exception occurred while opening the OPC Package " + aasxPath);
+			}
+		}
 	}
 }

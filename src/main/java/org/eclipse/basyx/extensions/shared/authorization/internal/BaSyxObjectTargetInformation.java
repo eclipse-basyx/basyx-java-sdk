@@ -35,7 +35,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Specialization of {@link TargetInformation} that uses the
- * aasId/smId/smElIdShortPath tuple.
+ * aasId/smId/smSemanticId/smElIdShortPath tuple.
  *
  * @author wege
  */ 
@@ -43,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class BaSyxObjectTargetInformation implements TargetInformation {
 	private String aasId;
 	private String smId;
+	private String smSemanticId;
 	private String smElIdShortPath;
 
 	public String getAasId() {
@@ -53,15 +54,56 @@ public class BaSyxObjectTargetInformation implements TargetInformation {
 		return smId;
 	}
 
+	public String getSmSemanticId() {
+		return smSemanticId;
+	}
+
 	public String getSmElIdShortPath() {
 		return smElIdShortPath;
 	}
 
 	@JsonCreator
-	public BaSyxObjectTargetInformation(final @JsonProperty("aasId") String aasId, final @JsonProperty("smId") String smId, final @JsonProperty("smElIdShortPath") String smElIdShortPath) {
+	public BaSyxObjectTargetInformation(
+			final @JsonProperty("aasId") String aasId,
+			final @JsonProperty("smId") String smId,
+			final @JsonProperty("smSemanticId") String smSemanticId,
+			final @JsonProperty("smElIdShortPath") String smElIdShortPath
+	) {
 		this.aasId = aasId;
 		this.smId = smId;
+		this.smSemanticId = smSemanticId;
 		this.smElIdShortPath = smElIdShortPath;
+	}
+
+	public static class Builder {
+		private String aasId;
+		private String smId;
+		private String smSemanticId;
+		private String smElIdShortPath;
+
+		public Builder setAasId(final String aasId) {
+			this.aasId = aasId;
+			return this;
+		}
+
+		public Builder setSmId(final String smId) {
+			this.smId = smId;
+			return this;
+		}
+
+		public Builder setSmSemanticId(final String smSemanticId) {
+			this.smSemanticId = smSemanticId;
+			return this;
+		}
+
+		public Builder setSmElIdShortPath(final String smElIdShortPath) {
+			this.smElIdShortPath = smElIdShortPath;
+			return this;
+		}
+
+		public BaSyxObjectTargetInformation build() {
+			return new BaSyxObjectTargetInformation(aasId, smId, smSemanticId, smElIdShortPath);
+		}
 	}
 
 	@Override
@@ -69,6 +111,7 @@ public class BaSyxObjectTargetInformation implements TargetInformation {
 		final Map<String, String> map = new HashMap<>();
 		map.put("aasId", aasId);
 		map.put("smId", smId);
+		map.put("smSemanticId", smSemanticId);
 		map.put("smElIdShortPath", smElIdShortPath);
 		return map;
 	}
@@ -85,17 +128,36 @@ public class BaSyxObjectTargetInformation implements TargetInformation {
 
 		final BaSyxObjectTargetInformation other = (BaSyxObjectTargetInformation) o;
 
-		return new EqualsBuilder().append(getAasId(), other.getAasId()).append(getSmId(), other.getSmId()).append(getSmElIdShortPath(), other.getSmElIdShortPath()).isEquals();
+		return new EqualsBuilder()
+				.append(getAasId(), other.getAasId())
+				.append(getSmId(), other.getSmId())
+				.append(getSmSemanticId(), other.getSmSemanticId())
+				.append(getSmElIdShortPath(), other.getSmElIdShortPath())
+				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(17, 37).append(getAasId()).append(getSmId()).append(getSmElIdShortPath()).toHashCode();
+		return new HashCodeBuilder(17, 37)
+				.append(getAasId())
+				.append(getSmId())
+				.append(getSmSemanticId())
+				.append(getSmElIdShortPath())
+				.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new StringBuilder("BaSyxObjectTargetInformation{").append("aasId='").append(aasId).append('\'').append(", smId='").append(smId).append('\'').append(", smElIdShortPath='").append(smElIdShortPath).append('\'').append('}')
+		return new StringBuilder("BaSyxObjectTargetInformation{")
+				.append("aasId='").append(aasId)
+				.append('\'')
+				.append(", smId='").append(smId)
+				.append('\'')
+				.append(", smSemanticId='").append(smSemanticId)
+				.append('\'')
+				.append(", smElIdShortPath='").append(smElIdShortPath)
+				.append('\'')
+				.append('}')
 				.toString();
 	}
 }

@@ -38,6 +38,7 @@ import org.eclipse.basyx.extensions.shared.authorization.internal.NotAuthorizedE
 import org.eclipse.basyx.extensions.submodel.authorization.SubmodelAPIScopes;
 import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IReference;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
@@ -90,7 +91,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 	protected ISubmodel authorizeGetSubmodel() throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
-		return submodelAPIAuthorizer.authorizeGetSubmodel(subjectInformationProvider.get(), aas, smId, decoratedSubmodelAPI::getSubmodel);
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		return submodelAPIAuthorizer.authorizeGetSubmodel(subjectInformationProvider.get(), aas, smId, smSemanticId, decoratedSubmodelAPI::getSubmodel);
 	}
 
 	@Override
@@ -125,7 +127,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 	protected void authorizeAddSubmodelElement(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
-		submodelAPIAuthorizer.authorizeAddSubmodelElement(subjectInformationProvider.get(), aas, smId, smElIdShortPath);
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		submodelAPIAuthorizer.authorizeAddSubmodelElement(subjectInformationProvider.get(), aas, smId, smSemanticId, smElIdShortPath);
 	}
 
 	@Override
@@ -143,7 +146,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 	protected ISubmodelElement authorizeGetSubmodelElement(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
-		return submodelAPIAuthorizer.authorizeGetSubmodelElement(subjectInformationProvider.get(), aas, smId, smElIdShortPath, () -> decoratedSubmodelAPI.getSubmodelElement(smElIdShortPath));
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		return submodelAPIAuthorizer.authorizeGetSubmodelElement(subjectInformationProvider.get(), aas, smId, smSemanticId, smElIdShortPath, () -> decoratedSubmodelAPI.getSubmodelElement(smElIdShortPath));
 	}
 
 	@Override
@@ -163,7 +167,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 	protected void authorizeDeleteSubmodelElement(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
-		submodelAPIAuthorizer.authorizeDeleteSubmodelElement(subjectInformationProvider.get(), aas, smId, smElIdShortPath);
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		submodelAPIAuthorizer.authorizeDeleteSubmodelElement(subjectInformationProvider.get(), aas, smId, smSemanticId, smElIdShortPath);
 	}
 
 	@Override
@@ -192,7 +197,9 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 	}
 
 	private Collection<IOperation> getOperationListOnly() throws InhibitException {
-		return submodelAPIAuthorizer.authorizeGetOperations(subjectInformationProvider.get(), aas, decoratedSubmodelAPI::getSubmodel, decoratedSubmodelAPI::getOperations);
+		final IIdentifier smId = getSmIdUnsecured();
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		return submodelAPIAuthorizer.authorizeGetOperations(subjectInformationProvider.get(), aas, smId, smSemanticId, decoratedSubmodelAPI::getSubmodel, decoratedSubmodelAPI::getOperations);
 	}
 
 	@Override
@@ -221,7 +228,9 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 	}
 
 	private Collection<ISubmodelElement> getSubmodelElementListOnly() throws InhibitException {
-		return submodelAPIAuthorizer.authorizeGetSubmodelElements(subjectInformationProvider.get(), aas, decoratedSubmodelAPI::getSubmodel, decoratedSubmodelAPI::getSubmodelElements);
+		final IIdentifier smId = getSmIdUnsecured();
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		return submodelAPIAuthorizer.authorizeGetSubmodelElements(subjectInformationProvider.get(), aas, smId, smSemanticId, decoratedSubmodelAPI::getSubmodel, decoratedSubmodelAPI::getSubmodelElements);
 	}
 
 	@Override
@@ -241,7 +250,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 	protected void authorizeUpdateSubmodelElement(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
-		submodelAPIAuthorizer.authorizeUpdateSubmodelElement(subjectInformationProvider.get(), aas, smId, smElIdShortPath);
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		submodelAPIAuthorizer.authorizeUpdateSubmodelElement(subjectInformationProvider.get(), aas, smId, smSemanticId, smElIdShortPath);
 	}
 
 	@Override
@@ -259,7 +269,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 	protected Object authorizeGetSubmodelElementValue(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
-		return submodelAPIAuthorizer.authorizeGetSubmodelElementValue(subjectInformationProvider.get(), aas, smId, smElIdShortPath, () -> decoratedSubmodelAPI.getSubmodelElementValue(smElIdShortPath));
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		return submodelAPIAuthorizer.authorizeGetSubmodelElementValue(subjectInformationProvider.get(), aas, smId, smSemanticId, smElIdShortPath, () -> decoratedSubmodelAPI.getSubmodelElementValue(smElIdShortPath));
 	}
 
 	@Override
@@ -298,7 +309,8 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 	protected void authorizeInvokeOperation(final String smElIdShortPath) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
-		submodelAPIAuthorizer.authorizeInvokeOperation(subjectInformationProvider.get(), aas, smId, smElIdShortPath);
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+		submodelAPIAuthorizer.authorizeInvokeOperation(subjectInformationProvider.get(), aas, smId, smSemanticId, smElIdShortPath);
 	}
 
 	@Override
@@ -316,7 +328,44 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 
 	protected Object authorizeGetOperationResult(final String smElIdShortPath, final String requestId) throws InhibitException {
 		final IIdentifier smId = getSmIdUnsecured();
-		return submodelAPIAuthorizer.authorizeGetOperationResult(subjectInformationProvider.get(), aas, smId, smElIdShortPath, requestId, () -> decoratedSubmodelAPI.getOperationResult(smElIdShortPath, requestId));
+		final IReference smSemanticId = getSmSemanticIdUnsecured();
+
+		// TODO: parameter object for the target of the operation?
+		// TODO: or general Target object?
+		// TODO: or general context object?
+
+		return submodelAPIAuthorizer.authorizeGetOperationResult(subjectInformationProvider.get(), aas, smId, smSemanticId, smElIdShortPath, requestId, () -> decoratedSubmodelAPI.getOperationResult(smElIdShortPath, requestId));
+	}
+
+	@Override
+	public File getSubmodelElementFile(String idShortPath) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
+			return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
+		}
+
+		try {
+			// TODO: maybe write own authorize method later and use its return
+			authorizeGetSubmodelElement(idShortPath);
+			return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
+		} catch (final InhibitException e) {
+			throw new NotAuthorizedException(e);
+		}
+	}
+
+	@Override
+	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
+		if (ElevatedCodeAuthentication.isCodeAuthentication()) {
+			decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
+			return;
+		}
+
+		try {
+			// TODO: maybe write own authorize method later
+			authorizeUpdateSubmodelElement(idShortPath);
+			decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
+		} catch (final InhibitException e) {
+			throw new NotAuthorizedException(e);
+		}
 	}
 
 	private IIdentifier getSmIdUnsecured() throws ResourceNotFoundException {
@@ -329,13 +378,15 @@ public class AuthorizedSubmodelAPI<SubjectInformationType> implements ISubmodelA
 		return sm.getIdentification();
 	}
 
-	@Override
-	public File getSubmodelElementFile(String idShortPath) {
-		return decoratedSubmodelAPI.getSubmodelElementFile(idShortPath);
-	}
+	private IReference getSmSemanticIdUnsecured() {
+		try (final ElevatedCodeAuthentication.ElevatedCodeAuthenticationAreaHandler ignored = ElevatedCodeAuthentication.enterElevatedCodeAuthenticationArea()) {
+			final ISubmodel sm = decoratedSubmodelAPI.getSubmodel();
 
-	@Override
-	public void uploadSubmodelElementFile(String idShortPath, InputStream fileStream) {
-		decoratedSubmodelAPI.uploadSubmodelElementFile(idShortPath, fileStream);
+			if (sm == null) {
+				return null;
+			}
+
+			return sm.getSemanticId();
+		}
 	}
 }
