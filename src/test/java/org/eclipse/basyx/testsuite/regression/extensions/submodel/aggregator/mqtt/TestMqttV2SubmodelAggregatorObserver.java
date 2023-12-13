@@ -132,14 +132,13 @@ public class TestMqttV2SubmodelAggregatorObserver {
 	}
 
 	@Test
-	public void testCreateSubmodelViaApi() {
+	public void noEventExpectedWhenSubmodelIsCreatedViaAPI() {
 		ISubmodelAPI smApi = new VABSubmodelAPI(new VABModelProvider(createTestSubmodel(), new VABMapHandler()));
 
 		String lastPayload = listener.lastPayload;
 
 		observedSubmodelAggregator.createSubmodel(smApi);
 
-		// No event is expected when creating a Submodel via its API
 		assertEquals(lastPayload, listener.lastPayload);
 	}
 
@@ -190,9 +189,12 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		String newSubmodelIdShort = "newSubmodelIdShort";
 		String newSubmodelId = "newSubmodelId";
 		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRDI, newSubmodelId);
+
 		Submodel newSubmodel = new Submodel(newSubmodelIdShort, newSubmodelIdentifier);
+
 		newSubmodel.addSubmodelElement(new SubmodelElementCollection("smeColl"));
 		newSubmodel.addSubmodelElement(new Property("prop", false));
+
 		return newSubmodel;
 	}
 
