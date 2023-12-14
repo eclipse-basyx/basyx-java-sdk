@@ -48,6 +48,7 @@ public class MqttTestListener implements InterceptHandler {
 	public String lastTopic;
 	public String lastPayload;
 	private ArrayList<String> topics = new ArrayList<>();
+	public int msgCounter;
 
 	@Override
 	public String getID() {
@@ -80,6 +81,7 @@ public class MqttTestListener implements InterceptHandler {
 		topics.add(msg.getTopicName());
 		lastTopic = msg.getTopicName();
 		lastPayload = msg.getPayload().toString(StandardCharsets.UTF_8);
+		msgCounter++;
 	}
 
 	@Override
