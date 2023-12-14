@@ -94,7 +94,6 @@ public class ObservableSubmodelAggregatorV2 extends Observable<ISubmodelAggregat
 	@Override
 	public void createSubmodel(ISubmodelAPI submodelAPI) {
 		submodelAggregator.createSubmodel(submodelAPI);
-		observers.stream().forEach(observer -> observer.submodelCreated(getParentAASId(submodelAPI.getSubmodel()), submodelAPI.getSubmodel(), this.aasServerId));
 	}
 
 	@Override

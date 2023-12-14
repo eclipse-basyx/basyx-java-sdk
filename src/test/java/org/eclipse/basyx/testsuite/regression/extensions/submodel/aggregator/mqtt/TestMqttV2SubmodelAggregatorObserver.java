@@ -42,9 +42,13 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.submodel.restapi.api.ISubmodelAPI;
+import org.eclipse.basyx.submodel.restapi.vab.VABSubmodelAPI;
 import org.eclipse.basyx.testsuite.regression.extensions.shared.mqtt.MqttTestListener;
 import org.eclipse.basyx.vab.coder.json.serialization.DefaultTypeFactory;
 import org.eclipse.basyx.vab.coder.json.serialization.GSONTools;
+import org.eclipse.basyx.vab.modelprovider.generic.VABModelProvider;
+import org.eclipse.basyx.vab.modelprovider.map.VABMapHandler;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.junit.After;
@@ -62,7 +66,7 @@ import io.moquette.broker.config.ResourceLoaderConfig;
 /**
  * Tests events emitting with the MqttSubmodelAggregatorObserver
  *
- * @author fischer, jungjan, siebert
+ * @author fischer, jungjan, siebert, mateusmolina
  *
  */
 public class TestMqttV2SubmodelAggregatorObserver {
@@ -120,16 +124,22 @@ public class TestMqttV2SubmodelAggregatorObserver {
 
 	@Test
 	public void testCreateSubmodel() {
-		String newSubmodelIdShort = "newSubmodelIdShort";
-		String newSubmodelId = "newSubmodelId";
-		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRDI, newSubmodelId);
-		Submodel newSubmodel = new Submodel(newSubmodelIdShort, newSubmodelIdentifier);
-		newSubmodel.addSubmodelElement(new SubmodelElementCollection("smeColl"));
-		newSubmodel.addSubmodelElement(new Property("prop", false));
+		Submodel newSubmodel = createTestSubmodel();
 		observedSubmodelAggregator.createSubmodel(newSubmodel);
 
 		assertEquals(removeSubmodelElements(newSubmodel), deserializePayload(listener.lastPayload));
 		assertEquals(payloadFactory.createCreateSubmodelTopic(null, observedSubmodelAggregator.getAasServerId()), listener.lastTopic);
+	}
+
+	@Test
+	public void noEventExpectedWhenSubmodelIsCreatedViaAPI() {
+		ISubmodelAPI smApi = new VABSubmodelAPI(new VABModelProvider(createTestSubmodel(), new VABMapHandler()));
+
+		String lastPayload = listener.lastPayload;
+
+		observedSubmodelAggregator.createSubmodel(smApi);
+
+		assertEquals(lastPayload, listener.lastPayload);
 	}
 
 	@Test
@@ -174,4 +184,18 @@ public class TestMqttV2SubmodelAggregatorObserver {
 		
 		return copy;
 	}
+
+	private static Submodel createTestSubmodel() {
+		String newSubmodelIdShort = "newSubmodelIdShort";
+		String newSubmodelId = "newSubmodelId";
+		Identifier newSubmodelIdentifier = new Identifier(IdentifierType.IRDI, newSubmodelId);
+
+		Submodel newSubmodel = new Submodel(newSubmodelIdShort, newSubmodelIdentifier);
+
+		newSubmodel.addSubmodelElement(new SubmodelElementCollection("smeColl"));
+		newSubmodel.addSubmodelElement(new Property("prop", false));
+
+		return newSubmodel;
+	}
+
 }
