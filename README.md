@@ -3,6 +3,9 @@
 # Eclipse BaSyx Java SDK
 [![BaSyx Logo](https://www.eclipse.org/basyx/img/basyxlogo.png)](https://www.eclipse.org/basyx/)
 
+This repository contains BaSyx Java V1. If you're looking for BaSyx Java V2, see [here](https://github.com/eclipse-basyx/basyx-java-server-sdk).
+
+
 The Eclipse BaSyx Java SDK is part of the [Eclipse BaSyx middleware](https://www.eclipse.org/basyx/). The SDK has been created within the [BaSys](https://www.basys40.de/) project.
 
 ## Eclipse Wiki
