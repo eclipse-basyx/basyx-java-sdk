@@ -221,7 +221,7 @@
 		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>sdk-server</artifactId>
-			<version>0.6.11</version>
+			<version>0.6.12</version>
 		</dependency>
 
 		<!-- Java Servlet API (for HTTP provider) -->
