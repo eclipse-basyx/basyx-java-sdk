@@ -28,7 +28,7 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
         
     - name: Delete old sdk package
-      uses: actions/delete-package-versions@v3
+      uses: actions/delete-package-versions@v5
       continue-on-error: true
       with:
         package-name: 'org.eclipse.basyx.basyx.sdk'
