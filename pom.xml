@@ -269,7 +269,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
-			<version>1.25.0</version>
+			<version>1.26.0</version>
 		</dependency>
 		
 		<!-- Used by Logback to compile filter expressions from logback.xml -->
