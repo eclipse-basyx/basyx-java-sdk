@@ -49,6 +49,16 @@
 		<spring-security-version>5.8.9</spring-security-version>
 	</properties>
 	
+	<pluginRepositories>
+		<pluginRepository>
+			<id>dash-licenses-snapshots</id>
+			<url>https://repo.eclipse.org/content/repositories/dash-licenses-snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+	
 	<repositories>
 		<!--  Additional repository for MQTT Client releases (Paho Java Client) -->
 	    <repository>
@@ -63,6 +73,21 @@
 
 		<plugins>
 			<!-- Compile Sources using Java 11 -->
+			
+			<plugin>
+				<groupId>org.eclipse.dash</groupId>
+				<artifactId>license-tool-plugin</artifactId>
+				<version>1.1.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>license-check</id>
+						<goals>
+							<goal>license-check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.12.1</version>
